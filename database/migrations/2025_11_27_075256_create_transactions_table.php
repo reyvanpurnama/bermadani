@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('invoiceNumber')->unique();
-            $table->unsignedBigInteger('member_id')->nullable();
+            $table->unsignedBigInteger('memberId')->nullable();
             $table->enum('type', ['SALE', 'PURCHASE', 'RETURN', 'INCOME', 'EXPENSE']);
             $table->decimal('totalAmount', 15, 2);
             $table->enum('paymentMethod', ['CASH', 'TRANSFER', 'CREDIT'])->default('CASH');
@@ -24,9 +24,9 @@ return new class extends Migration
             $table->boolean('isProduction')->default(true);
             $table->timestamps();
             
-            $table->foreign('member_id')->references('id')->on('members')->onDelete('set null');
+            $table->foreign('memberId')->references('id')->on('members')->onDelete('set null');
             
-            $table->index(['member_id', 'date']);
+            $table->index(['memberId', 'date']);
             $table->index('status');
             $table->index('date');
             $table->index('paymentMethod');

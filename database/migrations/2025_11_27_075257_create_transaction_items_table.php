@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('transaction_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('transaction_id');
-            $table->unsignedBigInteger('product_id');
+            $table->unsignedBigInteger('transactionId');
+            $table->unsignedBigInteger('productId');
             $table->integer('quantity');
             $table->decimal('unitPrice', 15, 2);
             $table->decimal('totalPrice', 15, 2);
@@ -27,11 +27,11 @@ return new class extends Migration
             $table->boolean('isProduction')->default(true);
             $table->timestamps();
             
-            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('restrict');
+            $table->foreign('transactionId')->references('id')->on('transactions')->onDelete('cascade');
+            $table->foreign('productId')->references('id')->on('products')->onDelete('restrict');
             
-            $table->index('transaction_id');
-            $table->index('product_id');
+            $table->index('transactionId');
+            $table->index('productId');
             $table->index('isProduction');
         });
     }

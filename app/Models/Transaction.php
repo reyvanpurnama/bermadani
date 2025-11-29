@@ -8,7 +8,7 @@ class Transaction extends Model
 {
     protected $fillable = [
         'invoiceNumber',
-        'member_id',
+        'memberId',
         'type',
         'totalAmount',
         'paymentMethod',
@@ -26,12 +26,12 @@ class Transaction extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'member_id');
+        return $this->belongsTo(Member::class, 'memberId');
     }
 
     public function items()
     {
-        return $this->hasMany(TransactionItem::class, 'transaction_id');
+        return $this->hasMany(TransactionItem::class, 'transactionId');
     }
     
     public function user()
