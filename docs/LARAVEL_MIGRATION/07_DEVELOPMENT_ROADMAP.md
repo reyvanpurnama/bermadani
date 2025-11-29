@@ -239,10 +239,10 @@
 
 | Week | Milestone | Target Date | Status |
 |------|-----------|-------------|--------|
-| 2 | Auth & Layouts Complete | Week 2 End | ⏳ |
-| 4 | POS Functional | Week 4 End | ⏳ |
-| 5 | Reports Ready | Week 5 End | ⏳ |
-| 7 | Supplier System Complete | Week 7 End | ⏳ |
+| 2 | Auth & Layouts Complete | Week 2 End | ✅ DONE |
+| 4 | POS Functional | Week 4 End | ✅ DONE |
+| 5 | Reports Ready | Week 5 End | ✅ DONE |
+| 7 | Supplier System Complete | Week 7 End | ⏳ IN PROGRESS |
 | 9 | Consignment Complete | Week 9 End | ⏳ |
 | 10 | Production Launch | Week 10 End | ⏳ |
 
