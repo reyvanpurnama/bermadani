@@ -70,6 +70,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             // Database notifications
             ->databaseNotifications()
-            ->databaseNotificationsPolling('30s');
+            ->databaseNotificationsPolling('30s')
+            // Sidebar collapse width
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('3.5rem');
     }
 }

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bermadani Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        // Light Mode (Google-like - Softer)
+                        page: '#E2E8F0',    // Slate 200 (Darker gray bg)
+                        card: '#F8FAFC',    // Slate 50 (Off-white cards)
+                        // Dark Mode (Neutral)
+                        darkPage: '#18181B', // Zinc 950
+                        darkCard: '#27272A', // Zinc 800
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .apexcharts-tooltip { z-index: 100 !important; }
+        /* Custom scrollbar for list */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-page text-slate-800 antialiased dark:bg-darkPage dark:text-slate-200 transition-colors duration-300">
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+<div id="sidebar-container"></div>
+
+<div id="main-content" class="md:ml-[180px] min-h-screen flex flex-col transition-all duration-300">
+    
+    <div id="navbar-container"></div>
+
+    <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+            <div class="lg:col-span-8 h-full">
+                <div class="bg-indigo-600 rounded-xl p-5 text-white shadow-sm relative overflow-hidden flex flex-col justify-center h-full">
+                    <div class="relative z-10 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-lg font-bold mb-1">Welcome back, Reyvan! 👋</h2>
+                            <p class="text-indigo-100 text-xs mb-3 opacity-90">Sales performance is up <span class="font-bold text-white">72%</span> today.</p>
+                            <button class="bg-card/20 hover:bg-card/30 text-white text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-md font-semibold transition-colors border border-white/10">View Profile</button>
+                        </div>
+                        <i class='bx bx-trophy text-6xl text-indigo-400 opacity-40 mr-4'></i>
+                    </div>
+                    <div class="absolute right-0 top-0 h-full w-1/3 opacity-10 bg-gradient-to-l from-white to-transparent transform skew-x-12 pointer-events-none"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 h-full flex flex-col gap-4">
+    
+    <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Profit</p>
+            <div class="flex items-end gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">$12,628</h3>
+                <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 72%</span>
+            </div>
+        </div>
+        <div class="bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg text-emerald-500"><i class='bx bx-line-chart text-lg'></i></div>
+    </div>
+
+    <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+        <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Sales</p>
+            <div class="flex items-end gap-2">
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">$4,679</h3>
+                <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 28%</span>
+            </div>
+        </div>
+        <div class="bg-blue-50 dark:bg-blue-500/10 p-2 rounded-lg text-blue-500"><i class='bx bx-wallet text-lg'></i></div>
+    </div>
+
+</div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4"> <div class="lg:col-span-8 flex flex-col gap-4 h-fit">
+                
+                <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row overflow-hidden">
+    
+    <div class="flex-1 p-5 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 flex flex-col justify-between">
+        
+        <div>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+                <div>
+                    <h3 class="font-bold text-base text-slate-800 dark:text-white">Revenue Overview</h3>
+                    <p class="text-[11px] text-slate-500">Income vs Expense Analytics</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex gap-3 hidden sm:flex">
+                        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[10px] text-slate-500 font-medium">Income</span></div>
+                        <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300"></span><span class="text-[10px] text-slate-500 font-medium">Expense</span></div>
+                    </div>
+                    <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
+                    <div class="relative">
+                        <select id="revenueFilter" class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
+                            <option value="today" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" selected>Hari Ini</option>
+                            <option value="week" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Minggu Ini</option>
+                            <option value="month" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Bulan Ini</option>
+                            <option value="year" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Tahun Ini</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class='bx bx-chevron-down text-sm'></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-1 w-full min-h-[260px]">
+            <div id="revenueChart" class="w-full h-full"></div>
+        </div>
+    </div>
+
+    <div class="w-full md:w-[260px] p-5 flex flex-col justify-between bg-slate-50/50 dark:bg-slate-800/30 border-l border-slate-100 dark:border-slate-700">
+    
+    <div class="mb-2">
+        <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Profitability</h3>
+        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Net vs Gross Margin</p>
+    </div>
+
+    <div class="bg-emerald-50/80 dark:bg-emerald-500/10 rounded-xl p-4 border border-emerald-100 dark:border-emerald-500/20 relative overflow-hidden group">
+        <div class="absolute -right-3 -bottom-3 text-emerald-500/10 dark:text-emerald-400/10 text-6xl group-hover:scale-110 transition-transform duration-500 pointer-events-none">
+            <i class='bx bx-wallet'></i>
+        </div>
+        <p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Current Net Profit</p>
+        
+        <h2 id="profit-value" class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight relative z-10">Rp 850 Rb</h2>
+        
+        <div class="flex items-center gap-2 mt-2 relative z-10">
+            <div class="flex items-center justify-center bg-emerald-500 text-white rounded-full w-4 h-4 shadow-sm shadow-emerald-500/30">
+                <i class='bx bx-trending-up text-[10px]'></i>
+            </div>
+            <span id="profit-change" class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+5.2%</span>
+            <span class="text-[10px] text-slate-400">vs periode lalu</span>
+        </div>
+    </div>
+
+    <div class="space-y-3 mt-4">
+        
+        <div>
+            <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Gross Margin</span>
+                <span id="gross-text" class="text-[11px] font-bold text-slate-700 dark:text-white">70%</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
+                <div id="gross-bar" class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: 70%"></div>
+            </div>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-end mb-1">
+                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Op. Expenses</span>
+                <span id="expense-text" class="text-[11px] font-bold text-slate-700 dark:text-white">30%</span>
+            </div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
+                <div id="expense-bar" class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: 30%"></div>
+            </div>
+        </div>
+
+        <p class="text-[9px] text-slate-400 mt-2 italic">*Net Profit setelah pajak & beban.</p>
+
+        <!-- Payment Method Section (Added) -->
+        <div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+            <div class="mb-3">
+                <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Payment Method</h3>
+                <p class="text-[10px] text-slate-500 uppercase tracking-widest">Transaction Type</p>
+            </div>
+            <div id="paymentChart" class="flex justify-center -ml-2"></div>
+            <div class="flex justify-center gap-4 mt-2">
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400">Cash</p>
+                    <h6 id="pay-cash" class="text-xs font-bold text-emerald-500">70%</h6>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400">QRIS</p>
+                    <h6 id="pay-qris" class="text-xs font-bold text-indigo-500">25%</h6>
+                </div>
+                <div class="text-center">
+                    <p class="text-[10px] text-slate-400">Transfer</p>
+                    <h6 id="pay-transfer" class="text-xs font-bold text-blue-500">5%</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+                <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 flex flex-col md:flex-row items-stretch gap-4 min-h-[140px]">
+    
+    <div class="flex flex-col gap-2 w-full md:w-auto md:border-r border-slate-100 dark:border-slate-700/50 pr-4 border-b md:border-b-0 pb-3 md:pb-0">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 ring-1 ring-teal-100 dark:ring-teal-500/20 shadow-sm">
+                <i class='bx bxs-balance-beam text-lg'></i>
+            </div>
+            <h6 class="text-[12px] font-bold text-slate-800 dark:text-white tracking-tight">NERACA</h6>
+        </div>
+        
+        <div class="relative w-full">
+            <select id="neracaFilter" class="w-full appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[10px] font-semibold rounded-md pl-3 pr-8 py-1 outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
+                <option value="today" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Hari Ini</option>
+                <option value="week" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" selected>Minggu Ini</option>
+                <option value="month" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Bulan Ini</option>
+                <option value="year" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200">Tahun Ini</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class='bx bx-chevron-down text-sm'></i></div>
+        </div>
+    </div>
+
+    <div class="flex-1 w-full md:w-auto px-0 md:px-3 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700/50 pb-3 md:pb-0 last:border-0 flex flex-col justify-between">
+        <div class="mb-1">
+            <div class="flex justify-between items-center mb-0.5">
+                <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">Total Aset</p>
+                <span id="neraca-aset-change" class="text-emerald-500 text-[9px] font-bold">+12%</span>
+            </div>
+            <h5 id="neraca-aset-val" class="text-[14px] font-bold text-slate-800 dark:text-white leading-none tracking-tight">Rp 2.45 M</h5>
+        </div>
+        <div id="neracaChart1" class="h-[60px] w-full"></div> 
+    </div>
+
+    <div class="flex-1 w-full md:w-auto px-0 md:px-3 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700/50 pb-3 md:pb-0 last:border-0 flex flex-col justify-between">
+        <div class="mb-1">
+            <div class="flex justify-between items-center mb-0.5">
+                <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">Liabilitas</p>
+                <span id="neraca-liab-change" class="text-slate-500 text-[9px] font-bold">Stable</span>
+            </div>
+            <h5 id="neraca-liab-val" class="text-[14px] font-bold text-slate-800 dark:text-white leading-none tracking-tight">Rp 450 Jt</h5>
+        </div>
+        <div id="neracaChart2" class="h-[60px] w-full"></div>
+    </div>
+
+    <div class="flex-1 w-full md:w-auto px-0 md:px-3 flex flex-col justify-between">
+        <div class="mb-1">
+            <div class="flex justify-between items-center mb-0.5">
+                <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-none">Ekuitas</p>
+                <span id="neraca-ekui-change" class="text-indigo-500 text-[9px] font-bold">+8%</span>
+            </div>
+            <h5 id="neraca-ekui-val" class="text-[14px] font-bold text-slate-800 dark:text-white leading-none tracking-tight">Rp 2.0 M</h5>
+        </div>
+        <div id="neracaChart3" class="h-[60px] w-full"></div>
+    </div>
+
+</div>
+            </div>
+
+            <div class="lg:col-span-4 flex flex-col gap-4 h-fit"> 
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-card dark:bg-darkCard p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between group hover:border-indigo-200 transition-colors cursor-pointer relative overflow-hidden h-[100px]">
+                        <span class="absolute top-2.5 right-2.5 text-[9px] bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-300 px-1.5 py-px rounded font-bold uppercase tracking-wide">Shift 1</span>
+                        <div class="mb-1"><div class="w-8 h-8 rounded-md bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary transition-all duration-300 group-hover:bg-indigo-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-indigo-500/40"><i class='bx bx-store-alt text-base'></i></div></div>
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 leading-none">Saldo Kasir</p><h6 class="text-[13px] font-bold text-slate-800 dark:text-white leading-tight truncate">Rp 2.400.000</h6></div>
+                    </div>
+                    <div class="bg-card dark:bg-darkCard p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between group hover:border-amber-200 transition-colors cursor-pointer relative overflow-hidden h-[100px]">
+                        <span class="absolute top-2.5 right-2.5 text-[9px] bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 px-1.5 py-px rounded font-bold uppercase tracking-wide">Urgent</span>
+                        <div class="mb-1"><div class="w-8 h-8 rounded-md bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-amber-500/40"><i class='bx bx-file-blank text-base'></i></div></div>
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 leading-none">Pengajuan</p><h6 class="text-[13px] font-bold text-slate-800 dark:text-white leading-tight truncate">5 Berkas</h6></div>
+                    </div>
+                    <div class="bg-card dark:bg-darkCard p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between group hover:border-rose-200 transition-colors cursor-pointer relative overflow-hidden h-[100px]">
+                        <span class="absolute top-2.5 right-2.5 text-[9px] bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 px-1.5 py-px rounded font-bold uppercase tracking-wide">Hari Ini</span>
+                        <div class="mb-1"><div class="w-8 h-8 rounded-md bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-500 transition-all duration-300 group-hover:bg-rose-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-rose-500/40"><i class='bx bx-time-five text-base'></i></div></div>
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 leading-none">Penagihan</p><h6 class="text-[13px] font-bold text-slate-800 dark:text-white leading-tight truncate">Rp 12.5 Jt</h6></div>
+                    </div>
+                    <div class="bg-card dark:bg-darkCard p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between group hover:border-cyan-200 transition-colors cursor-pointer relative overflow-hidden h-[100px]">
+                        <span class="absolute top-2.5 right-2.5 text-[9px] bg-cyan-50 text-cyan-600 dark:bg-cyan-500/10 dark:text-cyan-400 px-1.5 py-px rounded font-bold uppercase tracking-wide">Active</span>
+                        <div class="mb-1"><div class="w-8 h-8 rounded-md bg-cyan-50 dark:bg-cyan-500/10 flex items-center justify-center text-cyan-500 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white group-hover:shadow-lg group-hover:shadow-cyan-500/40"><i class='bx bx-receipt text-base'></i></div></div>
+                        <div><p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 leading-none">Gantung</p><h6 class="text-[13px] font-bold text-slate-800 dark:text-white leading-tight truncate">3 Nota</h6></div>
+                    </div>
+                </div>
+
+                <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 flex flex-col h-full min-h-[280px]">
+                    <!-- Tabs Header -->
+                    <div class="flex items-center gap-2 md:gap-4 border-b border-slate-100 dark:border-slate-700 pb-3 mb-3 overflow-x-auto no-scrollbar">
+                        <button onclick="switchTab('stok')" id="tab-stok" class="text-[11px] md:text-[13px] font-bold text-slate-800 dark:text-white border-b-2 border-rose-500 pb-3 -mb-3.5 transition-colors whitespace-nowrap shrink-0">
+                            <i class='bx bx-error-circle text-rose-500 mr-1'></i> Stok Kritis
+                        </button>
+                        <button onclick="switchTab('laris')" id="tab-laris" class="text-[11px] md:text-[13px] font-bold text-slate-400 dark:text-slate-500 border-b-2 border-transparent pb-3 -mb-3.5 hover:text-slate-600 dark:hover:text-slate-300 transition-colors whitespace-nowrap shrink-0">
+                            <i class='bx bx-trophy text-amber-500 mr-1'></i> Produk Terlaris
+                        </button>
+                        <div class="flex-1 text-right">
+                            <button class="text-[9px] md:text-[10px] text-primary font-bold hover:underline whitespace-nowrap">Lihat Semua</button>
+                        </div>
+                    </div>
+
+                    <!-- Content: Stok Menipis -->
+                    <div id="content-stok" class="flex-1 space-y-4 overflow-y-auto pr-1 custom-scrollbar">
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px]">🍜</div>
+                                    <div><h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none">Indomie Goreng</h6><p class="text-[9px] text-slate-400">Grosir</p></div>
+                                </div>
+                                <span class="text-[11px] font-bold text-rose-500">Sisa 12</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1"><div class="bg-rose-500 h-1 rounded-full" style="width: 15%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px]">🌾</div>
+                                    <div><h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none">Beras 5kg</h6><p class="text-[9px] text-slate-400">Sembako</p></div>
+                                </div>
+                                <span class="text-[11px] font-bold text-rose-500">Sisa 4</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1"><div class="bg-rose-500 h-1 rounded-full" style="width: 8%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px]">🧴</div>
+                                    <div><h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none">Sabun Cair</h6><p class="text-[9px] text-slate-400">Retail</p></div>
+                                </div>
+                                <span class="text-[11px] font-bold text-amber-500">Sisa 24</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1"><div class="bg-amber-500 h-1 rounded-full" style="width: 40%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-[10px]">🥚</div>
+                                    <div><h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none">Telur Ayam</h6><p class="text-[9px] text-slate-400">Sembako</p></div>
+                                </div>
+                                <span class="text-[11px] font-bold text-amber-500">Sisa 15</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1"><div class="bg-amber-500 h-1 rounded-full" style="width: 30%"></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Content: Produk Terlaris (Hidden by default) -->
+                    <div id="content-laris" class="hidden flex-1 overflow-y-auto pr-1 space-y-3 custom-scrollbar">
+                        <div class="flex items-center gap-3 group cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 font-bold text-[12px] ring-1 ring-amber-100 dark:ring-amber-500/20">#1</div>
+                            <div class="flex-1 min-w-0">
+                                <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none truncate">Minyak Goreng 2L</h6>
+                                <div class="flex items-center gap-2 mt-1"><span class="text-[9px] text-slate-400">Sembako</span><span class="text-[9px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 px-1 rounded-sm font-medium">+8%</span></div>
+                            </div>
+                            <div class="text-right"><span class="block text-[13px] font-bold text-slate-800 dark:text-white">84</span><span class="text-[9px] text-slate-400">Terjual</span></div>
+                        </div>
+                        <div class="flex items-center gap-3 group cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold text-[12px] ring-1 ring-slate-200 dark:ring-slate-600">#2</div>
+                            <div class="flex-1 min-w-0">
+                                <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none truncate">Gula Pasir 1kg</h6>
+                                <div class="flex items-center gap-2 mt-1"><span class="text-[9px] text-slate-400">Sembako</span></div>
+                            </div>
+                            <div class="text-right"><span class="block text-[13px] font-bold text-slate-800 dark:text-white">62</span><span class="text-[9px] text-slate-400">Terjual</span></div>
+                        </div>
+                        <div class="flex items-center gap-3 group cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold text-[12px] ring-1 ring-slate-200 dark:ring-slate-600">#3</div>
+                            <div class="flex-1 min-w-0">
+                                <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none truncate">Teh Kotak 250ml</h6>
+                                <div class="flex items-center gap-2 mt-1"><span class="text-[9px] text-slate-400">Minuman</span><span class="text-[9px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-1 rounded-sm font-medium">-2%</span></div>
+                            </div>
+                            <div class="text-right"><span class="block text-[13px] font-bold text-slate-800 dark:text-white">45</span><span class="text-[9px] text-slate-400">Terjual</span></div>
+                        </div>
+                        <div class="flex items-center gap-3 group cursor-pointer">
+                            <div class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-700 flex items-center justify-center text-slate-500 font-bold text-[12px] ring-1 ring-slate-200 dark:ring-slate-600">#4</div>
+                            <div class="flex-1 min-w-0">
+                                <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none truncate">Roti Tawar Kupas</h6>
+                                <div class="flex items-center gap-2 mt-1"><span class="text-[9px] text-slate-400">Roti</span></div>
+                            </div>
+                            <div class="text-right"><span class="block text-[13px] font-bold text-slate-800 dark:text-white">31</span><span class="text-[9px] text-slate-400">Terjual</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <div class="bg-card dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden mt-6">
+            <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Recent Transactions</h3>
+                <a href="#" class="text-sm text-primary font-medium hover:underline">View All</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                    <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Order ID</th>
+                            <th class="px-6 py-4">Customer</th>
+                            <th class="px-6 py-4">Date</th>
+                            <th class="px-6 py-4">Amount</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                            <td class="px-6 py-4 font-mono text-xs text-slate-500">#ORD-001</td>
+                            <td class="px-6 py-4 flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-primary dark:text-indigo-400 font-bold text-xs">JD</div><span class="font-medium text-slate-900 dark:text-white">John Doe</span></td>
+                            <td class="px-6 py-4">Oct 24, 2023</td>
+                            <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">$120.00</td>
+                            <td class="px-6 py-4"><span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">Paid</span></td>
+                            <td class="px-6 py-4 text-center"><button class="text-slate-400 hover:text-indigo-500"><i class='bx bx-show'></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer class="mt-10 text-center text-xs text-slate-400 pb-4">&copy; 2025 Bermadani. Designed by AI.</footer>
+    </main>
+</div>
+
+<script>
+    // --- COMPONENT LOADER ---
+    async function loadComponents() {
+        try {
+            const sidebarRes = await fetch('components/sidebar.html');
+            const sidebarHtml = await sidebarRes.text();
+            document.getElementById('sidebar-container').innerHTML = sidebarHtml;
+
+            const navbarRes = await fetch('components/navbar.html');
+            const navbarHtml = await navbarRes.text();
+            document.getElementById('navbar-container').innerHTML = navbarHtml;
+
+            // Initialize Dashboard Logic AFTER components are loaded
+            initDashboard();
+            initSidebar();
+            
+            // Highlight Dashboard link
+            setTimeout(() => {
+                const links = document.querySelectorAll('nav a');
+                links.forEach(link => {
+                    if(link.innerText.includes('Dashboard')) {
+                        link.classList.add('bg-slate-50', 'dark:bg-slate-700/40', 'text-primary', 'dark:text-indigo-400');
+                        link.classList.remove('text-slate-500', 'dark:text-slate-400');
+                        link.querySelector('i').classList.remove('opacity-70');
+                        link.querySelector('i').classList.add('opacity-100');
+                        link.querySelector('span').classList.replace('font-medium', 'font-semibold');
+                    }
+                });
+            }, 50);
+        } catch (error) {
+            console.error("Error loading components:", error);
+        }
+    }
+
+    function initSidebar() {
+        const sidebar = document.getElementById('main-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const closeBtn = document.getElementById('sidebar-close');
+        const collapseBtn = document.getElementById('sidebar-collapse-desktop');
+        const mainContent = document.getElementById('main-content');
+        const sidebarTexts = document.querySelectorAll('.sidebar-text');
+        const collapseIcon = collapseBtn?.querySelector('i');
+
+        // Mobile Toggle
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        // Desktop Collapse
+        function toggleCollapse() {
+            const isCollapsed = sidebar.classList.contains('w-[70px]');
+            const header = document.getElementById('sidebar-header');
+            const navItems = document.querySelectorAll('.nav-item');
+            const collapseContainer = document.getElementById('sidebar-collapse-desktop');
+            const userProfile = document.getElementById('user-profile');
+            
+            if (isCollapsed) {
+                // Expand
+                sidebar.classList.replace('w-[70px]', 'w-[180px]');
+                mainContent.classList.replace('md:ml-[70px]', 'md:ml-[180px]');
+                sidebarTexts.forEach(el => el.classList.remove('hidden'));
+                collapseIcon?.classList.remove('rotate-180');
+                
+                // Remove centering
+                header.classList.remove('justify-center');
+                navItems.forEach(el => el.classList.remove('justify-center'));
+                collapseContainer.classList.remove('justify-center');
+                userProfile.classList.remove('justify-center');
+
+                localStorage.setItem('sidebar-collapsed', 'false');
+            } else {
+                // Collapse
+                sidebar.classList.replace('w-[180px]', 'w-[70px]');
+                mainContent.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+                sidebarTexts.forEach(el => el.classList.add('hidden'));
+                collapseIcon?.classList.add('rotate-180');
+                
+                // Add centering
+                header.classList.add('justify-center');
+                navItems.forEach(el => el.classList.add('justify-center'));
+                collapseContainer.classList.add('justify-center');
+                userProfile.classList.add('justify-center');
+
+                localStorage.setItem('sidebar-collapsed', 'true');
+            }
+        }
+
+        // Init State
+        const savedState = localStorage.getItem('sidebar-collapsed');
+        if (savedState === 'true') {
+             sidebar.classList.replace('w-[180px]', 'w-[70px]');
+             mainContent.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+             sidebarTexts.forEach(el => el.classList.add('hidden'));
+             collapseIcon?.classList.add('rotate-180');
+             
+             // Apply centering on init
+             const header = document.getElementById('sidebar-header');
+             const navItems = document.querySelectorAll('.nav-item');
+             const collapseContainer = document.getElementById('sidebar-collapse-desktop');
+             const userProfile = document.getElementById('user-profile');
+             
+             header?.classList.add('justify-center');
+             navItems?.forEach(el => el.classList.add('justify-center'));
+             collapseContainer?.classList.add('justify-center');
+             userProfile?.classList.add('justify-center');
+        }
+
+        if(toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+        if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if(overlay) overlay.addEventListener('click', closeSidebar);
+        if(collapseBtn) collapseBtn.addEventListener('click', toggleCollapse);
+    }
+
+    // --- DASHBOARD LOGIC (Wrapped in function) ---
+    function initDashboard() {
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+        let isDark = false;
+
+        // --- 1. THEME INIT ---
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark'); 
+            if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun'); 
+            isDark = true;
+        }
+
+        if(themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function() {
+                html.classList.toggle('dark');
+                isDark = html.classList.contains('dark');
+                themeIcon.classList.replace(isDark ? 'bx-moon' : 'bx-sun', isDark ? 'bx-sun' : 'bx-moon');
+                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+                updateCharts(isDark ? 'dark' : 'light');
+            });
+        }
+
+        // --- 2. DATASETS (Simulasi Backend) ---
+        const getChartColors = (theme) => ({
+            text: theme === 'dark' ? '#94a3b8' : '#64748b',
+            grid: theme === 'dark' ? '#334155' : '#f1f5f9',
+            tooltipTheme: theme === 'dark' ? 'dark' : 'light',
+            bg: theme === 'dark' ? '#18181B' : '#FFFFFF'
+        });
+        let currentColors = getChartColors(isDark ? 'dark' : 'light');
+
+        // Data Revenue
+        const revenueData = {
+            today: { categories: ["08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00"], income: [150, 320, 450, 320, 400, 550, 300, 120], expense: [50, 100, 120, 80, 90, 150, 80, 40] },
+            week: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], income: [2100, 1800, 2400, 2800, 3200, 4500, 3800], expense: [800, 700, 900, 1100, 1200, 1500, 1300] },
+            month: { categories: ["Week 1", "Week 2", "Week 3", "Week 4"], income: [12500, 15400, 18200, 21000], expense: [4500, 5200, 6100, 7500] },
+            year: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], income: [31, 40, 28, 51, 42, 109, 100, 85, 92, 110, 95, 120], expense: [11, 32, 45, 32, 34, 52, 41, 30, 45, 55, 40, 60] }
+        };
+
+        // Data Payment
+        const paymentData = { 
+            today: [70, 25, 5], 
+            week: [55, 30, 15], 
+            month: [40, 40, 20], 
+            year: [20, 30, 50] 
+        };
+
+        // Data Profitability
+        const profitData = {
+            today: { val: "Rp 850 Rb", change: "+5.2%", gross: "70%", exp: "30%" },
+            week:  { val: "Rp 4.2 Jt", change: "-1.5%", gross: "60%", exp: "40%" },
+            month: { val: "Rp 12.8 Jt", change: "+12.5%", gross: "65%", exp: "35%" },
+            year:  { val: "Rp 145 Jt", change: "+8.4%", gross: "55%", exp: "45%" }
+        };
+
+        // Data Neraca (Dummy)
+        const neracaData = {
+            today: {
+                aset: { val: "Rp 2.45 M", change: "+0.5%", data: [2.44, 2.44, 2.45, 2.45, 2.45, 2.45, 2.45] },
+                liab: { val: "Rp 450 Jt", change: "Stable", data: [450, 450, 450, 450, 450, 450, 450] },
+                ekui: { val: "Rp 2.0 M", change: "+0.2%", data: [1.99, 1.99, 2.0, 2.0, 2.0, 2.0, 2.0] }
+            },
+            week: {
+                aset: { val: "Rp 2.45 M", change: "+12%", data: [2.1, 2.15, 2.2, 2.25, 2.35, 2.4, 2.45] },
+                liab: { val: "Rp 450 Jt", change: "Stable", data: [440, 455, 445, 460, 450, 455, 450] },
+                ekui: { val: "Rp 2.0 M", change: "+8%", data: [1.8, 1.82, 1.85, 1.9, 1.92, 1.95, 2.0] }
+            },
+            month: {
+                aset: { val: "Rp 2.8 M", change: "+15%", data: [2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8] },
+                liab: { val: "Rp 480 Jt", change: "+2%", data: [450, 460, 455, 470, 465, 475, 480] },
+                ekui: { val: "Rp 2.32 M", change: "+10%", data: [1.9, 2.0, 2.1, 2.15, 2.2, 2.25, 2.32] }
+            },
+            year: {
+                aset: { val: "Rp 3.5 M", change: "+25%", data: [2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.5] },
+                liab: { val: "Rp 500 Jt", change: "+5%", data: [400, 420, 440, 450, 460, 480, 500] },
+                ekui: { val: "Rp 3.0 M", change: "+20%", data: [1.5, 1.8, 2.0, 2.2, 2.5, 2.8, 3.0] }
+            }
+        };
+
+        // --- 3. CHARTS CONFIG ---
+
+        // A. Revenue Chart
+        var optionsRevenue = {
+            series: [{ name: 'Income', data: revenueData.today.income }, { name: 'Expense', data: revenueData.today.expense }],
+            chart: { 
+                height: '100%', 
+                type: 'area', 
+                toolbar: { show: false }, 
+                fontFamily: 'Inter', 
+                foreColor: currentColors.text 
+            },
+            colors: ['#4F46E5', '#cbd5e1'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+            xaxis: { categories: revenueData.today.categories, axisBorder: { show: false }, axisTicks: { show: false } },
+            grid: { borderColor: currentColors.grid, strokeDashArray: 4 },
+            legend: { show: false },
+            tooltip: { theme: currentColors.tooltipTheme }
+        };
+        var chartRevenue = new ApexCharts(document.querySelector("#revenueChart"), optionsRevenue);
+        chartRevenue.render();
+
+        // B. Payment Chart
+        var optionsPayment = {
+            series: paymentData.today,
+            labels: ['Cash', 'QRIS', 'Transfer'],
+            chart: { type: 'donut', height: 160, fontFamily: 'Inter' },
+            colors: ['#10b981', '#6366f1', '#3b82f6'],
+            plotOptions: { pie: { donut: { size: '70%', labels: { show: false } } } },
+            dataLabels: { enabled: false },
+            legend: { show: false },
+            stroke: { width: 0 },
+            tooltip: { theme: currentColors.tooltipTheme }
+        };
+        var chartPayment = new ApexCharts(document.querySelector("#paymentChart"), optionsPayment);
+        chartPayment.render();
+
+        // --- 4. LOGIC FILTERING ---
+        const filterEl = document.getElementById('revenueFilter');
+        if(filterEl) {
+            filterEl.addEventListener('change', function(e) {
+                const selected = e.target.value; // today, week, month, year
+                
+                // 1. Update Revenue Chart
+                const rev = revenueData[selected];
+                if(rev) {
+                    chartRevenue.updateOptions({
+                        xaxis: { categories: rev.categories },
+                        series: [{ name: 'Income', data: rev.income }, { name: 'Expense', data: rev.expense }]
+                    });
+                }
+                
+                // 2. Update Payment Chart & Text
+                const pay = paymentData[selected];
+                if(pay) {
+                    chartPayment.updateSeries(pay);
+                    // Update Text di bawah donut
+                    document.getElementById('pay-cash').innerText = pay[0] + "%";
+                    document.getElementById('pay-qris').innerText = pay[1] + "%";
+                    document.getElementById('pay-transfer').innerText = pay[2] + "%";
+                }
+
+                // 3. Update Profitability Card
+                const prof = profitData[selected];
+                if(prof) {
+                    // Update Angka Duit & Persen Change
+                    document.getElementById('profit-value').innerText = prof.val;
+                    document.getElementById('profit-change').innerText = prof.change;
+                    
+                    // Update Teks Persen Bar
+                    document.getElementById('gross-text').innerText = prof.gross;
+                    document.getElementById('expense-text').innerText = prof.exp;
+                    
+                    // Update Panjang Bar (Animasi CSS)
+                    document.getElementById('gross-bar').style.width = prof.gross;
+                    document.getElementById('expense-bar').style.width = prof.exp;
+                }
+            });
+        }
+
+        // --- 5. NERACA CHARTS (Mini Area Charts) ---
+        // Menggunakan style Area Gradient mirip Revenue Chart tapi versi mini (Sparkline)
+        const neracaChartOptions = {
+            chart: {
+                type: 'area',
+                height: 60,
+                sparkline: { enabled: true }, // Mode minimalis tanpa axis
+                fontFamily: 'Inter',
+            },
+            stroke: { curve: 'smooth', width: 2 },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shadeIntensity: 1,
+                    opacityFrom: 0.45,
+                    opacityTo: 0.05,
+                    stops: [0, 100]
+                }
+            },
+            tooltip: {
+                fixed: { enabled: false },
+                x: { show: false },
+                y: { title: { formatter: function (seriesName) { return '' } } },
+                marker: { show: false },
+                theme: currentColors.tooltipTheme
+            }
+        };
+
+        // Chart 1: Total Aset (Emerald - Tren Naik)
+        const chartNeraca1 = new ApexCharts(document.querySelector("#neracaChart1"), {
+            ...neracaChartOptions,
+            series: [{ name: 'Aset', data: [2.1, 2.15, 2.2, 2.25, 2.35, 2.4, 2.45] }], 
+            colors: ['#10b981']
+        });
+        chartNeraca1.render();
+
+        // Chart 2: Liabilitas (Slate - Stabil/Fluktuatif)
+        const chartNeraca2 = new ApexCharts(document.querySelector("#neracaChart2"), {
+            ...neracaChartOptions,
+            series: [{ name: 'Liabilitas', data: [440, 455, 445, 460, 450, 455, 450] }], 
+            colors: ['#64748b']
+        });
+        chartNeraca2.render();
+
+        // Chart 3: Ekuitas (Indigo - Tren Naik Stabil)
+        const chartNeraca3 = new ApexCharts(document.querySelector("#neracaChart3"), {
+            ...neracaChartOptions,
+            series: [{ name: 'Ekuitas', data: [1.8, 1.82, 1.85, 1.9, 1.92, 1.95, 2.0] }], 
+            colors: ['#6366f1']
+        });
+        chartNeraca3.render();
+
+        // Filter Logic Neraca
+        const neracaFilterEl = document.getElementById('neracaFilter');
+        if(neracaFilterEl) {
+            neracaFilterEl.addEventListener('change', function(e) {
+                const selected = e.target.value;
+                const data = neracaData[selected];
+                
+                if(data) {
+                    // Update Text
+                    document.getElementById('neraca-aset-val').innerText = data.aset.val;
+                    document.getElementById('neraca-aset-change').innerText = data.aset.change;
+                    document.getElementById('neraca-liab-val').innerText = data.liab.val;
+                    document.getElementById('neraca-liab-change').innerText = data.liab.change;
+                    document.getElementById('neraca-ekui-val').innerText = data.ekui.val;
+                    document.getElementById('neraca-ekui-change').innerText = data.ekui.change;
+
+                    // Update Charts
+                    chartNeraca1.updateSeries([{ data: data.aset.data }]);
+                    chartNeraca2.updateSeries([{ data: data.liab.data }]);
+                    chartNeraca3.updateSeries([{ data: data.ekui.data }]);
+                }
+            });
+        }
+
+        function updateCharts(theme) {
+            const c = getChartColors(theme);
+            chartRevenue.updateOptions({ chart: { foreColor: c.text }, grid: { borderColor: c.grid }, tooltip: { theme: c.tooltipTheme } });
+            chartPayment.updateOptions({ tooltip: { theme: c.tooltipTheme } });
+            
+            // Update Neraca Charts Theme
+            [chartNeraca1, chartNeraca2, chartNeraca3].forEach(chart => {
+                chart.updateOptions({ tooltip: { theme: c.tooltipTheme } });
+            });
+        }
+    }
+
+    // --- 6. TAB SWITCHER LOGIC ---
+    function switchTab(tab) {
+        const btnStok = document.getElementById('tab-stok');
+        const btnLaris = document.getElementById('tab-laris');
+        const contentStok = document.getElementById('content-stok');
+        const contentLaris = document.getElementById('content-laris');
+
+        if(tab === 'stok') {
+            // Active Stok
+            btnStok.classList.remove('text-slate-400', 'dark:text-slate-500', 'border-transparent');
+            btnStok.classList.add('text-slate-800', 'dark:text-white', 'border-rose-500');
+            
+            // Inactive Laris
+            btnLaris.classList.add('text-slate-400', 'dark:text-slate-500', 'border-transparent');
+            btnLaris.classList.remove('text-slate-800', 'dark:text-white', 'border-amber-500');
+
+            contentStok.classList.remove('hidden');
+            contentLaris.classList.add('hidden');
+        } else {
+            // Active Laris
+            btnLaris.classList.remove('text-slate-400', 'dark:text-slate-500', 'border-transparent');
+            btnLaris.classList.add('text-slate-800', 'dark:text-white', 'border-amber-500');
+            
+            // Inactive Stok
+            btnStok.classList.add('text-slate-400', 'dark:text-slate-500', 'border-transparent');
+            btnStok.classList.remove('text-slate-800', 'dark:text-white', 'border-rose-500');
+
+            contentLaris.classList.remove('hidden');
+            contentStok.classList.add('hidden');
+        }
+    }
+
+    // Start Loading
+    loadComponents();
+</script>
+</body>
+</html>
