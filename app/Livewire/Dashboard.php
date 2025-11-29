@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Category;
+use App\Models\FinancialTransaction;
 use App\Models\Member;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -96,9 +97,18 @@ class Dashboard extends Component
 
     public function getOperatingExpensesProperty()
     {
-        // Estimasi beban operasional: 15% dari penjualan (gaji, listrik, sewa, dll)
-        // Nanti bisa diganti dengan data real dari tabel expenses
-        return $this->totalSales * 0.15;
+        // Ambil total pengeluaran dari financial_transactions berdasarkan filter
+        $query = FinancialTransaction::expense();
+        
+        $expenses = match($this->filter) {
+            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
+            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
+            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
+            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            default => $query->whereDate('transactionDate', today())->sum('amount'),
+        };
+
+        return $expenses ?? 0;
     }
 
     public function getOperatingMarginPercentProperty()

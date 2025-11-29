@@ -101,7 +101,7 @@
                 <div class="w-full md:w-[260px] p-5 flex flex-col justify-between bg-slate-50/50 dark:bg-slate-800/30 border-l border-slate-100 dark:border-slate-700">
                     <div class="mb-2">
                         <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Profitabilitas</h3>
-                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Margin Bersih vs Kotor</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Analisis Laba & Pengeluaran</p>
                     </div>
 
                     <div class="bg-emerald-50/80 dark:bg-emerald-500/10 rounded-xl p-4 border border-emerald-100 dark:border-emerald-500/20 relative overflow-hidden group">
@@ -149,16 +149,16 @@
 
                         <div>
                             <div class="flex justify-between items-end mb-1">
-                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Beban Operasional</span>
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Pengeluaran</span>
                                 <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->operatingMarginPercent }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
                                 <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: {{ $this->operatingMarginPercent }}%"></div>
                             </div>
-                            <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->operatingExpenses, 0, ',', '.') }} (Est. 15%)</p>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->operatingExpenses, 0, ',', '.') }}</p>
                         </div>
 
-                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih setelah beban operasional.</p>
+                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih = Penjualan - Pengeluaran.</p>
                     </div>
                 </div>
             </div>
