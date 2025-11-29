@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Masuk Portal - Nexus Kampus</title>
+    <title>Masuk Portal - Bermadani</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -34,65 +34,71 @@
         }
     </style>
 </head>
-<body class="bg-white dark:bg-darkBg font-sans h-screen overflow-hidden">
+<body class="bg-white dark:bg-darkBg font-sans h-screen h-dvh overflow-hidden text-slate-800 dark:text-slate-200">
 
-    <div class="w-full h-full flex">
+    <div class="w-full h-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
         
-        {{-- Left Side - Hero Section --}}
-        <div class="hidden lg:flex w-1/2 relative items-center justify-center bg-slate-900">
+        {{-- Left Side (Image & Branding) --}}
+        <div class="w-full lg:w-[55%] h-16 sm:h-24 lg:h-full relative flex items-center lg:justify-center bg-slate-900 overflow-hidden shrink-0 transition-all duration-500">
             <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop" 
                  class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Campus Library">
             
-            <div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-slate-900/80"></div>
+            <div class="absolute inset-0 bg-gradient-to-r lg:bg-gradient-to-t from-primary/90 to-slate-900/80"></div>
 
-            <div class="relative z-10 p-16 text-white max-w-xl">
-                <div class="mb-8 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center">
-                        <i class='bx bxs-cube-alt text-2xl'></i>
+            <div class="relative z-10 p-4 lg:p-16 text-white w-full max-w-xl flex flex-col justify-center h-full">
+                <div class="flex items-center gap-3 lg:mb-8">
+                    <div class="w-8 h-8 lg:w-10 lg:h-10 bg-white/20 backdrop-blur-md rounded-lg lg:rounded-xl flex items-center justify-center">
+                        <i class='bx bxs-cube-alt text-xl lg:text-2xl'></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold tracking-tight leading-none">NEXUS</h1>
-                        <p class="text-[10px] uppercase tracking-widest font-semibold opacity-80">Commerce System</p>
+                        <h1 class="text-lg lg:text-2xl font-bold tracking-tight leading-none">BERMADANI</h1>
+                        <p class="text-[8px] lg:text-[10px] uppercase tracking-widest font-semibold opacity-80">Commerce System</p>
                     </div>
                 </div>
                 
-                <h2 class="text-4xl font-bold mb-6 leading-tight">
-                    "Satu Kartu, <br> <span class="text-yellow-400">Ribuan Kemudahan.</span>"
-                </h2>
-                <p class="text-blue-100 text-lg leading-relaxed mb-8">
-                    Nikmati kemudahan transaksi di minimarket kampus dan akses layanan simpan pinjam koperasi dalam satu genggaman.
-                </p>
+                {{-- Desktop Only Content --}}
+                <div class="hidden lg:block animate-fade-up">
+                    <h2 class="text-4xl font-bold mb-6 leading-tight">
+                        "Satu Kartu, <br> <span class="text-yellow-400">Ribuan Kemudahan.</span>"
+                    </h2>
+                    <p class="text-blue-100 text-lg leading-relaxed mb-8">
+                        Nikmati kemudahan transaksi di minimarket kampus dan akses layanan simpan pinjam koperasi dalam satu genggaman.
+                    </p>
 
-                <div class="flex gap-6">
-                    <div class="flex items-center gap-2 text-sm font-medium opacity-80">
-                        <i class='bx bxs-check-shield text-xl'></i> Aman
-                    </div>
-                    <div class="flex items-center gap-2 text-sm font-medium opacity-80">
-                        <i class='bx bxs-zap text-xl'></i> Cepat
-                    </div>
-                    <div class="flex items-center gap-2 text-sm font-medium opacity-80">
-                        <i class='bx bxs-data text-xl'></i> Transparan
+                    <div class="flex gap-6">
+                        <div class="flex items-center gap-2 text-sm font-medium opacity-80">
+                            <i class='bx bxs-check-shield text-xl'></i> Aman
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-medium opacity-80">
+                            <i class='bx bxs-zap text-xl'></i> Cepat
+                        </div>
+                        <div class="flex items-center gap-2 text-sm font-medium opacity-80">
+                            <i class='bx bxs-data text-xl'></i> Transparan
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <div class="absolute bottom-8 left-16 text-xs text-white/40">
+            <div class="absolute bottom-8 left-16 text-xs text-white/40 hidden lg:block">
                 &copy; 2025 Digital Campus Initiative
             </div>
         </div>
 
-        {{-- Right Side - Login Form --}}
-        <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 bg-white dark:bg-darkBg relative">
+        {{-- Right Side (Form) --}}
+        <div class="w-full lg:w-[45%] flex-1 lg:h-full relative bg-white dark:bg-darkBg lg:overflow-y-auto flex flex-col p-6 sm:p-12">
             
-            <a href="{{ route('home') }}" class="absolute top-8 left-8 flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium">
-                <i class='bx bx-arrow-back'></i> Kembali
-            </a>
+            {{-- Navigation & Tools --}}
+            <div class="flex justify-between items-center w-full mb-8 lg:absolute lg:top-8 lg:left-0 lg:px-12 lg:mb-0 z-20">
+                <a href="{{ route('home') }}" class="flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium">
+                    <i class='bx bx-arrow-back'></i> <span>Kembali</span>
+                </a>
 
-            <button id="theme-toggle" class="absolute top-8 right-8 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
-                <i id="theme-icon" class='bx bx-moon text-2xl'></i>
-            </button>
+                <button id="theme-toggle" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                    <i id="theme-icon" class='bx bx-moon text-2xl'></i>
+                </button>
+            </div>
 
-            <div class="w-full max-w-sm animate-fade-up">
+            <div class="w-full max-w-sm mx-auto animate-fade-up lg:flex-1 lg:flex lg:flex-col lg:justify-center">
                 
                 <div class="text-center mb-10">
                     <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 dark:bg-blue-900/20 text-primary mb-4 shadow-sm">
@@ -119,14 +125,14 @@
                             ID Pengguna
                         </label>
                         <div class="relative group">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 transition-colors group-focus-within:text-primary">
-                                <i class='bx bxs-id-card text-xl'></i>
-                            </span>
+                            <div class="absolute inset-y-0 left-0 w-[50px] flex items-center justify-center text-slate-400 transition-colors group-focus-within:text-primary pointer-events-none z-10">
+                                <i class='bx bxs-id-card text-2xl'></i>
+                            </div>
                             <input type="email" 
                                    id="email"
                                    name="email" 
                                    value="{{ old('email') }}"
-                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-11 p-3.5 outline-none transition-all placeholder-slate-400" 
+                                   class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-base sm:text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-[50px] p-3.5 outline-none transition-all placeholder-slate-400" 
                                    placeholder="username atau email..." 
                                    required
                                    autofocus>
@@ -138,18 +144,20 @@
                             <label for="password" class="block text-sm font-bold text-slate-700 dark:text-slate-300">Kata Sandi</label>
                             <a href="#" class="text-xs font-semibold text-primary hover:underline">Lupa sandi?</a>
                         </div>
-                        <div class="relative" x-data="{ show: false }">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                <i class='bx bxs-lock-alt text-xl'></i>
-                            </span>
-                            <input :type="show ? 'text' : 'password'" 
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 w-[50px] flex items-center justify-center text-slate-400 transition-colors group-focus-within:text-primary pointer-events-none z-10">
+                                <i class='bx bxs-lock-alt text-2xl'></i>
+                            </div>
+                            
+                            <input type="password" 
                                    id="password"
                                    name="password" 
-                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-11 p-3.5 outline-none transition-all placeholder-slate-400" 
+                                   class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-base sm:text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-[50px] pr-12 p-3.5 outline-none transition-all placeholder-slate-400" 
                                    placeholder="••••••••" 
                                    required>
-                            <span @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-slate-400 hover:text-slate-600 transition-colors">
-                                <i class='bx text-xl' :class="show ? 'bx-show' : 'bx-hide'"></i>
+                                   
+                            <span id="toggle-password" class="absolute inset-y-0 right-0 w-[50px] flex items-center justify-center cursor-pointer text-slate-400 hover:text-slate-600 transition-colors z-10">
+                                <i id="password-icon" class='bx bx-hide text-xl'></i>
                             </span>
                         </div>
                     </div>
@@ -178,7 +186,6 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         // Dark Mode Logic
         const themeToggleBtn = document.getElementById('theme-toggle');
@@ -195,6 +202,21 @@
                 themeIcon.classList.replace('bx-moon', 'bx-sun'); localStorage.setItem('color-theme', 'dark');
             } else {
                 themeIcon.classList.replace('bx-sun', 'bx-moon'); localStorage.setItem('color-theme', 'light');
+            }
+        });
+
+        // Toggle Password Visibility
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+        const passwordIcon = document.getElementById('password-icon');
+
+        togglePassword.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.replace('bx-hide', 'bx-show');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.replace('bx-show', 'bx-hide');
             }
         });
     </script>

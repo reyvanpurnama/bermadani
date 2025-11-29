@@ -43,9 +43,9 @@ class ActivityLog extends Model
         ?array $oldValues = null,
         ?array $newValues = null
     ) {
-        // Log for Admin, SuperAdmin, Developer, and Kasir (not Supplier)
+        // Log for Admin, SuperAdmin, and Kasir (not Supplier or Developer)
         $user = auth()->user();
-        if (!$user || $user->isSupplier()) {
+        if (!$user || $user->isSupplier() || $user->isDeveloper()) {
             return null;
         }
 
@@ -67,7 +67,7 @@ class ActivityLog extends Model
     public static function logLogin()
     {
         $user = auth()->user();
-        if (!$user || $user->isSupplier()) {
+        if (!$user || $user->isSupplier() || $user->isDeveloper()) {
             return null;
         }
 
@@ -86,7 +86,7 @@ class ActivityLog extends Model
     public static function logLogout()
     {
         $user = auth()->user();
-        if (!$user || $user->isSupplier()) {
+        if (!$user || $user->isSupplier() || $user->isDeveloper()) {
             return null;
         }
 

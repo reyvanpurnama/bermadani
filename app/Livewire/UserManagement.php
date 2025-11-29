@@ -244,6 +244,7 @@ class UserManagement extends Component
     public function render()
     {
         $users = User::query()
+            ->where('role', '!=', 'DEVELOPER') // Hide developer from list
             ->when($this->search, function ($q) {
                 $q->where(function ($query) {
                     $query->where('name', 'like', "%{$this->search}%")
@@ -254,7 +255,7 @@ class UserManagement extends Component
             ->when($this->filterStatus !== '', function ($q) {
                 $q->where('isActive', $this->filterStatus === '1');
             })
-            ->orderByRaw("FIELD(role, 'SUPER_ADMIN', 'DEVELOPER', 'ADMIN', 'KASIR', 'SUPPLIER')")
+            ->orderByRaw("FIELD(role, 'SUPER_ADMIN', 'ADMIN', 'KASIR', 'SUPPLIER')")
             ->orderBy('name')
             ->paginate(10);
 

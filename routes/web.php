@@ -30,6 +30,9 @@ Route::middleware('guest')->group(function () {
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
             request()->session()->regenerate();
             
+            // Update last login timestamp
+            Auth::user()->updateLastLogin();
+            
             // Log login activity
             ActivityLog::logLogin();
             

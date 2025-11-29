@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\ActivityLog;
+use App\Models\CashierShift;
 use App\Models\Category;
 use App\Models\Member;
 use App\Models\Product;
@@ -25,6 +26,18 @@ class PosCustom extends Component
     public $note = '';
     
     public $lastInvoice = null;
+
+    public function mount()
+    {
+        // Block kasir yang belum check-in
+        if (auth()->user()->isKasir()) {
+            $hasActiveShift = CashierShift::getOpenShift(auth()->id());
+            if (!$hasActiveShift) {
+                session()->flash('error', 'Kamu harus check-in terlebih dahulu sebelum melakukan transaksi');
+                return redirect()->route('kasir.dashboard');
+            }
+        }
+    }
 
     public function addToCart($productId)
     {

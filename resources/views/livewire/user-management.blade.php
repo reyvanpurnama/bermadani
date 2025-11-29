@@ -31,7 +31,6 @@
                     <option value="SUPER_ADMIN">Super Admin</option>
                     <option value="ADMIN">Admin</option>
                     <option value="KASIR">Kasir</option>
-                    <option value="DEVELOPER">Developer</option>
                 </select>
             </div>
 

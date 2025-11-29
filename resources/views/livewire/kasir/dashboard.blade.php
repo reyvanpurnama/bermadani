@@ -1,4 +1,12 @@
 <div class="space-y-6">
+    {{-- Flash Message --}}
+    @if(session('error'))
+    <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3">
+        <i class='bx bx-error-circle text-xl'></i>
+        <span class="text-sm font-medium">{{ session('error') }}</span>
+    </div>
+    @endif
+
     {{-- Check-In Modal --}}
     @if($showCheckInModal)
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -358,5 +366,6 @@
         </div>
 
     </div>
+    @endif
     @endif
 </div>
