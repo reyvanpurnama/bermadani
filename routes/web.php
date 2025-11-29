@@ -9,6 +9,11 @@ Route::get('/', function () {
     return view('landing');
 })->name('home');
 
+// Supplier Registration (Public)
+Route::get('/daftar-supplier', function () {
+    return view('supplier.register');
+})->name('supplier.register');
+
 // Auth Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', function () {

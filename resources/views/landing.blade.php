@@ -149,7 +149,36 @@
             </div>
         </div>
     </section>
+        <section class="py-16 bg-gradient-to-r from-indigo-600 to-primary relative overflow-hidden">
+        
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl"></div>
 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+                
+                <div class="md:w-2/3">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-800/50 border border-blue-400/30 text-blue-100 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
+        <i class='bx bxs-store-alt'></i> Terbuka Untuk Umum
+    </div>
+    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
+        Punya Produk Sendiri? <br>
+        <span class="text-blue-200">Titip Jual di Sini Aja!</span>
+    </h2>
+    <p class="text-blue-100 text-base md:text-lg max-w-xl leading-relaxed">
+        Kami menerima supplier dari Mahasiswa, UMKM, maupun Umum. Pantau omzet lewat aplikasi, dan cairkan dana penjualan kapan saja.
+    </p>
+</div>
+
+                <div class="md:w-1/3 flex justify-center md:justify-end">
+                    <a href="{{ route('supplier.register') }}" class="group inline-flex justify-center items-center py-4 px-8 text-base font-bold text-primary bg-white rounded-full shadow-xl hover:bg-slate-50 transition-all hover:scale-105">
+                        Daftar Jadi Mitra <i class='bx bx-right-arrow-alt text-2xl ml-2 group-hover:translate-x-1 transition-transform'></i>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
     <section id="layanan" class="py-20 bg-slate-50 dark:bg-slate-900/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
