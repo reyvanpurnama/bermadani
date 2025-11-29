@@ -206,7 +206,7 @@
                 </button>
                 <button 
                     wire:click="openPaymentModal"
-                    class="col-span-3 py-3 rounded-xl bg-primary hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-bold text-[14px] shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-2"
+                    class="col-span-3 py-3 rounded-xl bg-primary hover:bg-indigo-700 disabled:bg-slate-200 disabled:dark:bg-slate-700 disabled:text-slate-400 disabled:dark:text-slate-500 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold text-[14px] shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-2"
                     @if(empty($cart)) disabled @endif
                 >
                     Bayar <i class='bx bx-right-arrow-alt'></i>
