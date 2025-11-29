@@ -14,7 +14,13 @@
     <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto custom-scroll overflow-x-hidden">
         @if(auth()->user()->isKasir())
             {{-- KASIR SIDEBAR --}}
-            <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-2 opacity-80 whitespace-nowrap transition-opacity duration-300">Apps</p>
+            <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-2 opacity-80 whitespace-nowrap transition-opacity duration-300">Main</p>
+            <a href="{{ route('kasir.dashboard') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('kasir.dashboard') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">
+                <i class='bx bxs-dashboard text-lg mr-3 {{ request()->routeIs('kasir.dashboard') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
+                <span class="sidebar-text text-sm {{ request()->routeIs('kasir.dashboard') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Dashboard</span>
+            </a>
+
+            <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80 whitespace-nowrap transition-opacity duration-300">Apps</p>
             <a href="{{ route('kasir.pos') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('kasir.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">
                 <i class='bx bx-desktop text-lg mr-3 {{ request()->routeIs('kasir.pos') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
                 <span class="sidebar-text text-sm {{ request()->routeIs('kasir.pos') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">POS System</span>
@@ -59,7 +65,7 @@
                 <span class="sidebar-text text-sm {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan Harian</span>
             </a>
 
-            @if(auth()->user()->isSuperAdmin() || auth()->user()->isDeveloper())
+            @if(auth()->user()->isSuperAdmin() || auth()->user()->isDeveloper() || auth()->user()->isAdmin())
             <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80 whitespace-nowrap transition-opacity duration-300">System</p>
             <a href="{{ route('admin.users') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">
                 <i class='bx bx-group text-lg mr-3 {{ request()->routeIs('admin.users*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 

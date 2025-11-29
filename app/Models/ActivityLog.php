@@ -43,9 +43,9 @@ class ActivityLog extends Model
         ?array $oldValues = null,
         ?array $newValues = null
     ) {
-        // Only log for Admin, SuperAdmin, Developer (not Kasir, Supplier)
+        // Log for Admin, SuperAdmin, Developer, and Kasir (not Supplier)
         $user = auth()->user();
-        if (!$user || $user->isKasir() || $user->isSupplier()) {
+        if (!$user || $user->isSupplier()) {
             return null;
         }
 
@@ -67,7 +67,7 @@ class ActivityLog extends Model
     public static function logLogin()
     {
         $user = auth()->user();
-        if (!$user || $user->isKasir() || $user->isSupplier()) {
+        if (!$user || $user->isSupplier()) {
             return null;
         }
 
@@ -75,7 +75,7 @@ class ActivityLog extends Model
             'user_id' => $user->id,
             'action' => 'LOGIN',
             'module' => 'Auth',
-            'description' => "User {$user->name} logged in",
+            'description' => "User {$user->name} ({$user->role}) logged in",
             'loggable_type' => User::class,
             'loggable_id' => $user->id,
             'ip_address' => request()->ip(),
@@ -86,7 +86,7 @@ class ActivityLog extends Model
     public static function logLogout()
     {
         $user = auth()->user();
-        if (!$user || $user->isKasir() || $user->isSupplier()) {
+        if (!$user || $user->isSupplier()) {
             return null;
         }
 
@@ -94,7 +94,7 @@ class ActivityLog extends Model
             'user_id' => $user->id,
             'action' => 'LOGOUT',
             'module' => 'Auth',
-            'description' => "User {$user->name} logged out",
+            'description' => "User {$user->name} ({$user->role}) logged out",
             'loggable_type' => User::class,
             'loggable_id' => $user->id,
             'ip_address' => request()->ip(),

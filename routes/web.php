@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
             // Redirect based on role
             $user = Auth::user();
             if ($user->isKasir()) {
-                return redirect()->route('kasir.pos');
+                return redirect()->route('kasir.dashboard');
             }
             
             return redirect()->intended('/admin');
@@ -133,9 +133,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.placeholder', ['title' => 'Pengaturan']);
     })->name('admin.settings');
     
-    // Activity Logs (Super Admin / Developer only)
+    // Activity Logs (Admin, Super Admin, Developer)
     Route::get('/activity-logs', function () {
-        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper()) {
+        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper() && !auth()->user()->isAdmin()) {
             abort(403);
         }
         return view('admin.activity-logs');

@@ -43,7 +43,7 @@ class ActivityLogs extends Component
 
     public function getUsersProperty()
     {
-        return User::whereIn('role', ['SUPER_ADMIN', 'ADMIN', 'DEVELOPER'])
+        return User::whereIn('role', ['SUPER_ADMIN', 'ADMIN', 'DEVELOPER', 'KASIR'])
             ->orderBy('name')
             ->get();
     }
