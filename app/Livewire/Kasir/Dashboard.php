@@ -162,9 +162,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.kasir.dashboard')
-            ->layout('layouts.admin', [
-                'pageTitle' => 'Dashboard Kasir'
-            ]);
+        return view('livewire.kasir.dashboard');
     }
 }

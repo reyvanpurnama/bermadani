@@ -121,6 +121,9 @@
                         <th class="px-6 py-4">No. Struk</th>
                         <th class="px-6 py-4">Waktu</th>
                         <th class="px-6 py-4">Pelanggan</th>
+                        @if(!auth()->user()->isKasir())
+                        <th class="px-6 py-4">Kasir</th>
+                        @endif
                         <th class="px-6 py-4">Total Belanja</th>
                         <th class="px-6 py-4 text-center">Metode</th>
                         <th class="px-6 py-4 text-center">Status</th>
@@ -150,6 +153,15 @@
                                     @endif
                                 </div>
                             </td>
+                            @if(!auth()->user()->isKasir())
+                            <td class="px-6 py-4">
+                                @if($transaction->user)
+                                    <span class="text-slate-600 dark:text-slate-300 text-xs">{{ $transaction->user->name }}</span>
+                                @else
+                                    <span class="text-slate-400 text-xs">-</span>
+                                @endif
+                            </td>
+                            @endif
                             <td class="px-6 py-4 font-bold {{ $transaction->status === 'CANCELLED' ? 'text-slate-500 line-through' : 'text-slate-800 dark:text-white' }}">
                                 Rp {{ number_format($transaction->totalAmount, 0, ',', '.') }}
                             </td>
@@ -182,7 +194,7 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="{{ route('transaksi.detail', $transaction->id) }}" 
+                                <a href="{{ auth()->user()->isKasir() ? route('kasir.transaction.detail', $transaction->id) : route('transaksi.detail', $transaction->id) }}" 
                                     class="text-slate-400 hover:text-primary transition-colors">
                                     <i class='bx bx-show text-xl'></i>
                                 </a>
@@ -190,7 +202,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center">
+                            <td colspan="{{ auth()->user()->isKasir() ? 7 : 8 }}" class="px-6 py-12 text-center">
                                 <div class="flex flex-col items-center justify-center text-slate-400">
                                     <i class='bx bx-receipt text-6xl mb-3 opacity-20'></i>
                                     <p class="font-medium">Tidak ada transaksi ditemukan</p>

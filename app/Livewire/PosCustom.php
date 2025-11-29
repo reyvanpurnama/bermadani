@@ -149,6 +149,7 @@ class PosCustom extends Component
             $transaction = Transaction::create([
                 'invoiceNumber' => $invoiceNumber,
                 'memberId' => $this->selectedMember['id'] ?? null,
+                'userId' => auth()->id(),
                 'type' => 'SALE',
                 'totalAmount' => $this->getCartTotalProperty(),
                 'paymentMethod' => $this->paymentMethod,

@@ -29,7 +29,7 @@
             <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80 whitespace-nowrap transition-opacity duration-300">Reports</p>
             <a href="{{ route('kasir.transactions') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('kasir.transactions*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">
                 <i class='bx bx-receipt text-lg mr-3 {{ request()->routeIs('kasir.transactions*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
-                <span class="sidebar-text text-sm {{ request()->routeIs('kasir.transactions*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Transaksi Saya</span>
+                <span class="sidebar-text text-sm {{ request()->routeIs('kasir.transactions*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat Transaksi</span>
             </a>
         @else
             {{-- ADMIN SIDEBAR --}}

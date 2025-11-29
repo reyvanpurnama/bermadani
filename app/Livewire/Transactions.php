@@ -36,9 +36,14 @@ class Transactions extends Component
 
     public function getTransactionsProperty()
     {
-        $query = Transaction::with(['member', 'items.product'])
+        $query = Transaction::with(['member', 'items.product', 'user'])
             ->where('type', 'SALE')
             ->where('isProduction', true);
+
+        // Kasir can only see their own transactions
+        if (auth()->user()->isKasir()) {
+            $query->where('userId', auth()->id());
+        }
 
         // Search by invoice number
         if ($this->search) {
@@ -75,6 +80,11 @@ class Transactions extends Component
             ->where('status', 'COMPLETED')
             ->where('isProduction', true);
 
+        // Kasir can only see their own stats
+        if (auth()->user()->isKasir()) {
+            $query->where('userId', auth()->id());
+        }
+
         // Apply date filters if set
         if ($this->dateFrom) {
             $query->where('date', '>=', $this->dateFrom . ' 00:00:00');
@@ -88,12 +98,18 @@ class Transactions extends Component
         $totalRevenue = $query->sum('totalAmount');
 
         // Today's revenue
-        $todayRevenue = Transaction::where('type', 'SALE')
+        $todayQuery = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->where('isProduction', true)
             ->where('date', '>=', today()->startOfDay())
-            ->where('date', '<=', today()->endOfDay())
-            ->sum('totalAmount');
+            ->where('date', '<=', today()->endOfDay());
+
+        // Kasir can only see their own today's revenue
+        if (auth()->user()->isKasir()) {
+            $todayQuery->where('userId', auth()->id());
+        }
+
+        $todayRevenue = $todayQuery->sum('totalAmount');
 
         // Average basket (average transaction amount)
         $averageBasket = $totalTransactions > 0 ? $totalRevenue / $totalTransactions : 0;

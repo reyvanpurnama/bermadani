@@ -118,9 +118,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.placeholder', ['title' => 'Pinjaman']);
     })->name('admin.loans');
     
-    // Users (Admin only)
+    // Users Management (Super Admin & Developer only for CRUD, Admin read-only)
     Route::get('/users', function () {
-        return view('admin.placeholder', ['title' => 'Pengguna']);
+        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper() && !auth()->user()->isAdmin()) {
+            abort(403);
+        }
+        return view('admin.users.index');
     })->name('admin.users');
     
     // Suppliers
@@ -148,7 +151,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 // Kasir Routes - Protected
 Route::middleware(['auth'])->prefix('kasir')->group(function () {
     // Kasir Dashboard
-    Route::get('/', App\Livewire\Kasir\Dashboard::class)->name('kasir.dashboard');
+    Route::get('/', function () {
+        return view('kasir.dashboard');
+    })->name('kasir.dashboard');
     
     // POS Access for Kasir
     Route::get('/pos', function () {
