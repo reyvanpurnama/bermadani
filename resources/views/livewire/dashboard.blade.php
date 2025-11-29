@@ -6,7 +6,15 @@
                 <div class="relative z-10 flex justify-between items-center">
                     <div>
                         <h2 class="text-lg font-bold mb-1">Selamat datang kembali, {{ auth()->user()->name }}! 👋</h2>
-                        <p class="text-indigo-100 text-xs mb-3 opacity-90">Performa penjualan naik <span class="font-bold text-white">72%</span> hari ini.</p>
+                        <p class="text-indigo-100 text-xs mb-3 opacity-90">
+                            @if($this->profitGrowth > 0)
+                                Performa penjualan naik <span class="font-bold text-white">{{ $this->profitGrowth }}%</span> {{ strtolower($this->previousPeriodLabel) }}.
+                            @elseif($this->profitGrowth < 0)
+                                Performa penjualan turun <span class="font-bold text-white">{{ abs($this->profitGrowth) }}%</span> {{ strtolower($this->previousPeriodLabel) }}.
+                            @else
+                                Performa penjualan stabil {{ strtolower($this->previousPeriodLabel) }}.
+                            @endif
+                        </p>
                         <a href="{{ route('admin.pos') }}" class="bg-card/20 hover:bg-card/30 text-white text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-md font-semibold transition-colors border border-white/10 inline-block">
                             Buka POS
                         </a>
@@ -22,8 +30,12 @@
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Keuntungan</p>
                     <div class="flex items-end gap-2">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->totalSales * 0.27, 0, ',', '.') }}</h3>
-                        <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 72%</span>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->netProfit, 0, ',', '.') }}</h3>
+                        @if($this->profitGrowth > 0)
+                            <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> {{ $this->profitGrowth }}%</span>
+                        @elseif($this->profitGrowth < 0)
+                            <span class="text-rose-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-down-arrow-alt'></i> {{ abs($this->profitGrowth) }}%</span>
+                        @endif
                     </div>
                 </div>
                 <div class="bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg text-emerald-500"><i class='bx bx-line-chart text-lg'></i></div>
@@ -34,7 +46,6 @@
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Penjualan</p>
                     <div class="flex items-end gap-2">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->totalSales, 0, ',', '.') }}</h3>
-                        <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 28%</span>
                     </div>
                 </div>
                 <div class="bg-blue-50 dark:bg-blue-500/10 p-2 rounded-lg text-blue-500"><i class='bx bx-wallet text-lg'></i></div>
@@ -100,15 +111,27 @@
                         <p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Laba Bersih Saat Ini</p>
                         
                         <h2 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight relative z-10">
-                            Rp {{ number_format($this->totalSales * 0.27, 0, ',', '.') }}
+                            Rp {{ number_format($this->netProfit, 0, ',', '.') }}
                         </h2>
                         
                         <div class="flex items-center gap-2 mt-2 relative z-10">
-                            <div class="flex items-center justify-center bg-emerald-500 text-white rounded-full w-4 h-4 shadow-sm shadow-emerald-500/30">
-                                <i class='bx bx-trending-up text-[10px]'></i>
-                            </div>
-                            <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+5.2%</span>
-                            <span class="text-[10px] text-slate-400">vs periode lalu</span>
+                            @if($this->profitGrowth > 0)
+                                <div class="flex items-center justify-center bg-emerald-500 text-white rounded-full w-4 h-4 shadow-sm shadow-emerald-500/30">
+                                    <i class='bx bx-trending-up text-[10px]'></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+{{ $this->profitGrowth }}%</span>
+                            @elseif($this->profitGrowth < 0)
+                                <div class="flex items-center justify-center bg-rose-500 text-white rounded-full w-4 h-4 shadow-sm shadow-rose-500/30">
+                                    <i class='bx bx-trending-down text-[10px]'></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-rose-700 dark:text-rose-400">{{ $this->profitGrowth }}%</span>
+                            @else
+                                <div class="flex items-center justify-center bg-slate-400 text-white rounded-full w-4 h-4 shadow-sm">
+                                    <i class='bx bx-minus text-[10px]'></i>
+                                </div>
+                                <span class="text-[11px] font-bold text-slate-500">0%</span>
+                            @endif
+                            <span class="text-[10px] text-slate-400">{{ $this->previousPeriodLabel }}</span>
                         </div>
                     </div>
 
@@ -116,24 +139,26 @@
                         <div>
                             <div class="flex justify-between items-end mb-1">
                                 <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Margin Kotor</span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">70%</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->grossMarginPercent }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: 70%"></div>
+                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: {{ $this->grossMarginPercent }}%"></div>
                             </div>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->grossProfit, 0, ',', '.') }}</p>
                         </div>
 
                         <div>
                             <div class="flex justify-between items-end mb-1">
                                 <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Beban Operasional</span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">30%</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->operatingMarginPercent }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                                <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: 30%"></div>
+                                <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: {{ $this->operatingMarginPercent }}%"></div>
                             </div>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->operatingExpenses, 0, ',', '.') }} (Est. 15%)</p>
                         </div>
 
-                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih setelah pajak & beban.</p>
+                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih setelah beban operasional.</p>
                     </div>
                 </div>
             </div>

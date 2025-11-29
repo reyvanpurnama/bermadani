@@ -34,6 +34,7 @@
     <nav class="fixed w-full z-50 top-0 start-0 bg-white/90 dark:bg-darkBg/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
+                
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
                         <i class='bx bxs-cube-alt text-2xl'></i>
@@ -46,15 +47,29 @@
 
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="#layanan" class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 transition-colors">Layanan</a>
-                    <a href="#" class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 transition-colors">Tentang Kami</a>
+                    <a href="webcom.html" class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 transition-colors">Tentang Kami</a>
                     
                     <button id="theme-toggle" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
                         <i id="theme-icon" class='bx bx-moon text-xl'></i>
                     </button>
                 </div>
 
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
                     <i class='bx bx-menu text-2xl'></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-darkBg border-t border-slate-200 dark:border-slate-800 shadow-xl absolute w-full left-0 top-20">
+            <div class="flex flex-col p-4 space-y-2">
+                <a href="#layanan" class="block px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors">
+                    Layanan
+                </a>
+                <a href="webcom.html" class="block px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors">
+                    Tentang Kami
+                </a>
+                <button id="theme-toggle-mobile" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors flex items-center gap-2">
+                    <i class='bx bx-moon text-lg'></i> Ganti Tema
                 </button>
             </div>
         </div>
@@ -182,25 +197,61 @@
     </footer>
 
     <script>
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const html = document.documentElement;
+    // --- VARIABLE SELECTION ---
+    const html = document.documentElement;
+    const themeIcon = document.getElementById('theme-icon');
+    const themeBtnDesktop = document.getElementById('theme-toggle');
+    const themeBtnMobile = document.getElementById('theme-toggle-mobile');
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark'); 
-            themeIcon.classList.replace('bx-moon', 'bx-sun');
+    // --- 1. INITIAL CHECK (Saat website dimuat) ---
+    // Cek apakah user pernah pilih dark mode atau settingan laptopnya dark
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark'); 
+        if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
+    } else {
+        html.classList.remove('dark');
+        if(themeIcon) themeIcon.classList.replace('bx-sun', 'bx-moon');
+    }
+
+    // --- 2. FUNGSI GANTI TEMA (Dipakai tombol desktop & mobile) ---
+    function toggleTheme() {
+        html.classList.toggle('dark');
+        if(html.classList.contains('dark')) {
+            if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
+            localStorage.setItem('color-theme', 'dark');
+        } else {
+            if(themeIcon) themeIcon.classList.replace('bx-sun', 'bx-moon');
+            localStorage.setItem('color-theme', 'light');
         }
+    }
 
-        themeToggleBtn.addEventListener('click', function() {
-            html.classList.toggle('dark');
-            if(html.classList.contains('dark')) {
-                themeIcon.classList.replace('bx-moon', 'bx-sun'); 
-                localStorage.setItem('color-theme', 'dark');
+    // Pasang Event Listener ke Tombol Desktop
+    if(themeBtnDesktop) {
+        themeBtnDesktop.addEventListener('click', toggleTheme);
+    }
+
+    // Pasang Event Listener ke Tombol Mobile (Kalau ada)
+    if(themeBtnMobile) {
+        themeBtnMobile.addEventListener('click', toggleTheme);
+    }
+
+    // --- 3. LOGIC MOBILE MENU (Hamburger) ---
+    if(mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+            // Buka/Tutup Menu
+            mobileMenu.classList.toggle('hidden');
+            
+            // Ganti Icon Hamburger jadi X (Silang) biar keren
+            const icon = mobileBtn.querySelector('i');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.classList.replace('bx-x', 'bx-menu');
             } else {
-                themeIcon.classList.replace('bx-sun', 'bx-moon'); 
-                localStorage.setItem('color-theme', 'light');
+                icon.classList.replace('bx-menu', 'bx-x');
             }
         });
-    </script>
+    }
+</script>
 </body>
 </html>
