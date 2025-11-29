@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('savings', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('memberId');
+            $table->unsignedBigInteger('member_id');
             $table->enum('type', ['POKOK', 'WAJIB', 'SUKARELA', 'WITHDRAWAL']);
             $table->decimal('amount', 15, 2);
             $table->text('description')->nullable();
             $table->timestamp('date')->useCurrent();
             $table->timestamps();
             
-            $table->foreign('memberId')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
             
-            $table->index(['memberId', 'date']);
+            $table->index(['member_id', 'date']);
             $table->index('type');
         });
     }

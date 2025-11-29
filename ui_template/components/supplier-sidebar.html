@@ -1,0 +1,56 @@
+<aside id="supplier-sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-[180px] border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden">
+    <div id="supplier-sidebar-header" class="h-16 flex items-center px-4 border-b border-slate-200 dark:border-slate-700 shrink-0 transition-all duration-300">
+        <div class="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+            <div class="w-6 h-6 bg-emerald-600 rounded flex items-center justify-center text-white shrink-0">
+                <i class='bx bxs-store-alt text-xs'></i>
+            </div>
+            <span class="supplier-sidebar-text text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none mt-0.5 transition-opacity duration-300">Mitra<span class="text-emerald-600">Panel</span></span>
+        </div>
+        <button id="supplier-sidebar-close" class="md:hidden ml-auto text-slate-500 hover:text-rose-500 transition-colors">
+            <i class='bx bx-x text-2xl'></i>
+        </button>
+    </div>
+
+    <nav class="flex-1 px-2.5 py-3 space-y-0.5 overflow-y-auto overflow-x-hidden">
+        <p class="supplier-sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-1 opacity-80 whitespace-nowrap transition-opacity duration-300">Ringkasan</p>
+        
+        <a href="index.html" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-md transition-all group whitespace-nowrap">
+            <i class='bx bxs-dashboard text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i> <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Dasbor</span>
+        </a>
+
+        <p class="supplier-sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap transition-opacity duration-300">Kelola</p>
+        
+        <a href="products.html" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-md transition-all group whitespace-nowrap">
+            <i class='bx bx-box text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i> <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Produk Saya</span>
+        </a>
+        
+        <a href="sales.html" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-md transition-all group whitespace-nowrap">
+            <i class='bx bx-line-chart text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i> <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Laporan Penjualan</span>
+        </a>
+
+        <p class="supplier-sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap transition-opacity duration-300">Aksi</p>
+
+        <a href="submit-product.html" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-md transition-all group whitespace-nowrap">
+            <i class='bx bx-plus-circle text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i> <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Ajukan Barang</span>
+        </a>
+
+        <a href="restock-request.html" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white rounded-md transition-all group whitespace-nowrap">
+            <i class='bx bx-archive-in text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i> <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Permintaan Restock</span>
+        </a>
+    </nav>
+
+    <div id="supplier-sidebar-collapse" class="hidden md:flex items-center gap-3 px-4 py-3 border-t border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-500 hover:text-emerald-600 whitespace-nowrap overflow-hidden">
+        <i class='bx bx-chevrons-left text-xl transition-transform duration-300 shrink-0'></i>
+        <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300">Ciutkan</span>
+    </div>
+
+    <div id="supplier-user-profile" class="p-2.5 border-t border-slate-100 dark:border-slate-700 overflow-hidden transition-all duration-300">
+        <div class="flex items-center gap-3 p-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group whitespace-nowrap">
+            <img src="https://ui-avatars.com/api/?name=Dani+MHS&background=10b981&color=fff" class="w-6 h-6 rounded-full object-cover ring-1 ring-slate-200 dark:ring-slate-600 shrink-0">
+            <div class="supplier-sidebar-text flex-1 overflow-hidden transition-opacity duration-300">
+                <h4 class="text-xs font-semibold text-slate-800 dark:text-white truncate">Dani (Mhs)</h4>
+                <p class="text-[9px] text-slate-400 truncate">Supplier Keripik</p>
+            </div>
+        </div>
+    </div>
+</aside>

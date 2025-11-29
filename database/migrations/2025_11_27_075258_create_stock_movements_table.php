@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stock_movements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('productId');
+            $table->unsignedBigInteger('product_id');
             $table->enum('movementType', ['PURCHASE_IN', 'CONSIGNMENT_IN', 'CONSIGNMENT_RETURN', 'SALE_OUT', 'RETURN_IN', 'RETURN_OUT', 'EXPIRED_OUT', 'ADJUSTMENT', 'TRANSFER_IN', 'TRANSFER_OUT', 'RESTOCK']);
             $table->integer('quantity');
             $table->enum('referenceType', ['PURCHASE', 'CONSIGNMENT_BATCH', 'SALE', 'ADJUSTMENT', 'EXPIRY', 'STOCK_REQUEST'])->nullable();
@@ -24,9 +24,9 @@ return new class extends Migration
             $table->boolean('isProduction')->default(true);
             $table->timestamps();
             
-            $table->foreign('productId')->references('id')->on('products')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             
-            $table->index(['productId', 'occurredAt']);
+            $table->index(['product_id', 'occurredAt']);
             $table->index(['referenceType', 'referenceId']);
             $table->index('isProduction');
         });

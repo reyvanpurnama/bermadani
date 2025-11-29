@@ -19,26 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
-        ]);
-
-        // Create default admin user
-        User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@koperasiumb.com',
-            'password' => bcrypt('password'),
-            'role' => 'ADMIN',
-            'is_active' => true,
-            'must_change_password' => false,
-        ]);
-
-        // Create kasir user
-        User::create([
-            'name' => 'Kasir',
-            'email' => 'kasir@koperasiumb.com',
-            'password' => bcrypt('password'),
-            'role' => 'KASIR',
-            'is_active' => true,
-            'must_change_password' => false,
+            RoleUsersSeeder::class,
         ]);
     }
 }

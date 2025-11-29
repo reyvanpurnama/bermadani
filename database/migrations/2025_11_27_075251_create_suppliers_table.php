@@ -57,11 +57,11 @@ return new class extends Migration
             $table->unsignedBigInteger('evaluatedBy')->nullable();
             $table->timestamp('evaluatedAt')->nullable();
             
-            $table->boolean('isActive')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->text('note')->nullable();
             $table->timestamps();
             
-            $table->index(['status', 'isActive']);
+            $table->index(['status', 'is_active']);
             $table->index('email');
             $table->index('approvedById');
         });

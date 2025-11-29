@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bermadani Admin Dashboard (Dark Mode Fixed)</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#F8FAFC', // Slate 50
+                        darkBg: '#0f172a',    // Slate 900
+                        darkCard: '#1e293b'   // Slate 800
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* Fix ApexChart Tooltip z-index if needed */
+        .apexcharts-tooltip {
+            z-index: 100 !important;
+        }
+    </style>
+</head>
+<body class="bg-secondary text-slate-800 antialiased dark:bg-darkBg dark:text-slate-200 transition-colors duration-300">
+
+    <aside class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-64 border-r border-slate-200 dark:border-slate-700 hidden md:flex flex-col z-10 transition-colors duration-300">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100 dark:border-slate-700">
+            <i class='bx bxs-cube-alt text-3xl text-primary mr-2'></i>
+            <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Bermadani<span class="text-primary">Admin</span></span>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+            <p class="px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Main Menu</p>
+            <a href="#" class="flex items-center px-4 py-3 bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 rounded-xl transition-colors font-medium">
+                <i class='bx bxs-dashboard text-xl mr-3'></i> Dashboard
+            </a>
+            <a href="analytics.html" class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors font-medium">
+                <i class='bx bx-line-chart text-xl mr-3'></i> Analytics
+            </a>
+            <a href="revenue.html" class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors font-medium">
+                <i class='bx bx-wallet text-xl mr-3'></i> Revenue
+            </a>
+            <a href="#" class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors font-medium">
+                <i class='bx bx-user text-xl mr-3'></i> Customers
+            </a>
+            <p class="px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-8">Settings</p>
+             <a href="#" class="flex items-center px-4 py-3 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-white rounded-xl transition-colors font-medium">
+                <i class='bx bx-cog text-xl mr-3'></i> Preferences
+            </a>
+        </nav>
+
+        <div class="p-4 border-t border-slate-100 dark:border-slate-700">
+            <div class="flex items-center gap-3">
+                <img src="https://i.pravatar.cc/150?img=12" alt="User" class="w-10 h-10 rounded-full object-cover ring-2 ring-slate-100 dark:ring-slate-700">
+                <div class="flex-1">
+                    <h4 class="text-sm font-semibold text-slate-900 dark:text-white">Alex Morgan</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Admin</p>
+                </div>
+                <button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"><i class='bx bx-log-out text-xl'></i></button>
+            </div>
+        </div>
+    </aside>
+
+    <div class="md:ml-64 min-h-screen flex flex-col transition-all duration-300">
+        <header class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors duration-300">
+            <div class="flex items-center w-full max-w-md">
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class='bx bx-search text-slate-400 text-xl'></i>
+                    </span>
+                    <input type="text" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 p-2.5 outline-none transition-all placeholder-slate-400" placeholder="Search data...">
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-all focus:outline-none">
+                    <i id="theme-icon" class='bx bx-moon text-2xl'></i>
+                </button>
+                <button class="relative p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-all">
+                    <i class='bx bx-bell text-2xl'></i>
+                    <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-darkCard"></span>
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+            <div class="flex justify-between items-end">
+                <div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">Overview</p>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
+                </div>
+                <button class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition-colors">
+                    <i class='bx bx-calendar'></i> Last 30 Days
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Revenue</p>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">$45,231</h3>
+                        </div>
+                        <div class="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg text-primary dark:text-indigo-400">
+                            <i class='bx bx-dollar-circle text-xl'></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-emerald-500 flex items-center font-medium bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"><i class='bx bx-up-arrow-alt mr-1'></i> 12.5%</span>
+                        <span class="text-slate-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Active Users</p>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">2,340</h3>
+                        </div>
+                        <div class="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">
+                            <i class='bx bx-group text-xl'></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-emerald-500 flex items-center font-medium bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full"><i class='bx bx-up-arrow-alt mr-1'></i> 5.2%</span>
+                        <span class="text-slate-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">New Orders</p>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">456</h3>
+                        </div>
+                        <div class="p-2 bg-orange-50 dark:bg-orange-500/10 rounded-lg text-orange-600 dark:text-orange-400">
+                            <i class='bx bx-cart text-xl'></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-rose-500 flex items-center font-medium bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-full"><i class='bx bx-down-arrow-alt mr-1'></i> 2.1%</span>
+                        <span class="text-slate-400 ml-2">vs last month</span>
+                    </div>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 transition-colors">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Conversion</p>
+                            <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">3.4%</h3>
+                        </div>
+                        <div class="p-2 bg-teal-50 dark:bg-teal-500/10 rounded-lg text-teal-600 dark:text-teal-400">
+                            <i class='bx bx-target-lock text-xl'></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm">
+                        <span class="text-slate-500 dark:text-slate-400 flex items-center font-medium bg-slate-100 dark:bg-slate-700 px-2 py-0.5 rounded-full"><i class='bx bx-minus mr-1'></i> 0.0%</span>
+                        <span class="text-slate-400 ml-2">Stable</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 col-span-2 transition-colors">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white">Revenue Overview</h3>
+                        <button class="text-slate-400 hover:text-primary"><i class='bx bx-dots-horizontal-rounded text-2xl'></i></button>
+                    </div>
+                    <div id="revenueChart"></div>
+                </div>
+                <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 col-span-1 transition-colors">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-white mb-4">Traffic Source</h3>
+                    <div id="trafficChart" class="flex justify-center"></div>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden transition-colors">
+                <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-white">Recent Transactions</h3>
+                    <a href="#" class="text-sm text-primary font-medium hover:underline">View All</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                        <thead class="bg-slate-50 dark:bg-slate-700/50 text-xs uppercase font-semibold text-slate-500 dark:text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Order ID</th>
+                                <th class="px-6 py-4">Customer</th>
+                                <th class="px-6 py-4">Date</th>
+                                <th class="px-6 py-4">Amount</th>
+                                <th class="px-6 py-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+                                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">#ORD-001</td>
+                                <td class="px-6 py-4 flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-primary dark:text-indigo-400 font-bold text-xs">JD</div>
+                                    <span class="text-slate-700 dark:text-slate-200">John Doe</span>
+                                </td>
+                                <td class="px-6 py-4">Oct 24, 2023</td>
+                                <td class="px-6 py-4 font-medium text-slate-900 dark:text-white">$120.00</td>
+                                <td class="px-6 py-4"><span class="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold">Paid</span></td>
+                            </tr>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <footer class="mt-10 text-center text-xs text-slate-400 pb-4">&copy; 2024 Bermadani Admin Dashboard. Designed by AI.</footer>
+        </main>
+    </div>
+
+    <script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+
+        // --- 1. INITIAL THEME CHECK ---
+        let isDark = false;
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            themeIcon.classList.replace('bx-moon', 'bx-sun');
+            isDark = true;
+        } else {
+            html.classList.remove('dark');
+            themeIcon.classList.replace('bx-sun', 'bx-moon');
+            isDark = false;
+        }
+
+        // --- 2. THEME TOGGLE EVENT ---
+        themeToggleBtn.addEventListener('click', function() {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                themeIcon.classList.replace('bx-moon', 'bx-sun');
+                localStorage.setItem('color-theme', 'dark');
+                updateCharts('dark');
+            } else {
+                themeIcon.classList.replace('bx-sun', 'bx-moon');
+                localStorage.setItem('color-theme', 'light');
+                updateCharts('light');
+            }
+        });
+
+        // --- 3. CHART CONFIG & UPDATE ---
+
+        // Setup Colors based on initial theme
+        const getChartColors = (theme) => {
+            return {
+                text: theme === 'dark' ? '#94a3b8' : '#64748b',
+                grid: theme === 'dark' ? '#334155' : '#f1f5f9',
+                tooltipTheme: theme === 'dark' ? 'dark' : 'light' // INI FIX-NYA
+            }
+        };
+
+        let currentColors = getChartColors(isDark ? 'dark' : 'light');
+
+        // REVENUE CHART
+        var optionsRevenue = {
+            series: [{ name: 'Revenue', data: [31, 40, 28, 51, 42, 109, 100, 120, 80, 95, 110] }, 
+                     { name: 'Expenses', data: [11, 32, 45, 32, 34, 52, 41, 60, 30, 45, 50] }],
+            chart: {
+                height: 320,
+                type: 'area',
+                toolbar: { show: false },
+                fontFamily: 'Inter, sans-serif',
+                foreColor: currentColors.text
+            },
+            colors: ['#4F46E5', '#94a3b8'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+            xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov"], axisBorder: { show: false }, axisTicks: { show: false } },
+            grid: { borderColor: currentColors.grid, strokeDashArray: 4 },
+            tooltip: { theme: currentColors.tooltipTheme } // Initial set
+        };
+
+        var chartRevenue = new ApexCharts(document.querySelector("#revenueChart"), optionsRevenue);
+        chartRevenue.render();
+
+        // TRAFFIC CHART
+        var optionsTraffic = {
+            series: [44, 55, 13],
+            labels: ['Direct', 'Social Media', 'Referral'],
+            chart: { type: 'donut', height: 300, fontFamily: 'Inter, sans-serif' },
+            colors: ['#4F46E5', '#0EA5E9', '#F43F5E'],
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '75%',
+                        labels: {
+                            show: true,
+                            name: { show: true, fontSize: '14px', fontFamily: 'Inter, sans-serif', color: currentColors.text },
+                            value: { show: true, fontSize: '24px', fontFamily: 'Inter, sans-serif', color: isDark ? '#ffffff' : '#0f172a', fontWeight: 700 },
+                            total: { 
+                                show: true, label: 'Total Visits', color: currentColors.text,
+                                formatter: function (w) { return w.globals.seriesTotals.reduce((a, b) => a + b, 0) }
+                            }
+                        }
+                    }
+                }
+            },
+            legend: { position: 'bottom', horizontalAlign: 'center', markers: { radius: 12 }, itemMargin: { horizontal: 10, vertical: 5 }, labels: { colors: currentColors.text } }, // Legend text color
+            dataLabels: { enabled: false },
+            stroke: { show: false },
+            tooltip: { theme: currentColors.tooltipTheme } // Initial set
+        };
+
+        var chartTraffic = new ApexCharts(document.querySelector("#trafficChart"), optionsTraffic);
+        chartTraffic.render();
+
+        // UPDATE FUNCTION
+        function updateCharts(theme) {
+            const colors = getChartColors(theme);
+            
+            // Update Revenue
+            chartRevenue.updateOptions({
+                chart: { foreColor: colors.text },
+                grid: { borderColor: colors.grid },
+                tooltip: { theme: colors.tooltipTheme }, // UPDATE TOOLTIP HERE
+                xaxis: { labels: { style: { colors: colors.text } } },
+                yaxis: { labels: { style: { colors: colors.text } } }
+            });
+
+            // Update Traffic
+            chartTraffic.updateOptions({
+                plotOptions: {
+                    pie: {
+                        donut: {
+                            labels: {
+                                name: { color: colors.text },
+                                value: { color: theme === 'dark' ? '#ffffff' : '#0f172a' },
+                                total: { color: colors.text }
+                            }
+                        }
+                    }
+                },
+                legend: { labels: { colors: colors.text } }, // Update legend text
+                tooltip: { theme: colors.tooltipTheme } // UPDATE TOOLTIP HERE
+            });
+        }
+    </script>
+</body>
+</html>

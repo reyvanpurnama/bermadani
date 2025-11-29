@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('memberId');
+            $table->unsignedBigInteger('member_id');
             $table->decimal('amount', 15, 2);
             $table->decimal('interestRate', 5, 2);
             $table->integer('tenor'); // in months
@@ -28,9 +28,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->timestamps();
             
-            $table->foreign('memberId')->references('id')->on('members')->onDelete('cascade');
+            $table->foreign('member_id')->references('id')->on('members')->onDelete('cascade');
             
-            $table->index(['memberId', 'status']);
+            $table->index(['member_id', 'status']);
             $table->index('status');
         });
     }

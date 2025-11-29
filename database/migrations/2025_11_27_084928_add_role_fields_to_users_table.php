@@ -34,7 +34,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex(['users_role_index']);
-            $table->dropIndex(['users_isactive_role_index']);
+            $table->dropIndex(['users_isActive_role_index']);
             
             $table->dropColumn([
                 'role',

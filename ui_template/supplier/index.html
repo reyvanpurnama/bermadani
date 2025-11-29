@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Dashboard - Nexus</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#4F46E5', 
+                        secondary: '#F8FAFC', 
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .apexcharts-tooltip { z-index: 100 !important; }
+    </style>
+</head>
+<body class="bg-secondary text-slate-800 antialiased dark:bg-darkBg dark:text-slate-200 transition-colors duration-300">
+
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
+<div id="supplier-sidebar-container"></div>
+
+<div id="main-content" class="md:ml-[180px] min-h-screen flex flex-col transition-all duration-300">
+    
+    <header class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors duration-300">
+        <div class="flex items-center gap-4">
+            <button id="sidebar-toggle" class="md:hidden w-[34px] h-[34px] flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all">
+                <i class='bx bx-menu text-[20px]'></i>
+            </button>
+            <div>
+                <h1 class="text-[14px] font-bold text-slate-800 dark:text-white">Dasbor Mitra</h1>
+                <p class="text-[10px] text-slate-500">Ringkasan performa penjualan produk Anda</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="theme-toggle" class="w-[34px] h-[34px] flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all focus:outline-none group">
+                <i id="theme-icon" class='bx bx-moon text-[20px] group-hover:text-emerald-600 transition-colors'></i>
+            </button>
+            <button class="w-[34px] h-[34px] flex items-center justify-center relative text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all group">
+                <i class='bx bx-bell text-[20px] group-hover:text-emerald-600 transition-colors'></i>
+                <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full border border-white dark:border-darkCard"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-emerald-200 transition-colors">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Omzet</p>
+                    <div class="flex items-end gap-2">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp 4.2 Jt</h3>
+                        <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 12%</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                    <i class='bx bx-wallet text-xl'></i>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-blue-200 transition-colors">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Unit Terjual</p>
+                    <div class="flex items-end gap-2">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">845 Pcs</h3>
+                        <span class="text-slate-400 text-[10px] mb-0.5">Bulan ini</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                    <i class='bx bx-package text-xl'></i>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-indigo-200 transition-colors">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Produk Aktif</p>
+                    <div class="flex items-end gap-2">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">8 SKU</h3>
+                        <span class="text-indigo-500 text-[10px] font-bold flex items-center mb-0.5">2 Low Stock</span>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <i class='bx bx-store text-xl'></i>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between border-l-4 border-l-amber-400 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Tertahan</p>
+                    <div class="flex items-end gap-2">
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp 850.000</h3>
+                    </div>
+                    <p class="text-[9px] text-amber-600 mt-1 font-semibold">Klik untuk Request Cair</p>
+                </div>
+                <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500">
+                    <i class='bx bx-time-five text-xl'></i>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 h-full">
+            
+            <div class="lg:col-span-2 bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col min-h-[300px]">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Trend Penjualan</h3>
+                        <p class="text-[10px] text-slate-500">Performa produk Anda 7 hari terakhir</p>
+                    </div>
+                    <select class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] rounded px-2 py-1 outline-none text-slate-700 dark:text-white">
+                        <option>7 Hari Terakhir</option>
+                        <option>Bulan Ini</option>
+                    </select>
+                </div>
+                <div class="flex-1 w-full relative">
+                    <div id="salesChart" class="absolute inset-0 w-full h-full"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1 bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col min-h-[300px]">
+                <div class="mb-4">
+                    <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Produk Terlaris</h3>
+                    <p class="text-[10px] text-slate-500">Berdasarkan kuantitas terjual</p>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto space-y-4 pr-1 custom-scrollbar">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">🍌</div>
+                        <div class="flex-1 min-w-0">
+                            <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white truncate">Keripik Pisang Coklat</h6>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1 mt-1.5">
+                                <div class="bg-emerald-500 h-1 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-[12px] font-bold text-slate-800 dark:text-white">120</span>
+                            <span class="text-[9px] text-slate-400">Pcs</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">🌶️</div>
+                        <div class="flex-1 min-w-0">
+                            <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white truncate">Basreng Pedas Level 5</h6>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1 mt-1.5">
+                                <div class="bg-indigo-500 h-1 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-[12px] font-bold text-slate-800 dark:text-white">85</span>
+                            <span class="text-[9px] text-slate-400">Pcs</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-lg">🍪</div>
+                        <div class="flex-1 min-w-0">
+                            <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white truncate">Cookies Matcha</h6>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1 mt-1.5">
+                                <div class="bg-amber-500 h-1 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-[12px] font-bold text-slate-800 dark:text-white">42</span>
+                            <span class="text-[9px] text-slate-400">Pcs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+</div>
+
+<script>
+    // 1. Dark Mode
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const html = document.documentElement;
+    let isDark = false;
+
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark'); themeIcon.classList.replace('bx-moon', 'bx-sun'); isDark = true;
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        html.classList.toggle('dark');
+        isDark = html.classList.contains('dark');
+        themeIcon.classList.replace(isDark ? 'bx-moon' : 'bx-sun', isDark ? 'bx-sun' : 'bx-moon');
+        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        updateCharts(isDark ? 'dark' : 'light');
+    });
+
+    // 2. Charts
+    const getChartColors = (theme) => ({
+        text: theme === 'dark' ? '#94a3b8' : '#64748b',
+        grid: theme === 'dark' ? '#334155' : '#f1f5f9',
+        tooltipTheme: theme === 'dark' ? 'dark' : 'light'
+    });
+
+    var optionsSales = {
+        series: [{ name: 'Penjualan (Rp)', data: [450000, 320000, 600000, 480000, 520000, 850000, 700000] }],
+        chart: { 
+            height: '100%', 
+            type: 'area', 
+            toolbar: { show: false }, 
+            fontFamily: 'Inter',
+            foreColor: isDark ? '#94a3b8' : '#64748b'
+        },
+        colors: ['#10b981'], // Emerald theme for Money
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+        xaxis: { 
+            categories: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"], 
+            axisBorder: { show: false }, 
+            axisTicks: { show: false } 
+        },
+        yaxis: {
+            labels: { formatter: (val) => { return val >= 1000 ? (val/1000) + 'k' : val } }
+        },
+        grid: { borderColor: isDark ? '#334155' : '#f1f5f9', strokeDashArray: 4 },
+        tooltip: { theme: isDark ? 'dark' : 'light' }
+    };
+
+    var chartSales = new ApexCharts(document.querySelector("#salesChart"), optionsSales);
+    chartSales.render();
+
+    function updateCharts(theme) {
+        const c = getChartColors(theme);
+        chartSales.updateOptions({ 
+            chart: { foreColor: c.text }, 
+            grid: { borderColor: c.grid }, 
+            tooltip: { theme: c.tooltipTheme } 
+        });
+    }
+
+    // 3. Load Sidebar Component & Init Collapse
+    async function loadSidebar() {
+        try {
+            const res = await fetch('../components/supplier-sidebar.html');
+            const html = await res.text();
+            document.getElementById('supplier-sidebar-container').innerHTML = html;
+            initSupplierSidebar();
+            
+            // Highlight Dashboard link
+            setTimeout(() => {
+                const links = document.querySelectorAll('#supplier-sidebar nav a');
+                links.forEach(link => {
+                    if(link.href.includes('index.html')) {
+                        link.classList.add('bg-emerald-50', 'dark:bg-emerald-900/20', 'text-emerald-600', 'dark:text-emerald-400');
+                        link.classList.remove('text-slate-500', 'dark:text-slate-400');
+                    }
+                });
+            }, 50);
+        } catch (error) {
+            console.error("Error loading sidebar:", error);
+        }
+    }
+
+    function initSupplierSidebar() {
+        const sidebar = document.getElementById('supplier-sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        const closeBtn = document.getElementById('supplier-sidebar-close');
+        const collapseBtn = document.getElementById('supplier-sidebar-collapse');
+        const mainContent = document.getElementById('main-content');
+        const sidebarTexts = document.querySelectorAll('.supplier-sidebar-text');
+        const collapseIcon = collapseBtn?.querySelector('i');
+
+        // Mobile Toggle
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.remove('hidden');
+            setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 300);
+        }
+
+        // Desktop Collapse
+        function toggleCollapse() {
+            const isCollapsed = sidebar.classList.contains('w-[70px]');
+            const header = document.getElementById('supplier-sidebar-header');
+            const navItems = document.querySelectorAll('.supplier-nav-item');
+            const collapseContainer = document.getElementById('supplier-sidebar-collapse');
+            const userProfile = document.getElementById('supplier-user-profile');
+            
+            if (isCollapsed) {
+                // Expand
+                sidebar.classList.replace('w-[70px]', 'w-[180px]');
+                mainContent.classList.replace('md:ml-[70px]', 'md:ml-[180px]');
+                sidebarTexts.forEach(el => el.classList.remove('hidden'));
+                collapseIcon?.classList.remove('rotate-180');
+                
+                // Remove centering
+                header.classList.remove('justify-center');
+                navItems.forEach(el => el.classList.remove('justify-center'));
+                collapseContainer.classList.remove('justify-center');
+                userProfile.classList.remove('justify-center');
+
+                localStorage.setItem('supplier-sidebar-collapsed', 'false');
+            } else {
+                // Collapse
+                sidebar.classList.replace('w-[180px]', 'w-[70px]');
+                mainContent.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+                sidebarTexts.forEach(el => el.classList.add('hidden'));
+                collapseIcon?.classList.add('rotate-180');
+                
+                // Add centering
+                header.classList.add('justify-center');
+                navItems.forEach(el => el.classList.add('justify-center'));
+                collapseContainer.classList.add('justify-center');
+                userProfile.classList.add('justify-center');
+
+                localStorage.setItem('supplier-sidebar-collapsed', 'true');
+            }
+        }
+
+        // Init State from localStorage
+        const savedState = localStorage.getItem('supplier-sidebar-collapsed');
+        if (savedState === 'true') {
+            sidebar.classList.replace('w-[180px]', 'w-[70px]');
+            mainContent.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+            sidebarTexts.forEach(el => el.classList.add('hidden'));
+            collapseIcon?.classList.add('rotate-180');
+            
+            const header = document.getElementById('supplier-sidebar-header');
+            const navItems = document.querySelectorAll('.supplier-nav-item');
+            const collapseContainer = document.getElementById('supplier-sidebar-collapse');
+            const userProfile = document.getElementById('supplier-user-profile');
+            
+            header?.classList.add('justify-center');
+            navItems?.forEach(el => el.classList.add('justify-center'));
+            collapseContainer?.classList.add('justify-center');
+            userProfile?.classList.add('justify-center');
+        }
+
+        if(toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+        if(closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        if(overlay) overlay.addEventListener('click', closeSidebar);
+        if(collapseBtn) collapseBtn.addEventListener('click', toggleCollapse);
+    }
+
+    // Init
+    loadSidebar();
+</script>
+
+</body>
+</html>

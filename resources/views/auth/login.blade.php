@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Masuk Portal - Nexus Kampus</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,7 +17,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA', // Sapphire Blue
+                        primary: '#0F52BA',
                         secondary: '#F8FAFC', 
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'
@@ -37,6 +38,7 @@
 
     <div class="w-full h-full flex">
         
+        {{-- Left Side - Hero Section --}}
         <div class="hidden lg:flex w-1/2 relative items-center justify-center bg-slate-900">
             <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?q=80&w=2070&auto=format&fit=crop" 
                  class="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay" alt="Campus Library">
@@ -79,9 +81,10 @@
             </div>
         </div>
 
+        {{-- Right Side - Login Form --}}
         <div class="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 bg-white dark:bg-darkBg relative">
             
-            <a href="landing.html" class="absolute top-8 left-8 flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium">
+            <a href="{{ route('home') }}" class="absolute top-8 left-8 flex items-center gap-2 text-sm text-slate-500 hover:text-primary transition-colors font-medium">
                 <i class='bx bx-arrow-back'></i> Kembali
             </a>
 
@@ -99,19 +102,34 @@
                     <p class="text-slate-500 dark:text-slate-400 text-sm">Masuk untuk mengakses layanan.</p>
                 </div>
 
-                <form action="admin/index.html" class="space-y-6">
+                @if ($errors->any())
+                    <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl p-4 mb-6">
+                        <div class="flex items-center gap-2 text-rose-600 dark:text-rose-400">
+                            <i class='bx bx-error-circle text-xl'></i>
+                            <span class="text-sm font-medium">{{ $errors->first() }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('login') }}" class="space-y-6">
+                    @csrf
                     
                     <div>
-                        <label for="identity" class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
+                        <label for="email" class="block mb-2 text-sm font-bold text-slate-700 dark:text-slate-300">
                             ID Pengguna
                         </label>
-                        <div class="relative">
+                        <div class="relative group">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 transition-colors group-focus-within:text-primary">
                                 <i class='bx bxs-id-card text-xl'></i>
                             </span>
-                            <input type="text" id="identity" 
+                            <input type="email" 
+                                   id="email"
+                                   name="email" 
+                                   value="{{ old('email') }}"
                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-11 p-3.5 outline-none transition-all placeholder-slate-400" 
-                                   placeholder="username atau email..." required>
+                                   placeholder="username atau email..." 
+                                   required
+                                   autofocus>
                         </div>
                     </div>
 
@@ -120,15 +138,18 @@
                             <label for="password" class="block text-sm font-bold text-slate-700 dark:text-slate-300">Kata Sandi</label>
                             <a href="#" class="text-xs font-semibold text-primary hover:underline">Lupa sandi?</a>
                         </div>
-                        <div class="relative">
+                        <div class="relative" x-data="{ show: false }">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                 <i class='bx bxs-lock-alt text-xl'></i>
                             </span>
-                            <input type="password" id="password" 
+                            <input :type="show ? 'text' : 'password'" 
+                                   id="password"
+                                   name="password" 
                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm rounded-xl focus:ring-2 focus:ring-primary/50 focus:border-primary block pl-11 p-3.5 outline-none transition-all placeholder-slate-400" 
-                                   placeholder="••••••••" required>
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-slate-400 hover:text-slate-600 transition-colors">
-                                <i class='bx bx-hide text-xl'></i>
+                                   placeholder="••••••••" 
+                                   required>
+                            <span @click="show = !show" class="absolute inset-y-0 right-0 flex items-center pr-4 cursor-pointer text-slate-400 hover:text-slate-600 transition-colors">
+                                <i class='bx text-xl' :class="show ? 'bx-show' : 'bx-hide'"></i>
                             </span>
                         </div>
                     </div>
@@ -157,6 +178,7 @@
         </div>
     </div>
 
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         // Dark Mode Logic
         const themeToggleBtn = document.getElementById('theme-toggle');
