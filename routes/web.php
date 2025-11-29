@@ -74,14 +74,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/transaksi', function () {
         return view('admin.transactions.index');
     })->name('admin.transactions');
-    Route::get('/transaksi/{id}', function ($id) {
-        return view('admin.transactions.detail', ['transactionId' => $id]);
-    })->name('transaksi.detail');
     
-    // Manual Transaction (Income/Expense)
+    // Manual Transaction (Income/Expense) - HARUS DI ATAS {id}
     Route::get('/transaksi/manual', function () {
         return view('admin.manual-transaction');
     })->name('admin.manual-transaction');
+    
+    Route::get('/transaksi/{id}', function ($id) {
+        return view('admin.transactions.detail', ['transactionId' => $id]);
+    })->name('transaksi.detail');
     
     // Members (not in MVP)
     Route::get('/members', function () {
