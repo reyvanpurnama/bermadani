@@ -217,7 +217,8 @@
         </div>
 
         <div class="lg:col-span-4 flex flex-col gap-4 h-fit">
-            {{-- Stats Cards (Product, Member, etc) --}}
+            {{-- Stats Cards (Product, Member, etc) - COMMENTED OUT FOR SAFETY --}}
+            {{-- 
             <div class="grid grid-cols-2 gap-4">
                 <div class="bg-card dark:bg-darkCard p-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
                     <div class="w-8 h-8 rounded-md bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary mb-2">
@@ -248,6 +249,7 @@
                     <h6 class="text-xl font-bold text-slate-800 dark:text-white">{{ \App\Models\Category::where('isActive', true)->count() }}</h6>
                 </div>
             </div>
+            --}
 
             {{-- Tabs: Stok Kritis / Produk Terlaris --}}
             <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 flex flex-col h-full min-h-[280px]" x-data="{ activeTab: 'stok' }">
