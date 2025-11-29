@@ -22,6 +22,11 @@
                     class="w-full bg-primary hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2">
                     <i class='bx bx-check-circle text-xl'></i> Check-In Sekarang
                 </button>
+                <button wire:click="skipCheckIn" 
+                    class="w-full mt-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 font-medium py-2.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
+                    <i class='bx bx-show text-lg'></i> Lihat Dashboard Saja
+                </button>
+                <p class="text-[10px] text-slate-400 text-center mt-2">*Tanpa check-in, kamu tidak bisa melakukan transaksi</p>
             </div>
         </div>
     </div>
@@ -109,24 +114,126 @@
     </div>
     @endif
 
-    {{-- Main Dashboard Content (only show if checked in) --}}
-    @if($this->currentShift)
+    {{-- Main Dashboard Content (only show if checked in OR view-only mode) --}}
+    @if($this->currentShift || $viewOnlyMode)
     {{-- Header --}}
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-slate-800 dark:text-white">Dashboard Kasir</h1>
+            @if($this->currentShift)
             <p class="text-sm text-slate-500">Shift dimulai {{ $this->currentShift->check_in_at->format('H:i') }} • {{ $this->currentShift->duration }}</p>
+            @else
+            <p class="text-sm text-amber-500 flex items-center gap-1"><i class='bx bx-info-circle'></i> Mode lihat saja - Belum check-in</p>
+            @endif
         </div>
         <div class="flex items-center gap-3">
+            @if($this->currentShift)
             <button wire:click="openCheckOutModal" class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors">
                 <i class='bx bx-log-out text-lg'></i> Check-Out
             </button>
             <a href="{{ route('kasir.pos') }}" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/30">
                 <i class='bx bx-shopping-bag text-lg'></i> Mulai Transaksi
             </a>
+            @else
+            <button wire:click="openCheckInModal" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/30">
+                <i class='bx bx-log-in text-lg'></i> Check-In Sekarang
+            </button>
+            @endif
         </div>
     </div>
 
+    @if($viewOnlyMode && !$this->currentShift)
+    {{-- View Only Stats - Show overall performance --}}
+    @php
+        $myTotalSales = \App\Models\Transaction::where('userId', auth()->id())->where('status', 'COMPLETED')->sum('totalAmount');
+        $myTotalTransactions = \App\Models\Transaction::where('userId', auth()->id())->where('status', 'COMPLETED')->count();
+        $myTodaySales = \App\Models\Transaction::where('userId', auth()->id())->where('status', 'COMPLETED')->whereDate('date', today())->sum('totalAmount');
+        $myTodayTransactions = \App\Models\Transaction::where('userId', auth()->id())->where('status', 'COMPLETED')->whereDate('date', today())->count();
+    @endphp
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Penjualan Hari Ini</p>
+                    <h3 class="text-xl font-bold text-emerald-600">Rp {{ number_format($myTodaySales, 0, ',', '.') }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-emerald-600">
+                    <i class='bx bx-calendar-check text-xl'></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Transaksi Hari Ini</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ $myTodayTransactions }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600">
+                    <i class='bx bx-receipt text-xl'></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Penjualan</p>
+                    <h3 class="text-xl font-bold text-primary">Rp {{ number_format($myTotalSales, 0, ',', '.') }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-primary">
+                    <i class='bx bx-line-chart text-xl'></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Transaksi</p>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ $myTotalTransactions }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-500">
+                    <i class='bx bx-history text-xl'></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Low Stock Alert for View Only Mode --}}
+    <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+            <h3 class="font-bold text-base text-slate-800 dark:text-white flex items-center gap-2">
+                <i class='bx bx-error-circle text-rose-500'></i> Stok Menipis
+            </h3>
+        </div>
+        <div class="divide-y divide-slate-100 dark:divide-slate-700">
+            @forelse($this->lowStockProducts as $product)
+                <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-sm">
+                                {{ $product->category?->icon ?? '📦' }}
+                            </div>
+                            <div>
+                                <h6 class="text-sm font-semibold text-slate-800 dark:text-white">{{ $product->name }}</h6>
+                                <p class="text-[10px] text-slate-400">{{ $product->category?->name ?? '-' }}</p>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold {{ $product->stock <= 5 ? 'text-rose-500' : 'text-amber-500' }}">
+                            Sisa {{ $product->stock }}
+                        </span>
+                    </div>
+                </div>
+            @empty
+                <div class="p-8 text-center text-slate-400">
+                    <i class='bx bx-check-circle text-4xl text-emerald-500'></i>
+                    <p class="text-sm mt-2">Semua stok aman!</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+    @else
     {{-- Quick Stats --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">

@@ -16,6 +16,7 @@ class Dashboard extends Component
     public $closeNote = '';
     public $showCheckInModal = false;
     public $showCheckOutModal = false;
+    public $viewOnlyMode = false;
 
     public function mount()
     {
@@ -29,6 +30,17 @@ class Dashboard extends Component
     public function getCurrentShiftProperty()
     {
         return CashierShift::getOpenShift(auth()->id());
+    }
+
+    public function skipCheckIn()
+    {
+        $this->viewOnlyMode = true;
+        $this->showCheckInModal = false;
+    }
+
+    public function openCheckInModal()
+    {
+        $this->showCheckInModal = true;
     }
 
     public function checkIn()
