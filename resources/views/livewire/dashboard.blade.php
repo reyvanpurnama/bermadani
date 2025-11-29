@@ -45,27 +45,96 @@
     {{-- Main Content Grid --}}
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div class="lg:col-span-8 flex flex-col gap-4 h-fit">
-            {{-- Revenue Chart Section --}}
-            <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
-                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+            {{-- Revenue Chart Section with Profitability Sidebar --}}
+            <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col md:flex-row overflow-hidden">
+                {{-- Chart Area --}}
+                <div class="flex-1 p-5 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 flex flex-col justify-between">
                     <div>
-                        <h3 class="font-bold text-base text-slate-800 dark:text-white">Ringkasan Pendapatan</h3>
-                        <p class="text-[11px] text-slate-500">Analisis Pemasukan vs Pengeluaran</p>
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
+                            <div>
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Ringkasan Pendapatan</h3>
+                                <p class="text-[11px] text-slate-500">Analisis Pemasukan vs Pengeluaran</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="flex gap-3 hidden sm:flex">
+                                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span class="text-[10px] text-slate-500 font-medium">Pemasukan</span></div>
+                                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300"></span><span class="text-[10px] text-slate-500 font-medium">Pengeluaran</span></div>
+                                </div>
+                                <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
+                                <div class="relative">
+                                    <select wire:model.live="filter" class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
+                                        <option value="today">Hari Ini</option>
+                                        <option value="week">Minggu Ini</option>
+                                        <option value="month">Bulan Ini</option>
+                                        <option value="year">Tahun Ini</option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class='bx bx-chevron-down text-sm'></i></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="relative">
-                        <select wire:model.live="filter" class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
-                            <option value="today">Hari Ini</option>
-                            <option value="week">Minggu Ini</option>
-                            <option value="month">Bulan Ini</option>
-                            <option value="year">Tahun Ini</option>
-                        </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class='bx bx-chevron-down text-sm'></i></div>
+
+                    <div class="flex-1 w-full min-h-[260px]">
+                        <div class="text-center py-12 text-slate-400">
+                            <i class='bx bx-line-chart text-5xl opacity-30'></i>
+                            <p class="text-xs mt-2">Chart akan ditampilkan di sini</p>
+                            <div class="mt-3 text-xs">
+                                <span class="font-bold text-slate-700 dark:text-white">Pemasukan:</span> 
+                                <span class="text-emerald-600 dark:text-emerald-400 font-bold">Rp {{ number_format($this->totalSales, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="text-center py-20 text-slate-400">
-                    <i class='bx bx-line-chart text-6xl'></i>
-                    <p class="text-sm mt-2">Chart akan ditampilkan di sini</p>
-                    <p class="text-xs mt-1">Pemasukan: Rp {{ number_format($this->totalSales, 0, ',', '.') }}</p>
+
+                {{-- Profitability Sidebar --}}
+                <div class="w-full md:w-[260px] p-5 flex flex-col justify-between bg-slate-50/50 dark:bg-slate-800/30 border-l border-slate-100 dark:border-slate-700">
+                    <div class="mb-2">
+                        <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Profitabilitas</h3>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Margin Bersih vs Kotor</p>
+                    </div>
+
+                    <div class="bg-emerald-50/80 dark:bg-emerald-500/10 rounded-xl p-4 border border-emerald-100 dark:border-emerald-500/20 relative overflow-hidden group">
+                        <div class="absolute -right-3 -bottom-3 text-emerald-500/10 dark:text-emerald-400/10 text-6xl group-hover:scale-110 transition-transform duration-500 pointer-events-none">
+                            <i class='bx bx-wallet'></i>
+                        </div>
+                        <p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">Laba Bersih Saat Ini</p>
+                        
+                        <h2 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight relative z-10">
+                            Rp {{ number_format($this->totalSales * 0.27, 0, ',', '.') }}
+                        </h2>
+                        
+                        <div class="flex items-center gap-2 mt-2 relative z-10">
+                            <div class="flex items-center justify-center bg-emerald-500 text-white rounded-full w-4 h-4 shadow-sm shadow-emerald-500/30">
+                                <i class='bx bx-trending-up text-[10px]'></i>
+                            </div>
+                            <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+5.2%</span>
+                            <span class="text-[10px] text-slate-400">vs periode lalu</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 mt-4">
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Margin Kotor</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">70%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
+                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: 70%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Beban Operasional</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">30%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
+                                <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: 30%"></div>
+                            </div>
+                        </div>
+
+                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih setelah pajak & beban.</p>
+                    </div>
                 </div>
             </div>
 

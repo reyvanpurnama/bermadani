@@ -44,7 +44,7 @@
     <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden opacity-0 transition-opacity duration-300 backdrop-blur-sm"></div>
     <div id="sidebar-container"></div>
 
-    <div id="main-content" class="md:ml-[180px] min-h-screen flex flex-col transition-all duration-300">
+    <div id="main-content-wrapper" class="md:ml-64 min-h-screen flex flex-col transition-all duration-300">
         
         <div id="navbar-container"></div>
 
@@ -215,7 +215,53 @@
     </div>
 
     <script>
-        // --- COMPONENT LOADER ---
+        // Desktop Sidebar Collapse Logic
+        const sidebarCollapseDesktop = document.getElementById('sidebar-collapse-desktop');
+        const mainContentWrapper = document.getElementById('main-content-wrapper');
+        const sidebarTextElements = document.querySelectorAll('.sidebar-text');
+        
+        function toggleDesktopSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const isCollapsed = sidebar.classList.contains('w-20');
+            
+            if (isCollapsed) {
+                // Expand
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                mainContentWrapper.classList.remove('md:ml-20');
+                mainContentWrapper.classList.add('md:ml-64');
+                
+                // Show text with delay for smooth transition
+                setTimeout(() => {
+                    sidebarTextElements.forEach(el => {
+                        el.classList.remove('opacity-0', 'hidden');
+                    });
+                }, 150);
+                
+                // Reset button animation
+                sidebarCollapseDesktop.classList.remove('active');
+            } else {
+                // Collapse
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20');
+                mainContentWrapper.classList.remove('md:ml-64');
+                mainContentWrapper.classList.add('md:ml-20');
+                
+                // Hide text immediately
+                sidebarTextElements.forEach(el => {
+                    el.classList.add('opacity-0', 'hidden');
+                });
+                
+                // Trigger button animation
+                sidebarCollapseDesktop.classList.add('active');
+            }
+        }
+
+        if (sidebarCollapseDesktop) {
+            sidebarCollapseDesktop.addEventListener('click', toggleDesktopSidebar);
+        }
+
+        // Sidebar Toggle Logic
         async function loadComponents() {
             try {
                 const sidebarRes = await fetch('../components/sidebar.html');
