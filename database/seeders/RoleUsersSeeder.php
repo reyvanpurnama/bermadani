@@ -17,48 +17,20 @@ class RoleUsersSeeder extends Seeder
         // Delete existing users (truncate gak bisa karena FK)
         User::query()->delete();
 
-        // Create users for each role
+        // Create users for production
         $users = [
             [
-                'name' => 'Super Admin',
-                'email' => 'superadmin@test.com',
+                'name' => 'Ridlo Abdillah',
+                'email' => 'ridloabdillah@bermadaniumbandung.id',
                 'password' => Hash::make('password'),
                 'role' => 'SUPER_ADMIN',
                 'isActive' => true,
             ],
             [
-                'name' => 'Admin',
-                'email' => 'admin@test.com',
-                'password' => Hash::make('password'),
-                'role' => 'ADMIN',
-                'isActive' => true,
-            ],
-            [
-                'name' => 'Kasir',
-                'email' => 'kasir@test.com',
-                'password' => Hash::make('password'),
-                'role' => 'KASIR',
-                'isActive' => true,
-            ],
-            [
                 'name' => 'Developer',
-                'email' => 'developer@test.com',
+                'email' => 'bermadani@dev.com',
                 'password' => Hash::make('password'),
                 'role' => 'DEVELOPER',
-                'isActive' => true,
-            ],
-            [
-                'name' => 'Supplier Test',
-                'email' => 'supplier@test.com',
-                'password' => Hash::make('password'),
-                'role' => 'SUPPLIER',
-                'isActive' => true,
-            ],
-            [
-                'name' => 'Member User',
-                'email' => 'user@test.com',
-                'password' => Hash::make('password'),
-                'role' => 'USER',
                 'isActive' => true,
             ],
         ];
@@ -67,16 +39,12 @@ class RoleUsersSeeder extends Seeder
             User::create($userData);
         }
 
-        $this->command->info('✅ Created 6 users (one per role)');
+        $this->command->info('✅ Created 2 users');
         $this->command->table(
             ['Role', 'Email', 'Password'],
             [
-                ['SUPER_ADMIN', 'superadmin@test.com', 'password'],
-                ['ADMIN', 'admin@test.com', 'password'],
-                ['KASIR', 'kasir@test.com', 'password'],
-                ['DEVELOPER', 'developer@test.com', 'password'],
-                ['SUPPLIER', 'supplier@test.com', 'password'],
-                ['USER', 'user@test.com', 'password'],
+                ['SUPER_ADMIN', 'ridloabdillah@bermadaniumbandung.id', 'password'],
+                ['DEVELOPER', 'bermadani@dev.com', 'password'],
             ]
         );
     }
