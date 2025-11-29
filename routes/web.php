@@ -28,6 +28,13 @@ Route::middleware('guest')->group(function () {
         
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
             request()->session()->regenerate();
+            
+            // Redirect based on role
+            $user = Auth::user();
+            if ($user->isKasir()) {
+                return redirect()->route('kasir.dashboard');
+            }
+            
             return redirect()->intended('/admin');
         }
         
@@ -121,6 +128,27 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     
     // Receipt
     Route::get('/transaction/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');
+});
+
+// Kasir Routes - Protected
+Route::middleware(['auth'])->prefix('kasir')->group(function () {
+    // Kasir Dashboard
+    Route::get('/', App\Livewire\Kasir\Dashboard::class)->name('kasir.dashboard');
+    
+    // POS Access for Kasir
+    Route::get('/pos', function () {
+        return view('admin.pos');
+    })->name('kasir.pos');
+    
+    // My Transactions
+    Route::get('/transaksi', function () {
+        return view('admin.transactions.index');
+    })->name('kasir.transactions');
+    
+    // Transaction Detail
+    Route::get('/transaksi/{id}', function ($id) {
+        return view('admin.transactions.detail', ['transactionId' => $id]);
+    })->name('kasir.transaction.detail');
 });
 
 // Keep old /pos route for backward compatibility
