@@ -51,10 +51,19 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.pos');
     })->name('admin.pos');
     
-    // Products / Inventory
-    Route::get('/products', function () {
-        return view('admin.placeholder', ['title' => 'Inventaris Produk']);
+    // Inventaris / Products
+    Route::get('/inventaris', function () {
+        return view('admin.products.index');
     })->name('admin.products');
+    Route::get('/inventaris/tambah', function () {
+        return view('admin.products.create');
+    })->name('admin.products.create');
+    Route::post('/inventaris', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
+    Route::get('/inventaris/{id}/edit', function ($id) {
+        return view('admin.products.edit', ['productId' => $id]);
+    })->name('admin.products.edit');
+    Route::put('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('admin.products.update');
+    Route::delete('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('admin.products.destroy');
     
     // Categories
     Route::get('/categories', function () {
