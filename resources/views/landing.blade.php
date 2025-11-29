@@ -103,11 +103,11 @@
                         <div class="flex justify-between items-end mt-4">
                             <div>
                                 <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Pemegang Kartu</p>
-                                <p class="font-bold uppercase tracking-wide text-sm sm:text-base">Alexander Morgan</p>
+                                <p class="font-bold uppercase tracking-wide text-sm sm:text-base">Aditya Pratama</p>
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>
-                                <span class="font-bold italic text-sm">NEXUS</span>
+                                <span class="font-bold italic text-sm">BERMADANI</span>
                             </div>
                         </div>
                     </div>
@@ -175,7 +175,7 @@
                 <div class="w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center text-slate-500 dark:text-slate-300">
                     <i class='bx bxs-cube-alt text-xs'></i>
                 </div>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Bermadani System</span>
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Bermadani</span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Koperasi & Retail Management System.</p>
         </div>

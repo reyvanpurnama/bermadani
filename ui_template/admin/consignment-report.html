@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Konsinyasi - Nexus Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: '#4F46E5', 
+                        secondary: '#F8FAFC', 
+                        darkBg: '#0f172a',
+                        darkCard: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .apexcharts-tooltip { z-index: 100 !important; }
+    </style>
+</head>
+<body class="bg-secondary text-slate-800 antialiased dark:bg-darkBg dark:text-slate-200 transition-colors duration-300">
+
+<aside class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-64 border-r border-slate-200 dark:border-slate-700 hidden md:flex flex-col z-30 transition-all duration-300">
+    <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                <i class='bx bxs-cube-alt text-xl'></i>
+            </div>
+            <span class="text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-none">Bermadani <span class="text-primary">Admin</span></span>
+        </div>
+    </div>
+
+    <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+        <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-2 opacity-80">Main</p>
+        <a href="dashboard-basic.html" class="flex items-center px-4 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400 rounded-xl transition-all group">
+            <i class='bx bxs-dashboard text-lg mr-3 opacity-70 group-hover:opacity-100 transition-opacity'></i> <span class="text-sm font-medium">Dashboard</span>
+        </a>
+        
+        <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80">Apps</p>
+        <a href="pos.html" class="flex items-center px-4 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400 rounded-xl transition-all group">
+            <i class='bx bx-desktop text-lg mr-3 opacity-70 group-hover:opacity-100 transition-opacity'></i> <span class="text-sm font-medium">POS System</span>
+        </a>
+        <a href="inventory.html" class="flex items-center px-4 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400 rounded-xl transition-all group">
+            <i class='bx bx-package text-lg mr-3 opacity-70 group-hover:opacity-100 transition-opacity'></i> <span class="text-sm font-medium">Inventory</span>
+        </a>
+
+        <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80">Konsinyasi</p>
+        
+        <a href="consignment-batches.html" class="flex items-center px-4 py-2.5 text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400 rounded-xl transition-all group">
+            <i class='bx bx-notepad text-lg mr-3 opacity-70 group-hover:opacity-100 transition-opacity'></i> <span class="text-sm font-medium">Daftar Batch</span>
+        </a>
+        <a href="consignment-report.html" class="flex items-center px-4 py-2.5 bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 rounded-xl transition-all group shadow-sm shadow-indigo-100 dark:shadow-none">
+            <i class='bx bx-file text-lg mr-3 opacity-100'></i> <span class="text-sm font-semibold">Laporan</span>
+        </a>
+    </nav>
+
+    <div class="p-4 border-t border-slate-100 dark:border-slate-700">
+        <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer group">
+            <img src="https://i.pravatar.cc/150?img=12" alt="User" class="w-9 h-9 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-600">
+            <div class="flex-1 overflow-hidden">
+                <h4 class="text-sm font-semibold text-slate-800 dark:text-white truncate">Alex M.</h4>
+                <p class="text-[10px] text-slate-400 truncate">Administrator</p>
+            </div>
+            <i class='bx bx-log-out text-slate-400 group-hover:text-rose-500 transition-colors'></i>
+        </div>
+    </div>
+</aside>
+
+<div class="md:ml-64 min-h-screen flex flex-col transition-all duration-300">
+    
+    <header class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors duration-300">
+        <div>
+            <h1 class="text-[14px] font-bold text-slate-800 dark:text-white">Laporan Mitra Supplier</h1>
+            <p class="text-[10px] text-slate-500">Evaluasi performa konsinyasi</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="theme-toggle" class="w-[34px] h-[34px] flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all">
+                <i id="theme-icon" class='bx bx-moon text-[20px]'></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl"><i class='bx bx-user-voice'></i></div>
+                <div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Mitra</p><h4 class="text-lg font-bold text-slate-800 dark:text-white">12 Aktif</h4></div>
+            </div>
+            
+            <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Omzet Konsinyasi</p>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Rp 8.500.000</h3>
+            </div>
+
+            <div class="bg-indigo-600 p-4 rounded-xl shadow-lg shadow-indigo-500/20 text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-1">Pendapatan Fee</p>
+                    <h3 class="text-xl font-bold">Rp 850.000</h3>
+                    <p class="text-[10px] text-indigo-100 mt-1">Keuntungan Koperasi (10%)</p>
+                </div>
+                <i class='bx bxs-bank absolute -bottom-4 -right-4 text-6xl text-white opacity-10'></i>
+            </div>
+
+            <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border-l-4 border-l-amber-400 border-y border-r border-slate-100 dark:border-slate-700">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Hutang ke Mitra</p>
+                <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">Rp 2.1 Jt</h3>
+                <p class="text-[10px] text-slate-400 mt-1">Belum settlement</p>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-[13px] text-slate-800 dark:text-white">Top 5 Mitra (Berdasarkan Omzet)</h3>
+                <select class="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[10px] rounded px-2 py-1 outline-none text-slate-700 dark:text-white">
+                    <option>Bulan Ini</option>
+                    <option>Tahun Ini</option>
+                </select>
+            </div>
+            <div id="supplierChart" class="w-full h-[300px]"></div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+            <div class="p-5 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-[13px] text-slate-800 dark:text-white">Rincian Performa Mitra</h3>
+                <button class="text-[11px] text-primary font-bold hover:underline flex items-center gap-1"><i class='bx bx-download'></i> Export Excel</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                    <thead class="bg-slate-50 dark:bg-slate-800/50 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-widest">
+                        <tr>
+                            <th class="px-5 py-3">Nama Mitra</th>
+                            <th class="px-5 py-3 text-center">Produk Aktif</th>
+                            <th class="px-5 py-3 text-center">Terjual (Qty)</th>
+                            <th class="px-5 py-3 text-center">Sell-through Rate</th>
+                            <th class="px-5 py-3 text-right">Total Omzet</th>
+                            <th class="px-5 py-3 text-right">Fee Koperasi</th>
+                            <th class="px-5 py-3 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[12px]">
+                        
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                            <td class="px-5 py-3 font-medium text-slate-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold">D</div>
+                                    Dani (Mahasiswa)
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-center">8 SKU</td>
+                            <td class="px-5 py-3 text-center font-bold text-emerald-600">845</td>
+                            <td class="px-5 py-3 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <span class="text-[11px] font-bold">85%</span>
+                                    <div class="w-16 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full"><div class="bg-emerald-500 h-1.5 rounded-full" style="width: 85%"></div></div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-right font-bold text-slate-800 dark:text-white">Rp 4.200.000</td>
+                            <td class="px-5 py-3 text-right font-bold text-indigo-600 dark:text-indigo-400">Rp 420.000</td>
+                            <td class="px-5 py-3 text-center">
+                                <button class="text-slate-400 hover:text-primary"><i class='bx bx-show text-lg'></i></button>
+                            </td>
+                        </tr>
+
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
+                            <td class="px-5 py-3 font-medium text-slate-800 dark:text-white">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-[10px] font-bold">K</div>
+                                    Kue Ibu Ani
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-center">3 SKU</td>
+                            <td class="px-5 py-3 text-center font-bold text-emerald-600">120</td>
+                            <td class="px-5 py-3 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <span class="text-[11px] font-bold">60%</span>
+                                    <div class="w-16 bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full"><div class="bg-blue-500 h-1.5 rounded-full" style="width: 60%"></div></div>
+                                </div>
+                            </td>
+                            <td class="px-5 py-3 text-right font-bold text-slate-800 dark:text-white">Rp 1.500.000</td>
+                            <td class="px-5 py-3 text-right font-bold text-indigo-600 dark:text-indigo-400">Rp 150.000</td>
+                            <td class="px-5 py-3 text-center">
+                                <button class="text-slate-400 hover:text-primary"><i class='bx bx-show text-lg'></i></button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const html = document.documentElement;
+    let isDark = false;
+
+    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        html.classList.add('dark'); themeIcon.classList.replace('bx-moon', 'bx-sun'); isDark = true;
+    }
+
+    themeToggleBtn.addEventListener('click', function() {
+        html.classList.toggle('dark');
+        isDark = html.classList.contains('dark');
+        themeIcon.classList.replace(isDark ? 'bx-moon' : 'bx-sun', isDark ? 'bx-sun' : 'bx-moon');
+        localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        updateCharts(isDark ? 'dark' : 'light');
+    });
+
+    // --- SUPPLIER CHART ---
+    const getChartColors = (theme) => ({
+        text: theme === 'dark' ? '#94a3b8' : '#64748b',
+        grid: theme === 'dark' ? '#334155' : '#f1f5f9',
+        tooltipTheme: theme === 'dark' ? 'dark' : 'light'
+    });
+
+    var optionsSupplier = {
+        series: [{ name: 'Omzet', data: [4200000, 1500000, 900000, 750000, 450000] }],
+        chart: { 
+            height: '100%', 
+            type: 'bar', 
+            toolbar: { show: false }, 
+            fontFamily: 'Inter',
+            foreColor: isDark ? '#94a3b8' : '#64748b'
+        },
+        colors: ['#4F46E5'], // Indigo
+        plotOptions: {
+            bar: { borderRadius: 4, horizontal: true, barHeight: '50%' } // Horizontal Bar
+        },
+        dataLabels: { enabled: false },
+        xaxis: { 
+            categories: ["Dani (Mhs)", "Kue Ibu Ani", "Roti Kampus", "Indofood", "Unilever"], 
+            axisBorder: { show: false }, 
+            axisTicks: { show: false },
+            labels: { formatter: (val) => { return (val/1000000).toFixed(1) + 'jt' } }
+        },
+        grid: { borderColor: isDark ? '#334155' : '#f1f5f9', strokeDashArray: 4 },
+        tooltip: { theme: isDark ? 'dark' : 'light', y: { formatter: function (val) { return "Rp " + val.toLocaleString('id-ID') } } }
+    };
+
+    var chartSupplier = new ApexCharts(document.querySelector("#supplierChart"), optionsSupplier);
+    chartSupplier.render();
+
+    function updateCharts(theme) {
+        const c = getChartColors(theme);
+        chartSupplier.updateOptions({ 
+            chart: { foreColor: c.text }, 
+            grid: { borderColor: c.grid }, 
+            tooltip: { theme: c.tooltipTheme } 
+        });
+    }
+</script>
+</body>
+</html>

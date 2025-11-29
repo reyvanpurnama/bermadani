@@ -66,19 +66,22 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::delete('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('admin.products.destroy');
     
     // Categories
-    Route::get('/categories', function () {
-        return view('admin.placeholder', ['title' => 'Kategori']);
+    Route::get('/kategori', function () {
+        return view('admin.categories.index');
     })->name('admin.categories');
     
-    // Members
+    // Transactions / Transaksi
+    Route::get('/transaksi', function () {
+        return view('admin.transactions.index');
+    })->name('admin.transactions');
+    Route::get('/transaksi/{id}', function ($id) {
+        return view('admin.transactions.detail', ['transactionId' => $id]);
+    })->name('transaksi.detail');
+    
+    // Members (not in MVP)
     Route::get('/members', function () {
         return view('admin.placeholder', ['title' => 'Anggota']);
     })->name('admin.members');
-    
-    // Transactions
-    Route::get('/transactions', function () {
-        return view('admin.placeholder', ['title' => 'Transaksi']);
-    })->name('admin.transactions');
     
     // Savings
     Route::get('/savings', function () {
