@@ -132,7 +132,7 @@
         }
 
         function toggleCollapse() {
-            const isCollapsed = sidebar?.classList.contains('w-[70px]');
+            const isCollapsed = sidebar?.classList.contains('w-20');
             const header = document.getElementById('sidebar-header');
             const navItems = document.querySelectorAll('.nav-item');
             const collapseContainer = document.getElementById('sidebar-collapse-desktop');
@@ -140,31 +140,36 @@
             const bottomBar = document.getElementById('pos-bottom-bar');
             
             if (isCollapsed) {
-                sidebar?.classList.replace('w-[70px]', 'w-64');
-                mainContent?.classList.replace('md:ml-[70px]', 'md:ml-64');
-                if(bottomBar) bottomBar.classList.replace('md:ml-[70px]', 'md:ml-64');
+                sidebar?.classList.remove('w-20');
+                sidebar?.classList.add('w-64');
+                mainContent?.classList.remove('md:ml-20');
+                mainContent?.classList.add('md:ml-64');
+                if(bottomBar) {
+                    bottomBar.classList.remove('md:ml-20');
+                    bottomBar.classList.add('md:ml-64');
+                }
                 
-                sidebarTexts.forEach(el => el.classList.remove('hidden'));
+                sidebarTexts.forEach(el => {
+                    el.classList.remove('hidden', 'opacity-0', 'w-0');
+                });
                 collapseIcon?.classList.remove('rotate-180');
-                
-                header?.classList.remove('justify-center');
-                navItems.forEach(el => el.classList.remove('justify-center'));
-                collapseContainer?.classList.remove('justify-center');
-                userProfile?.classList.remove('justify-center');
 
                 localStorage.setItem('sidebar-collapsed', 'false');
             } else {
-                sidebar?.classList.replace('w-64', 'w-[70px]');
-                mainContent?.classList.replace('md:ml-64', 'md:ml-[70px]');
-                if(bottomBar) bottomBar.classList.replace('md:ml-64', 'md:ml-[70px]');
+                sidebar?.classList.remove('w-64');
+                sidebar?.classList.add('w-20');
+                mainContent?.classList.remove('md:ml-64');
+                mainContent?.classList.add('md:ml-20');
+                if(bottomBar) {
+                    bottomBar.classList.remove('md:ml-64');
+                    bottomBar.classList.add('md:ml-20');
+                }
 
-                sidebarTexts.forEach(el => el.classList.add('hidden'));
+                sidebarTexts.forEach(el => {
+                    el.classList.add('opacity-0', 'w-0');
+                    setTimeout(() => el.classList.add('hidden'), 300);
+                });
                 collapseIcon?.classList.add('rotate-180');
-                
-                header?.classList.add('justify-center');
-                navItems.forEach(el => el.classList.add('justify-center'));
-                collapseContainer?.classList.add('justify-center');
-                userProfile?.classList.add('justify-center');
 
                 localStorage.setItem('sidebar-collapsed', 'true');
             }
@@ -173,18 +178,20 @@
         // Init Sidebar State
         const savedState = localStorage.getItem('sidebar-collapsed');
         if (savedState === 'true') {
-            sidebar?.classList.replace('w-64', 'w-[70px]');
-            mainContent?.classList.replace('md:ml-64', 'md:ml-[70px]');
+            sidebar?.classList.remove('w-64');
+            sidebar?.classList.add('w-20');
+            mainContent?.classList.remove('md:ml-64');
+            mainContent?.classList.add('md:ml-20');
             const bottomBar = document.getElementById('pos-bottom-bar');
-            if(bottomBar) bottomBar.classList.replace('md:ml-64', 'md:ml-[70px]');
+            if(bottomBar) {
+                bottomBar.classList.remove('md:ml-64');
+                bottomBar.classList.add('md:ml-20');
+            }
 
-            sidebarTexts.forEach(el => el.classList.add('hidden'));
+            sidebarTexts.forEach(el => {
+                el.classList.add('opacity-0', 'w-0', 'hidden');
+            });
             collapseIcon?.classList.add('rotate-180');
-            
-            document.getElementById('sidebar-header')?.classList.add('justify-center');
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.add('justify-center'));
-            document.getElementById('sidebar-collapse-desktop')?.classList.add('justify-center');
-            document.getElementById('user-profile')?.classList.add('justify-center');
         }
 
         toggleBtn?.addEventListener('click', openSidebar);
