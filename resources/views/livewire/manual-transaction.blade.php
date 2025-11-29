@@ -100,6 +100,17 @@
                     {{-- Proof File --}}
                     <div>
                         <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Bukti Struk / Foto (Opsional)</label>
+                        
+                        @if($proofFile)
+                            {{-- Preview --}}
+                            <div class="mb-3 relative">
+                                <img src="{{ $proofFile->temporaryUrl() }}" class="w-full h-40 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                <button type="button" wire:click="$set('proofFile', null)" class="absolute top-2 right-2 bg-rose-500 hover:bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
+                                    <i class='bx bx-x text-lg'></i>
+                                </button>
+                            </div>
+                        @endif
+
                         <div class="flex items-center justify-center w-full">
                             <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:hover:border-slate-500 transition-colors">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -111,12 +122,15 @@
                                             <span class="font-semibold">Klik upload</span> atau drag file
                                         @endif
                                     </p>
+                                    <p class="text-[10px] text-slate-400 mt-1">PNG, JPG (Max 2MB)</p>
                                 </div>
                                 <input id="dropzone-file" type="file" wire:model="proofFile" class="hidden" accept="image/*" />
                             </label>
                         </div>
                         @error('proofFile') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                        <div wire:loading wire:target="proofFile" class="text-xs text-slate-500 mt-1">Uploading...</div>
+                        <div wire:loading wire:target="proofFile" class="text-xs text-indigo-500 mt-1 flex items-center gap-1">
+                            <i class='bx bx-loader-alt bx-spin'></i> Uploading...
+                        </div>
                     </div>
 
                 </div>
@@ -153,7 +167,19 @@
                     @forelse($this->recentTransactions as $trx)
                         <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                             <div class="flex justify-between items-start mb-1">
-                                <span class="text-[12px] font-bold text-slate-800 dark:text-white">{{ $trx->category }}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[12px] font-bold text-slate-800 dark:text-white">{{ $trx->category }}</span>
+                                    @if($trx->proofFile)
+                                        <button 
+                                            type="button" 
+                                            onclick="showProof('{{ asset('storage/' . $trx->proofFile) }}')"
+                                            class="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center gap-1"
+                                            title="Lihat bukti"
+                                        >
+                                            <i class='bx bx-image-alt'></i>
+                                        </button>
+                                    @endif
+                                </div>
                                 <span class="text-[10px] text-slate-400">{{ $trx->transactionDate->diffForHumans() }}</span>
                             </div>
                             <div class="flex justify-between items-center">
@@ -175,4 +201,34 @@
         </div>
 
     </div>
+
+    {{-- Modal Preview Bukti --}}
+    <div id="proofModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeProof()">
+        <div class="relative max-w-4xl w-full" onclick="event.stopPropagation()">
+            <button onclick="closeProof()" class="absolute -top-10 right-0 text-white hover:text-rose-400 transition-colors">
+                <i class='bx bx-x text-4xl'></i>
+            </button>
+            <img id="proofImage" src="" class="w-full h-auto max-h-[90vh] object-contain rounded-xl shadow-2xl">
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        function showProof(url) {
+            document.getElementById('proofImage').src = url;
+            document.getElementById('proofModal').classList.remove('hidden');
+            document.getElementById('proofModal').classList.add('flex');
+        }
+
+        function closeProof() {
+            document.getElementById('proofModal').classList.add('hidden');
+            document.getElementById('proofModal').classList.remove('flex');
+        }
+
+        // Close with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeProof();
+        });
+    </script>
+    @endpush
 </div>
