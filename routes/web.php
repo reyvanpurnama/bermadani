@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ActivityLog;
 
 // Landing Page
 Route::get('/', function () {
@@ -29,10 +30,13 @@ Route::middleware('guest')->group(function () {
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
             request()->session()->regenerate();
             
+            // Log login activity
+            ActivityLog::logLogin();
+            
             // Redirect based on role
             $user = Auth::user();
             if ($user->isKasir()) {
-                return redirect()->route('kasir.dashboard');
+                return redirect()->route('kasir.pos');
             }
             
             return redirect()->intended('/admin');
@@ -45,6 +49,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', function () {
+    // Log logout activity before logout
+    ActivityLog::logLogout();
+    
     Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
@@ -125,6 +132,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/settings', function () {
         return view('admin.placeholder', ['title' => 'Pengaturan']);
     })->name('admin.settings');
+    
+    // Activity Logs (Super Admin / Developer only)
+    Route::get('/activity-logs', function () {
+        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper()) {
+            abort(403);
+        }
+        return view('admin.activity-logs');
+    })->name('admin.activity-logs');
     
     // Receipt
     Route::get('/transaction/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');

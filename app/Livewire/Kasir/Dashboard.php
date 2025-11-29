@@ -11,16 +11,16 @@ class Dashboard extends Component
 {
     public function getTodaySalesProperty()
     {
+        // TODO: Filter by user_id once column is added to transactions table
         return Transaction::whereDate('date', today())
             ->where('status', 'COMPLETED')
-            ->where('userId', auth()->id())
             ->sum('totalAmount');
     }
 
     public function getTodayTransactionsCountProperty()
     {
+        // TODO: Filter by user_id once column is added to transactions table
         return Transaction::whereDate('date', today())
-            ->where('userId', auth()->id())
             ->count();
     }
 
@@ -35,8 +35,8 @@ class Dashboard extends Component
 
     public function getRecentTransactionsProperty()
     {
+        // TODO: Filter by user_id once column is added to transactions table
         return Transaction::with('member')
-            ->where('userId', auth()->id())
             ->latest('date')
             ->latest('id')
             ->limit(5)

@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\Member;
 use App\Models\Product;
@@ -182,6 +183,21 @@ class PosCustom extends Component
             }
 
             DB::commit();
+
+            // Log activity for POS transaction
+            ActivityLog::log(
+                'CREATE',
+                'Transaction',
+                "Transaksi POS {$invoiceNumber} sebesar Rp " . number_format($transaction->totalAmount, 0, ',', '.'),
+                $transaction,
+                null,
+                [
+                    'invoiceNumber' => $invoiceNumber,
+                    'totalAmount' => $transaction->totalAmount,
+                    'paymentMethod' => $transaction->paymentMethod,
+                    'itemCount' => count($this->cart),
+                ]
+            );
 
             $this->lastInvoice = $invoiceNumber;
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Transaksi berhasil!']);

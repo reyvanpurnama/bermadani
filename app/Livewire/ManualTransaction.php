@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ActivityLog;
 use App\Models\FinancialTransaction;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -63,7 +64,7 @@ class ManualTransaction extends Component
             $proofPath = $this->proofFile->store('financial-proofs', 'public');
         }
 
-        FinancialTransaction::create([
+        $transaction = FinancialTransaction::create([
             'type' => $this->type,
             'amount' => $this->amount,
             'category' => $this->category,
@@ -72,6 +73,17 @@ class ManualTransaction extends Component
             'proofFile' => $proofPath,
             'userId' => auth()->id(),
         ]);
+
+        // Log activity
+        $typeLabel = $this->type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran';
+        ActivityLog::log(
+            'CREATE',
+            'ManualTransaction',
+            "{$typeLabel} {$this->category} sebesar Rp " . number_format($this->amount, 0, ',', '.'),
+            $transaction,
+            null,
+            $transaction->toArray()
+        );
 
         session()->flash('success', 'Transaksi berhasil disimpan!');
         
