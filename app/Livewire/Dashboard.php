@@ -53,23 +53,14 @@ class Dashboard extends Component
     // Profitability Metrics
     public function getGrossProfitProperty()
     {
-        $query = Transaction::where('type', 'SALE')
-            ->where('status', 'COMPLETED')
-            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactionId');
-        
-        $grossProfit = match($this->filter) {
-            'today' => $query->whereDate('transactions.date', today())->sum('transaction_items.grossProfit'),
-            'week' => $query->whereBetween('transactions.date', [now()->startOfWeek(), now()->endOfWeek()])->sum('transaction_items.grossProfit'),
-            'month' => $query->whereMonth('transactions.date', now()->month)->whereYear('transactions.date', now()->year)->sum('transaction_items.grossProfit'),
-            'year' => $query->whereYear('transactions.date', now()->year)->sum('transaction_items.grossProfit'),
-            default => $query->whereDate('transactions.date', today())->sum('transaction_items.grossProfit'),
-        };
-
-        return $grossProfit ?? 0;
+        // Untuk produk TOKO (beli putus), penjualan = laba kotor
+        // Karena barang dianggap gratis/modal awal, bukan pengeluaran riil saat transaksi
+        return $this->totalSales;
     }
 
     public function getTotalCogsProperty()
     {
+        // COGS hanya untuk tracking margin, bukan pengeluaran riil
         $query = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactionId');
@@ -131,17 +122,29 @@ class Dashboard extends Component
         [$currentStart, $currentEnd] = $this->getCurrentPeriodRange();
         [$previousStart, $previousEnd] = $this->getPreviousPeriodRange();
 
-        $currentProfit = Transaction::where('type', 'SALE')
+        // Current net profit (sales - expenses)
+        $currentSales = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->whereBetween('date', [$currentStart, $currentEnd])
-            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactionId')
-            ->sum('transaction_items.grossProfit') ?? 0;
+            ->sum('totalAmount') ?? 0;
+            
+        $currentExpenses = FinancialTransaction::expense()
+            ->whereBetween('transactionDate', [$currentStart, $currentEnd])
+            ->sum('amount') ?? 0;
+            
+        $currentProfit = $currentSales - $currentExpenses;
 
-        $previousProfit = Transaction::where('type', 'SALE')
+        // Previous net profit (sales - expenses)
+        $previousSales = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->whereBetween('date', [$previousStart, $previousEnd])
-            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactionId')
-            ->sum('transaction_items.grossProfit') ?? 0;
+            ->sum('totalAmount') ?? 0;
+            
+        $previousExpenses = FinancialTransaction::expense()
+            ->whereBetween('transactionDate', [$previousStart, $previousEnd])
+            ->sum('amount') ?? 0;
+            
+        $previousProfit = $previousSales - $previousExpenses;
 
         if ($previousProfit == 0) return 0;
 
