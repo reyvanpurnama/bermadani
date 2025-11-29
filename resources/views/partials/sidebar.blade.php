@@ -1,4 +1,4 @@
-<aside id="main-sidebar" class="fixed inset-y-0 left-0 bg-card dark:bg-darkCard w-64 border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden group/sidebar">
+<aside id="main-sidebar" class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-64 border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden group/sidebar">
     <div id="sidebar-header" class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700 shrink-0 transition-all duration-300">
         <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap">
             <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white shadow-lg shadow-indigo-500/30 shrink-0">

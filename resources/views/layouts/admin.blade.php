@@ -57,7 +57,7 @@
     @include('partials.sidebar')
 
     {{-- Main Content --}}
-    <div id="main-content" class="md:ml-[180px] flex-1 flex flex-col h-full min-w-0 relative transition-all duration-300">
+    <div id="main-content" class="md:ml-64 flex-1 flex flex-col h-full min-w-0 relative transition-all duration-300">
         {{-- Top Navbar --}}
         @hasSection('hide-navbar')
         @else
@@ -140,9 +140,9 @@
             const bottomBar = document.getElementById('pos-bottom-bar');
             
             if (isCollapsed) {
-                sidebar?.classList.replace('w-[70px]', 'w-[180px]');
-                mainContent?.classList.replace('md:ml-[70px]', 'md:ml-[180px]');
-                if(bottomBar) bottomBar.classList.replace('md:ml-[70px]', 'md:ml-[180px]');
+                sidebar?.classList.replace('w-[70px]', 'w-64');
+                mainContent?.classList.replace('md:ml-[70px]', 'md:ml-64');
+                if(bottomBar) bottomBar.classList.replace('md:ml-[70px]', 'md:ml-64');
                 
                 sidebarTexts.forEach(el => el.classList.remove('hidden'));
                 collapseIcon?.classList.remove('rotate-180');
@@ -154,9 +154,9 @@
 
                 localStorage.setItem('sidebar-collapsed', 'false');
             } else {
-                sidebar?.classList.replace('w-[180px]', 'w-[70px]');
-                mainContent?.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
-                if(bottomBar) bottomBar.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+                sidebar?.classList.replace('w-64', 'w-[70px]');
+                mainContent?.classList.replace('md:ml-64', 'md:ml-[70px]');
+                if(bottomBar) bottomBar.classList.replace('md:ml-64', 'md:ml-[70px]');
 
                 sidebarTexts.forEach(el => el.classList.add('hidden'));
                 collapseIcon?.classList.add('rotate-180');
@@ -173,10 +173,10 @@
         // Init Sidebar State
         const savedState = localStorage.getItem('sidebar-collapsed');
         if (savedState === 'true') {
-            sidebar?.classList.replace('w-[180px]', 'w-[70px]');
-            mainContent?.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+            sidebar?.classList.replace('w-64', 'w-[70px]');
+            mainContent?.classList.replace('md:ml-64', 'md:ml-[70px]');
             const bottomBar = document.getElementById('pos-bottom-bar');
-            if(bottomBar) bottomBar.classList.replace('md:ml-[180px]', 'md:ml-[70px]');
+            if(bottomBar) bottomBar.classList.replace('md:ml-64', 'md:ml-[70px]');
 
             sidebarTexts.forEach(el => el.classList.add('hidden'));
             collapseIcon?.classList.add('rotate-180');
