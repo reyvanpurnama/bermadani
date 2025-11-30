@@ -3,7 +3,7 @@
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-xl font-bold text-slate-800 dark:text-white">Activity Logs</h1>
-            <p class="text-sm text-slate-500">Riwayat aktivitas admin, super admin, dan developer</p>
+            <p class="text-sm text-slate-500">Riwayat aktivitas Pengguna</p>
         </div>
     </div>
 
