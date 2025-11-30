@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ActivityLog;
 
@@ -11,9 +12,8 @@ Route::get('/', function () {
 })->name('home');
 
 // Supplier Registration (Public)
-Route::get('/daftar-supplier', function () {
-    return view('supplier.register');
-})->name('supplier.register');
+Route::get('/daftar-supplier', [SupplierController::class, 'showRegistrationForm'])->name('supplier.register');
+Route::post('/daftar-supplier', [SupplierController::class, 'register'])->name('supplier.register.store');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -60,6 +60,60 @@ Route::post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect()->route('home');
 })->name('logout');
+
+// Supplier Auth Routes
+Route::middleware('guest')->prefix('supplier')->group(function () {
+    Route::get('/login', [App\Http\Controllers\Auth\SupplierAuthController::class, 'showLoginForm'])->name('supplier.login');
+    Route::post('/login', [App\Http\Controllers\Auth\SupplierAuthController::class, 'login']);
+});
+
+// Supplier Portal Routes - Protected
+Route::middleware(['auth'])->prefix('supplier')->group(function () {
+    Route::get('/dashboard', function () {
+        // Check if user is supplier
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.dashboard');
+    })->name('supplier.dashboard');
+    
+    Route::get('/products', function () {
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.products.index');
+    })->name('supplier.products');
+    
+    Route::get('/products/submit', function () {
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.products.submit');
+    })->name('supplier.products.submit');
+    
+    Route::get('/sales', function () {
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.sales');
+    })->name('supplier.sales');
+    
+    Route::get('/restock', function () {
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.restock');
+    })->name('supplier.restock');
+    
+    Route::get('/profile', function () {
+        if (auth()->user()->role !== 'SUPPLIER') {
+            abort(403, 'Unauthorized');
+        }
+        return view('supplier.profile');
+    })->name('supplier.profile');
+    
+    Route::post('/logout', [App\Http\Controllers\Auth\SupplierAuthController::class, 'logout'])->name('supplier.logout');
+});
 
 // Admin Routes - Protected
 Route::middleware(['auth'])->prefix('admin')->group(function () {
@@ -129,10 +183,17 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.users.index');
     })->name('admin.users');
     
-    // Suppliers
+    // Suppliers Management
     Route::get('/suppliers', function () {
-        return view('admin.placeholder', ['title' => 'Supplier']);
+        return view('admin.suppliers.index');
     })->name('admin.suppliers');
+    Route::get('/suppliers/{id}', function ($id) {
+        return view('admin.suppliers.detail', ['supplierId' => $id]);
+    })->name('admin.suppliers.detail');
+    Route::post('/suppliers/{id}/approve', [SupplierController::class, 'approve'])->name('admin.suppliers.approve');
+    Route::post('/suppliers/{id}/reject', [SupplierController::class, 'reject'])->name('admin.suppliers.reject');
+    Route::post('/suppliers/{id}/suspend', [SupplierController::class, 'suspend'])->name('admin.suppliers.suspend');
+    Route::post('/suppliers/{id}/activate', [SupplierController::class, 'activate'])->name('admin.suppliers.activate');
     
     // Settings
     Route::get('/settings', function () {
