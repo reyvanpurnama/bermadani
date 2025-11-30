@@ -58,6 +58,10 @@
                 <i class='bx bx-category text-lg mr-3 {{ request()->routeIs('admin.categories*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
                 <span class="sidebar-text text-sm {{ request()->routeIs('admin.categories*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Kategori Produk</span>
             </a>
+            <a href="{{ route('admin.suppliers') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">
+                <i class='bx bx-store-alt text-lg mr-3 {{ request()->routeIs('admin.suppliers*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
+                <span class="sidebar-text text-sm {{ request()->routeIs('admin.suppliers*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Supplier</span>
+            </a>
 
             <p class="sidebar-text px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 mt-6 opacity-80 whitespace-nowrap transition-opacity duration-300">Reports</p>
             <a href="{{ route('admin.transactions') }}" class="nav-item flex items-center px-4 py-2.5 rounded-xl transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 hover:text-primary dark:hover:text-indigo-400' }}">

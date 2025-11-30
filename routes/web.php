@@ -68,47 +68,26 @@ Route::middleware('guest')->prefix('supplier')->group(function () {
 });
 
 // Supplier Portal Routes - Protected
-Route::middleware(['auth'])->prefix('supplier')->group(function () {
+Route::middleware(['auth:supplier'])->prefix('supplier')->group(function () {
     Route::get('/dashboard', function () {
-        // Check if user is supplier
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
         return view('supplier.dashboard');
     })->name('supplier.dashboard');
     
-    Route::get('/products', function () {
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
-        return view('supplier.products.index');
-    })->name('supplier.products');
+    // Product Management
+    Route::get('/products', [App\Http\Controllers\Supplier\SupplierProductController::class, 'index'])->name('supplier.products.index');
+    Route::get('/products/create', [App\Http\Controllers\Supplier\SupplierProductController::class, 'create'])->name('supplier.products.create');
+    Route::post('/products', [App\Http\Controllers\Supplier\SupplierProductController::class, 'store'])->name('supplier.products.store');
+    Route::get('/products/{product}/edit', [App\Http\Controllers\Supplier\SupplierProductController::class, 'edit'])->name('supplier.products.edit');
+    Route::put('/products/{product}', [App\Http\Controllers\Supplier\SupplierProductController::class, 'update'])->name('supplier.products.update');
+    Route::delete('/products/{product}', [App\Http\Controllers\Supplier\SupplierProductController::class, 'destroy'])->name('supplier.products.destroy');
     
-    Route::get('/products/submit', function () {
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
-        return view('supplier.products.submit');
-    })->name('supplier.products.submit');
-    
-    Route::get('/sales', function () {
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
-        return view('supplier.sales');
-    })->name('supplier.sales');
+    Route::get('/sales', [App\Http\Controllers\Supplier\SupplierSalesController::class, 'index'])->name('supplier.sales');
     
     Route::get('/restock', function () {
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
         return view('supplier.restock');
     })->name('supplier.restock');
     
     Route::get('/profile', function () {
-        if (auth()->user()->role !== 'SUPPLIER') {
-            abort(403, 'Unauthorized');
-        }
         return view('supplier.profile');
     })->name('supplier.profile');
     
