@@ -53,9 +53,23 @@ class Dashboard extends Component
     // Profitability Metrics
     public function getGrossProfitProperty()
     {
-        // Untuk produk TOKO (beli putus), penjualan = laba kotor
-        // Karena barang dianggap gratis/modal awal, bukan pengeluaran riil saat transaksi
-        return $this->totalSales;
+        // Margin Kotor = Penjualan POS + Omset Historis (dari transaksi manual)
+        return $this->totalSales + $this->historicalSales;
+    }
+
+    // Omset Penjualan Historis (dari transaksi manual)
+    public function getHistoricalSalesProperty()
+    {
+        $query = FinancialTransaction::income()
+            ->where('category', 'Omset Penjualan (Historis)');
+        
+        return match($this->filter) {
+            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
+            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
+            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
+            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            default => $query->whereDate('transactionDate', today())->sum('amount'),
+        };
     }
 
     public function getTotalCogsProperty()
@@ -102,6 +116,23 @@ class Dashboard extends Component
         return $expenses ?? 0;
     }
 
+    // Pemasukan Lain-lain (KECUALI Suntikan Modal & Omset Historis)
+    public function getOtherIncomeProperty()
+    {
+        $query = FinancialTransaction::income()
+            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)']);
+        
+        $income = match($this->filter) {
+            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
+            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
+            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
+            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            default => $query->whereDate('transactionDate', today())->sum('amount'),
+        };
+
+        return $income ?? 0;
+    }
+
     public function getOperatingMarginPercentProperty()
     {
         $sales = $this->totalSales;
@@ -113,7 +144,8 @@ class Dashboard extends Component
 
     public function getNetProfitProperty()
     {
-        return max(0, $this->grossProfit - $this->operatingExpenses);
+        // Laba Bersih = Margin Kotor + Pemasukan Lain-lain - Pengeluaran Operasional
+        return max(0, $this->grossProfit + $this->otherIncome - $this->operatingExpenses);
     }
 
     public function getProfitGrowthProperty()
@@ -122,33 +154,53 @@ class Dashboard extends Component
         [$currentStart, $currentEnd] = $this->getCurrentPeriodRange();
         [$previousStart, $previousEnd] = $this->getPreviousPeriodRange();
 
-        // Current net profit (sales - expenses)
+        // Current net profit (sales + historical + other income - expenses)
         $currentSales = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->whereBetween('date', [$currentStart, $currentEnd])
             ->sum('totalAmount') ?? 0;
+        
+        $currentHistorical = FinancialTransaction::income()
+            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereBetween('transactionDate', [$currentStart, $currentEnd])
+            ->sum('amount') ?? 0;
+        
+        $currentOtherIncome = FinancialTransaction::income()
+            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->whereBetween('transactionDate', [$currentStart, $currentEnd])
+            ->sum('amount') ?? 0;
             
         $currentExpenses = FinancialTransaction::expense()
             ->whereBetween('transactionDate', [$currentStart, $currentEnd])
             ->sum('amount') ?? 0;
             
-        $currentProfit = $currentSales - $currentExpenses;
+        $currentProfit = $currentSales + $currentHistorical + $currentOtherIncome - $currentExpenses;
 
-        // Previous net profit (sales - expenses)
+        // Previous net profit (sales + historical + other income - expenses)
         $previousSales = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->whereBetween('date', [$previousStart, $previousEnd])
             ->sum('totalAmount') ?? 0;
+        
+        $previousHistorical = FinancialTransaction::income()
+            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereBetween('transactionDate', [$previousStart, $previousEnd])
+            ->sum('amount') ?? 0;
+        
+        $previousOtherIncome = FinancialTransaction::income()
+            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->whereBetween('transactionDate', [$previousStart, $previousEnd])
+            ->sum('amount') ?? 0;
             
         $previousExpenses = FinancialTransaction::expense()
             ->whereBetween('transactionDate', [$previousStart, $previousEnd])
             ->sum('amount') ?? 0;
             
-        $previousProfit = $previousSales - $previousExpenses;
+        $previousProfit = $previousSales + $previousHistorical + $previousOtherIncome - $previousExpenses;
 
         if ($previousProfit == 0) return 0;
 
-        return round((($currentProfit - $previousProfit) / $previousProfit) * 100, 1);
+        return round((($currentProfit - $previousProfit) / abs($previousProfit)) * 100, 1);
     }
 
     public function getPreviousPeriodLabelProperty()
@@ -187,9 +239,15 @@ class Dashboard extends Component
     // ALL-TIME METRICS (untuk card atas)
     public function getAllTimeSalesProperty()
     {
-        return Transaction::where('type', 'SALE')
+        $posSales = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->sum('totalAmount');
+        
+        $historicalSales = FinancialTransaction::income()
+            ->where('category', 'Omset Penjualan (Historis)')
+            ->sum('amount');
+        
+        return $posSales + $historicalSales;
     }
 
     public function getAllTimeExpensesProperty()
@@ -197,9 +255,18 @@ class Dashboard extends Component
         return FinancialTransaction::expense()->sum('amount');
     }
 
+    // Pemasukan Lain-lain All-Time (KECUALI Suntikan Modal & Omset Historis)
+    public function getAllTimeOtherIncomeProperty()
+    {
+        return FinancialTransaction::income()
+            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->sum('amount');
+    }
+
     public function getAllTimeProfitProperty()
     {
-        return max(0, $this->allTimeSales - $this->allTimeExpenses);
+        // All-time profit = Sales + Other Income - Expenses
+        return max(0, $this->allTimeSales + $this->allTimeOtherIncome - $this->allTimeExpenses);
     }
 
     public function getFirstTransactionDateProperty()

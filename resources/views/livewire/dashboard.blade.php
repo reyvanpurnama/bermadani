@@ -158,13 +158,30 @@
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->grossProfit, 0, ',', '.') }}</p>
                         </div>
 
+                        @if($this->otherIncome > 0)
                         <div>
                             @php
-                                // Hitung persentase pengeluaran terhadap pemasukan
-                                // Jika tidak ada pemasukan tapi ada pengeluaran, tampilkan 100%
+                                $totalIncome = $this->grossProfit + $this->otherIncome;
+                                $otherIncomePercent = $totalIncome > 0 ? min(100, ($this->otherIncome / $totalIncome) * 100) : 0;
+                            @endphp
+                            <div class="flex justify-between items-end mb-1">
+                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Pemasukan Lain</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ number_format($otherIncomePercent, 1) }}%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
+                                <div class="bg-emerald-500 h-1 rounded-full transition-all duration-500" style="width: {{ $otherIncomePercent }}%"></div>
+                            </div>
+                            <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->otherIncome, 0, ',', '.') }}</p>
+                        </div>
+                        @endif
+
+                        <div>
+                            @php
+                                // Hitung persentase pengeluaran terhadap total pemasukan (gross + other)
+                                $totalIncome = $this->grossProfit + $this->otherIncome;
                                 $expenseBarPercent = 0;
-                                if ($this->grossProfit > 0) {
-                                    $expenseBarPercent = min(100, ($this->operatingExpenses / $this->grossProfit) * 100);
+                                if ($totalIncome > 0) {
+                                    $expenseBarPercent = min(100, ($this->operatingExpenses / $totalIncome) * 100);
                                 } elseif ($this->operatingExpenses > 0) {
                                     $expenseBarPercent = 100; // Ada pengeluaran tanpa pemasukan
                                 }
@@ -179,7 +196,7 @@
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->operatingExpenses, 0, ',', '.') }}</p>
                         </div>
 
-                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih = Penjualan - Pengeluaran.</p>
+                        <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih = Penjualan + Pemasukan Lain - Pengeluaran</p>
                     </div>
                 </div>
             </div>
