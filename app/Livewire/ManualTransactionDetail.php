@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ActivityLog;
 use App\Models\FinancialTransaction;
 use Livewire\Component;
 
@@ -23,6 +24,19 @@ class ManualTransactionDetail extends Component
             session()->flash('error', 'Anda tidak memiliki izin untuk menghapus transaksi ini.');
             return;
         }
+
+        $typeLabel = $this->transaction->type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran';
+        $oldData = $this->transaction->toArray();
+        
+        // Log activity before delete - pass the model while it still exists
+        ActivityLog::log(
+            'DELETE',
+            'ManualTransaction',
+            "{$typeLabel} {$this->transaction->category} sebesar Rp " . number_format($this->transaction->amount, 0, ',', '.'),
+            $this->transaction,  // Pass model before delete
+            $oldData,
+            null
+        );
 
         $this->transaction->delete();
         
