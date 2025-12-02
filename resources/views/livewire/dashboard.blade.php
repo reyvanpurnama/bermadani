@@ -26,27 +26,24 @@
         </div>
 
         <div class="lg:col-span-4 h-full flex flex-col gap-4">
-            <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group relative">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Keuntungan</p>
                     <div class="flex items-end gap-2">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->netProfit, 0, ',', '.') }}</h3>
-                        @if($this->profitGrowth > 0)
-                            <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> {{ $this->profitGrowth }}%</span>
-                        @elseif($this->profitGrowth < 0)
-                            <span class="text-rose-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-down-arrow-alt'></i> {{ abs($this->profitGrowth) }}%</span>
-                        @endif
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->allTimeProfit, 0, ',', '.') }}</h3>
                     </div>
+                    <p class="text-[9px] text-slate-400 mt-0.5">Sejak {{ $this->firstTransactionDate }}</p>
                 </div>
                 <div class="bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg text-emerald-500"><i class='bx bx-line-chart text-lg'></i></div>
             </div>
 
-            <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between">
+            <div class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group relative">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Penjualan</p>
                     <div class="flex items-end gap-2">
-                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->totalSales, 0, ',', '.') }}</h3>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($this->allTimeSales, 0, ',', '.') }}</h3>
                     </div>
+                    <p class="text-[9px] text-slate-400 mt-0.5">Sejak {{ $this->firstTransactionDate }}</p>
                 </div>
                 <div class="bg-blue-50 dark:bg-blue-500/10 p-2 rounded-lg text-blue-500"><i class='bx bx-wallet text-lg'></i></div>
             </div>

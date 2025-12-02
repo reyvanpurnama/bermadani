@@ -184,6 +184,34 @@ class Dashboard extends Component
         };
     }
 
+    // ALL-TIME METRICS (untuk card atas)
+    public function getAllTimeSalesProperty()
+    {
+        return Transaction::where('type', 'SALE')
+            ->where('status', 'COMPLETED')
+            ->sum('totalAmount');
+    }
+
+    public function getAllTimeExpensesProperty()
+    {
+        return FinancialTransaction::expense()->sum('amount');
+    }
+
+    public function getAllTimeProfitProperty()
+    {
+        return max(0, $this->allTimeSales - $this->allTimeExpenses);
+    }
+
+    public function getFirstTransactionDateProperty()
+    {
+        $firstSale = Transaction::where('type', 'SALE')
+            ->where('status', 'COMPLETED')
+            ->orderBy('date')
+            ->first();
+        
+        return $firstSale?->date?->format('d M Y') ?? now()->format('d M Y');
+    }
+
     public function getTotalProductsProperty()
     {
         return Product::where('isActive', true)->count();
