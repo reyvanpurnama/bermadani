@@ -180,13 +180,17 @@
                                         </button>
                                     @endif
                                 </div>
-                                <span class="text-[10px] text-slate-400">{{ $trx->transactionDate->diffForHumans() }}</span>
+                                <span class="text-[10px] text-slate-400">{{ $trx->transactionDate->format('d M Y') }}</span>
                             </div>
-                            <div class="flex justify-between items-center">
+                            <div class="flex justify-between items-center mb-1">
                                 <span class="text-[10px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-1.5 py-0.5 rounded truncate max-w-[150px]">{{ Str::limit($trx->description ?? '-', 20) }}</span>
                                 <span class="text-[12px] font-bold {{ $trx->type === 'INCOME' ? 'text-emerald-500' : 'text-rose-500' }}">
                                     {{ $trx->type === 'INCOME' ? '+' : '-' }} Rp {{ number_format($trx->amount, 0, ',', '.') }}
                                 </span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[9px] text-slate-400">
+                                <i class='bx bx-user'></i>
+                                <span>oleh {{ $trx->user?->name ?? 'Unknown' }}</span>
                             </div>
                         </div>
                     @empty
