@@ -156,18 +156,28 @@
                                 <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->grossMarginPercent }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: {{ $this->grossMarginPercent }}%"></div>
+                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500" style="width: {{ min(100, $this->grossMarginPercent) }}%"></div>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->grossProfit, 0, ',', '.') }}</p>
                         </div>
 
                         <div>
+                            @php
+                                // Hitung persentase pengeluaran terhadap pemasukan
+                                // Jika tidak ada pemasukan tapi ada pengeluaran, tampilkan 100%
+                                $expenseBarPercent = 0;
+                                if ($this->grossProfit > 0) {
+                                    $expenseBarPercent = min(100, ($this->operatingExpenses / $this->grossProfit) * 100);
+                                } elseif ($this->operatingExpenses > 0) {
+                                    $expenseBarPercent = 100; // Ada pengeluaran tanpa pemasukan
+                                }
+                            @endphp
                             <div class="flex justify-between items-end mb-1">
                                 <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Pengeluaran</span>
-                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->operatingMarginPercent }}%</span>
+                                <span class="text-[11px] font-bold text-slate-700 dark:text-white">{{ number_format($expenseBarPercent, 1) }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                                <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: {{ $this->operatingMarginPercent }}%"></div>
+                                <div class="bg-rose-500 h-1 rounded-full transition-all duration-500" style="width: {{ $expenseBarPercent }}%"></div>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp {{ number_format($this->operatingExpenses, 0, ',', '.') }}</p>
                         </div>
