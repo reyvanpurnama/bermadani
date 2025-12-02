@@ -165,7 +165,7 @@
                 </div>
                 <div class="divide-y divide-slate-100 dark:divide-slate-700 max-h-[400px] overflow-y-auto">
                     @forelse($this->recentTransactions as $trx)
-                        <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+                        <a href="{{ route('admin.manual-transaction.detail', $trx->id) }}" class="block p-4 hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors cursor-pointer">
                             <div class="flex justify-between items-start mb-1">
                                 <div class="flex items-center gap-2">
                                     <span class="text-[12px] font-bold text-slate-800 dark:text-white">{{ $trx->category }}</span>
@@ -192,7 +192,7 @@
                                 <i class='bx bx-user'></i>
                                 <span>oleh {{ $trx->user?->name ?? 'Unknown' }}</span>
                             </div>
-                        </div>
+                        </a>
                     @empty
                         <div class="p-8 text-center text-slate-400">
                             <i class='bx bx-receipt text-4xl'></i>
