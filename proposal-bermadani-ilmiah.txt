@@ -1,0 +1,855 @@
+================================================================================
+
+                              PROPOSAL PROYEK
+                         DIGITALISASI UMKM KOPERASI
+                    
+                    "SISTEM INFORMASI MANAJEMEN KOPERASI
+                           BERMADANI BERBASIS WEB"
+                    
+                         (Studi Kasus: Koperasi Bermadani
+                   Universitas Mercu Buana Bandung)
+
+================================================================================
+
+                              Disusun Oleh:
+                              KELOMPOK [X]
+
+                    1. [Nama Lengkap 1]     (NIM: __________)
+                    2. [Nama Lengkap 2]     (NIM: __________)
+                    3. [Nama Lengkap 3]     (NIM: __________)
+                    4. [Nama Lengkap 4]     (NIM: __________)
+                    5. [Nama Lengkap 5]     (NIM: __________)
+
+
+                         PROGRAM STUDI [NAMA PRODI]
+                            FAKULTAS [NAMA FAKULTAS]
+                    UNIVERSITAS MERCU BUANA BANDUNG
+                                  2025
+
+================================================================================
+                              HALAMAN PENGESAHAN
+================================================================================
+
+Proposal Proyek Digitalisasi UMKM dengan judul:
+
+"SISTEM INFORMASI MANAJEMEN KOPERASI BERMADANI BERBASIS WEB"
+
+Telah diperiksa dan disetujui untuk dipresentasikan pada:
+
+Hari/Tanggal    : ________________
+Mata Kuliah     : Digitalisasi UMKM
+Dosen Pengampu  : ________________
+
+
+                                              Bandung, _____________ 2025
+                                              
+                                              Mengetahui,
+                                              Dosen Pengampu
+
+
+
+                                              (_________________________)
+                                              NIP. 
+
+================================================================================
+                                DAFTAR ISI
+================================================================================
+
+HALAMAN JUDUL ........................................................... i
+HALAMAN PENGESAHAN ..................................................... ii
+DAFTAR ISI ............................................................ iii
+DAFTAR TABEL .......................................................... iv
+DAFTAR GAMBAR .......................................................... v
+
+BAB I    PENDAHULUAN
+         1.1 Latar Belakang Masalah .................................... 1
+         1.2 Identifikasi Masalah ...................................... 3
+         1.3 Rumusan Masalah ........................................... 4
+         1.4 Batasan Masalah ........................................... 4
+         1.5 Tujuan Penelitian ......................................... 5
+         1.6 Manfaat Penelitian ........................................ 5
+
+BAB II   TINJAUAN PUSTAKA
+         2.1 Landasan Teori ............................................ 7
+         2.2 Penelitian Terdahulu ...................................... 12
+         2.3 Kerangka Pemikiran ........................................ 14
+
+BAB III  METODOLOGI PENELITIAN
+         3.1 Metode Pengembangan Sistem ................................ 15
+         3.2 Teknik Pengumpulan Data ................................... 16
+         3.3 Analisis Kebutuhan Sistem ................................. 17
+         3.4 Perancangan Sistem ........................................ 18
+         3.5 Jadwal Pelaksanaan ........................................ 25
+
+DAFTAR PUSTAKA ......................................................... 26
+
+================================================================================
+                                DAFTAR TABEL
+================================================================================
+
+Tabel 1.1  Perbandingan Kondisi Sebelum dan Sesudah Digitalisasi ....... 3
+Tabel 2.1  Penelitian Terdahulu ........................................ 12
+Tabel 3.1  Kebutuhan Fungsional Sistem ................................. 17
+Tabel 3.2  Kebutuhan Non-Fungsional Sistem ............................. 18
+Tabel 3.3  Struktur Tabel Users ........................................ 21
+Tabel 3.4  Struktur Tabel Products ..................................... 21
+Tabel 3.5  Struktur Tabel Transactions ................................. 22
+Tabel 3.6  Jadwal Pelaksanaan Proyek ................................... 25
+
+================================================================================
+                               DAFTAR GAMBAR
+================================================================================
+
+Gambar 2.1  Kerangka Pemikiran ......................................... 14
+Gambar 3.1  Model Waterfall ............................................ 15
+Gambar 3.2  Use Case Diagram ........................................... 19
+Gambar 3.3  Flowchart Transaksi POS .................................... 20
+Gambar 3.4  Entity Relationship Diagram (ERD) .......................... 23
+Gambar 3.5  Wireframe Landing Page ..................................... 24
+Gambar 3.6  Wireframe Dashboard Admin .................................. 24
+Gambar 3.7  Wireframe Point of Sale .................................... 25
+
+================================================================================
+                                  BAB I
+                               PENDAHULUAN
+================================================================================
+
+1.1 Latar Belakang Masalah
+--------------------------
+
+    Perkembangan teknologi informasi yang semakin pesat telah membawa dampak
+signifikan terhadap berbagai aspek kehidupan, termasuk dalam dunia usaha. 
+Digitalisasi menjadi kebutuhan yang tidak dapat dihindari oleh pelaku usaha,
+termasuk Usaha Mikro, Kecil, dan Menengah (UMKM). Menurut data Kementerian 
+Koperasi dan UKM (2024), sebanyak 64,2 juta UMKM di Indonesia berkontribusi
+terhadap 61% Produk Domestik Bruto (PDB) nasional. Namun, hanya sekitar 13%
+dari UMKM tersebut yang telah mengadopsi teknologi digital dalam operasional
+bisnisnya.
+
+    Koperasi sebagai salah satu bentuk badan usaha yang berperan penting dalam
+perekonomian Indonesia juga menghadapi tantangan yang sama. Koperasi Bermadani
+merupakan unit usaha yang beroperasi di lingkungan kampus Universitas Mercu
+Buana (UMB) Bandung. Koperasi ini menyediakan berbagai kebutuhan civitas
+akademika seperti alat tulis kantor, makanan ringan, minuman, dan kebutuhan
+sehari-hari lainnya, serta melayani simpan pinjam bagi anggotanya.
+
+    Berdasarkan hasil observasi dan wawancara dengan pengelola Koperasi
+Bermadani, ditemukan beberapa permasalahan operasional yang menghambat
+efisiensi dan efektivitas pelayanan, antara lain:
+
+    a. Pencatatan transaksi penjualan masih dilakukan secara manual menggunakan
+       buku kas, sehingga rentan terhadap kesalahan pencatatan dan membutuhkan
+       waktu yang lama dalam proses rekapitulasi.
+
+    b. Tidak tersedianya sistem inventori yang terstruktur menyebabkan kesulitan
+       dalam memantau stok barang secara real-time. Hal ini sering mengakibatkan
+       kehabisan stok tanpa adanya peringatan dini.
+
+    c. Proses transaksi yang lambat, rata-rata membutuhkan waktu 3-5 menit per
+       transaksi, terutama saat terjadi antrian pembeli yang panjang.
+
+    d. Pembuatan laporan keuangan dan penjualan dilakukan secara manual setiap
+       akhir bulan, memakan waktu dan tenaga yang tidak sedikit.
+
+    e. Tidak adanya sistem yang dapat melacak aktivitas kasir, sehingga sulit
+       untuk melakukan audit dan memastikan akuntabilitas.
+
+    Permasalahan-permasalahan tersebut dapat diatasi dengan penerapan sistem
+informasi berbasis teknologi digital. Sistem informasi manajemen yang terintegrasi
+akan membantu koperasi dalam mengelola transaksi penjualan, inventori, pelaporan,
+dan manajemen sumber daya manusia secara lebih efisien.
+
+    Berdasarkan latar belakang di atas, peneliti tertarik untuk mengembangkan
+"Sistem Informasi Manajemen Koperasi Bermadani Berbasis Web" sebagai solusi
+digitalisasi yang komprehensif untuk meningkatkan efisiensi operasional koperasi.
+
+
+1.2 Identifikasi Masalah
+------------------------
+
+    Berdasarkan latar belakang masalah yang telah diuraikan, dapat diidentifikasi
+beberapa permasalahan sebagai berikut:
+
+    1. Pencatatan transaksi penjualan yang masih manual menyebabkan kesalahan
+       pencatatan dan lambatnya proses rekapitulasi data.
+
+    2. Tidak adanya sistem inventori yang terstruktur mengakibatkan kesulitan
+       dalam memantau stok barang secara real-time.
+
+    3. Proses transaksi yang lambat (3-5 menit per transaksi) menurunkan
+       kepuasan pelanggan, terutama saat jam sibuk.
+
+    4. Pembuatan laporan keuangan dan penjualan secara manual membutuhkan
+       waktu yang lama dan rentan terhadap kesalahan.
+
+    5. Tidak tersedianya audit trail untuk melacak aktivitas pengguna sistem.
+
+    6. Manajemen shift kasir yang tidak terorganisir menyebabkan kesulitan
+       dalam pertanggungjawaban kas.
+
+
+1.3 Rumusan Masalah
+-------------------
+
+    Berdasarkan identifikasi masalah di atas, rumusan masalah dalam penelitian
+ini adalah:
+
+    1. Bagaimana merancang dan membangun sistem informasi manajemen koperasi
+       berbasis web yang dapat mempercepat proses transaksi penjualan?
+
+    2. Bagaimana mengembangkan sistem inventori yang dapat memantau stok barang
+       secara real-time dan memberikan notifikasi ketika stok menipis?
+
+    3. Bagaimana membangun sistem pelaporan otomatis yang dapat menghasilkan
+       laporan penjualan dan keuangan secara akurat dan efisien?
+
+    4. Bagaimana mengimplementasikan sistem manajemen kasir dengan fitur
+       check-in dan check-out untuk meningkatkan akuntabilitas?
+
+
+1.4 Batasan Masalah
+-------------------
+
+    Agar penelitian ini lebih fokus dan terarah, maka ditetapkan batasan
+masalah sebagai berikut:
+
+    1. Sistem yang dikembangkan berfokus pada modul Point of Sale (POS),
+       manajemen produk, manajemen inventori, dashboard analytics, manajemen
+       kasir, dan activity logging.
+
+    2. Penelitian dilakukan di Koperasi Bermadani Universitas Mercu Buana
+       Bandung.
+
+    3. Sistem dikembangkan berbasis web menggunakan framework Laravel dengan
+       bahasa pemrograman PHP.
+
+    4. Modul simpanan dan pinjaman tidak termasuk dalam scope penelitian ini
+       dan akan menjadi pengembangan di masa mendatang.
+
+    5. Sistem tidak mencakup integrasi dengan payment gateway pihak ketiga.
+
+
+1.5 Tujuan Penelitian
+---------------------
+
+    Tujuan dari penelitian ini adalah:
+
+    1. Merancang dan membangun sistem informasi manajemen koperasi berbasis web
+       yang dapat mempercepat proses transaksi penjualan dari rata-rata 3-5
+       menit menjadi kurang dari 1 menit per transaksi.
+
+    2. Mengembangkan sistem inventori yang mampu memantau stok barang secara
+       real-time dan memberikan alert ketika stok mencapai batas minimum.
+
+    3. Membangun sistem pelaporan otomatis yang dapat menghasilkan laporan
+       penjualan harian, mingguan, dan bulanan secara akurat.
+
+    4. Mengimplementasikan sistem manajemen kasir dengan fitur check-in/check-out
+       untuk meningkatkan akuntabilitas dan transparansi.
+
+    5. Menyediakan audit trail melalui activity logging untuk keamanan dan
+       pelacakan aktivitas pengguna.
+
+
+1.6 Manfaat Penelitian
+----------------------
+
+    1.6.1 Manfaat Teoritis
+
+    a. Memberikan kontribusi dalam pengembangan ilmu pengetahuan di bidang
+       sistem informasi, khususnya dalam penerapan teknologi digital untuk
+       UMKM dan koperasi.
+
+    b. Menjadi referensi bagi penelitian selanjutnya yang berkaitan dengan
+       digitalisasi UMKM dan pengembangan sistem informasi berbasis web.
+
+
+    1.6.2 Manfaat Praktis
+
+    a. Bagi Koperasi Bermadani:
+       - Meningkatkan efisiensi operasional hingga 80%
+       - Mempercepat proses transaksi penjualan
+       - Menyediakan data yang akurat untuk pengambilan keputusan
+       - Meningkatkan transparansi dan akuntabilitas
+
+    b. Bagi Civitas Akademika UMB:
+       - Mendapatkan pelayanan yang lebih cepat dan efisien
+       - Memperoleh bukti transaksi yang jelas
+
+    c. Bagi Peneliti:
+       - Mengimplementasikan ilmu yang diperoleh selama perkuliahan
+       - Memperoleh pengalaman dalam pengembangan sistem informasi
+
+
+================================================================================
+                                  BAB II
+                            TINJAUAN PUSTAKA
+================================================================================
+
+2.1 Landasan Teori
+------------------
+
+    2.1.1 Sistem Informasi
+
+    Menurut Laudon dan Laudon (2020), sistem informasi adalah sekumpulan
+komponen yang saling terkait yang mengumpulkan, memproses, menyimpan, dan
+mendistribusikan informasi untuk mendukung pengambilan keputusan dan
+pengendalian dalam suatu organisasi.
+
+    O'Brien dan Marakas (2019) mendefinisikan sistem informasi sebagai
+kombinasi terorganisasi dari manusia, perangkat keras, perangkat lunak,
+jaringan komunikasi, sumber data, serta kebijakan dan prosedur yang
+menyimpan, mengambil, mengubah, dan menyebarkan informasi dalam organisasi.
+
+
+    2.1.2 Digitalisasi UMKM
+
+    Digitalisasi UMKM adalah proses transformasi operasional usaha mikro,
+kecil, dan menengah dari sistem konvensional (manual) ke sistem berbasis
+teknologi digital. Menurut OECD (2021), digitalisasi UMKM mencakup:
+
+    a. Penggunaan teknologi digital untuk operasional internal
+    b. Pemasaran dan penjualan melalui platform digital
+    c. Manajemen keuangan dan pembukuan digital
+    d. Komunikasi dengan pelanggan melalui kanal digital
+
+
+    2.1.3 Koperasi
+
+    Berdasarkan Undang-Undang Nomor 25 Tahun 1992 tentang Perkoperasian,
+koperasi adalah badan usaha yang beranggotakan orang-seorang atau badan
+hukum koperasi dengan melandaskan kegiatannya berdasarkan prinsip koperasi
+sekaligus sebagai gerakan ekonomi rakyat yang berdasar atas asas kekeluargaan.
+
+    Koperasi memiliki prinsip-prinsip sebagai berikut:
+    a. Keanggotaan bersifat sukarela dan terbuka
+    b. Pengelolaan dilakukan secara demokratis
+    c. Pembagian Sisa Hasil Usaha (SHU) dilakukan secara adil
+    d. Pemberian balas jasa yang terbatas terhadap modal
+    e. Kemandirian
+    f. Pendidikan perkoperasian
+    g. Kerja sama antar koperasi
+
+
+    2.1.4 Point of Sale (POS)
+
+    Point of Sale (POS) adalah sistem yang digunakan untuk melakukan
+transaksi penjualan dan pembayaran di tempat usaha. Menurut Turban et al.
+(2018), sistem POS modern terdiri dari:
+
+    a. Hardware: komputer/tablet, barcode scanner, printer struk, cash drawer
+    b. Software: aplikasi POS untuk mengelola transaksi
+    c. Database: penyimpanan data transaksi dan inventori
+    d. Network: koneksi internet untuk sinkronisasi data
+
+
+    2.1.5 Framework Laravel
+
+    Laravel adalah framework PHP open-source yang dikembangkan oleh Taylor
+Otwell pada tahun 2011. Laravel mengikuti pola arsitektur Model-View-Controller
+(MVC) dan menyediakan berbagai fitur yang memudahkan pengembangan aplikasi web.
+
+    Fitur utama Laravel meliputi:
+    a. Eloquent ORM untuk interaksi dengan database
+    b. Blade templating engine untuk tampilan
+    c. Artisan CLI untuk otomatisasi tugas
+    d. Migration dan seeding untuk manajemen database
+    e. Authentication dan authorization built-in
+    f. Queue system untuk background processing
+
+
+    2.1.6 Livewire
+
+    Livewire adalah framework full-stack untuk Laravel yang memungkinkan
+pengembangan antarmuka dinamis tanpa meninggalkan kenyamanan Laravel.
+Livewire membuat komponen reaktif yang dapat merespons interaksi pengguna
+tanpa perlu menulis JavaScript secara manual.
+
+
+    2.1.7 Tailwind CSS
+
+    Tailwind CSS adalah framework CSS yang menggunakan pendekatan utility-first.
+Berbeda dengan framework CSS tradisional seperti Bootstrap, Tailwind
+menyediakan kelas-kelas utilitas tingkat rendah yang dapat dikombinasikan
+untuk membangun desain kustom tanpa menulis CSS kustom.
+
+
+2.2 Penelitian Terdahulu
+------------------------
+
+    Beberapa penelitian terdahulu yang relevan dengan penelitian ini antara
+lain:
+
++----+-------------------+----------------------+------------------+------------+
+| No | Peneliti (Tahun)  | Judul Penelitian     | Metode           | Hasil      |
++----+-------------------+----------------------+------------------+------------+
+| 1  | Pratama & Sari    | Sistem Informasi     | Waterfall        | Sistem POS |
+|    | (2023)            | Penjualan Berbasis   |                  | berhasil   |
+|    |                   | Web pada Toko XYZ    |                  | meningkat- |
+|    |                   |                      |                  | kan        |
+|    |                   |                      |                  | efisiensi  |
+|    |                   |                      |                  | 75%        |
++----+-------------------+----------------------+------------------+------------+
+| 2  | Hidayat et al.    | Pengembangan         | Agile Scrum      | Aplikasi   |
+|    | (2022)            | Aplikasi Manajemen   |                  | dapat      |
+|    |                   | Inventori UMKM       |                  | memantau   |
+|    |                   |                      |                  | stok       |
+|    |                   |                      |                  | real-time  |
++----+-------------------+----------------------+------------------+------------+
+| 3  | Wijaya (2023)     | Implementasi         | RAD              | Sistem     |
+|    |                   | Sistem Kasir         |                  | berhasil   |
+|    |                   | Digital pada         |                  | mengurangi |
+|    |                   | Koperasi ABC         |                  | kesalahan  |
+|    |                   |                      |                  | transaksi  |
++----+-------------------+----------------------+------------------+------------+
+| 4  | Rahman & Putra    | Digitalisasi         | Design Thinking  | Peningkat- |
+|    | (2024)            | Koperasi Simpan      |                  | an jumlah  |
+|    |                   | Pinjam Berbasis      |                  | transaksi  |
+|    |                   | Mobile               |                  | 150%       |
++----+-------------------+----------------------+------------------+------------+
+
+    Perbedaan penelitian ini dengan penelitian terdahulu terletak pada:
+    a. Integrasi fitur POS, inventori, dan manajemen kasir dalam satu sistem
+    b. Implementasi activity logging untuk audit trail
+    c. Penggunaan teknologi terkini (Laravel 11, Livewire 3, Tailwind CSS)
+    d. Fokus pada koperasi kampus dengan karakteristik pengguna yang spesifik
+
+
+2.3 Kerangka Pemikiran
+----------------------
+
+                    +---------------------------+
+                    |    PERMASALAHAN           |
+                    | - Transaksi manual lambat |
+                    | - Tidak ada sistem stok   |
+                    | - Laporan tidak akurat    |
+                    | - Tidak ada audit trail   |
+                    +-------------+-------------+
+                                  |
+                                  v
+                    +---------------------------+
+                    |    ANALISIS KEBUTUHAN     |
+                    | - Kebutuhan fungsional    |
+                    | - Kebutuhan non-fungsional|
+                    +-------------+-------------+
+                                  |
+                                  v
+                    +---------------------------+
+                    |    PERANCANGAN SISTEM     |
+                    | - Use Case Diagram        |
+                    | - Flowchart               |
+                    | - ERD                     |
+                    | - Wireframe               |
+                    +-------------+-------------+
+                                  |
+                                  v
+                    +---------------------------+
+                    |    IMPLEMENTASI           |
+                    | - Laravel 11              |
+                    | - Livewire 3              |
+                    | - Tailwind CSS            |
+                    | - MySQL                   |
+                    +-------------+-------------+
+                                  |
+                                  v
+                    +---------------------------+
+                    |    PENGUJIAN              |
+                    | - Unit Testing            |
+                    | - Integration Testing     |
+                    | - UAT                     |
+                    +-------------+-------------+
+                                  |
+                                  v
+                    +---------------------------+
+                    |    HASIL                  |
+                    | Sistem Informasi Koperasi |
+                    | Bermadani Berbasis Web    |
+                    +---------------------------+
+
+
+================================================================================
+                                  BAB III
+                         METODOLOGI PENELITIAN
+================================================================================
+
+3.1 Metode Pengembangan Sistem
+------------------------------
+
+    Metode pengembangan sistem yang digunakan dalam penelitian ini adalah
+metode Waterfall. Menurut Pressman (2019), metode Waterfall adalah model
+pengembangan perangkat lunak yang bersifat sekuensial, di mana setiap fase
+harus diselesaikan sebelum fase berikutnya dimulai.
+
+    Tahapan metode Waterfall:
+
+    1. Requirements Analysis (Analisis Kebutuhan)
+       Pada tahap ini dilakukan pengumpulan data dan analisis kebutuhan
+       sistem melalui observasi, wawancara, dan studi dokumentasi.
+
+    2. System Design (Perancangan Sistem)
+       Tahap perancangan meliputi pembuatan use case diagram, flowchart,
+       entity relationship diagram (ERD), dan wireframe.
+
+    3. Implementation (Implementasi)
+       Tahap implementasi adalah proses penulisan kode program berdasarkan
+       rancangan yang telah dibuat menggunakan Laravel 11, Livewire 3, dan
+       Tailwind CSS.
+
+    4. Testing (Pengujian)
+       Pengujian dilakukan untuk memastikan sistem berfungsi sesuai dengan
+       kebutuhan. Metode pengujian yang digunakan adalah black-box testing.
+
+    5. Deployment (Penerapan)
+       Sistem yang telah diuji kemudian di-deploy ke server hosting untuk
+       dapat diakses oleh pengguna.
+
+    6. Maintenance (Pemeliharaan)
+       Tahap pemeliharaan meliputi perbaikan bug dan pengembangan fitur
+       tambahan berdasarkan feedback pengguna.
+
+
+3.2 Teknik Pengumpulan Data
+---------------------------
+
+    3.2.1 Observasi
+
+    Observasi dilakukan dengan mengamati secara langsung proses operasional
+Koperasi Bermadani, meliputi proses transaksi penjualan, pencatatan stok,
+dan pembuatan laporan.
+
+    3.2.2 Wawancara
+
+    Wawancara dilakukan dengan pengelola dan kasir Koperasi Bermadani untuk
+mendapatkan informasi mengenai permasalahan yang dihadapi dan kebutuhan
+sistem yang diharapkan.
+
+    3.2.3 Studi Dokumentasi
+
+    Studi dokumentasi dilakukan dengan mempelajari dokumen-dokumen yang
+berkaitan dengan operasional koperasi, seperti buku kas, laporan penjualan,
+dan daftar inventori.
+
+    3.2.4 Studi Literatur
+
+    Studi literatur dilakukan dengan mempelajari jurnal, buku, dan referensi
+lainnya yang berkaitan dengan sistem informasi, digitalisasi UMKM, dan
+pengembangan aplikasi web.
+
+
+3.3 Analisis Kebutuhan Sistem
+-----------------------------
+
+    3.3.1 Kebutuhan Fungsional
+
++----+---------------------------+--------------------------------------------+
+| No | Modul                     | Fungsi                                     |
++----+---------------------------+--------------------------------------------+
+| 1  | Authentication            | Login multi-role, logout, session mgmt     |
+| 2  | Dashboard                 | Statistik penjualan, grafik, alert         |
+| 3  | Point of Sale (POS)       | Transaksi penjualan, pembayaran, struk     |
+| 4  | Manajemen Produk          | CRUD produk, kategori, barcode             |
+| 5  | Manajemen Inventori       | Stock tracking, adjustment, movement       |
+| 6  | Sistem Kasir              | Check-in/out, shift management             |
+| 7  | Laporan                   | Daily sales, per-kasir, export             |
+| 8  | User Management           | CRUD users, role-based access control      |
+| 9  | Activity Logging          | Audit trail, tracking aktivitas            |
+| 10 | Landing Page              | Company profile, informasi layanan         |
++----+---------------------------+--------------------------------------------+
+
+
+    3.3.2 Kebutuhan Non-Fungsional
+
++----+---------------------------+--------------------------------------------+
+| No | Aspek                     | Kebutuhan                                  |
++----+---------------------------+--------------------------------------------+
+| 1  | Performance               | Response time < 2 detik                    |
+| 2  | Usability                 | User interface intuitif, mudah digunakan   |
+| 3  | Reliability               | Sistem tersedia 99% waktu operasional      |
+| 4  | Security                  | Autentikasi, otorisasi, enkripsi password  |
+| 5  | Compatibility             | Kompatibel dengan browser modern           |
+| 6  | Responsiveness            | Tampilan responsif (desktop, tablet, HP)   |
+| 7  | Scalability               | Dapat dikembangkan untuk fitur tambahan    |
++----+---------------------------+--------------------------------------------+
+
+
+3.4 Perancangan Sistem
+----------------------
+
+    3.4.1 Use Case Diagram
+
+                              +------------------------+
+                              |    SISTEM BERMADANI    |
+                              +------------------------+
+                                         |
+          +------------------------------+------------------------------+
+          |                              |                              |
+    +-----v------+                +------v-----+                 +------v-----+
+    | SUPER      |                |   ADMIN    |                 |   KASIR    |
+    | ADMIN      |                |            |                 |            |
+    +------------+                +------------+                 +------------+
+    | UC01:Login |                | UC01:Login |                 | UC01:Login |
+    | UC02:Manage|                | UC03:Manage|                 | UC07:CheckIn|
+    |     Users  |                |     Product|                 | UC08:POS   |
+    | UC03-UC09  |                | UC04:Manage|                 |     Trans  |
+    |     (All)  |                |     Categ  |                 | UC09:View  |
+    | UC10:View  |                | UC05:Manage|                 |     Own Trx|
+    |     Logs   |                |     Stock  |                 | UC10:Check |
+    +------------+                | UC06:View  |                 |     Out    |
+                                  |     Report |                 +------------+
+                                  +------------+
+
+
+    3.4.2 Flowchart Sistem (Transaksi POS)
+
+                              +-------+
+                              | START |
+                              +---+---+
+                                  |
+                                  v
+                          +-------+--------+
+                          | Kasir Login    |
+                          +-------+--------+
+                                  |
+                                  v
+                          +-------+--------+
+                          | Check-In Shift |
+                          | Input Kas Awal |
+                          +-------+--------+
+                                  |
+                                  v
+                      +-----------+-----------+
+                      | Scan/Pilih Produk     |<---------+
+                      +-----------+-----------+          |
+                                  |                      |
+                                  v                      |
+                          +-------+--------+             |
+                          | Tambah ke      |             |
+                          | Keranjang      |             |
+                          +-------+--------+             |
+                                  |                      |
+                                  v                      |
+                          +-------+--------+    Ya       |
+                          | Tambah Produk  +-------------+
+                          | Lagi?          |
+                          +-------+--------+
+                                  | Tidak
+                                  v
+                          +-------+--------+
+                          | Pilih Metode   |
+                          | Pembayaran     |
+                          +-------+--------+
+                                  |
+                                  v
+                          +-------+--------+
+                          | Input Nominal  |
+                          | Bayar          |
+                          +-------+--------+
+                                  |
+                                  v
+                          +-------+--------+
+                          | Simpan         |
+                          | Transaksi      |
+                          +-------+--------+
+                                  |
+                                  v
+                          +-------+--------+
+                          | Cetak Struk    |
+                          +-------+--------+
+                                  |
+                                  v
+                              +---+---+
+                              |  END  |
+                              +-------+
+
+
+    3.4.3 Entity Relationship Diagram (ERD)
+
+    +---------------+       +---------------+       +---------------+
+    |    USERS      |       |  CATEGORIES   |       |   PRODUCTS    |
+    +---------------+       +---------------+       +---------------+
+    | *id           |       | *id           |       | *id           |
+    | name          |       | name          |       | name          |
+    | email         |       | description   |       | #categoryId   |
+    | password      |       | created_at    |       | price         |
+    | role          |       | updated_at    |       | stock         |
+    | isActive      |       +-------+-------+       | barcode       |
+    | lastLoginAt   |               |               | image         |
+    | created_at    |               | 1             | created_at    |
+    | updated_at    |               |               | updated_at    |
+    +-------+-------+               |               +-------+-------+
+            |                       |                       |
+            | 1                     +----------M------------+
+            |                                               |
+            |                                               | 1
+    +-------+-------+       +---------------+       +-------+-------+
+    | CASHIER_SHIFTS|       | TRANSACTIONS  |       | TRANS_ITEMS   |
+    +---------------+       +---------------+       +---------------+
+    | *id           |       | *id           |       | *id           |
+    | #user_id      |       | invoiceNumber |       | #transactionId|
+    | opening_cash  |       | totalAmount   |       | #productId    |
+    | closing_cash  |       | paymentMethod |       | quantity      |
+    | expected_cash |       | amountPaid    |       | price         |
+    | total_sales   |       | changeAmount  |       | subtotal      |
+    | check_in_at   |       | #userId       |       | created_at    |
+    | check_out_at  |       | notes         |       +---------------+
+    | notes         |       | created_at    |
+    +---------------+       +-------+-------+
+                                    |
+                            +-------+-------+
+                            | ACTIVITY_LOGS |
+                            +---------------+
+                            | *id           |
+                            | #userId       |
+                            | action        |
+                            | description   |
+                            | ipAddress     |
+                            | userAgent     |
+                            | created_at    |
+                            +---------------+
+
+    Keterangan:
+    * = Primary Key
+    # = Foreign Key
+    1 = One
+    M = Many
+
+
+    3.4.4 Struktur Tabel Database
+
+    Tabel 3.3 Struktur Tabel Users
+    +---------------+---------------+------+-----+---------+----------------+
+    | Field         | Type          | Null | Key | Default | Extra          |
+    +---------------+---------------+------+-----+---------+----------------+
+    | id            | BIGINT        | NO   | PRI | NULL    | AUTO_INCREMENT |
+    | name          | VARCHAR(255)  | NO   |     | NULL    |                |
+    | email         | VARCHAR(255)  | NO   | UNI | NULL    |                |
+    | password      | VARCHAR(255)  | NO   |     | NULL    |                |
+    | role          | ENUM          | NO   |     | USER    |                |
+    | isActive      | BOOLEAN       | NO   |     | TRUE    |                |
+    | lastLoginAt   | TIMESTAMP     | YES  |     | NULL    |                |
+    | created_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    | updated_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    +---------------+---------------+------+-----+---------+----------------+
+
+    Tabel 3.4 Struktur Tabel Products
+    +---------------+---------------+------+-----+---------+----------------+
+    | Field         | Type          | Null | Key | Default | Extra          |
+    +---------------+---------------+------+-----+---------+----------------+
+    | id            | BIGINT        | NO   | PRI | NULL    | AUTO_INCREMENT |
+    | name          | VARCHAR(255)  | NO   |     | NULL    |                |
+    | categoryId    | BIGINT        | NO   | FOR | NULL    |                |
+    | price         | DECIMAL(12,2) | NO   |     | 0       |                |
+    | stock         | INT           | NO   |     | 0       |                |
+    | barcode       | VARCHAR(50)   | YES  | UNI | NULL    |                |
+    | image         | VARCHAR(255)  | YES  |     | NULL    |                |
+    | created_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    | updated_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    +---------------+---------------+------+-----+---------+----------------+
+
+    Tabel 3.5 Struktur Tabel Transactions
+    +---------------+---------------+------+-----+---------+----------------+
+    | Field         | Type          | Null | Key | Default | Extra          |
+    +---------------+---------------+------+-----+---------+----------------+
+    | id            | BIGINT        | NO   | PRI | NULL    | AUTO_INCREMENT |
+    | invoiceNumber | VARCHAR(50)   | NO   | UNI | NULL    |                |
+    | totalAmount   | DECIMAL(12,2) | NO   |     | 0       |                |
+    | paymentMethod | ENUM          | NO   |     | CASH    |                |
+    | amountPaid    | DECIMAL(12,2) | NO   |     | 0       |                |
+    | changeAmount  | DECIMAL(12,2) | NO   |     | 0       |                |
+    | userId        | BIGINT        | NO   | FOR | NULL    |                |
+    | notes         | TEXT          | YES  |     | NULL    |                |
+    | created_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    | updated_at    | TIMESTAMP     | YES  |     | NULL    |                |
+    +---------------+---------------+------+-----+---------+----------------+
+
+
+    3.4.5 Wireframe
+
+    [Lampirkan gambar wireframe untuk setiap halaman utama:]
+    - Landing Page
+    - Login Page
+    - Dashboard Admin
+    - Point of Sale
+    - Manajemen Produk
+    - Kasir Check-in/Check-out
+
+
+3.5 Jadwal Pelaksanaan
+----------------------
+
+    Tabel 3.6 Jadwal Pelaksanaan Proyek
+
++----+----------------------+----+----+----+----+----+----+----+----+
+| No | Kegiatan             | Minggu                               |
+|    |                      | 9  | 10 | 11 | 12 | 13 | 14 | 15 | 16 |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 1  | Analisis Kebutuhan   | ## |    |    |    |    |    |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 2  | Perancangan Sistem   |    | ## |    |    |    |    |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 3  | Implementasi Fase 1  |    |    | ## |    |    |    |    |    |
+|    | (Auth, Dashboard,    |    |    |    |    |    |    |    |    |
+|    |  Produk)             |    |    |    |    |    |    |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 4  | Implementasi Fase 2  |    |    |    | ## |    |    |    |    |
+|    | (POS, Inventori,     |    |    |    |    |    |    |    |    |
+|    |  Kasir)              |    |    |    |    |    |    |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 5  | Implementasi Fase 3  |    |    |    |    | ## |    |    |    |
+|    | (Laporan, User Mgmt, |    |    |    |    |    |    |    |    |
+|    |  Landing Page)       |    |    |    |    |    |    |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 6  | Pengujian & Perbaikan|    |    |    |    |    | ## |    |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 7  | Deployment & Evaluasi|    |    |    |    |    |    | ## |    |
++----+----------------------+----+----+----+----+----+----+----+----+
+| 8  | Presentasi UAS       |    |    |    |    |    |    |    | ## |
++----+----------------------+----+----+----+----+----+----+----+----+
+
+
+================================================================================
+                              DAFTAR PUSTAKA
+================================================================================
+
+Laudon, K. C., & Laudon, J. P. (2020). Management Information Systems: 
+    Managing the Digital Firm (16th ed.). Pearson.
+
+O'Brien, J. A., & Marakas, G. M. (2019). Essentials of Management Information 
+    Systems (12th ed.). McGraw-Hill Education.
+
+OECD. (2021). The Digital Transformation of SMEs. OECD Studies on SMEs and 
+    Entrepreneurship. OECD Publishing.
+
+Otwell, T. (2024). Laravel Documentation. Retrieved from 
+    https://laravel.com/docs
+
+Pressman, R. S. (2019). Software Engineering: A Practitioner's Approach 
+    (9th ed.). McGraw-Hill Education.
+
+Turban, E., Pollard, C., & Wood, G. (2018). Information Technology for 
+    Management: On-Demand Strategies for Performance, Growth, and 
+    Sustainability (11th ed.). Wiley.
+
+Undang-Undang Republik Indonesia Nomor 25 Tahun 1992 tentang Perkoperasian.
+
+Kementerian Koperasi dan UKM. (2024). Statistik UMKM Indonesia 2024. 
+    Jakarta: Kemenkop UKM.
+
+Hidayat, R., et al. (2022). Pengembangan Aplikasi Manajemen Inventori UMKM 
+    Berbasis Web. Jurnal Sistem Informasi, 10(2), 45-58.
+
+Pratama, A., & Sari, D. (2023). Sistem Informasi Penjualan Berbasis Web pada 
+    Toko XYZ. Jurnal Teknologi Informasi, 15(1), 23-35.
+
+Rahman, F., & Putra, H. (2024). Digitalisasi Koperasi Simpan Pinjam Berbasis 
+    Mobile. Jurnal Ilmiah Komputer, 8(1), 12-24.
+
+Wijaya, B. (2023). Implementasi Sistem Kasir Digital pada Koperasi ABC. 
+    Jurnal Informatika, 12(3), 78-89.
+
+
+================================================================================
+
+                         --- AKHIR DOKUMEN ---
+
+================================================================================

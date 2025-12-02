@@ -72,7 +72,7 @@
                                     <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300"></span><span class="text-[10px] text-slate-500 font-medium">Pengeluaran</span></div>
                                 </div>
                                 <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
-                                <div class="relative">
+                                <div class="relative group">
                                     <select wire:model.live="filter" class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
                                         <option value="today">Hari Ini</option>
                                         <option value="week">Minggu Ini</option>
@@ -80,6 +80,20 @@
                                         <option value="year">Tahun Ini</option>
                                     </select>
                                     <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500"><i class='bx bx-chevron-down text-sm'></i></div>
+                                    {{-- Tooltip hint --}}
+                                    <div class="absolute top-full right-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
+                                        <div class="bg-slate-800 dark:bg-slate-900 text-white text-[9px] px-2 py-1 rounded shadow-lg whitespace-nowrap">
+                                            @if($filter === 'today')
+                                                📅 {{ now()->format('d M Y') }}
+                                            @elseif($filter === 'week')
+                                                📅 {{ now()->startOfWeek()->format('d M') }} - {{ now()->endOfWeek()->format('d M Y') }}
+                                            @elseif($filter === 'month')
+                                                📅 1 - {{ now()->endOfMonth()->format('d M Y') }}
+                                            @elseif($filter === 'year')
+                                                📅 Jan - Des {{ now()->year }}
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
