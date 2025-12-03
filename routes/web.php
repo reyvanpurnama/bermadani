@@ -61,14 +61,8 @@ Route::post('/logout', function () {
     return redirect()->route('home');
 })->name('logout');
 
-// Supplier Auth Routes
-Route::middleware('guest')->prefix('supplier')->group(function () {
-    Route::get('/login', [App\Http\Controllers\Auth\SupplierAuthController::class, 'showLoginForm'])->name('supplier.login');
-    Route::post('/login', [App\Http\Controllers\Auth\SupplierAuthController::class, 'login']);
-});
-
-// Supplier Portal Routes - Protected
-Route::middleware(['auth:supplier'])->prefix('supplier')->group(function () {
+// Supplier Portal Routes - Protected (Login via /login)
+Route::middleware(['auth'])->prefix('supplier')->group(function () {
     Route::get('/dashboard', function () {
         return view('supplier.dashboard');
     })->name('supplier.dashboard');
@@ -90,8 +84,6 @@ Route::middleware(['auth:supplier'])->prefix('supplier')->group(function () {
     Route::get('/profile', function () {
         return view('supplier.profile');
     })->name('supplier.profile');
-    
-    Route::post('/logout', [App\Http\Controllers\Auth\SupplierAuthController::class, 'logout'])->name('supplier.logout');
 });
 
 // Admin Routes - Protected

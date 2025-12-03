@@ -104,7 +104,24 @@
                     </div>
                 </div>
 
-                <form id="wizardForm" action="supplier-dashboard.html">
+                @if(session('success'))
+                <div class="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg text-sm">
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form id="wizardForm" method="POST" action="{{ route('supplier.register.store') }}">
+                    @csrf
                     
                     <div class="step-content active" id="step1">
                         <div class="bg-white dark:bg-darkCard p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
@@ -133,7 +150,7 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Nama Lengkap</label>
-                                    <input type="text" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Nama sesuai KTP">
+                                    <input type="text" name="ownerName" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Nama sesuai KTP">
                                 </div>
 
                                 <div>
@@ -146,7 +163,9 @@
     <div class="relative">
         <span class="absolute inset-y-0 left-4 flex items-center text-slate-500 text-sm font-bold">+62</span>
         
-        <input type="number" 
+        <input type="text" 
+               name="phone"
+               required
                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none no-spinner" 
                placeholder="812 3456 7890"
                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -169,12 +188,12 @@
                             <div class="space-y-5">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Nama Brand / Toko</label>
-                                    <input type="text" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Contoh: Keripik Mas Dani">
+                                    <input type="text" name="businessName" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Contoh: Keripik Mas Dani">
                                 </div>
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Kategori Utama</label>
-                                    <select class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
+                                    <select name="productCategory" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
                                         <option>Makanan Ringan (Snack)</option>
                                         <option>Minuman</option>
                                         <option>Fashion / Aksesoris</option>
@@ -185,7 +204,7 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Deskripsi Singkat</label>
-                                    <textarea rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Jelaskan produk apa yang ingin Anda titip jual..."></textarea>
+                                    <textarea name="description" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Jelaskan produk apa yang ingin Anda titip jual..."></textarea>
                                 </div>
                             </div>
 
@@ -205,15 +224,25 @@
                             <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Akun & Pencairan</h2>
                             
                             <div class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Alamat Lengkap</label>
+                                    <textarea name="address" rows="2" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Alamat usaha/rumah"></textarea>
+                                </div>
+
                                 <div class="grid md:grid-cols-2 gap-5">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Email</label>
-                                        <input type="email" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="email@anda.com">
+                                        <input type="email" name="email" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="email@anda.com">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Password</label>
-                                        <input type="password" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="••••••••">
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Password (min 8 karakter)</label>
+                                        <input type="password" name="password" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="••••••••">
                                     </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Konfirmasi Password</label>
+                                    <input type="password" name="password_confirmation" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Ketik ulang password">
                                 </div>
 
                                 <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
@@ -259,7 +288,7 @@
                 </form>
                 
                 <div class="mt-8 text-center">
-                    <p class="text-xs text-slate-500">Sudah punya akun? <a href="login-campus.html" class="text-primary font-bold hover:underline">Masuk disini</a></p>
+                    <p class="text-xs text-slate-500">Sudah punya akun? <a href="{{ route('login') }}" class="text-primary font-bold hover:underline">Masuk disini</a></p>
                 </div>
 
             </div>
