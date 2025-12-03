@@ -175,7 +175,7 @@
                                     @if($trx->proofFile)
                                         <button 
                                             type="button" 
-                                            onclick="showProof('{{ asset('storage/' . $trx->proofFile) }}')"
+                                            onclick="event.preventDefault(); event.stopPropagation(); showProof('{{ asset('storage/' . $trx->proofFile) }}')"
                                             class="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors flex items-center gap-1"
                                             title="Lihat bukti"
                                         >
