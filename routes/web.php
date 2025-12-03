@@ -102,6 +102,10 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.manual-transaction');
     })->name('admin.manual-transaction');
     
+    Route::get('/transaksi/manual/riwayat', function () {
+        return view('admin.manual-transaction-history');
+    })->name('admin.manual-transaction.history');
+    
     Route::get('/transaksi/manual/{id}', function ($id) {
         return view('admin.manual-transaction-detail', ['transactionId' => $id]);
     })->name('admin.manual-transaction.detail');

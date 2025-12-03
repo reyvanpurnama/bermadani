@@ -162,6 +162,9 @@
             <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden flex-1">
                 <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                     <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">Riwayat Input</h3>
+                    <a href="{{ route('admin.manual-transaction.history') }}" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors">
+                        Lihat Semua
+                    </a>
                 </div>
                 <div class="divide-y divide-slate-100 dark:divide-slate-700 max-h-[400px] overflow-y-auto">
                     @forelse($this->recentTransactions as $trx)
