@@ -60,7 +60,13 @@
                         </label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-bold">Rp</span>
-                            <input type="number" wire:model="amount" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl pl-10 pr-4 py-3 text-lg font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500/20 focus:border-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500 transition-all placeholder-slate-300" placeholder="0">
+                            <input type="text" 
+                                   id="amountInput" 
+                                   wire:model="amount" 
+                                   x-data="{ formatNumber(e) { let val = e.target.value.replace(/\D/g, ''); if(val) { e.target.value = new Intl.NumberFormat('id-ID').format(val); @this.set('amount', val); } else { e.target.value = ''; @this.set('amount', null); } } }"
+                                   x-on:input="formatNumber"
+                                   class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl pl-10 pr-4 py-3 text-lg font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500/20 focus:border-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500 transition-all placeholder-slate-300" 
+                                   placeholder="0">
                         </div>
                         @error('amount') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
@@ -137,8 +143,9 @@
 
                 {{-- Submit Button --}}
                 <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700">
-                    <button type="submit" class="w-full bg-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-600 hover:bg-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-700 text-white font-bold py-3 rounded-xl shadow-lg shadow-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500/20 transition-all text-sm flex items-center justify-center gap-2">
-                        <i class='bx bx-save text-lg'></i> Simpan {{ $type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran' }}
+                    <button type="submit" class="w-full bg-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-600 hover:bg-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-{{ $type === 'INCOME' ? 'emerald' : 'rose' }}-500/20 transition-all text-sm flex items-center justify-center gap-2">
+                        <i class='bx bx-save text-lg shrink-0'></i> 
+                        <span class="truncate">Simpan {{ $type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran' }}</span>
                     </button>
                 </div>
 
