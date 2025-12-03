@@ -115,7 +115,10 @@
                         </h3>
                     </div>
                     <div class="p-4">
-                        <a href="{{ asset('storage/' . $transaction->proofFile) }}" target="_blank" class="block group">
+                        <div 
+                            onclick="showProof('{{ asset('storage/' . $transaction->proofFile) }}')" 
+                            class="block group cursor-pointer"
+                        >
                             <img 
                                 src="{{ asset('storage/' . $transaction->proofFile) }}" 
                                 alt="Bukti Transaksi" 
@@ -124,7 +127,7 @@
                             <p class="text-[10px] text-center text-slate-400 mt-2 group-hover:text-indigo-500 transition-colors">
                                 <i class='bx bx-zoom-in'></i> Klik untuk memperbesar
                             </p>
-                        </a>
+                        </div>
                     </div>
                 </div>
             @else
@@ -192,8 +195,29 @@
         </div>
     </div>
 
+    {{-- Modal Preview Bukti --}}
+    <div id="proofModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden items-center justify-center p-4" onclick="closeProof()">
+        <div class="relative max-w-4xl w-full" onclick="event.stopPropagation()">
+            <button onclick="closeProof()" class="absolute -top-10 right-0 text-white hover:text-rose-400 transition-colors">
+                <i class='bx bx-x text-4xl'></i>
+            </button>
+            <img id="proofImage" src="" class="w-full h-auto max-h-[90vh] object-contain rounded-xl shadow-2xl">
+        </div>
+    </div>
+
     @push('scripts')
     <script>
+        function showProof(url) {
+            document.getElementById('proofImage').src = url;
+            document.getElementById('proofModal').classList.remove('hidden');
+            document.getElementById('proofModal').classList.add('flex');
+        }
+
+        function closeProof() {
+            document.getElementById('proofModal').classList.add('hidden');
+            document.getElementById('proofModal').classList.remove('flex');
+        }
+
         function confirmDelete() {
             document.getElementById('deleteModal').classList.remove('hidden');
             document.getElementById('deleteModal').classList.add('flex');
@@ -205,7 +229,10 @@
         }
 
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeDeleteModal();
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+                closeProof();
+            }
         });
     </script>
     @endpush
