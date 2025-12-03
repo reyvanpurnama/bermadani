@@ -271,12 +271,33 @@ class Dashboard extends Component
 
     public function getFirstTransactionDateProperty()
     {
-        $firstSale = Transaction::where('type', 'SALE')
+        // 1. Cek transaksi POS pertama
+        $firstPosSale = Transaction::where('type', 'SALE')
             ->where('status', 'COMPLETED')
             ->orderBy('date')
             ->first();
+            
+        // 2. Cek transaksi manual (Omset Historis) pertama
+        $firstHistoricalSale = FinancialTransaction::income()
+            ->where('category', 'Omset Penjualan (Historis)')
+            ->orderBy('transactionDate')
+            ->first();
+            
+        // 3. Bandingkan mana yang lebih lama
+        $posDate = $firstPosSale?->date;
+        $historicalDate = $firstHistoricalSale?->transactionDate;
         
-        return $firstSale?->date?->format('d M Y') ?? now()->format('d M Y');
+        if ($posDate && $historicalDate) {
+            return $posDate->lt($historicalDate) 
+                ? $posDate->format('d M Y') 
+                : $historicalDate->format('d M Y');
+        } elseif ($posDate) {
+            return $posDate->format('d M Y');
+        } elseif ($historicalDate) {
+            return $historicalDate->format('d M Y');
+        }
+        
+        return now()->format('d M Y');
     }
 
     public function getTotalProductsProperty()
