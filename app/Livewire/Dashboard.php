@@ -92,12 +92,18 @@ class Dashboard extends Component
 
     public function getGrossMarginPercentProperty()
     {
-        $sales = $this->totalSales;
+        $posSales = $this->totalSales;
+        $historicalSales = $this->historicalSales;
+        $totalRevenue = $posSales + $historicalSales;
         $cogs = $this->totalCogs;
         
-        if ($sales == 0) return 0;
+        if ($totalRevenue == 0) return 0;
         
-        return round((($sales - $cogs) / $sales) * 100, 1);
+        // Margin = (POS Sales - COGS) + Historical Sales
+        // Asumsi: Historical Sales tidak ada COGS (margin 100%)
+        $totalMargin = ($posSales - $cogs) + $historicalSales;
+        
+        return round(($totalMargin / $totalRevenue) * 100, 1);
     }
 
     public function getOperatingExpensesProperty()
