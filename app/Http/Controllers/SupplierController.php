@@ -30,10 +30,14 @@ class SupplierController extends Controller
     {
         try {
             $supplier = $this->supplierService->register($request->validated());
+            
+            // Auto-login supplier setelah registrasi
+            \Auth::login($supplier);
+            $request->session()->regenerate();
 
             return redirect()
-                ->route('supplier.register')
-                ->with('success', 'Pendaftaran berhasil! Silakan tunggu konfirmasi dari admin. Anda akan dihubungi melalui email: ' . $supplier->email);
+                ->route('supplier.pending')
+                ->with('success', 'Pendaftaran berhasil! Data Anda sedang dalam proses verifikasi oleh admin.');
         } catch (\Exception $e) {
             return redirect()
                 ->back()
