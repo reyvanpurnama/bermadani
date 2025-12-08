@@ -98,19 +98,15 @@
             </div>
 
             <div class="flex flex-col gap-3">
-                <a href="{{ route('home') }}" class="w-full py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-                    Kembali ke Beranda
-                </a>
-                
                 <form method="POST" action="{{ route('logout') }}" style="display: none;" id="logoutForm">
                     @csrf
                 </form>
                 
-                <button onclick="document.getElementById('logoutForm').submit()" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm">
-                    Keluar
+                <button onclick="document.getElementById('logoutForm').submit()" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2">
+                    <i class='bx bx-log-out text-lg'></i> Keluar
                 </button>
                 
-                <p class="text-xs text-slate-400 mt-2">
+                <p class="text-xs text-slate-400 mt-2 text-center">
                     Butuh bantuan prioritas? 
                     <a href="https://wa.me/6287123456789" class="text-primary font-bold hover:underline" target="_blank">Hubungi Admin via WhatsApp</a>
                 </p>
