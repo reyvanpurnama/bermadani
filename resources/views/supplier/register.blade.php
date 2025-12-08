@@ -80,7 +80,7 @@
 
                     <div class="flex items-center gap-4 opacity-50 transition-opacity" id="ind-step-3">
                         <div class="w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">3</div>
-                        <div><h6 class="font-bold">Akun & Bank</h6><p class="text-xs text-blue-200">Pencairan dana</p></div>
+                        <div><h6 class="font-bold">Akun & Kontak</h6><p class="text-xs text-blue-200">Alamat & login</p></div>
                     </div>
                 </div>
             </div>
@@ -221,7 +221,7 @@
 
                     <div class="step-content" id="step3">
                         <div class="bg-white dark:bg-darkCard p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                            <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Akun & Pencairan</h2>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Akun & Kontak</h2>
                             
                             <div class="space-y-5">
                                 <div>
@@ -245,24 +245,41 @@
                                     <input type="password" name="password_confirmation" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Ketik ulang password">
                                 </div>
 
-                                <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
-                                    <h4 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2">
-                                        <i class='bx bxs-bank'></i> Info Rekening (Penting)
-                                    </h4>
-                                    <div class="grid grid-cols-3 gap-3">
-                                        <div class="col-span-1">
-                                            <select class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none cursor-pointer h-10">
-                                                <option>BCA</option>
-                                                <option>BRI</option>
-                                                <option>Mandiri</option>
-                                            </select>
+                                <div class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                                    <div class="flex items-start gap-3">
+                                        <i class='bx bx-credit-card text-blue-600 dark:text-blue-400 text-xl flex-shrink-0 mt-0.5'></i>
+                                        <div>
+                                            <h4 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-2">Biaya Pendaftaran</h4>
+                                            <p class="text-sm font-bold text-blue-900 dark:text-blue-200 mb-1">Rp 25.000</p>
+                                            <p class="text-xs text-blue-600 dark:text-blue-400 leading-relaxed mb-3">Biaya pendaftaran satu kali. Setiap bulannya akan ada iuran lanjutan.</p>
+                                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-2"><strong>Rekening Tujuan:</strong></p>
+                                            <div class="bg-white dark:bg-slate-800 p-2 rounded text-xs font-mono text-slate-700 dark:text-slate-300 space-y-1">
+                                                <p>BCA: 1234567890 (Bermadani)</p>
+                                                <p>BRI: 0987654321 (Bermadani)</p>
+                                            </div>
                                         </div>
-                                        <div class="col-span-2">
-                                            <input type="text" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none h-10" placeholder="Nomor Rekening">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Bukti Transfer Pembayaran Pendaftaran <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div id="paymentProofPreview" class="hidden mb-3">
+                                            <img id="paymentProofImg" src="" alt="Bukti Pembayaran" class="w-full h-40 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                            <button type="button" onclick="document.getElementById('paymentProof').value = ''; document.getElementById('paymentProofPreview').classList.add('hidden');" class="mt-2 text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-bold">
+                                                Hapus Gambar
+                                            </button>
                                         </div>
-                                        <div class="col-span-3">
-                                            <input type="text" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none h-10" placeholder="Atas Nama Pemilik">
-                                        </div>
+                                        <label for="paymentProof" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:hover:border-slate-500 transition-colors">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <i class='bx bx-receipt text-2xl text-slate-400 mb-2'></i>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                                    <span class="font-semibold">Klik upload</span> atau drag file
+                                                </p>
+                                                <p class="text-[10px] text-slate-400 mt-1">PNG, JPG (Max 2MB)</p>
+                                            </div>
+                                            <input id="paymentProof" type="file" name="registrationPaymentProof" accept="image/*" class="hidden" onchange="previewPaymentProof(this)">
+                                        </label>
                                     </div>
                                 </div>
 
@@ -299,6 +316,17 @@
         function toggleIdentity(type) {
             const label = document.getElementById('id-label');
             label.innerText = type === 'student' ? 'NIM / NIP' : 'Nomor KTP (NIK)';
+        }
+
+        function previewPaymentProof(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('paymentProofImg').src = e.target.result;
+                    document.getElementById('paymentProofPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
         function nextStep(step) {
@@ -342,7 +370,7 @@
             mobTextStep.innerText = `Langkah ${step} dari 3`;
             if(step === 1) { mobTextName.innerText = 'Data Pemilik'; mobProgress.style.width = '33%'; }
             if(step === 2) { mobTextName.innerText = 'Info Produk'; mobProgress.style.width = '66%'; }
-            if(step === 3) { mobTextName.innerText = 'Akun & Bank'; mobProgress.style.width = '100%'; }
+            if(step === 3) { mobTextName.innerText = 'Akun & Kontak'; mobProgress.style.width = '100%'; }
         }
     </script>
 
