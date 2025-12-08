@@ -248,15 +248,30 @@
                                 <div class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
                                     <div class="flex items-start gap-3">
                                         <i class='bx bx-credit-card text-blue-600 dark:text-blue-400 text-xl flex-shrink-0 mt-0.5'></i>
-                                        <div>
+                                        <div class="w-full">
                                             <h4 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-2">Biaya Pendaftaran</h4>
-                                            <p class="text-sm font-bold text-blue-900 dark:text-blue-200 mb-1">Rp 25.000</p>
-                                            <p class="text-xs text-blue-600 dark:text-blue-400 leading-relaxed mb-3">Biaya pendaftaran satu kali. Setiap bulannya akan ada iuran lanjutan.</p>
-                                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-2"><strong>Rekening Tujuan:</strong></p>
-                                            <div class="bg-white dark:bg-slate-800 p-2 rounded text-xs font-mono text-slate-700 dark:text-slate-300 space-y-1">
-                                                <p>BCA: 1234567890 (Bermadani)</p>
-                                                <p>BRI: 0987654321 (Bermadani)</p>
+                                            <p class="text-sm font-bold text-blue-900 dark:text-blue-200 mb-3">Rp 25.000</p>
+                                            
+                                            <div class="mb-3">
+                                                <p class="text-xs text-blue-600 dark:text-blue-400 mb-2"><strong>Scan QR Code di bawah:</strong></p>
+                                                @php
+                                                    $qrPath = public_path('assets/payment-qr/registration-fee.png');
+                                                    $qrExists = file_exists($qrPath);
+                                                @endphp
+                                                
+                                                @if($qrExists)
+                                                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg inline-block">
+                                                        <img src="{{ asset('assets/payment-qr/registration-fee.png') }}" alt="QR Code Pembayaran" class="w-32 h-32 object-contain">
+                                                    </div>
+                                                @else
+                                                    <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg text-center">
+                                                        <i class='bx bx-qr text-3xl text-slate-400 mb-2'></i>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">QR Code sedang dalam tahap pengembangan</p>
+                                                    </div>
+                                                @endif
                                             </div>
+                                            
+                                            <p class="text-[10px] text-blue-600 dark:text-blue-400 italic">💡 Tip: Pastikan nominal yang Anda transfer sesuai dengan nominal yang tertera di aplikasi dompet digital Anda.</p>
                                         </div>
                                     </div>
                                 </div>
