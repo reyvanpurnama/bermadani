@@ -242,7 +242,11 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Konfirmasi Password</label>
-                                    <input type="password" name="password_confirmation" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Ketik ulang password">
+                                    <div class="relative">
+                                        <input type="password" id="passwordConfirmation" name="password_confirmation" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none pr-10" placeholder="Ketik ulang password" oninput="validatePasswordMatch()">
+                                        <div id="passwordMatchIcon" class="absolute inset-y-0 right-3 flex items-center pointer-events-none"></div>
+                                    </div>
+                                    <div id="passwordMatchMessage" class="text-xs mt-1 hidden"></div>
                                 </div>
 
                                 <div class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
@@ -341,6 +345,34 @@
                     document.getElementById('paymentProofPreview').classList.remove('hidden');
                 };
                 reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validatePasswordMatch() {
+            const password = document.querySelector('input[name="password"]').value;
+            const passwordConfirmation = document.getElementById('passwordConfirmation').value;
+            const icon = document.getElementById('passwordMatchIcon');
+            const message = document.getElementById('passwordMatchMessage');
+            
+            if (!passwordConfirmation) {
+                icon.innerHTML = '';
+                message.classList.add('hidden');
+                return;
+            }
+            
+            if (password === passwordConfirmation && password.length >= 8) {
+                icon.innerHTML = '<i class="bx bx-check-circle text-lg text-emerald-500"></i>';
+                message.textContent = 'Password cocok ✓';
+                message.className = 'text-xs mt-1 text-emerald-600 dark:text-emerald-400 flex items-center gap-1';
+                message.classList.remove('hidden');
+            } else if (password !== passwordConfirmation && passwordConfirmation) {
+                icon.innerHTML = '<i class="bx bx-x-circle text-lg text-rose-500"></i>';
+                message.textContent = 'Password tidak cocok';
+                message.className = 'text-xs mt-1 text-rose-600 dark:text-rose-400 flex items-center gap-1';
+                message.classList.remove('hidden');
+            } else {
+                icon.innerHTML = '';
+                message.classList.add('hidden');
             }
         }
 

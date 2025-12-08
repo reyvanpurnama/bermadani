@@ -27,6 +27,7 @@ Route::middleware('guest')->group(function () {
             'password' => 'required',
         ]);
         
+        // Coba login sebagai User (admin/kasir) dulu
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
             request()->session()->regenerate();
             
@@ -45,6 +46,23 @@ Route::middleware('guest')->group(function () {
             return redirect()->intended('/admin');
         }
         
+        // Jika gagal, coba login sebagai Supplier
+        $supplier = \App\Models\Supplier::where('email', request('email'))->first();
+        
+        if ($supplier && \Hash::check(request('password'), $supplier->password)) {
+            // Login supplier menggunakan Auth::login()
+            Auth::login($supplier, request()->boolean('remember'));
+            request()->session()->regenerate();
+            
+            // Check status supplier
+            if (in_array($supplier->status, ['PENDING', 'PENDING_REVIEW', 'REJECTED'])) {
+                return redirect()->route('supplier.pending');
+            }
+            
+            // Jika status APPROVED/ACTIVE, redirect ke dashboard supplier
+            return redirect()->route('supplier.dashboard');
+        }
+        
         return back()->withErrors([
             'email' => 'Email atau password salah.',
         ])->onlyInput('email');
@@ -60,6 +78,11 @@ Route::post('/logout', function () {
     request()->session()->regenerateToken();
     return redirect()->route('home');
 })->name('logout');
+
+// Supplier Pending Page (ketika supplier belum approve)
+Route::middleware('auth')->get('/supplier/pending', function () {
+    return view('supplier.pending');
+})->name('supplier.pending');
 
 // Supplier Portal Routes - Protected (Login via /login)
 Route::middleware(['auth'])->prefix('supplier')->group(function () {

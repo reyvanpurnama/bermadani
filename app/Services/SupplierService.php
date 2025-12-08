@@ -22,16 +22,8 @@ class SupplierService
             // Generate unique supplier code
             $code = $this->generateSupplierCode();
 
-            // Create user account for supplier
-            $user = User::create([
-                'name' => $data['ownerName'],
-                'email' => $data['email'],
-                'password' => Hash::make($data['password']),
-                'role' => 'SUPPLIER',
-                'isActive' => false, // Inactive until approved
-            ]);
-
-            // Create supplier record
+            // Create supplier record ONLY
+            // Login akan direct via suppliers table, bukan users table
             $supplier = Supplier::create([
                 'code' => $code,
                 'ownerName' => $data['ownerName'],
@@ -51,9 +43,6 @@ class SupplierService
                 'isSuspendedForPayment' => false,
                 'isActive' => false,
             ]);
-
-            // Link user to supplier (optional: add userId column to suppliers table)
-            // Or use email as the link
 
             return $supplier;
         });
