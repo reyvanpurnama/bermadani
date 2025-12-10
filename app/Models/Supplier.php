@@ -70,7 +70,7 @@ class Supplier extends Authenticatable
         'maxActiveProducts' => 'integer',
         'currentActiveProducts' => 'integer',
         'paymentGraceDays' => 'integer',
-        'registrationPaymentStatus' => \App\Enums\RegistrationPaymentStatus::class,
+        // registrationPaymentStatus tetap string untuk compatibility dengan SQLite
     ];
 
     protected $hidden = [
@@ -128,6 +128,54 @@ class Supplier extends Authenticatable
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = Hash::make($value);
+    }
+
+    /**
+     * Get enum instance from registrationPaymentStatus string
+     */
+    public function getPaymentStatusEnumAttribute()
+    {
+        if (!$this->registrationPaymentStatus) {
+            return null;
+        }
+        
+        return \App\Enums\RegistrationPaymentStatus::from($this->registrationPaymentStatus);
+    }
+
+    /**
+     * Get payment status label in Bahasa Indonesia
+     */
+    public function getPaymentStatusLabelAttribute(): string
+    {
+        try {
+            return $this->paymentStatusEnum?->label() ?? 'Unknown';
+        } catch (\Exception $e) {
+            return match($this->registrationPaymentStatus) {
+                'UNPAID' => 'Belum Dibayar',
+                'PENDING_VERIFICATION' => 'Menunggu Verifikasi',
+                'VERIFIED' => 'Terverifikasi',
+                'REJECTED' => 'Ditolak',
+                default => 'Unknown',
+            };
+        }
+    }
+
+    /**
+     * Get payment status color for badge
+     */
+    public function getPaymentStatusColorAttribute(): string
+    {
+        try {
+            return $this->paymentStatusEnum?->color() ?? 'gray';
+        } catch (\Exception $e) {
+            return match($this->registrationPaymentStatus) {
+                'UNPAID' => 'gray',
+                'PENDING_VERIFICATION' => 'yellow',
+                'VERIFIED' => 'green',
+                'REJECTED' => 'red',
+                default => 'gray',
+            };
+        }
     }
 
     public function calculateAverageScore()
