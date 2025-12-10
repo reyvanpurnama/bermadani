@@ -34,7 +34,14 @@ class SupplierService
                 'description' => $data['description'] ?? null,
                 'productCategory' => $data['productCategory'] ?? null,
                 'password' => $data['password'], // Will be hashed by model mutator
-                'status' => 'PENDING', // Default status
+                
+                // Payment fields
+                'registrationFee' => 25000,
+                'registrationPaymentProof' => $data['registrationPaymentProof'] ?? null,
+                'registrationPaymentStatus' => $data['registrationPaymentStatus'] ?? 'UNPAID',
+                
+                // Status: PENDING jika sudah upload, PENDING_PAYMENT jika belum
+                'status' => ($data['registrationPaymentStatus'] ?? 'UNPAID') === 'PENDING_VERIFICATION' ? 'PENDING' : 'PENDING_PAYMENT',
                 'monthlyFee' => 25000, // Default fee
                 'maxActiveProducts' => 10, // Default limit
                 'currentActiveProducts' => 0,
@@ -84,10 +91,16 @@ class SupplierService
      * @param int $supplierId
      * @param int $approvedBy
      * @return Supplier
+     * @throws \Exception
      */
     public function approve(int $supplierId, int $approvedBy): Supplier
     {
         $supplier = Supplier::findOrFail($supplierId);
+
+        // Validasi: Payment harus sudah verified
+        if ($supplier->registrationPaymentStatus !== 'VERIFIED') {
+            throw new \Exception('Pembayaran registrasi belum diverifikasi! Harap verifikasi pembayaran terlebih dahulu.');
+        }
 
         // Update supplier status
         $supplier->update([

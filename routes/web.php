@@ -184,6 +184,11 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/suppliers/{id}', function ($id) {
         return view('admin.suppliers.detail', ['supplierId' => $id]);
     })->name('admin.suppliers.detail');
+    // Payment verification routes
+    Route::post('/suppliers/{id}/verify-payment', [SupplierController::class, 'verifyPayment'])->name('admin.suppliers.verifyPayment');
+    Route::post('/suppliers/{id}/reject-payment', [SupplierController::class, 'rejectPayment'])->name('admin.suppliers.rejectPayment');
+    
+    // Supplier approval routes
     Route::post('/suppliers/{id}/approve', [SupplierController::class, 'approve'])->name('admin.suppliers.approve');
     Route::post('/suppliers/{id}/reject', [SupplierController::class, 'reject'])->name('admin.suppliers.reject');
     Route::post('/suppliers/{id}/suspend', [SupplierController::class, 'suspend'])->name('admin.suppliers.suspend');
