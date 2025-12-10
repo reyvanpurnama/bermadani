@@ -119,7 +119,7 @@
                                     $statusLabel = match($supplier->status) {
                                         'ACTIVE' => 'Aktif',
                                         'PENDING' => 'Menunggu',
-                                        'APPROVED_PENDING_PAYMENT' => 'Approve (Unpaid)',
+                                        'APPROVED' => 'Disetujui',
                                         'SUSPENDED' => 'Suspended',
                                         'REJECTED' => 'Ditolak',
                                         default => $supplier->status,

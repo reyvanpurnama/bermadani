@@ -40,8 +40,8 @@ class SupplierService
                 'registrationPaymentProof' => $data['registrationPaymentProof'] ?? null,
                 'registrationPaymentStatus' => $data['registrationPaymentStatus'] ?? 'UNPAID',
                 
-                // Status: PENDING jika sudah upload, PENDING_PAYMENT jika belum
-                'status' => ($data['registrationPaymentStatus'] ?? 'UNPAID') === 'PENDING_VERIFICATION' ? 'PENDING' : 'PENDING_PAYMENT',
+                // Status: PENDING jika sudah upload proof, tetap PENDING jika belum
+                'status' => 'PENDING',
                 'monthlyFee' => 25000, // Default fee
                 'maxActiveProducts' => 10, // Default limit
                 'currentActiveProducts' => 0,
@@ -104,7 +104,7 @@ class SupplierService
 
         // Update supplier status
         $supplier->update([
-            'status' => 'APPROVED_PENDING_PAYMENT',
+            'status' => 'APPROVED',
             'approvedAt' => now(),
             'approvedById' => $approvedBy,
         ]);

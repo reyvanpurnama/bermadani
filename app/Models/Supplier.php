@@ -95,7 +95,7 @@ class Supplier extends Authenticatable
     public function approve($approvedById)
     {
         $this->update([
-            'status' => 'APPROVED_PENDING_PAYMENT',
+            'status' => 'APPROVED',
             'approvedAt' => now(),
             'approvedById' => $approvedById,
         ]);
@@ -194,5 +194,47 @@ class Supplier extends Authenticatable
         $this->update(['productAverageScore' => round($average, 2)]);
 
         return $average;
+    }
+
+    /**
+     * Accessor: Get supplier status as enum
+     */
+    public function getStatusEnumAttribute()
+    {
+        if (!$this->status) {
+            return null;
+        }
+        
+        return \App\Enums\SupplierStatus::from($this->status);
+    }
+
+    /**
+     * Accessor: Get supplier status label
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return match($this->status) {
+            'PENDING' => 'Menunggu Verifikasi',
+            'APPROVED' => 'Disetujui',
+            'ACTIVE' => 'Aktif',
+            'SUSPENDED' => 'Ditangguhkan',
+            'REJECTED' => 'Ditolak',
+            default => $this->status,
+        };
+    }
+
+    /**
+     * Accessor: Get supplier status color
+     */
+    public function getStatusColorAttribute(): string
+    {
+        return match($this->status) {
+            'PENDING' => 'yellow',
+            'APPROVED' => 'blue',
+            'ACTIVE' => 'green',
+            'SUSPENDED' => 'gray',
+            'REJECTED' => 'red',
+            default => 'gray',
+        };
     }
 }

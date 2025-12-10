@@ -125,7 +125,7 @@ class SupplierManagement extends Component
             $supplier = Supplier::findOrFail($supplierId);
             
             $supplier->update([
-                'status' => 'APPROVED_PENDING_PAYMENT',
+                'status' => 'APPROVED',
                 'approvedAt' => now(),
                 'approvedById' => auth()->id(),
             ]);

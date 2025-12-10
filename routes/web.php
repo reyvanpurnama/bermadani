@@ -55,7 +55,7 @@ Route::middleware('guest')->group(function () {
             request()->session()->regenerate();
             
             // Check status supplier
-            if (in_array($supplier->status, ['PENDING', 'PENDING_REVIEW', 'REJECTED'])) {
+            if (in_array($supplier->status, ['PENDING', 'REJECTED'])) {
                 return redirect()->route('supplier.pending');
             }
             
