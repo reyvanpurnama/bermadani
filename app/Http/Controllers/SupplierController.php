@@ -24,6 +24,21 @@ class SupplierController extends Controller
     }
 
     /**
+     * Show pending approval page for supplier
+     */
+    public function pending()
+    {
+        $supplier = auth()->user();
+        
+        if (!$supplier instanceof \App\Models\Supplier) {
+            return redirect()->route('login')
+                ->with('error', 'Akses ditolak. Silakan login sebagai supplier.');
+        }
+
+        return view('supplier.pending', compact('supplier'));
+    }
+
+    /**
      * Handle supplier registration
      */
     public function register(SupplierRegistrationRequest $request)

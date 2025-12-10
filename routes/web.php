@@ -80,9 +80,7 @@ Route::post('/logout', function () {
 })->name('logout');
 
 // Supplier Pending Page (ketika supplier belum approve)
-Route::middleware('auth')->get('/supplier/pending', function () {
-    return view('supplier.pending');
-})->name('supplier.pending');
+Route::middleware('auth')->get('/supplier/pending', [SupplierController::class, 'pending'])->name('supplier.pending');
 
 // Supplier Portal Routes - Protected (Login via /login)
 Route::middleware(['auth'])->prefix('supplier')->group(function () {

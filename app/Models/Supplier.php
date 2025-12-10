@@ -57,10 +57,12 @@ class Supplier extends Authenticatable
     protected $casts = [
         'monthlyFee' => 'decimal:2',
         'productAverageScore' => 'decimal:2',
+        'registrationFee' => 'decimal:2',
         'isPaymentActive' => 'boolean',
         'isSuspendedForPayment' => 'boolean',
         'isActive' => 'boolean',
         'approvedAt' => 'datetime',
+        'registrationPaymentVerifiedAt' => 'datetime',
         'lastPaymentDate' => 'datetime',
         'nextPaymentDue' => 'datetime',
         'suspendedAt' => 'datetime',
@@ -68,6 +70,7 @@ class Supplier extends Authenticatable
         'maxActiveProducts' => 'integer',
         'currentActiveProducts' => 'integer',
         'paymentGraceDays' => 'integer',
+        'registrationPaymentStatus' => \App\Enums\RegistrationPaymentStatus::class,
     ];
 
     protected $hidden = [

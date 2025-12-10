@@ -14,9 +14,11 @@ class SupplierManagement extends Component
     public $filterStatus = '';
     public $showRejectModal = false;
     public $showSuspendModal = false;
+    public $showRejectPaymentModal = false;
     public $selectedSupplierId = null;
     public $rejectReason = '';
     public $suspendReason = '';
+    public $rejectPaymentReason = '';
 
     protected $queryString = ['search', 'filterStatus'];
 
@@ -61,6 +63,60 @@ class SupplierManagement extends Component
         $this->showSuspendModal = false;
         $this->selectedSupplierId = null;
         $this->suspendReason = '';
+    }
+
+    public function openRejectPaymentModal($supplierId)
+    {
+        $this->selectedSupplierId = $supplierId;
+        $this->rejectPaymentReason = '';
+        $this->showRejectPaymentModal = true;
+    }
+
+    public function closeRejectPaymentModal()
+    {
+        $this->showRejectPaymentModal = false;
+        $this->selectedSupplierId = null;
+        $this->rejectPaymentReason = '';
+    }
+
+    public function verifyPayment($supplierId)
+    {
+        try {
+            $supplier = Supplier::findOrFail($supplierId);
+            
+            $supplier->update([
+                'registrationPaymentStatus' => 'VERIFIED',
+                'registrationPaymentVerifiedAt' => now(),
+                'registrationPaymentVerifiedBy' => auth()->id(),
+                'status' => 'PENDING', // Ubah ke PENDING untuk menunggu approval data
+            ]);
+
+            session()->flash('success', 'Pembayaran berhasil diverifikasi! Supplier sekarang menunggu approval data.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    public function rejectPayment()
+    {
+        $this->validate([
+            'rejectPaymentReason' => 'required|string|max:500',
+        ]);
+
+        try {
+            $supplier = Supplier::findOrFail($this->selectedSupplierId);
+            
+            $supplier->update([
+                'registrationPaymentStatus' => 'REJECTED',
+                'rejectedReason' => $this->rejectPaymentReason,
+                'status' => 'REJECTED',
+            ]);
+
+            session()->flash('success', 'Pembayaran ditolak.');
+            $this->closeRejectPaymentModal();
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     public function approve($supplierId)
