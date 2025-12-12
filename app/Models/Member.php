@@ -3,18 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Member extends Model
 {
-    use HasUuids;
-
-    /**
-     * Disable auto-increment (we use CUID/UUID)
-     */
-    public $incrementing = false;
-    protected $keyType = 'string';
-
     /**
      * The attributes that are mass assignable.
      */

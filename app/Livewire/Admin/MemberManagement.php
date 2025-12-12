@@ -6,16 +6,22 @@ use App\Models\Member;
 use App\Services\MemberService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class MemberManagement extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     public $search = '';
     public $filterStatus = '';
     public $filterTier = '';
     public $filterUnitKerja = '';
     public $filterJoinDate = '';
+    
+    // Import properties
+    public $showImportModal = false;
+    public $importFile;
+    public $importSummary = null;
     
     protected $queryString = [
         'search' => ['except' => ''],
@@ -74,6 +80,48 @@ class MemberManagement extends Component
             session()->flash('success', 'Anggota berhasil diaktifkan kembali.');
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal mengaktifkan anggota: ' . $e->getMessage());
+        }
+    }
+
+    public function openImportModal()
+    {
+        $this->showImportModal = true;
+        $this->importFile = null;
+        $this->importSummary = null;
+    }
+
+    public function closeImportModal()
+    {
+        $this->showImportModal = false;
+        $this->importFile = null;
+        $this->importSummary = null;
+    }
+
+    public function importMembers()
+    {
+        $this->validate([
+            'importFile' => 'required|mimes:xlsx,xls|max:10240', // max 10MB
+        ]);
+
+        try {
+            $filePath = $this->importFile->getRealPath();
+            
+            $this->importSummary = $this->memberService->importFromExcel($filePath);
+            
+            if ($this->importSummary['success'] > 0) {
+                session()->flash('success', 
+                    "Import berhasil! {$this->importSummary['success']} anggota ditambahkan, " .
+                    "{$this->importSummary['skipped']} dilewati, " .
+                    "{$this->importSummary['errors']} error."
+                );
+            } else {
+                session()->flash('error', 'Tidak ada anggota yang berhasil diimport.');
+            }
+            
+            $this->reset(['importFile']);
+            
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal import: ' . $e->getMessage());
         }
     }
 

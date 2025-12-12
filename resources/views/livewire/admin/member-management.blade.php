@@ -6,6 +6,10 @@
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola data keanggotaan, simpanan, dan poin.</p>
         </div>
         <div class="flex gap-2">
+            <button wire:click="openImportModal"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-emerald-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bx-import text-lg'></i> Import Excel
+            </button>
             <button wire:click="$dispatch('export-csv')"
                 class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-export'></i> Export CSV
@@ -221,4 +225,93 @@
             {{ $members->links() }}
         </div>
     </div>
+
+    {{-- Import Modal --}}
+    @if($showImportModal)
+    <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" wire:click="closeImportModal"></div>
+
+            <div class="inline-block align-bottom bg-white dark:bg-darkCard rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div class="bg-white dark:bg-darkCard px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-500/10">
+                            <i class='bx bx-import text-2xl text-emerald-600'></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Import Data Anggota</h3>
+                            <p class="text-[11px] text-slate-500">Upload file Excel (.xlsx atau .xls)</p>
+                        </div>
+                    </div>
+
+                    <div class="border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-lg p-6 text-center">
+                        <input type="file" wire:model="importFile" accept=".xlsx,.xls" id="importFile" class="hidden">
+                        <label for="importFile" class="cursor-pointer">
+                            <div class="flex flex-col items-center gap-2">
+                                <i class='bx bx-cloud-upload text-4xl text-slate-400'></i>
+                                @if($importFile)
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-white">{{ $importFile->getClientOriginalName() }}</p>
+                                    <p class="text-xs text-slate-500">{{ number_format($importFile->getSize() / 1024, 2) }} KB</p>
+                                @else
+                                    <p class="text-sm font-semibold text-slate-700 dark:text-white">Klik untuk pilih file</p>
+                                    <p class="text-xs text-slate-500">atau drag & drop file Excel di sini</p>
+                                @endif
+                            </div>
+                        </label>
+                        @error('importFile')
+                            <p class="text-xs text-rose-500 mt-2">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mt-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-3">
+                        <p class="text-[11px] text-blue-700 dark:text-blue-400 font-semibold mb-2">Format Excel yang diharapkan:</p>
+                        <ul class="text-[10px] text-blue-600 dark:text-blue-300 list-disc list-inside space-y-1">
+                            <li>Kolom 1: NO (nomor urut)</li>
+                            <li>Kolom 2: NAMA ANGGOTA</li>
+                            <li>Kolom 3: PENDAFTARAN ANGGOTA (tanggal)</li>
+                            <li>Kolom 4: SIMPANAN POKOK</li>
+                            <li>Kolom 5: TOTAL SIMPANAN WAJIB</li>
+                        </ul>
+                    </div>
+
+                    @if($importSummary)
+                    <div class="mt-4 bg-slate-50 dark:bg-slate-700 rounded-lg p-4">
+                        <p class="text-sm font-bold text-slate-700 dark:text-white mb-2">Hasil Import:</p>
+                        <div class="space-y-1 text-xs">
+                            <p class="text-emerald-600 dark:text-emerald-400">✓ {{ $importSummary['success'] }} anggota berhasil ditambahkan</p>
+                            <p class="text-amber-600 dark:text-amber-400">⊘ {{ $importSummary['skipped'] }} anggota dilewati (duplikat)</p>
+                            <p class="text-rose-600 dark:text-rose-400">✗ {{ $importSummary['errors'] }} error</p>
+                        </div>
+                        @if(count($importSummary['error_details']) > 0)
+                        <details class="mt-2">
+                            <summary class="text-xs text-slate-600 dark:text-slate-400 cursor-pointer hover:text-slate-800 dark:hover:text-slate-200">Detail Error</summary>
+                            <div class="mt-2 max-h-40 overflow-y-auto bg-white dark:bg-slate-800 rounded p-2 text-[10px] text-slate-600 dark:text-slate-400">
+                                @foreach($importSummary['error_details'] as $error)
+                                    <p>{{ $error }}</p>
+                                @endforeach
+                            </div>
+                        </details>
+                        @endif
+                    </div>
+                    @endif
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                    <button wire:click="importMembers" type="button" 
+                        class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-emerald-600 text-sm font-bold text-white hover:bg-emerald-700 focus:outline-none sm:ml-3 sm:w-auto disabled:opacity-50"
+                        {{ !$importFile ? 'disabled' : '' }}
+                        wire:loading.attr="disabled"
+                        wire:target="importMembers">
+                        <span wire:loading.remove wire:target="importMembers">Import Sekarang</span>
+                        <span wire:loading wire:target="importMembers">Importing...</span>
+                    </button>
+                    <button wire:click="closeImportModal" type="button" 
+                        class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-darkCard text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

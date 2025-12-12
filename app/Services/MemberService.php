@@ -383,4 +383,19 @@ class MemberService
 
         return $member->fresh();
     }
+
+    /**
+     * Import members from Excel file
+     *
+     * @param string $filePath
+     * @return array
+     */
+    public function importFromExcel(string $filePath): array
+    {
+        $import = new \App\Imports\MemberImport($this);
+        
+        \Maatwebsite\Excel\Facades\Excel::import($import, $filePath);
+        
+        return $import->getSummary();
+    }
 }
