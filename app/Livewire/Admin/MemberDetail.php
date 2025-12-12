@@ -60,7 +60,7 @@ class MemberDetail extends Component
     {
         return Transaction::where('memberId', $this->memberId)
             ->with(['merchant'])
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
@@ -68,7 +68,7 @@ class MemberDetail extends Component
     {
         return SimpananTransaction::where('memberId', $this->memberId)
             ->with(['processor'])
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
