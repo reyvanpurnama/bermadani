@@ -68,6 +68,11 @@ class Member extends Model
         return $this->hasMany(Saving::class, 'memberId');
     }
 
+    public function simpananTransactions()
+    {
+        return $this->hasMany(SimpananTransaction::class, 'memberId');
+    }
+
     public function loans()
     {
         return $this->hasMany(Loan::class, 'memberId');
@@ -208,10 +213,12 @@ class Member extends Model
 
     public function updateTier()
     {
+        // Tier based on POINTS, not totalSpent
+        // BRONZE: 0-999, SILVER: 1000-2999, GOLD: 3000-5999, PLATINUM: 6000+
         $tier = match(true) {
-            $this->totalSpent >= 10000000 => 'PLATINUM',
-            $this->totalSpent >= 5000000 => 'GOLD',
-            $this->totalSpent >= 2000000 => 'SILVER',
+            $this->points >= 6000 => 'PLATINUM',
+            $this->points >= 3000 => 'GOLD',
+            $this->points >= 1000 => 'SILVER',
             default => 'BRONZE',
         };
 
@@ -220,6 +227,74 @@ class Member extends Model
         }
 
         return $this;
+    }
+
+    /**
+     * Generate unique member number
+     * Format: MBR-YYYYMMDD-XXX
+     */
+    public static function generateNomorAnggota()
+    {
+        $date = now()->format('Ymd');
+        $prefix = "MBR-{$date}-";
+
+        $lastMember = self::where('nomorAnggota', 'LIKE', "{$prefix}%")
+            ->latest('id')
+            ->first();
+
+        if ($lastMember) {
+            $lastNumber = (int) substr($lastMember->nomorAnggota, -3);
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+
+        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+    }
+
+    /**
+     * Get progress to next tier (0-100)
+     */
+    public function getNextTierProgressAttribute()
+    {
+        $thresholds = [
+            'BRONZE' => ['current' => 0, 'next' => 1000],
+            'SILVER' => ['current' => 1000, 'next' => 3000],
+            'GOLD' => ['current' => 3000, 'next' => 6000],
+            'PLATINUM' => ['current' => 6000, 'next' => 6000], // Max tier
+        ];
+
+        $tierData = $thresholds[$this->tier] ?? $thresholds['BRONZE'];
+        
+        if ($this->tier === 'PLATINUM') {
+            return 100; // Already at max tier
+        }
+
+        $currentPoints = $this->points - $tierData['current'];
+        $requiredPoints = $tierData['next'] - $tierData['current'];
+        
+        return min(100, ($currentPoints / $requiredPoints) * 100);
+    }
+
+    /**
+     * Get points needed for next tier
+     */
+    public function getPointsToNextTierAttribute()
+    {
+        $thresholds = [
+            'BRONZE' => 1000,
+            'SILVER' => 3000,
+            'GOLD' => 6000,
+            'PLATINUM' => 0, // Already at max
+        ];
+
+        $nextThreshold = $thresholds[$this->tier] ?? 1000;
+        
+        if ($this->tier === 'PLATINUM') {
+            return 0; // Already at max tier
+        }
+
+        return max(0, $nextThreshold - $this->points);
     }
 
     public function recordPurchase($amount)
