@@ -114,10 +114,31 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.transactions.detail', ['transactionId' => $id]);
     })->name('transaksi.detail');
     
-    // Members (not in MVP)
-    Route::get('/members', function () {
-        return view('admin.placeholder', ['title' => 'Anggota']);
-    })->name('admin.members');
+    // Members Management
+    Route::prefix('members')->name('admin.members.')->group(function () {
+        Route::get('/', function () {
+            return view('admin.members.index');
+        })->name('index');
+        
+        Route::get('/create', function () {
+            return view('admin.members.create');
+        })->name('create');
+        
+        Route::get('/{member}', function ($member) {
+            $member = \App\Models\Member::findOrFail($member);
+            return view('admin.members.show', compact('member'));
+        })->name('show');
+        
+        Route::get('/{member}/edit', function ($member) {
+            $member = \App\Models\Member::findOrFail($member);
+            return view('admin.members.edit', compact('member'));
+        })->name('edit');
+        
+        Route::get('/{member}/simpanan', function ($member) {
+            $member = \App\Models\Member::findOrFail($member);
+            return view('admin.members.simpanan', compact('member'));
+        })->name('simpanan');
+    });
     
     // Savings
     Route::get('/savings', function () {
