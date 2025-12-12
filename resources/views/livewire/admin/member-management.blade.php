@@ -186,7 +186,7 @@
                             </td>
                             <td class="px-5 py-3.5 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('admin.members.detail', $member->id) }}" 
+                                    <a href="{{ route('admin.members.show', $member->id) }}" 
                                         class="text-slate-400 hover:text-primary transition-colors p-1" title="Detail">
                                         <i class='bx bx-show text-lg'></i>
                                     </a>
