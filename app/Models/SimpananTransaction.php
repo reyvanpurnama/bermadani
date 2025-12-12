@@ -85,15 +85,15 @@ class SimpananTransaction extends Model
      */
     public function getFormattedAmountAttribute()
     {
-        return 'Rp ' . number_format($this->amount, 0, ',', '.');
+        return 'Rp ' . number_format((float)$this->amount, 0, ',', '.');
     }
 
     public function getFormattedBalanceAttribute()
     {
-        return 'Rp ' . number_format($this->balanceAfter, 0, ',', '.');
+        return 'Rp ' . number_format((float)$this->balanceAfter, 0, ',', '.');
     }
 
-    public function getTypeLabel Attribute()
+    public function getTypeLabelAttribute()
     {
         return match($this->type) {
             'POKOK' => 'Simpanan Pokok',
@@ -103,7 +103,7 @@ class SimpananTransaction extends Model
         };
     }
 
-    public function getTransactionTypeLabel Attribute()
+    public function getTransactionTypeLabelAttribute()
     {
         return match($this->transactionType) {
             'SETOR' => 'Setoran',
