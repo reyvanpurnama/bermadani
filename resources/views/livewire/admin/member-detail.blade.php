@@ -259,7 +259,7 @@
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                     <td class="px-5 py-3">
                                         #{{ $transaction->invoiceNumber }}<br>
-                                        <span class="text-[10px] text-slate-400">{{ $transaction->createdAt->format('d M, H:i') }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ $transaction->created_at->format('d M, H:i') }}</span>
                                     </td>
                                     <td class="px-5 py-3">{{ $transaction->merchant->businessName ?? '-' }}</td>
                                     <td class="px-5 py-3 text-right font-bold text-slate-800 dark:text-white">
@@ -296,7 +296,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($simpananTransactions as $simpanan)
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-5 py-3">{{ $simpanan->createdAt->format('d M Y') }}</td>
+                                    <td class="px-5 py-3">{{ $simpanan->created_at->format('d M Y') }}</td>
                                     <td class="px-5 py-3">
                                         <span class="
                                             @if($simpanan->type === 'POKOK') bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300
