@@ -87,7 +87,7 @@ class MemberEdit extends Component
 
             DB::commit();
 
-            session()->flash('message', 'Data member berhasil diperbarui.');
+            session()->flash('success', 'Data member berhasil diperbarui.');
 
             return redirect()->route('admin.members.show', $this->member->id);
 

@@ -149,11 +149,11 @@
                         <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Jenis Kelamin</label>
                         <div class="flex gap-4 mt-2">
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" wire:model="gender" value="M" class="text-primary focus:ring-primary">
+                                <input type="radio" wire:model="gender" value="MALE" class="text-primary focus:ring-primary">
                                 <span class="text-[13px] text-slate-700 dark:text-slate-300">Laki-laki</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" wire:model="gender" value="F" class="text-primary focus:ring-primary">
+                                <input type="radio" wire:model="gender" value="FEMALE" class="text-primary focus:ring-primary">
                                 <span class="text-[13px] text-slate-700 dark:text-slate-300">Perempuan</span>
                             </label>
                         </div>
