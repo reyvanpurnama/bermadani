@@ -17,6 +17,7 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class MemberImport implements ToCollection, WithHeadingRow
 {
     protected $memberService;
+    protected $sukarelaData = [];
     public $errors = [];
     public $successCount = 0;
     public $skipCount = 0;
@@ -24,6 +25,35 @@ class MemberImport implements ToCollection, WithHeadingRow
     public function __construct(MemberService $memberService)
     {
         $this->memberService = $memberService;
+        $this->loadSukarelaData();
+    }
+
+    /**
+     * Load simpanan sukarela data from pivot CSV
+     */
+    protected function loadSukarelaData()
+    {
+        $pivotFile = base_path('docs/data/pivot-sukarela.csv');
+        
+        if (!file_exists($pivotFile)) {
+            return;
+        }
+
+        $handle = fopen($pivotFile, 'r');
+        $headers = fgetcsv($handle); // Skip first 4 header rows
+        fgetcsv($handle);
+        fgetcsv($handle);
+        fgetcsv($handle);
+        
+        while (($data = fgetcsv($handle)) !== false) {
+            if (!empty($data[0]) && $data[0] !== 'Row Labels' && $data[0] !== 'Grand Total') {
+                $name = trim($data[0]);
+                $grandTotal = $this->parseRupiah($data[4] ?? '0'); // Column Grand Total
+                $this->sukarelaData[$name] = $grandTotal;
+            }
+        }
+        
+        fclose($handle);
     }
 
     /**
@@ -65,9 +95,10 @@ class MemberImport implements ToCollection, WithHeadingRow
                     $joinDate = now();
                 }
 
-                // Parse simpanan values
-                $simpananPokok = $this->parseNumber($row['simpanan_pokok'] ?? 0);
-                $simpananWajib = $this->parseNumber($row['total_simpanan_wajib'] ?? 0);
+                // Parse simpanan values dengan format rupiah Indonesia
+                $simpananPokok = $this->parseRupiah($row['simpanan_pokok'] ?? '0');
+                $simpananWajib = $this->parseRupiah($row['total_simpanan_wajib'] ?? '0');
+                $simpananSukarela = $this->sukarelaData[$name] ?? 0;
 
                 // Cek apakah member sudah ada berdasarkan nama
                 $existingMember = Member::whereHas('user', function ($query) use ($name) {
@@ -121,7 +152,7 @@ class MemberImport implements ToCollection, WithHeadingRow
                     'totalSpent' => 0,
                     'simpananPokok' => $simpananPokok,
                     'simpananWajib' => $simpananWajib,
-                    'simpananSukarela' => 0,
+                    'simpananSukarela' => $simpananSukarela,
                 ]);
 
                 // Catat transaksi simpanan pokok jika ada
@@ -146,7 +177,21 @@ class MemberImport implements ToCollection, WithHeadingRow
                         'amount' => $simpananWajib,
                         'balanceAfter' => $simpananWajib,
                         'notes' => 'Import data awal - Simpanan Wajib',
-                        'processedBy' => auth()->id() ?? 1, // Default to user ID 1 if not authenticated
+                        'processedBy' => auth()->id() ?? 1,
+                        'processedAt' => $joinDate,
+                        'status' => 'APPROVED',
+                    ]);
+                }
+
+                // Catat transaksi simpanan sukarela jika ada
+                if ($simpananSukarela > 0) {
+                    $member->simpananTransactions()->create([
+                        'type' => 'SUKARELA',
+                        'transactionType' => 'SETOR',
+                        'amount' => $simpananSukarela,
+                        'balanceAfter' => $simpananSukarela,
+                        'notes' => 'Saldo awal simpanan sukarela (dari pivot data)',
+                        'processedBy' => auth()->id() ?? 1,
                         'processedAt' => $joinDate,
                         'status' => 'APPROVED',
                     ]);
@@ -163,28 +208,30 @@ class MemberImport implements ToCollection, WithHeadingRow
     }
 
     /**
-     * Parse number dari string atau formula Excel
+     * Parse Indonesian rupiah format to number
+     * Examples: "Rp2.950.000" -> 2950000, " Rp 10.088 " -> 10088
      */
-    private function parseNumber($value)
+    private function parseRupiah($value)
     {
         if (is_numeric($value)) {
             return (float) $value;
         }
 
-        // Jika ada formula (dimulai dengan =), return 0 karena kita tidak bisa evaluate formula
+        // Jika ada formula (dimulai dengan =), return 0
         if (is_string($value) && str_starts_with(trim($value), '=')) {
             return 0;
         }
 
-        // Jika ada string lain, coba extract angka
         if (is_string($value)) {
-            // Remove non-numeric characters except dot and comma
-            $cleaned = preg_replace('/[^0-9.,]/', '', $value);
-            $cleaned = str_replace(',', '', $cleaned);
+            // Remove "Rp", spaces, and dots (thousand separators)
+            $cleaned = str_replace(['Rp', 'rp', ' ', '.'], '', $value);
+            // Replace comma with dot for decimal separator (if any)
+            $cleaned = str_replace(',', '.', $cleaned);
+            
             $number = (float) $cleaned;
             
-            // Sanity check: jika angka terlalu besar (> 1 miliar), kembalikan 0
-            if ($number > 1000000000) {
+            // Sanity check: jika angka terlalu besar (> 1 miliar) atau negatif, return 0
+            if ($number > 1000000000 || $number < 0) {
                 return 0;
             }
             
