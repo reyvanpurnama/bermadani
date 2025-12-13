@@ -16,6 +16,7 @@ class MonthlyDebitApproval extends Component
     public $selectedMonth;
     public $selectedTransactions = [];
     public $selectAll = false;
+    public $processing = false;
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -23,6 +24,82 @@ class MonthlyDebitApproval extends Component
     {
         // Default to current month
         $this->selectedMonth = now()->format('Y-m');
+    }
+
+    public function generateDebit()
+    {
+        $this->processing = true;
+
+        try {
+            $month = Carbon::createFromFormat('Y-m', $this->selectedMonth);
+
+            // Check if already generated
+            $existing = SimpananTransaction::where('type', 'WAJIB')
+                ->where('transactionType', 'SETOR')
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
+                ->count();
+
+            if ($existing > 0) {
+                session()->flash('warning', "Auto-debit untuk bulan {$month->format('F Y')} sudah pernah di-generate ({$existing} transaksi). Cek tab Pending di bawah.");
+                $this->processing = false;
+                return;
+            }
+
+            // Get all active members
+            $members = Member::where('status', 'ACTIVE')
+                ->whereDate('joinDate', '<=', $month->endOfMonth())
+                ->get();
+
+            if ($members->isEmpty()) {
+                session()->flash('error', 'Tidak ada member aktif yang ditemukan.');
+                $this->processing = false;
+                return;
+            }
+
+            $processed = 0;
+
+            DB::beginTransaction();
+
+            foreach ($members as $member) {
+                // Calculate new balance
+                $currentBalance = $member->simpananWajib ?? 0;
+                $newBalance = $currentBalance + $member->monthly_wajib_amount;
+
+                // Create transaction
+                SimpananTransaction::create([
+                    'memberId' => $member->id,
+                    'type' => 'WAJIB',
+                    'transactionType' => 'SETOR',
+                    'amount' => $member->monthly_wajib_amount,
+                    'balanceAfter' => $newBalance,
+                    'notes' => "Auto-debit simpanan wajib - {$month->format('F Y')}",
+                    'processedBy' => auth()->id(),
+                    'status' => 'PENDING',
+                    'created_at' => $month,
+                    'updated_at' => $month,
+                ]);
+
+                // Update last debit date
+                $member->update([
+                    'last_wajib_debit_date' => $month->format('Y-m-d')
+                ]);
+
+                $processed++;
+            }
+
+            DB::commit();
+
+            session()->flash('success', "✅ Berhasil generate {$processed} transaksi auto-debit untuk {$month->format('F Y')}! Silahkan review dan approve.");
+            $this->dispatch('refreshComponent');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Gagal generate auto-debit: ' . $e->getMessage());
+        } finally {
+            $this->processing = false;
+        }
     }
 
     public function updatedSelectAll($value)
