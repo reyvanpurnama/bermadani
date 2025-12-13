@@ -164,7 +164,6 @@ class MemberImport implements ToCollection, WithHeadingRow
                         'balanceAfter' => $simpananPokok,
                         'notes' => 'Import data awal - Simpanan Pokok',
                         'processedBy' => auth()->id() ?? 1, // Default to user ID 1 if not authenticated
-                        'processedAt' => $joinDate,
                         'status' => 'APPROVED',
                     ]);
                 }
@@ -178,7 +177,6 @@ class MemberImport implements ToCollection, WithHeadingRow
                         'balanceAfter' => $simpananWajib,
                         'notes' => 'Import data awal - Simpanan Wajib',
                         'processedBy' => auth()->id() ?? 1,
-                        'processedAt' => $joinDate,
                         'status' => 'APPROVED',
                     ]);
                 }
@@ -192,7 +190,6 @@ class MemberImport implements ToCollection, WithHeadingRow
                         'balanceAfter' => $simpananSukarela,
                         'notes' => 'Saldo awal simpanan sukarela (dari pivot data)',
                         'processedBy' => auth()->id() ?? 1,
-                        'processedAt' => $joinDate,
                         'status' => 'APPROVED',
                     ]);
                 }
