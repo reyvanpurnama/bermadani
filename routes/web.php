@@ -140,11 +140,6 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         })->name('simpanan');
     });
     
-    // Monthly Debit Approval
-    Route::get('/simpanan/monthly-debit-approval', function () {
-        return view('admin.simpanan.monthly-debit-approval');
-    })->name('admin.simpanan.monthly-debit-approval');
-    
     // Savings
     Route::get('/savings', function () {
         return view('admin.placeholder', ['title' => 'Simpanan']);

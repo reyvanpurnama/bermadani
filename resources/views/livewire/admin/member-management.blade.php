@@ -2,10 +2,10 @@
     {{-- Header Section --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
-            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Daftar Anggota</h1>
-            <p class="text-[11px] text-slate-500 mt-0.5">Kelola data keanggotaan, simpanan, dan poin.</p>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Manajemen Anggota</h1>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kelola data keanggotaan, simpanan, dan auto-debit bulanan.</p>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-2" x-show="activeTab === 'members'" x-data="{ activeTab: @entangle('activeTab') }">
             <button wire:click="openImportModal"
                 class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-emerald-500/20 transition-colors flex items-center gap-2">
                 <i class='bx bx-import text-lg'></i> Import Excel
@@ -21,6 +21,34 @@
         </div>
     </div>
 
+    {{-- Tabs Navigation --}}
+    <div class="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
+        <button wire:click="switchTab('members')" 
+                class="px-4 py-2 text-sm font-semibold transition-colors relative
+                       {{ $activeTab === 'members' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+            <div class="flex items-center gap-2">
+                <i class='bx bx-group text-lg'></i>
+                Daftar Anggota
+            </div>
+            @if($activeTab === 'members')
+                <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>
+            @endif
+        </button>
+        <button wire:click="switchTab('auto-debit')" 
+                class="px-4 py-2 text-sm font-semibold transition-colors relative
+                       {{ $activeTab === 'auto-debit' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+            <div class="flex items-center gap-2">
+                <i class='bx bx-calendar-check text-lg'></i>
+                Auto-Debit Bulanan
+            </div>
+            @if($activeTab === 'auto-debit')
+                <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>
+            @endif
+        </button>
+    </div>
+
+    {{-- Members List Tab --}}
+    @if($activeTab === 'members')
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
@@ -225,6 +253,12 @@
             {{ $members->links() }}
         </div>
     </div>
+    @endif {{-- End Members Tab --}}
+
+    {{-- Auto-Debit Tab --}}
+    @if($activeTab === 'auto-debit')
+        @livewire('admin.monthly-debit-approval')
+    @endif
 
     {{-- Import Modal --}}
     @if($showImportModal)

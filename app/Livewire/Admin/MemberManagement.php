@@ -12,6 +12,8 @@ class MemberManagement extends Component
 {
     use WithPagination, WithFileUploads;
 
+    public $activeTab = 'members'; // 'members' or 'auto-debit'
+    
     public $search = '';
     public $filterStatus = '';
     public $filterTier = '';
@@ -24,6 +26,7 @@ class MemberManagement extends Component
     public $importSummary = null;
     
     protected $queryString = [
+        'activeTab' => ['except' => 'members'],
         'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterTier' => ['except' => ''],
@@ -35,6 +38,11 @@ class MemberManagement extends Component
     public function boot(MemberService $memberService)
     {
         $this->memberService = $memberService;
+    }
+
+    public function switchTab($tab)
+    {
+        $this->activeTab = $tab;
     }
 
     public function updatingSearch()
