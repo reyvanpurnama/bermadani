@@ -56,7 +56,7 @@ class MemberCreate extends Component
         if ($this->currentStep === 2) {
             $rules['name'] = 'required|string|max:255';
             $rules['phone'] = 'required|string|max:20';
-            $rules['gender'] = 'required|in:M,F';
+            $rules['gender'] = 'required|in:MALE,FEMALE';
             $rules['unitKerja'] = 'nullable|string|max:255';
             $rules['address'] = 'nullable|string';
         }

@@ -25,7 +25,7 @@ class MemberEdit extends Component
         return [
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20',
-            'gender' => 'required|in:M,F',
+            'gender' => 'required|in:MALE,FEMALE',
             'unitKerja' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'status' => 'required|in:ACTIVE,INACTIVE,SUSPENDED',
