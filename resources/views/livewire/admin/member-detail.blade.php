@@ -7,7 +7,7 @@
     @endif
 
     <!-- Member Profile Card -->
-    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden mb-6">
         <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none"></div>
 
         <div class="relative shrink-0">
@@ -78,7 +78,7 @@
     </div>
 
     <!-- Info and Portfolio Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Personal Information -->
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <h3 class="text-[13px] font-bold text-slate-800 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">

@@ -345,6 +345,9 @@ class MemberService
             'total' => Member::count(),
             'active' => Member::where('status', 'ACTIVE')->count(),
             'totalSimpanan' => Member::sum(DB::raw('simpananPokok + simpananWajib + simpananSukarela')),
+            'simpananPokok' => Member::sum('simpananPokok'),
+            'simpananWajib' => Member::sum('simpananWajib'),
+            'simpananSukarela' => Member::sum('simpananSukarela'),
             'avgPoints' => Member::avg('points'),
         ];
     }

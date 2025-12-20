@@ -150,7 +150,7 @@ class MemberManagement extends Component
             ->when($this->filterUnitKerja, fn($query) => $query->where('unitKerja', $this->filterUnitKerja))
             ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate))
             ->with('user')
-            ->latest('joinDate')
+            ->orderBy('name', 'asc')
             ->paginate(15);
     }
 

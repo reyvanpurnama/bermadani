@@ -50,7 +50,7 @@
     {{-- Members List Tab --}}
     @if($activeTab === 'members')
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary text-xl">
                 <i class='bx bx-group'></i>
@@ -72,22 +72,55 @@
         </div>
 
         <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-            <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">
-                <i class='bx bx-wallet'></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Dana Terhimpun</p>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['totalSimpanan'] ?? 0, 0, ',', '.') }}</h4>
-            </div>
-        </div>
-
-        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
             <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl">
                 <i class='bx bx-gift'></i>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rata-rata Poin</p>
                 <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ number_format($stats['avgPoints'] ?? 0) }} Pts</h4>
+            </div>
+        </div>
+    </div>
+
+    {{-- Financial Stats --}}
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">
+                <i class='bx bx-wallet'></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Dana</p>
+                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['totalSimpanan'] ?? 0, 0, ',', '.') }}</h4>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-700/50 flex items-center justify-center text-slate-500 text-xl">
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Pokok</p>
+                <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['simpananPokok'] ?? 0, 0, ',', '.') }}</h4>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-700/50 flex items-center justify-center text-slate-500 text-xl">
+                <i class='bx bxs-calendar'></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Wajib</p>
+                <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['simpananWajib'] ?? 0, 0, ',', '.') }}</h4>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 text-xl">
+                <i class='bx bxs-wallet-alt'></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Sukarela</p>
+                <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['simpananSukarela'] ?? 0, 0, ',', '.') }}</h4>
             </div>
         </div>
     </div>
@@ -159,7 +192,7 @@
                         <th class="px-5 py-3">Anggota</th>
                         <th class="px-5 py-3">Unit / Prodi</th>
                         <th class="px-5 py-3">Status & Tier</th>
-                        <th class="px-5 py-3 text-right">Total Simpanan</th>
+                        <th class="px-5 py-3 min-w-[200px]">Portfolio Simpanan</th>
                         <th class="px-5 py-3 text-center">Poin</th>
                         <th class="px-5 py-3 text-center">Aksi</th>
                     </tr>
@@ -167,7 +200,7 @@
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
                     @forelse ($members as $member)
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
-                            <td class="px-5 py-3.5">
+                            <td class="px-5 py-3.5 align-top">
                                 <div class="flex items-center gap-3">
                                     <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold">
                                         {{ strtoupper(substr($member->name, 0, 1)) }}
@@ -178,11 +211,11 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-5 py-3.5">
+                            <td class="px-5 py-3.5 align-top">
                                 <span class="block font-medium text-slate-700 dark:text-slate-300">{{ $member->unitKerja }}</span>
                                 <span class="text-[10px] text-slate-400">{{ $member->email }}</span>
                             </td>
-                            <td class="px-5 py-3.5">
+                            <td class="px-5 py-3.5 align-top">
                                 <div class="flex flex-col gap-1">
                                     <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border
                                         @if($member->status === 'ACTIVE') bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800
@@ -201,18 +234,30 @@
                                     </span>
                                 </div>
                             </td>
-                            <td class="px-5 py-3.5 text-right">
-                                <p class="font-bold text-slate-900 dark:text-white">Rp {{ number_format($member->totalSimpanan, 0, ',', '.') }}</p>
-                                <div class="text-[10px] text-slate-400 mt-0.5 flex justify-end gap-2">
-                                    <span title="Pokok">P: {{ number_format($member->simpananPokok / 1000) }}k</span>
-                                    <span title="Wajib">W: {{ number_format($member->simpananWajib / 1000) }}k</span>
-                                    <span title="Sukarela">S: {{ number_format($member->simpananSukarela / 1000) }}k</span>
+                            <td class="px-5 py-3.5 align-top">
+                                <div class="flex flex-col gap-1.5 w-full max-w-[240px]">
+                                    <div class="flex justify-between items-center text-[11px]">
+                                        <span class="text-slate-500 dark:text-slate-400">Pokok</span>
+                                        <span class="font-medium text-slate-700 dark:text-slate-300">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[11px]">
+                                        <span class="text-slate-500 dark:text-slate-400">Wajib</span>
+                                        <span class="font-medium text-slate-700 dark:text-slate-300">Rp {{ number_format($member->simpananWajib, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center text-[11px]">
+                                        <span class="text-slate-500 dark:text-slate-400">Sukarela</span>
+                                        <span class="font-medium text-slate-700 dark:text-slate-300">Rp {{ number_format($member->simpananSukarela, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="border-t border-slate-100 dark:border-slate-700 pt-1.5 mt-0.5 flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-slate-800 dark:text-white">Total Aset</span>
+                                        <span class="text-[12px] font-bold text-primary dark:text-blue-400">Rp {{ number_format($member->totalSimpanan, 0, ',', '.') }}</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-5 py-3.5 text-center font-bold text-amber-500">
+                            <td class="px-5 py-3.5 text-center align-top font-bold text-amber-500">
                                 {{ number_format($member->points) }}
                             </td>
-                            <td class="px-5 py-3.5 text-center">
+                            <td class="px-5 py-3.5 text-center align-top">
                                 <div class="flex items-center justify-center gap-2">
                                     <a href="{{ route('admin.members.show', $member->id) }}" 
                                         class="text-slate-400 hover:text-primary transition-colors p-1" title="Detail">

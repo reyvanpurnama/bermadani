@@ -13,10 +13,16 @@ class MonthlyDebitApproval extends Component
 {
     use WithPagination;
 
+    public $viewMode = 'list'; // 'list' or 'detail'
+    public $filterYear;
+    
     public $selectedMonth;
     public $selectedTransactions = [];
     public $selectAll = false;
     public $processing = false;
+    
+    // New property to toggle month view if needed, but default is hidden
+    public $showMonthPicker = false;
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
@@ -24,6 +30,115 @@ class MonthlyDebitApproval extends Component
     {
         // Default to current month
         $this->selectedMonth = now()->format('Y-m');
+        $this->filterYear = now()->year;
+    }
+
+    public function setViewMode($mode)
+    {
+        $this->viewMode = $mode;
+    }
+
+    public function selectMonth($month)
+    {
+        $this->selectedMonth = $month;
+        $this->viewMode = 'detail';
+    }
+
+    public function getMonthlyHistoryProperty()
+    {
+        $history = [];
+        // Show months for the selected year (1-12)
+        // Or maybe up to current month + 1 if current year? 
+        // Let's just show all 12 months for the year.
+        
+        for ($m = 12; $m >= 1; $m--) {
+            $date = Carbon::create($this->filterYear, $m, 1);
+            
+            // Query stats for this month
+            $query = SimpananTransaction::where('type', 'WAJIB')
+                ->where('transactionType', 'SETOR')
+                ->whereYear('created_at', $this->filterYear)
+                ->whereMonth('created_at', $m);
+                
+            $totalCount = (clone $query)->count();
+            $pendingCount = (clone $query)->where('status', 'PENDING')->count();
+            $totalAmount = (clone $query)->sum('amount');
+            
+            // Determine status
+            $status = 'EMPTY';
+            if ($totalCount > 0) {
+                $status = $pendingCount > 0 ? 'PENDING' : 'COMPLETED';
+            }
+            
+            // Get approver info
+            $approver = null;
+            $approvedAt = null;
+            if ($status === 'COMPLETED') {
+                $lastTx = (clone $query)->whereNotNull('approvedBy')->latest('approvedAt')->first();
+                if ($lastTx && $lastTx->approver) {
+                    $approver = $lastTx->approver->name;
+                    $approvedAt = $lastTx->approvedAt;
+                }
+            }
+            
+            $history[] = [
+                'date' => $date->format('Y-m'),
+                'monthName' => $date->translatedFormat('F'),
+                'status' => $status,
+                'totalAmount' => $totalAmount,
+                'count' => $totalCount,
+                'pending' => $pendingCount,
+                'approver' => $approver,
+                'approvedAt' => $approvedAt,
+                'isFuture' => $date->endOfMonth()->isFuture(),
+                'isPast' => $date->endOfMonth()->isPast(),
+            ];
+        }
+        
+        return $history;
+    }
+
+    public function toggleMonthPicker()
+    {
+        $this->showMonthPicker = !$this->showMonthPicker;
+    }
+
+    public function nextMonth()
+    {
+        $this->selectedMonth = Carbon::createFromFormat('Y-m', $this->selectedMonth)->addMonth()->format('Y-m');
+    }
+
+    public function prevMonth()
+    {
+        $this->selectedMonth = Carbon::createFromFormat('Y-m', $this->selectedMonth)->subMonth()->format('Y-m');
+    }
+
+    public function getDebitStatusProperty()
+    {
+        $month = Carbon::createFromFormat('Y-m', $this->selectedMonth);
+        
+        $total = SimpananTransaction::where('type', 'WAJIB')
+            ->where('transactionType', 'SETOR')
+            ->whereYear('created_at', $month->year)
+            ->whereMonth('created_at', $month->month)
+            ->count();
+
+        if ($total === 0) {
+            return 'EMPTY';
+        }
+
+        $pending = SimpananTransaction::where('type', 'WAJIB')
+            ->where('transactionType', 'SETOR')
+            ->whereYear('created_at', $month->year)
+            ->whereMonth('created_at', $month->month)
+            ->where('status', 'PENDING')
+            ->count();
+
+        if ($pending > 0) {
+            return 'PENDING';
+        }
+
+        return 'COMPLETED';
     }
 
     public function generateDebit()
@@ -38,7 +153,6 @@ class MonthlyDebitApproval extends Component
                 ->where('transactionType', 'SETOR')
                 ->whereYear('created_at', $month->year)
                 ->whereMonth('created_at', $month->month)
-                ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
                 ->count();
 
             if ($existing > 0) {
@@ -118,12 +232,10 @@ class MonthlyDebitApproval extends Component
         $month = Carbon::createFromFormat('Y-m', $this->selectedMonth);
 
         return SimpananTransaction::with(['member.user'])
-            ->where('status', 'PENDING')
             ->where('type', 'WAJIB')
             ->where('transactionType', 'SETOR')
             ->whereYear('created_at', $month->year)
             ->whereMonth('created_at', $month->month)
-            ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
             ->orderBy('created_at', 'desc')
             ->paginate(50);
     }
@@ -132,26 +244,15 @@ class MonthlyDebitApproval extends Component
     {
         $month = Carbon::createFromFormat('Y-m', $this->selectedMonth);
 
-        $pending = SimpananTransaction::where('status', 'PENDING')
-            ->where('type', 'WAJIB')
+        $baseQuery = SimpananTransaction::where('type', 'WAJIB')
             ->whereYear('created_at', $month->year)
-            ->whereMonth('created_at', $month->month)
-            ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
-            ->count();
+            ->whereMonth('created_at', $month->month);
 
-        $approved = SimpananTransaction::where('status', 'APPROVED')
-            ->where('type', 'WAJIB')
-            ->whereYear('created_at', $month->year)
-            ->whereMonth('created_at', $month->month)
-            ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
-            ->count();
-
-        $totalAmount = SimpananTransaction::where('status', 'PENDING')
-            ->where('type', 'WAJIB')
-            ->whereYear('created_at', $month->year)
-            ->whereMonth('created_at', $month->month)
-            ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
-            ->sum('amount');
+        $pending = (clone $baseQuery)->where('status', 'PENDING')->count();
+        $approved = (clone $baseQuery)->where('status', 'APPROVED')->count();
+        
+        // Total amount of ALL generated bills (Pending + Approved)
+        $totalAmount = (clone $baseQuery)->whereIn('status', ['PENDING', 'APPROVED'])->sum('amount');
 
         return [
             'pending' => $pending,
@@ -250,7 +351,6 @@ class MonthlyDebitApproval extends Component
             ->where('transactionType', 'SETOR')
             ->whereYear('created_at', $month->year)
             ->whereMonth('created_at', $month->month)
-            ->where('notes', 'LIKE', 'Auto-debit simpanan wajib%')
             ->get();
     }
 
