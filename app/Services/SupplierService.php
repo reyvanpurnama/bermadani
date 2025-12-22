@@ -102,16 +102,13 @@ class SupplierService
             throw new \Exception('Pembayaran registrasi belum diverifikasi! Harap verifikasi pembayaran terlebih dahulu.');
         }
 
-        // Update supplier status
+        // Update supplier status dan aktifkan akun
         $supplier->update([
-            'status' => 'APPROVED',
+            'status' => 'ACTIVE',
+            'isActive' => true,
+            'isPaymentActive' => true,
             'approvedAt' => now(),
             'approvedById' => $approvedBy,
-        ]);
-
-        // Activate user account
-        User::where('email', $supplier->email)->update([
-            'isActive' => true,
         ]);
 
         return $supplier->fresh();
@@ -149,14 +146,10 @@ class SupplierService
 
         $supplier->update([
             'status' => 'SUSPENDED',
+            'isActive' => false,
             'isSuspendedForPayment' => true,
             'suspendedAt' => now(),
             'suspensionReason' => $reason,
-        ]);
-
-        // Deactivate user account
-        User::where('email', $supplier->email)->update([
-            'isActive' => false,
         ]);
 
         return $supplier->fresh();
@@ -178,11 +171,6 @@ class SupplierService
             'isSuspendedForPayment' => false,
             'suspendedAt' => null,
             'suspensionReason' => null,
-        ]);
-
-        // Activate user account
-        User::where('email', $supplier->email)->update([
-            'isActive' => true,
         ]);
 
         return $supplier->fresh();

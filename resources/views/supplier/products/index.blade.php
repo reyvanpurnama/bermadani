@@ -77,7 +77,8 @@
                 <tr>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
-                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Jual</th>
+                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga</th>
+                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Fee Koperasi</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Stok</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
@@ -102,6 +103,11 @@
                     </td>
                     <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
                         Rp {{ number_format($product->sellPrice, 0, ',', '.') }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                            {{ number_format($product->profitShareRate ?? 0, 0) }}%
+                        </span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->stock > 10 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400' }}">
@@ -136,7 +142,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <td colspan="7" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                         <div class="flex flex-col items-center justify-center">
                             <i class='bx bx-box text-4xl mb-2 text-slate-300'></i>
                             <p>Belum ada produk.</p>

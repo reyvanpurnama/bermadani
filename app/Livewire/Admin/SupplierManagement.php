@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\Supplier;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierManagement extends Component
 {
@@ -15,7 +16,9 @@ class SupplierManagement extends Component
     public $showRejectModal = false;
     public $showSuspendModal = false;
     public $showRejectPaymentModal = false;
+    public $showDetailModal = false;
     public $selectedSupplierId = null;
+    public $selectedSupplier = null;
     public $rejectReason = '';
     public $suspendReason = '';
     public $rejectPaymentReason = '';
@@ -35,6 +38,18 @@ class SupplierManagement extends Component
     public function clearFilters()
     {
         $this->reset(['search', 'filterStatus']);
+    }
+
+    public function openDetailModal($supplierId)
+    {
+        $this->selectedSupplier = Supplier::with('products')->findOrFail($supplierId);
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->selectedSupplier = null;
     }
 
     public function openRejectModal($supplierId)
@@ -87,7 +102,7 @@ class SupplierManagement extends Component
             $supplier->update([
                 'registrationPaymentStatus' => 'VERIFIED',
                 'registrationPaymentVerifiedAt' => now(),
-                'registrationPaymentVerifiedBy' => auth()->id(),
+                'registrationPaymentVerifiedBy' => Auth::id(),
                 'status' => 'PENDING', // Ubah ke PENDING untuk menunggu approval data
             ]);
 
@@ -125,17 +140,19 @@ class SupplierManagement extends Component
             $supplier = Supplier::findOrFail($supplierId);
             
             $supplier->update([
-                'status' => 'APPROVED',
+                'status' => 'ACTIVE',
+                'isActive' => true,
+                'isPaymentActive' => true,
                 'approvedAt' => now(),
-                'approvedById' => auth()->id(),
+                'approvedById' => Auth::id(),
             ]);
 
-            // Activate user account
+            // Activate user account (if linked)
             \App\Models\User::where('email', $supplier->email)->update([
                 'isActive' => true,
             ]);
 
-            session()->flash('success', 'Supplier berhasil disetujui!');
+            session()->flash('success', 'Supplier berhasil disetujui dan diaktifkan!');
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }

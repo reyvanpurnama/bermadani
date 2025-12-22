@@ -5,14 +5,14 @@
 @section('header-subtitle', 'Ringkasan performa penjualan produk Anda')
 
 @section('content')
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
 
     <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-emerald-200 transition-colors">
         <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Omzet</p>
             <div class="flex items-end gap-2">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp 0</h3>
-                <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> 0%</span>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($totalOmzet ?? 0, 0, ',', '.') }}</h3>
+                <span class="text-emerald-500 text-[10px] font-bold flex items-center mb-0.5"><i class='bx bx-up-arrow-alt'></i> {{ $omzetGrowth ?? 0 }}%</span>
             </div>
         </div>
         <div class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
@@ -20,11 +20,25 @@
         </div>
     </div>
 
+    <!-- Total Pendapatan (Bersih setelah dipotong fee koperasi) -->
+    <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-teal-200 transition-colors">
+        <div>
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Pendapatan</p>
+            <div class="flex items-end gap-2">
+                <h3 class="text-xl font-bold text-teal-600 dark:text-teal-400 leading-none">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h3>
+            </div>
+            <p class="text-[9px] text-slate-500 mt-1">Bersih setelah fee koperasi</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 group-hover:scale-110 transition-transform">
+            <i class='bx bx-money text-xl'></i>
+        </div>
+    </div>
+
     <div class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group hover:border-blue-200 transition-colors">
         <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Unit Terjual</p>
             <div class="flex items-end gap-2">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">0 Pcs</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">{{ $unitTerjual ?? 0 }} Pcs</h3>
                 <span class="text-slate-400 text-[10px] mb-0.5">Bulan ini</span>
             </div>
         </div>
@@ -37,8 +51,8 @@
         <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Produk Aktif</p>
             <div class="flex items-end gap-2">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">0 SKU</h3>
-                <span class="text-indigo-500 text-[10px] font-bold flex items-center mb-0.5">0 Low Stock</span>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">{{ $produkAktif ?? 0 }} SKU</h3>
+                <span class="text-indigo-500 text-[10px] font-bold flex items-center mb-0.5">{{ $lowStock ?? 0 }} Low Stock</span>
             </div>
         </div>
         <div class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
@@ -50,7 +64,7 @@
         <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Tertahan</p>
             <div class="flex items-end gap-2">
-                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp 0</h3>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Rp {{ number_format($saldoTertahan ?? 0, 0, ',', '.') }}</h3>
             </div>
             <p class="text-[9px] text-amber-600 mt-1 font-semibold">Klik untuk Request Cair</p>
         </div>

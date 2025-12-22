@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 
+/**
+ * @method void updateLastLogin()
+ */
 class Supplier extends Authenticatable
 {
     protected $fillable = [
@@ -236,5 +239,17 @@ class Supplier extends Authenticatable
             'REJECTED' => 'red',
             default => 'gray',
         };
+    }
+
+    /**
+     * Update last login timestamp
+     * Note: If lastLoginAt column doesn't exist, this is a no-op
+     */
+    public function updateLastLogin(): void
+    {
+        // Only update if column exists in table
+        if (\Illuminate\Support\Facades\Schema::hasColumn('suppliers', 'lastLoginAt')) {
+            $this->update(['lastLoginAt' => now()]);
+        }
     }
 }

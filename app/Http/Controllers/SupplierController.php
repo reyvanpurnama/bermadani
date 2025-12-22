@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SupplierRegistrationRequest;
 use App\Services\SupplierService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
@@ -28,11 +29,23 @@ class SupplierController extends Controller
      */
     public function pending()
     {
-        $supplier = auth()->user();
+        $supplier = auth('supplier')->user();
         
         if (!$supplier instanceof \App\Models\Supplier) {
-            return redirect()->route('login')
+            return redirect()->route('supplier.login')
                 ->with('error', 'Akses ditolak. Silakan login sebagai supplier.');
+        }
+
+        // Jika sudah approved, redirect ke dashboard supplier
+        if ($supplier->status === 'APPROVED' || $supplier->status === 'ACTIVE') {
+            return redirect()->route('supplier.dashboard')
+                ->with('success', 'Akun Anda sudah aktif!');
+        }
+
+        // Jika rejected, tampilkan halaman error atau pending dengan info rejected
+        if ($supplier->status === 'REJECTED') {
+            return view('supplier.pending', compact('supplier'))
+                ->with('error', 'Pendaftaran Anda ditolak. Alasan: ' . ($supplier->rejectedReason ?? 'Tidak disebutkan'));
         }
 
         return view('supplier.pending', compact('supplier'));
@@ -50,7 +63,7 @@ class SupplierController extends Controller
             if ($request->hasFile('registrationPaymentProof')) {
                 $file = $request->file('registrationPaymentProof');
                 $filename = 'payment_proof_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('payment-proofs', $filename, 'public');
+                $path = $file->storeAs('payment-pr oofs', $filename, 'public');
                 $data['registrationPaymentProof'] = $path;
                 $data['registrationPaymentStatus'] = 'PENDING_VERIFICATION';
             } else {
@@ -59,8 +72,8 @@ class SupplierController extends Controller
             
             $supplier = $this->supplierService->register($data);
             
-            // Auto-login supplier setelah registrasi
-            \Auth::login($supplier);
+            // Auto-login supplier dengan guard 'supplier'
+            Auth::guard('supplier')->login($supplier);
             $request->session()->regenerate();
 
             return redirect()
@@ -80,7 +93,9 @@ class SupplierController extends Controller
     public function approve(Request $request, $id)
     {
         try {
-            $supplier = $this->supplierService->approve($id, auth()->id());
+            /** @var int $adminId */
+            $adminId = Auth::id();
+            $supplier = $this->supplierService->approve($id, $adminId);
 
             return redirect()
                 ->back()
@@ -165,7 +180,7 @@ class SupplierController extends Controller
             $supplier->update([
                 'registrationPaymentStatus' => 'VERIFIED',
                 'registrationPaymentVerifiedAt' => now(),
-                'registrationPaymentVerifiedBy' => auth()->id(),
+                'registrationPaymentVerifiedBy' => Auth::id(),
                 'status' => 'PENDING', // Ubah ke PENDING untuk menunggu approval data
             ]);
 

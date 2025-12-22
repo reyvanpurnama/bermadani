@@ -134,9 +134,9 @@
                             </td>
                             <td class="px-5 py-3.5 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('admin.suppliers.detail', $supplier->id) }}" class="text-slate-400 hover:text-primary transition-colors text-lg" title="Detail">
+                                    <button wire:click="openDetailModal({{ $supplier->id }})" class="text-slate-400 hover:text-primary transition-colors text-lg" title="Detail">
                                         <i class='bx bx-show'></i>
-                                    </a>
+                                    </button>
                                     
                                     @if($supplier->status === 'PENDING')
                                         <button wire:click="approve({{ $supplier->id }})" class="text-emerald-500 hover:text-emerald-700 transition-colors text-lg" title="Approve">
@@ -217,6 +217,137 @@
             <div class="flex justify-end gap-3">
                 <button wire:click="closeSuspendModal" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Batal</button>
                 <button wire:click="suspend" class="px-4 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors">Suspend Supplier</button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Detail Modal -->
+    @if($showDetailModal && $selectedSupplier)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" wire:click="closeDetailModal">
+        <div @click.stop class="bg-white dark:bg-darkCard rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-fade-up">
+            <!-- Header -->
+            <div class="sticky top-0 bg-gradient-to-r from-primary to-indigo-600 px-6 py-4 flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Detail Supplier</h3>
+                    <p class="text-indigo-100 text-sm">{{ $selectedSupplier->code }}</p>
+                </div>
+                <button wire:click="closeDetailModal" class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6">
+                <!-- Status Badges -->
+                <div class="flex flex-wrap gap-3 mb-6">
+                    @php
+                        $statusClass = match($selectedSupplier->status) {
+                            'ACTIVE' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400',
+                            'PENDING' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
+                            'SUSPENDED' => 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400',
+                            'REJECTED' => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400',
+                            default => 'bg-slate-100 text-slate-700',
+                        };
+                        $paymentClass = match($selectedSupplier->registrationPaymentStatus) {
+                            'VERIFIED' => 'bg-emerald-100 text-emerald-700',
+                            'PENDING_VERIFICATION' => 'bg-amber-100 text-amber-700',
+                            'REJECTED' => 'bg-rose-100 text-rose-700',
+                            default => 'bg-slate-100 text-slate-700',
+                        };
+                    @endphp
+                    <span class="{{ $statusClass }} px-3 py-1 rounded-full text-xs font-bold uppercase">
+                        {{ $selectedSupplier->status }}
+                    </span>
+                    <span class="{{ $paymentClass }} px-3 py-1 rounded-full text-xs font-bold uppercase">
+                        <i class='bx bx-money mr-1'></i> {{ $selectedSupplier->registrationPaymentStatus }}
+                    </span>
+                </div>
+
+                <!-- Info Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Informasi Bisnis</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs text-slate-500">Nama Bisnis</p>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $selectedSupplier->businessName }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Kategori Produk</p>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $selectedSupplier->productCategory ?? '-' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Alamat</p>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">{{ $selectedSupplier->address }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Informasi Pemilik</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-xs text-slate-500">Nama Pemilik</p>
+                                <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $selectedSupplier->ownerName }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Email</p>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">{{ $selectedSupplier->email }}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-slate-500">Telepon</p>
+                                <p class="text-sm text-slate-700 dark:text-slate-300">{{ $selectedSupplier->phone }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Proof -->
+                @if($selectedSupplier->registrationPaymentProof)
+                <div class="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Bukti Pembayaran</h4>
+                    <div class="flex items-center gap-4">
+                        <img src="{{ asset('storage/' . $selectedSupplier->registrationPaymentProof) }}" 
+                             alt="Bukti Pembayaran" 
+                             class="w-32 h-32 object-contain border border-slate-200 rounded-lg bg-white cursor-pointer hover:opacity-75 transition-opacity"
+                             onclick="window.open(this.src, '_blank')">
+                        <div>
+                            <p class="text-xs text-slate-500 mb-1">Nominal</p>
+                            <p class="text-lg font-bold text-slate-900 dark:text-white">Rp {{ number_format($selectedSupplier->registrationFee, 0, ',', '.') }}</p>
+                            @if($selectedSupplier->registrationPaymentVerifiedAt)
+                            <p class="text-xs text-slate-500 mt-2">Diverifikasi: {{ $selectedSupplier->registrationPaymentVerifiedAt->format('d M Y, H:i') }}</p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+                @endif
+
+                <!-- Products Summary -->
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-lg">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Produk</h4>
+                    <p class="text-2xl font-bold text-slate-900 dark:text-white">
+                        {{ $selectedSupplier->currentActiveProducts }} / {{ $selectedSupplier->maxActiveProducts }}
+                    </p>
+                    <p class="text-xs text-slate-500 mt-1">Produk aktif dari limit maksimal</p>
+                </div>
+
+                @if($selectedSupplier->description)
+                <div class="mt-6">
+                    <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Deskripsi</h4>
+                    <p class="text-sm text-slate-700 dark:text-slate-300">{{ $selectedSupplier->description }}</p>
+                </div>
+                @endif
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                <button wire:click="closeDetailModal" class="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                    Tutup
+                </button>
+                <a href="{{ route('admin.suppliers.detail', $selectedSupplier->id) }}" class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-lg transition-colors flex items-center gap-2">
+                    <i class='bx bx-edit-alt'></i> Lihat Lengkap & Edit
+                </a>
             </div>
         </div>
     </div>

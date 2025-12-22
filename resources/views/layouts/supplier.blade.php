@@ -105,7 +105,7 @@
                 <p class="text-[9px] text-slate-400 truncate">Logout</p>
             </div>
         </div>
-        <form id="logout-form" action="{{ route('supplier.logout') }}" method="POST" class="hidden">
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
             @csrf
         </form>
     </div>

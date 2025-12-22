@@ -120,7 +120,7 @@
                 </div>
                 @endif
 
-                <form id="wizardForm" method="POST" action="{{ route('supplier.register.store') }}">
+                <form id="wizardForm" method="POST" action="{{ route('supplier.register.store') }}" enctype="multipart/form-data">
                     @csrf
                     
                     <div class="step-content active" id="step1">

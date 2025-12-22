@@ -28,7 +28,7 @@ class SupplierRegistrationRequest extends FormRequest
             'description' => 'nullable|string|max:1000',
             'productCategory' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
-            'registrationPaymentProof' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'registrationPaymentProof' => 'required|file|mimes:jpeg,png,jpg,gif,webp|max:5120',
         ];
     }
 
@@ -49,9 +49,9 @@ class SupplierRegistrationRequest extends FormRequest
             'password.min' => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'registrationPaymentProof.required' => 'Bukti pembayaran wajib diunggah.',
-            'registrationPaymentProof.image' => 'File harus berupa gambar.',
-            'registrationPaymentProof.mimes' => 'Format file harus jpeg, png, atau jpg.',
-            'registrationPaymentProof.max' => 'Ukuran file maksimal 2MB.',
+            'registrationPaymentProof.file' => 'File harus berupa file yang valid.',
+            'registrationPaymentProof.mimes' => 'Format file harus jpeg, png, jpg, gif, atau webp.',
+            'registrationPaymentProof.max' => 'Ukuran file maksimal 5MB.',
         ];
     }
 }
