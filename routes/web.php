@@ -145,6 +145,12 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         return view('admin.placeholder', ['title' => 'Simpanan']);
     })->name('admin.savings');
     
+    // Payments - Pembayaran Simpanan
+    Route::prefix('payments')->name('admin.payments.')->group(function () {
+        Route::get('/create', \App\Livewire\Admin\PaymentForm::class)->name('create');
+        Route::get('/receipt/{receiptNumber}', \App\Livewire\Admin\PaymentReceipt::class)->name('receipt');
+    });
+    
     // Loans
     Route::get('/loans', function () {
         return view('admin.placeholder', ['title' => 'Pinjaman']);
