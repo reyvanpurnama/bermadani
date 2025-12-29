@@ -22,20 +22,23 @@ class MemberService
         return DB::transaction(function () use ($data) {
             // Generate unique nomor anggota
             $nomorAnggota = Member::generateNomorAnggota();
+            
+            // Auto-generate email from member number
+            $memberEmail = $nomorAnggota . '@bermadani.id';
 
             // Create or link to user account
             if (isset($data['createNewUser']) && $data['createNewUser']) {
                 $user = User::create([
                     'name' => $data['name'],
-                    'email' => $data['email'],
-                    'username' => $data['username'],
-                    'password' => Hash::make($data['password']),
+                    'email' => $memberEmail,
+                    'username' => $data['username'] ?? $nomorAnggota,
+                    'password' => Hash::make($data['password'] ?? 'password'),
                     'role' => 'member',
                     'isActive' => true,
                 ]);
                 $userId = $user->id;
             } else {
-                $userId = $data['userId'];
+                $userId = $data['userId'] ?? null;
             }
 
             // Create member
@@ -43,7 +46,7 @@ class MemberService
                 'userId' => $userId,
                 'nomorAnggota' => $nomorAnggota,
                 'name' => $data['name'],
-                'email' => $data['email'],
+                'email' => $memberEmail,
                 'phone' => $data['phone'] ?? null,
                 'address' => $data['address'] ?? null,
                 'gender' => $data['gender'],

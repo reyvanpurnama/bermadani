@@ -224,25 +224,30 @@ class Member extends Model
 
     /**
      * Generate unique member number
-     * Format: MBR-YYYYMMDD-XXX
+     * Format: YYNNNNNN (8 digits)
+     * YY = tahun join (2 digit)
+     * NNNNNN = nomor urut (6 digit)
      */
     public static function generateNomorAnggota()
     {
-        $date = now()->format('Ymd');
-        $prefix = "MBR-{$date}-";
+        $year = now()->format('y'); // 2 digit year (e.g., 25 for 2025)
 
-        $lastMember = self::where('nomorAnggota', 'LIKE', "{$prefix}%")
-            ->latest('id')
+        // Get last member number for this year
+        $lastMember = self::where('nomorAnggota', 'LIKE', "{$year}%")
+            ->where('nomorAnggota', 'REGEXP', '^[0-9]{8}$') // Only 8 digit numbers
+            ->orderByRaw('CAST(nomorAnggota AS UNSIGNED) DESC')
             ->first();
 
         if ($lastMember) {
-            $lastNumber = (int) substr($lastMember->nomorAnggota, -3);
+            // Extract sequence number (last 6 digits)
+            $lastNumber = (int) substr($lastMember->nomorAnggota, 2);
             $newNumber = $lastNumber + 1;
         } else {
             $newNumber = 1;
         }
 
-        return $prefix . str_pad($newNumber, 3, '0', STR_PAD_LEFT);
+        // Format: YY + 6 digit sequence
+        return $year . str_pad($newNumber, 6, '0', STR_PAD_LEFT);
     }
 
     /**
