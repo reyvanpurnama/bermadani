@@ -188,18 +188,18 @@
                     <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class='bx bx-calendar-plus text-5xl text-indigo-600 dark:text-indigo-400'></i>
                     </div>
-                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Tagihan Belum Dibuat</h3>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white mb-3">Kewajiban Simpanan Belum Ditetapkan</h3>
                     <p class="text-slate-500 dark:text-slate-400 max-w-lg mx-auto mb-8">
-                        Belum ada data tagihan simpanan wajib untuk periode <span class="font-bold text-slate-800 dark:text-white">{{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y') }}</span>. 
-                        Klik tombol di bawah untuk memproses tagihan otomatis bagi seluruh anggota aktif.
+                        Kewajiban simpanan wajib periode <span class="font-bold text-slate-800 dark:text-white">{{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y') }}</span> belum dibuat. 
+                        Klik tombol di bawah untuk menetapkan kewajiban simpanan bagi seluruh anggota aktif.
                     </p>
                     
                     <button wire:click="generateDebit" 
                             wire:loading.attr="disabled"
-                            wire:confirm="Generate auto-debit untuk bulan {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y') }}?"
+                            wire:confirm="Tetapkan kewajiban simpanan untuk bulan {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y') }}?"
                             class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 mx-auto disabled:opacity-50 disabled:cursor-not-allowed">
                         <span wire:loading.remove wire:target="generateDebit">
-                            <i class='bx bx-rocket'></i> Generate Tagihan Sekarang
+                            <i class='bx bx-check-double'></i> Tetapkan Kewajiban Simpanan
                         </span>
                         <span wire:loading wire:target="generateDebit" class="flex items-center gap-2">
                             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
