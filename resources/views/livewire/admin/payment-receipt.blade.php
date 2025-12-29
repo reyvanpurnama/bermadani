@@ -68,7 +68,7 @@
                 <div>
                     <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Diterima Dari</p>
                     <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ $member->name }}</h4>
-                    <p class="text-sm text-slate-500">{{ $member->memberNumber }} <span class="mx-1">•</span> {{ $member->unitKerja }}</p>
+                    <p class="text-sm text-slate-500">{{ $member->nomorAnggota }} <span class="mx-1">•</span> {{ $member->unitKerja }}</p>
                 </div>
                 <div class="text-left sm:text-right">
                     <p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Metode Pembayaran</p>

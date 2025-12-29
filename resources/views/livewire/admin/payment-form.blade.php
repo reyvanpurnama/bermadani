@@ -26,7 +26,7 @@
                         <option value="">-- Cari Nama / No. Anggota --</option>
                         @foreach($members as $member)
                             <option value="{{ $member->id }}">
-                                {{ $member->name }} - {{ $member->memberNumber }} ({{ $member->unitKerja }})
+                                {{ $member->name }} - {{ $member->nomorAnggota }} ({{ $member->unitKerja }})
                             </option>
                         @endforeach
                     </select>

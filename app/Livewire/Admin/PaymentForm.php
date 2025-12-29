@@ -55,7 +55,7 @@ class PaymentForm extends Component
 
     public function mount()
     {
-        $this->members = Member::select('id', 'name', 'memberNumber', 'unitKerja')
+        $this->members = Member::select('id', 'name', 'nomorAnggota', 'unitKerja')
             ->orderBy('name')
             ->get();
         $this->paymentDate = now()->format('Y-m-d');
