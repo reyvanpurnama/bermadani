@@ -45,12 +45,21 @@ class UpdateMemberEmails extends Command
                 $member->update(['email' => $newEmail]);
                 $count++;
 
-                // Also update linked user's email if exists
+                // Also update linked user's email and role if exists
                 if ($member->userId) {
                     $user = User::find($member->userId);
-                    if ($user && $user->email !== $newEmail) {
-                        $user->update(['email' => $newEmail]);
-                        $userUpdated++;
+                    if ($user) {
+                        $changes = [];
+                        if ($user->email !== $newEmail) {
+                            $changes['email'] = $newEmail;
+                        }
+                        if ($user->role !== 'MEMBER') {
+                            $changes['role'] = 'MEMBER';
+                        }
+                        if (!empty($changes)) {
+                            $user->update($changes);
+                            $userUpdated++;
+                        }
                     }
                 }
 
