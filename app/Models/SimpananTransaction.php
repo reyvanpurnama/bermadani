@@ -19,11 +19,15 @@ class SimpananTransaction extends Model
         'approvedBy',
         'approvedAt',
         'rejectionReason',
+        'billingMonth',
+        'billStatus',
+        'paidAmount',
     ];
 
     protected $casts = [
         'amount' => 'decimal:2',
         'balanceAfter' => 'decimal:2',
+        'paidAmount' => 'decimal:2',
         'approvedAt' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -45,6 +49,30 @@ class SimpananTransaction extends Model
     public function approver()
     {
         return $this->belongsTo(User::class, 'approvedBy');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(SimpananPayment::class, 'billId');
+    }
+
+    /**
+     * Computed Properties
+     */
+    public function getPaymentStatusAttribute()
+    {
+        if ($this->paidAmount == 0) {
+            return 'UNPAID';
+        } elseif ($this->paidAmount >= $this->amount) {
+            return 'PAID';
+        } else {
+            return 'PARTIAL';
+        }
+    }
+
+    public function getRemainingAmountAttribute()
+    {
+        return max(0, $this->amount - $this->paidAmount);
     }
 
     /**

@@ -57,7 +57,7 @@
     @include('partials.sidebar')
 
     {{-- Main Content --}}
-    <div id="main-content" class="md:ml-64 flex-1 flex flex-col h-full min-w-0 relative transition-all duration-300">
+    <div id="main-content" class="md:ml-[180px] flex-1 flex flex-col h-full min-w-0 relative transition-all duration-300">
         {{-- Top Navbar --}}
         @hasSection('hide-navbar')
         @else
