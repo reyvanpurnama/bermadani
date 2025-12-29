@@ -83,6 +83,7 @@
         {{-- Page Content --}}
         <main class="flex-1 overflow-y-auto @yield('main-class', 'p-6') custom-scroll">
             @yield('content')
+            {{ $slot ?? '' }}
         </main>
     </div>
 

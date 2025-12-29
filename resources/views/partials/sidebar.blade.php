@@ -75,8 +75,8 @@
                 <span class="sidebar-text text-xs {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Simpanan</span>
             </a>
             <a href="{{ route('admin.payments.create') }}" class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                <i class='bx bx-credit-card text-sm mr-2 {{ request()->routeIs('admin.payments*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
-                <span class="sidebar-text text-xs {{ request()->routeIs('admin.payments*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Pembayaran</span>
+                <i class='bx bx-receipt text-sm mr-2 {{ request()->routeIs('admin.payments*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
+                <span class="sidebar-text text-xs {{ request()->routeIs('admin.payments*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat Setoran</span>
             </a>
             <a href="{{ route('admin.loans') }}" class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-money text-sm mr-2 {{ request()->routeIs('admin.loans*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 

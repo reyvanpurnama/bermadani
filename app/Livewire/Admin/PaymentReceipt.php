@@ -3,8 +3,10 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use Livewire\Attributes\Layout;
 use App\Models\SimpananPayment;
 
+#[Layout('layouts.admin')]
 class PaymentReceipt extends Component
 {
     public $payment;
@@ -71,9 +73,6 @@ class PaymentReceipt extends Component
 
     public function render()
     {
-        return view('livewire.admin.payment-receipt')
-            ->layout('layouts.admin', [
-                'title' => 'Kuitansi Pembayaran'
-            ]);
+        return view('livewire.admin.payment-receipt');
     }
 }

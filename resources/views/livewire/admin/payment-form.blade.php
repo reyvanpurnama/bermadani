@@ -1,8 +1,8 @@
 <div>
     {{-- Page Header --}}
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Input Pembayaran Simpanan</h1>
-        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catat pembayaran simpanan dari anggota</p>
+        <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Pencatatan Setoran Simpanan</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catat setoran simpanan anggota yang dibayar secara tunai, transfer, atau potong gaji</p>
     </div>
 
     {{-- Flash Messages --}}
@@ -47,10 +47,10 @@
                 <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
                     <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                         <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                            <i class='bx bx-list-check text-lg text-primary'></i> Tagihan Belum Lunas
+                            <i class='bx bx-list-check text-lg text-primary'></i> Kewajiban Simpanan Bulanan
                         </h3>
-                        <span class="text-[10px] bg-rose-50 text-rose-600 dark:bg-rose-900/20 px-2 py-1 rounded font-bold uppercase border border-rose-100 dark:border-rose-900">
-                            {{ count($unpaidBills) }} Tunggakan
+                        <span class="text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-900/20 px-2 py-1 rounded font-bold uppercase border border-amber-100 dark:border-amber-900">
+                            {{ count($unpaidBills) }} Belum Disetor
                         </span>
                     </div>
 
@@ -64,10 +64,10 @@
                                                {{ count($selectedBills) === count($unpaidBills) ? 'checked' : '' }}
                                                class="rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer">
                                     </th>
-                                    <th class="px-6 py-3">Bulan</th>
-                                    <th class="px-6 py-3">Jenis</th>
-                                    <th class="px-6 py-3 text-right">Tagihan</th>
-                                    <th class="px-6 py-3 text-right">Sisa Bayar</th>
+                                    <th class="px-6 py-3">Periode</th>
+                                    <th class="px-6 py-3">Jenis Simpanan</th>
+                                    <th class="px-6 py-3 text-right">Nominal</th>
+                                    <th class="px-6 py-3 text-right">Sisa Setoran</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
@@ -113,7 +113,8 @@
             @elseif($selectedMemberId)
                 <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-12 text-center">
                     <i class='bx bx-check-circle text-6xl text-emerald-500 mb-4'></i>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium">Tidak ada tunggakan untuk anggota ini</p>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium">Semua kewajiban simpanan anggota ini sudah lunas</p>
+                    <p class="text-xs text-slate-400 dark:text-slate-500 mt-2">Tidak ada simpanan yang perlu disetor</p>
                 </div>
             @endif
 
@@ -121,14 +122,14 @@
             @if(count($selectedBills) > 0)
                 <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-6 flex items-center gap-2">
-                        <i class='bx bx-money text-lg text-primary'></i> Detail Transaksi
+                        <i class='bx bx-money text-lg text-primary'></i> Detail Setoran
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
-                        {{-- Metode Pembayaran --}}
+                        {{-- Sumber Dana --}}
                         <div class="md:col-span-2">
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Metode Pembayaran</label>
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-3">Sumber Dana</label>
                             <div class="grid grid-cols-3 gap-3">
                                 <label class="cursor-pointer group">
                                     <input type="radio" wire:model.live="paymentMethod" value="CASH" class="peer sr-only">
@@ -154,9 +155,9 @@
                             </div>
                         </div>
 
-                        {{-- Tanggal Pembayaran --}}
+                        {{-- Tanggal Setoran --}}
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Tanggal Bayar</label>
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Tanggal Setoran</label>
                             <input type="date" wire:model="paymentDate"
                                    class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
                             @error('paymentDate')
@@ -214,7 +215,7 @@
                 <div class="bg-primary text-white rounded-xl shadow-xl shadow-indigo-500/20 p-6 relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-bl-full -mr-10 -mt-10 pointer-events-none"></div>
                     
-                    <h3 class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">Total Pembayaran</h3>
+                    <h3 class="text-indigo-100 text-[10px] font-bold uppercase tracking-widest mb-1">Total Setoran</h3>
                     <div class="flex items-baseline gap-1 mb-6">
                         <span class="text-lg opacity-80">Rp</span>
                         <span class="text-4xl font-extrabold tracking-tight">{{ number_format($totalAmount, 0, ',', '.') }}</span>
@@ -222,8 +223,8 @@
 
                     <div class="space-y-3 mb-6">
                         <div class="flex justify-between text-xs text-indigo-100 border-b border-indigo-400/30 pb-2">
-                            <span>Item Dipilih</span>
-                            <span class="font-bold">{{ $itemsCount }} Tagihan</span>
+                            <span>Simpanan Dipilih</span>
+                            <span class="font-bold">{{ $itemsCount }} Item</span>
                         </div>
                         <div class="flex justify-between text-xs text-indigo-100">
                             <span>Admin Fee</span>
@@ -235,21 +236,21 @@
                             wire:loading.attr="disabled"
                             {{ count($selectedBills) === 0 ? 'disabled' : '' }}
                             class="w-full py-3.5 bg-white text-primary font-bold rounded-xl shadow-sm hover:bg-indigo-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 group">
-                        <span wire:loading.remove wire:target="processPayment">Proses Pembayaran</span>
+                        <span wire:loading.remove wire:target="processPayment">Catat Setoran</span>
                         <span wire:loading wire:target="processPayment">
-                            <i class='bx bx-loader-alt bx-spin text-xl'></i> Memproses...
+                            <i class='bx bx-loader-alt bx-spin text-xl'></i> Menyimpan...
                         </span>
                         <i wire:loading.remove wire:target="processPayment" class='bx bx-right-arrow-alt text-xl group-hover:translate-x-1 transition-transform'></i>
                     </button>
                 </div>
 
                 {{-- Info Box --}}
-                <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl p-4 flex gap-3">
-                    <i class='bx bx-info-circle text-amber-500 text-xl shrink-0 mt-0.5'></i>
+                <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl p-4 flex gap-3">
+                    <i class='bx bx-info-circle text-blue-500 text-xl shrink-0 mt-0.5'></i>
                     <div>
-                        <h4 class="text-xs font-bold text-amber-800 dark:text-amber-400 mb-1">Informasi</h4>
-                        <p class="text-[11px] text-amber-700 dark:text-amber-300 leading-relaxed">
-                            Pastikan data tagihan yang dipilih sudah sesuai. Kuitansi akan terbit otomatis setelah pembayaran sukses.
+                        <h4 class="text-xs font-bold text-blue-800 dark:text-blue-400 mb-1">Cara Penggunaan</h4>
+                        <p class="text-[11px] text-blue-700 dark:text-blue-300 leading-relaxed">
+                            Pilih anggota → centang simpanan yang ingin dicatat → pilih sumber dana → klik Catat Setoran. Bukti setoran akan otomatis terbit.
                         </p>
                     </div>
                 </div>

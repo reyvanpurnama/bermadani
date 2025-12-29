@@ -4,11 +4,13 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Livewire\Attributes\Layout;
 use App\Models\Member;
 use App\Services\SimpananPaymentService;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+#[Layout('layouts.admin')]
 class PaymentForm extends Component
 {
     use WithFileUploads;
@@ -175,9 +177,6 @@ class PaymentForm extends Component
 
     public function render()
     {
-        return view('livewire.admin.payment-form')
-            ->layout('layouts.admin', [
-                'title' => 'Input Pembayaran Simpanan'
-            ]);
+        return view('livewire.admin.payment-form');
     }
 }
