@@ -18,23 +18,98 @@
         {{-- Main Form Column --}}
         <div class="lg:col-span-2 space-y-6">
             
-            {{-- Section: Pilih Anggota --}}
+            {{-- Section: Pilih Anggota (Searchable) --}}
             <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
                 <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
                     Pilih Anggota
                 </label>
-                <div class="relative">
-                    <select wire:model.live="selectedMemberId"
-                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors cursor-pointer appearance-none">
-                        <option value="">-- Cari Nama / No. Anggota --</option>
-                        @foreach($members as $member)
-                            <option value="{{ $member->id }}">
-                                {{ $member->name }} - {{ $member->nomorAnggota }} ({{ $member->unitKerja }})
-                            </option>
-                        @endforeach
-                    </select>
-                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-500">
-                        <i class='bx bx-chevron-down text-xl'></i>
+                <div x-data="{
+                    open: false,
+                    search: '',
+                    selected: null,
+                    members: @js($members->map(fn($m) => ['id' => $m->id, 'name' => $m->name, 'nomorAnggota' => $m->nomorAnggota, 'unitKerja' => $m->unitKerja])),
+                    get filtered() {
+                        if (!this.search) return this.members;
+                        const s = this.search.toLowerCase();
+                        return this.members.filter(m => 
+                            m.name.toLowerCase().includes(s) || 
+                            m.nomorAnggota.toLowerCase().includes(s) ||
+                            m.unitKerja.toLowerCase().includes(s)
+                        );
+                    },
+                    selectMember(member) {
+                        this.selected = member;
+                        this.search = '';
+                        this.open = false;
+                        $wire.set('selectedMemberId', member.id);
+                    },
+                    clear() {
+                        this.selected = null;
+                        this.search = '';
+                        $wire.set('selectedMemberId', '');
+                    }
+                }" class="relative">
+                    {{-- Selected Display --}}
+                    <template x-if="selected">
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">
+                                    <span x-text="selected.name.charAt(0)"></span>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-800 dark:text-white" x-text="selected.name"></p>
+                                    <p class="text-[11px] text-slate-500" x-text="selected.nomorAnggota + ' • ' + selected.unitKerja"></p>
+                                </div>
+                            </div>
+                            <button @click="clear()" type="button" class="text-slate-400 hover:text-rose-500 transition-colors">
+                                <i class='bx bx-x text-xl'></i>
+                            </button>
+                        </div>
+                    </template>
+
+                    {{-- Search Input --}}
+                    <template x-if="!selected">
+                        <div class="relative">
+                            <input type="text" 
+                                   x-model="search"
+                                   @focus="open = true"
+                                   @click.away="open = false"
+                                   placeholder="Ketik nama, nomor anggota, atau unit kerja..."
+                                   class="w-full px-4 py-2.5 pl-10 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-colors">
+                            <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
+                                <i class='bx bx-search text-lg'></i>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- Dropdown Results --}}
+                    <div x-show="open && !selected" 
+                         x-transition:enter="transition ease-out duration-200"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         class="absolute z-50 w-full mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-64 overflow-y-auto custom-scroll">
+                        <template x-if="filtered.length === 0">
+                            <div class="px-4 py-8 text-center text-slate-400 text-sm">
+                                <i class='bx bx-search-alt text-3xl mb-2 block opacity-50'></i>
+                                <p>Anggota tidak ditemukan</p>
+                            </div>
+                        </template>
+                        <template x-for="member in filtered" :key="member.id">
+                            <button @click="selectMember(member)" 
+                                    type="button"
+                                    class="w-full flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors text-left border-b border-slate-100 dark:border-slate-700 last:border-0">
+                                <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs font-bold shrink-0">
+                                    <span x-text="member.name.charAt(0)"></span>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-medium text-slate-800 dark:text-white truncate" x-text="member.name"></p>
+                                    <p class="text-[11px] text-slate-500 truncate" x-text="member.nomorAnggota + ' • ' + member.unitKerja"></p>
+                                </div>
+                            </button>
+                        </template>
                     </div>
                 </div>
                 @error('selectedMemberId')
