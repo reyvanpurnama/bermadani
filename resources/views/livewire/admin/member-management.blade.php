@@ -3,7 +3,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
             <h1 class="text-xl font-bold text-slate-900 dark:text-white">Manajemen Anggota</h1>
-            <p class="text-[11px] text-slate-500 mt-0.5">Kelola data keanggotaan, simpanan, dan auto-debit bulanan.</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Kelola data keanggotaan dan kewajiban simpanan bulanan.</p>
         </div>
         <div class="flex gap-2" x-show="activeTab === 'members'" x-data="{ activeTab: @entangle('activeTab') }">
             <button wire:click="openImportModal"
@@ -39,7 +39,7 @@
                        {{ $activeTab === 'auto-debit' ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
             <div class="flex items-center gap-2">
                 <i class='bx bx-calendar-check text-lg'></i>
-                Auto-Debit Bulanan
+                Kewajiban Bulanan
             </div>
             @if($activeTab === 'auto-debit')
                 <div class="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600 dark:bg-indigo-400"></div>
