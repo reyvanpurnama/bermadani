@@ -1,6 +1,4 @@
-@section('page-title', 'Kuitansi Pembayaran')
-@section('hide-navbar', true)
-
+<div>
 <style>
     @media print {
         #sidebar-container, header, .no-print, #theme-toggle, #sidebar-toggle { display: none !important; }
@@ -152,4 +150,5 @@
         &copy; {{ date('Y') }} Koperasi Bermadani. Generated automatically.
     </div>
 
+</div>
 </div>

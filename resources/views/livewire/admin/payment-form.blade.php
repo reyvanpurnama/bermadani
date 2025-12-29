@@ -1,7 +1,10 @@
-@section('page-title', 'Input Pembayaran Simpanan')
+<div>
+    {{-- Page Header --}}
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Input Pembayaran Simpanan</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catat pembayaran simpanan dari anggota</p>
+    </div>
 
-<div class="space-y-6">
-    
     {{-- Flash Messages --}}
     @if (session()->has('error'))
         <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-400 rounded-xl flex items-center gap-3 shadow-sm">
