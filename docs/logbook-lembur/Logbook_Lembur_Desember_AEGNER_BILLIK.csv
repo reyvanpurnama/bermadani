@@ -1,0 +1,32 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,
+NIM,220102007,,,
+BULAN,DESEMBER,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 02.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Senin, 01 Desember 2025",20:28,01:28,5,Tambah Properti All-Time di Card Dashboard
+"Selasa, 02 Desember 2025",19:41,01:41,6,Halaman Riwayat Transaksi Manual
+"Rabu, 03 Desember 2025",18:02,00:02,6,Update Validasi Gender di Form Anggota
+"Kamis, 04 Desember 2025",18:20,00:20,6,Perbaikan Perhitungan Profitabilitas
+"Jumat, 05 Desember 2025",20:11,00:11,4,Ubah Logika Penentuan Tanggal
+"Sabtu, 06 Desember 2025",19:24,01:24,6,Implementasi Riwayat Auto-Debit Bulanan
+"Minggu, 07 Desember 2025",20:17,01:17,5,Hapus UI Template dari Git Tracking
+"Senin, 08 Desember 2025",19:55,01:55,6,Nonaktifkan Stats Cards untuk Keamanan
+"Selasa, 09 Desember 2025",19:15,01:15,6,Fitur Import Excel untuk Data Anggota
+"Rabu, 10 Desember 2025",20:20,01:20,5,Hapus Quick Stats Cards Duplikat
+"Kamis, 11 Desember 2025",19:11,00:11,5,Pindahkan Quick Stats ke Kolom Kanan
+"Jumat, 12 Desember 2025",19:19,00:19,5,Perbaikan UI & Styling Dashboard
+"Sabtu, 13 Desember 2025",18:49,23:49,5,Routing untuk Member Management
+"Minggu, 14 Desember 2025",18:39,22:39,4,Perbaikan Nilai Gender di Database
+"Senin, 15 Desember 2025",19:05,01:05,6,Halaman Transaksi dengan List & Detail View
+"Selasa, 16 Desember 2025",19:47,01:47,6,Dokumentasi Migrasi Laravel
+"Rabu, 17 Desember 2025",19:44,23:44,4,Kategori Penjualan & Perhitungan Profit
+"Kamis, 18 Desember 2025",18:47,00:47,6,Halaman Manajemen Inventaris Produk
+"Jumat, 19 Desember 2025",18:46,00:46,6,Konversi Dashboard ke UI Template Design
+"Sabtu, 20 Desember 2025",18:48,23:48,5,User Management & Tracking Transaksi
+"Minggu, 21 Desember 2025",19:00,23:00,4,Form Edit Data Anggota
+"Senin, 22 Desember 2025",19:39,01:39,6,Perbaikan Bug Timestamp Member Detail
+"Selasa, 23 Desember 2025",19:58,01:58,6,Tooltip Hover untuk Dropdown Filter
+"Rabu, 24 Desember 2025",20:48,01:48,5,Halaman Manajemen Simpanan Anggota
+"Kamis, 25 Desember 2025",19:19,01:19,6,Polish UI & Perbaikan Teks Interface

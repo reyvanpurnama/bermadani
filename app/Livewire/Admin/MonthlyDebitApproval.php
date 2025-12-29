@@ -219,12 +219,20 @@ class MonthlyDebitApproval extends Component
     public function updatedSelectAll($value)
     {
         if ($value) {
-            $this->selectedTransactions = $this->getPendingTransactions()
+            // Select all transactions on current page
+            $this->selectedTransactions = $this->pendingTransactions
                 ->pluck('id')
                 ->toArray();
         } else {
             $this->selectedTransactions = [];
         }
+    }
+
+    public function updatedSelectedTransactions()
+    {
+        // Update selectAll checkbox state based on whether all items are selected
+        $allIds = $this->pendingTransactions->pluck('id')->toArray();
+        $this->selectAll = !empty($allIds) && count(array_intersect($this->selectedTransactions, $allIds)) === count($allIds);
     }
 
     public function getPendingTransactionsProperty()

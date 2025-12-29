@@ -97,7 +97,7 @@
                     <i class='bx bx-arrow-back text-2xl group-hover:-translate-x-1 transition-transform'></i>
                 </button>
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Detail Periode</h2>
+                    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Rincian Tagihan Bulan</h2>
                     <p class="text-slate-600 dark:text-slate-400 mt-1">
                         {{ \Carbon\Carbon::createFromFormat('Y-m', $selectedMonth)->format('F Y') }}
                     </p>
@@ -252,8 +252,8 @@
         @endif
 
         @if($this->debitStatus !== 'EMPTY')
-            <!-- Bulk Actions Bar (Only visible when items selected) -->
-            @if(count($selectedTransactions) > 0)
+            <!-- Bulk Actions Bar (Only visible when items selected AND status is PENDING) -->
+            @if(count($selectedTransactions) > 0 && $this->debitStatus === 'PENDING')
                 <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl z-50 flex items-center gap-4 animate-in slide-in-from-bottom-4 fade-in duration-300">
                     <span class="font-bold text-sm"><span class="text-indigo-400">{{ count($selectedTransactions) }}</span> terpilih</span>
                     <div class="h-4 w-px bg-slate-700"></div>
@@ -275,28 +275,29 @@
                     <table class="w-full">
                         <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
                             <tr>
-                                <th class="px-6 py-4 text-left w-16">
-                                    <input type="checkbox" wire:model.live="selectAll" 
-                                           class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
-                                </th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Anggota & Unit</th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Keterangan</th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nominal</th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Saldo Akhir</th>
-                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                                @if($this->debitStatus === 'PENDING')
+                                    <th class="px-6 py-4 text-left w-16">
+                                        <input type="checkbox" wire:model.live="selectAll" 
+                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
+                                    </th>
+                                @endif
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Anggota</th>
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Unit Kerja</th>
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Jumlah Tagihan</th>
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Saldo Simpanan</th>
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status Pembayaran</th>
+                                <th class="px-6 py-4 text-left text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal Bayar</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                             @forelse($transactions as $transaction)
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group {{ in_array($transaction->id, $selectedTransactions) ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : '' }}">
-                                    <td class="px-6 py-4">
-                                        <input type="checkbox" wire:model.live="selectedTransactions" value="{{ $transaction->id }}"
-                                               class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
-                                        {{ $transaction->created_at->format('d/m/Y') }}
-                                    </td>
+                                    @if($this->debitStatus === 'PENDING')
+                                        <td class="px-6 py-4">
+                                            <input type="checkbox" wire:model.live="selectedTransactions" value="{{ $transaction->id }}"
+                                                   class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
+                                        </td>
+                                    @endif
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">
@@ -305,17 +306,14 @@
                                             <div>
                                                 <div class="text-sm font-bold text-slate-800 dark:text-white">{{ $transaction->member->name }}</div>
                                                 <div class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
-                                                    {{ $transaction->member->nomorAnggota }} 
-                                                    @if($transaction->member->unitKerja)
-                                                        <span class="mx-1 text-slate-300">|</span> {{ $transaction->member->unitKerja }}
-                                                    @endif
+                                                    No. Anggota: {{ $transaction->member->nomorAnggota }}
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="text-xs font-medium text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-lg">
-                                            {{ Str::limit($transaction->notes, 20) }}
+                                        <span class="text-sm text-slate-600 dark:text-slate-400">
+                                            {{ $transaction->member->unitKerja ?? '-' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
@@ -324,7 +322,7 @@
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="text-sm text-slate-500 dark:text-slate-400">
+                                        <span class="text-sm text-emerald-600 dark:text-emerald-400 font-semibold">
                                             Rp {{ number_format($transaction->balanceAfter, 0, ',', '.') }}
                                         </span>
                                     </td>
@@ -332,24 +330,27 @@
                                         @if($transaction->status === 'PENDING')
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                                Pending
+                                                Menunggu
                                             </span>
                                         @elseif($transaction->status === 'APPROVED')
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">
-                                                <i class='bx bx-check'></i> Approved
+                                                <i class='bx bx-check'></i> Lunas
                                             </span>
                                         @elseif($transaction->status === 'REJECTED')
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">
-                                                <i class='bx bx-x'></i> Rejected
+                                                <i class='bx bx-x'></i> Ditolak
                                             </span>
                                         @endif
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 font-mono">
+                                        {{ $transaction->created_at->format('d/m/Y') }}
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-                                        <i class='bx bx-check-circle text-4xl mb-2 text-slate-300 dark:text-slate-600'></i>
-                                        <p>Tidak ada transaksi ditemukan.</p>
+                                    <td colspan="{{ $this->debitStatus === 'PENDING' ? '7' : '6' }}" class="px-6 py-12 text-center text-slate-400">
+                                        <i class='bx bx-inbox text-4xl mb-2 text-slate-300 dark:text-slate-600'></i>
+                                        <p>Belum ada data tagihan.</p>
                                     </td>
                                 </tr>
                             @endforelse
