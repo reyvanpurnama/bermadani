@@ -38,6 +38,9 @@ Route::middleware('guest')->group(function () {
             
             // Redirect based on role
             $user = Auth::user();
+            if ($user->isMember()) {
+                return redirect()->route('member.dashboard');
+            }
             if ($user->isKasir()) {
                 return redirect()->route('kasir.dashboard');
             }
@@ -212,4 +215,12 @@ Route::middleware(['auth'])->prefix('kasir')->group(function () {
 // Keep old /pos route for backward compatibility
 Route::middleware(['auth'])->get('/pos', function () {
     return redirect()->route('admin.pos');
+});
+
+// Member Portal Routes
+Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
+    Route::get('/', \App\Livewire\Member\Dashboard::class)->name('dashboard');
+    Route::get('/profile', \App\Livewire\Member\Profile::class)->name('profile');
+    Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
+    Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
 });
