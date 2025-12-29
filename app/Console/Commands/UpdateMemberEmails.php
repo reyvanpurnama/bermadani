@@ -34,6 +34,7 @@ class UpdateMemberEmails extends Command
         $members = Member::all();
         $count = 0;
         $userCount = 0;
+        $userUpdated = 0;
 
         DB::beginTransaction();
         try {
@@ -44,11 +45,18 @@ class UpdateMemberEmails extends Command
                 $member->update(['email' => $newEmail]);
                 $count++;
 
+                // Also update linked user's email if exists
+                if ($member->userId) {
+                    $user = User::find($member->userId);
+                    if ($user && $user->email !== $newEmail) {
+                        $user->update(['email' => $newEmail]);
+                        $userUpdated++;
+                    }
+                }
+
                 // Create/update user account if flag is set
                 if ($this->option('with-users')) {
-                    $user = User::where('email', $newEmail)->first();
-                    
-                    if (!$user) {
+                    if (!$member->userId) {
                         $user = User::create([
                             'name' => $member->name,
                             'email' => $newEmail,
@@ -65,6 +73,7 @@ class UpdateMemberEmails extends Command
 
             DB::commit();
             $this->info("Successfully updated $count member emails to @bermadani.id format.");
+            $this->info("Updated $userUpdated existing user account emails.");
             
             if ($this->option('with-users')) {
                 $this->info("Created $userCount new user accounts with password: 'password'");
