@@ -7,6 +7,7 @@ use App\Models\CashierShift;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -29,7 +30,7 @@ class Dashboard extends Component
 
     public function getCurrentShiftProperty()
     {
-        return CashierShift::getOpenShift(auth()->id());
+        return CashierShift::getOpenShift(Auth::id());
     }
 
     public function skipCheckIn()
@@ -50,16 +51,19 @@ class Dashboard extends Component
         ]);
 
         $shift = CashierShift::create([
-            'user_id' => auth()->id(),
+            'user_id' => Auth::id(),
             'opening_cash' => $this->openingCash,
             'check_in_at' => now(),
             'status' => 'OPEN',
         ]);
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         ActivityLog::log(
             'CHECK_IN',
             'Shift',
-            "Kasir " . auth()->user()->name . " check-in dengan modal Rp " . number_format($this->openingCash, 0, ',', '.'),
+            "Kasir " . $user->name . " check-in dengan modal Rp " . number_format($this->openingCash, 0, ',', '.'),
             $shift
         );
 
@@ -96,10 +100,13 @@ class Dashboard extends Component
         $shift->calculateSummary();
         $shift->save();
 
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
         ActivityLog::log(
             'CHECK_OUT',
             'Shift',
-            "Kasir " . auth()->user()->name . " check-out. Total penjualan: Rp " . number_format($shift->total_sales, 0, ',', '.') . ", Selisih: Rp " . number_format($shift->difference, 0, ',', '.'),
+            "Kasir " . $user->name . " check-out. Total penjualan: Rp " . number_format($shift->total_sales, 0, ',', '.') . ", Selisih: Rp " . number_format($shift->difference, 0, ',', '.'),
             $shift
         );
 
@@ -139,6 +146,17 @@ class Dashboard extends Component
         return Transaction::where('date', '>=', $shift->check_in_at)
             ->where('status', 'COMPLETED')
             ->where('paymentMethod', 'CASH')
+            ->sum('totalAmount');
+    }
+
+    public function getDigitalSalesProperty()
+    {
+        $shift = $this->currentShift;
+        if (!$shift) return 0;
+
+        return Transaction::where('date', '>=', $shift->check_in_at)
+            ->where('status', 'COMPLETED')
+            ->whereIn('paymentMethod', ['DEBIT', 'CREDIT', 'QRIS', 'TRANSFER'])
             ->sum('totalAmount');
     }
 

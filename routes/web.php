@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ActivityLog;
 
@@ -11,9 +12,8 @@ Route::get('/', function () {
 })->name('home');
 
 // Supplier Registration (Public)
-Route::get('/daftar-supplier', function () {
-    return view('supplier.register');
-})->name('supplier.register');
+Route::get('/daftar-supplier', [SupplierController::class, 'showRegistrationForm'])->name('supplier.register');
+Route::post('/daftar-supplier', [SupplierController::class, 'register'])->name('supplier.register.store');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -27,25 +27,56 @@ Route::middleware('guest')->group(function () {
             'password' => 'required',
         ]);
         
+        // Coba login sebagai User (admin/kasir) dulu
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
             request()->session()->regenerate();
             
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            
             // Update last login timestamp
-            Auth::user()->updateLastLogin();
+            $user->updateLastLogin();
             
             // Log login activity
             ActivityLog::logLogin();
             
             // Redirect based on role
-            $user = Auth::user();
             if ($user->isMember()) {
                 return redirect()->route('member.dashboard');
             }
+            
             if ($user->isKasir()) {
                 return redirect()->route('kasir.dashboard');
             }
             
             return redirect()->intended('/admin');
+        }
+        
+        // Jika gagal, coba login sebagai Supplier menggunakan guard supplier
+        if (Auth::guard('supplier')->attempt($credentials, request()->boolean('remember'))) {
+            request()->session()->regenerate();
+            
+            /** @var \App\Models\Supplier $supplier */
+            $supplier = Auth::guard('supplier')->user();
+            
+            // Update last login timestamp
+            $supplier->updateLastLogin();
+            
+            // Log login activity
+            ActivityLog::log(
+                'login',
+                'Supplier Login',
+                'Supplier ' . $supplier->businessName . ' logged in',
+                $supplier
+            );
+            
+            // Check status supplier
+            if (in_array($supplier->status, ['PENDING', 'REJECTED'])) {
+                return redirect()->route('supplier.pending');
+            }
+            
+            // Jika status APPROVED/ACTIVE, redirect ke dashboard supplier
+            return redirect()->route('supplier.dashboard');
         }
         
         return back()->withErrors([
@@ -58,14 +89,43 @@ Route::post('/logout', function () {
     // Log logout activity before logout
     ActivityLog::logLogout();
     
-    Auth::logout();
+    // Logout from all guards
+    Auth::guard('web')->logout();
+    Auth::guard('supplier')->logout();
+    
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect()->route('home');
 })->name('logout');
 
+// Supplier Pending Page (ketika supplier belum approve)
+Route::middleware('auth:supplier')->get('/supplier/pending', [SupplierController::class, 'pending'])->name('supplier.pending');
+
+// Supplier Portal Routes - Protected (Login via /login)
+Route::middleware(['auth:supplier', 'supplier.status', 'log.activity'])->prefix('supplier')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Supplier\SupplierDashboardController::class, 'index'])->name('supplier.dashboard');
+    
+    // Product Management
+    Route::get('/products', [App\Http\Controllers\Supplier\SupplierProductController::class, 'index'])->name('supplier.products.index');
+    Route::get('/products/create', [App\Http\Controllers\Supplier\SupplierProductController::class, 'create'])->name('supplier.products.create');
+    Route::post('/products', [App\Http\Controllers\Supplier\SupplierProductController::class, 'store'])->name('supplier.products.store');
+    Route::get('/products/{product}/edit', [App\Http\Controllers\Supplier\SupplierProductController::class, 'edit'])->name('supplier.products.edit');
+    Route::put('/products/{product}', [App\Http\Controllers\Supplier\SupplierProductController::class, 'update'])->name('supplier.products.update');
+    Route::delete('/products/{product}', [App\Http\Controllers\Supplier\SupplierProductController::class, 'destroy'])->name('supplier.products.destroy');
+    
+    Route::get('/sales', [App\Http\Controllers\Supplier\SupplierSalesController::class, 'index'])->name('supplier.sales');
+    
+    Route::get('/restock', function () {
+        return view('supplier.restock');
+    })->name('supplier.restock');
+    
+    Route::get('/profile', function () {
+        return view('supplier.profile');
+    })->name('supplier.profile');
+});
+
 // Admin Routes - Protected
-Route::middleware(['auth'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])->prefix('admin')->group(function () {
     // Dashboard
     Route::get('/', function () {
         return view('admin.dashboard');
@@ -160,17 +220,26 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.loans');
     
     // Users Management (Super Admin & Developer only for CRUD, Admin read-only)
-    Route::get('/users', function () {
-        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper() && !auth()->user()->isAdmin()) {
-            abort(403);
-        }
+    Route::middleware(['role:SUPER_ADMIN,DEVELOPER,ADMIN'])->get('/users', function () {
         return view('admin.users.index');
     })->name('admin.users');
     
-    // Suppliers
+    // Suppliers Management
     Route::get('/suppliers', function () {
-        return view('admin.placeholder', ['title' => 'Supplier']);
+        return view('admin.suppliers.index');
     })->name('admin.suppliers');
+    Route::get('/suppliers/{id}', function ($id) {
+        return view('admin.suppliers.detail', ['supplierId' => $id]);
+    })->name('admin.suppliers.detail');
+    // Payment verification routes
+    Route::post('/suppliers/{id}/verify-payment', [SupplierController::class, 'verifyPayment'])->name('admin.suppliers.verifyPayment');
+    Route::post('/suppliers/{id}/reject-payment', [SupplierController::class, 'rejectPayment'])->name('admin.suppliers.rejectPayment');
+    
+    // Supplier approval routes
+    Route::post('/suppliers/{id}/approve', [SupplierController::class, 'approve'])->name('admin.suppliers.approve');
+    Route::post('/suppliers/{id}/reject', [SupplierController::class, 'reject'])->name('admin.suppliers.reject');
+    Route::post('/suppliers/{id}/suspend', [SupplierController::class, 'suspend'])->name('admin.suppliers.suspend');
+    Route::post('/suppliers/{id}/activate', [SupplierController::class, 'activate'])->name('admin.suppliers.activate');
     
     // Settings
     Route::get('/settings', function () {
@@ -178,10 +247,7 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     })->name('admin.settings');
     
     // Activity Logs (Admin, Super Admin, Developer)
-    Route::get('/activity-logs', function () {
-        if (!auth()->user()->isSuperAdmin() && !auth()->user()->isDeveloper() && !auth()->user()->isAdmin()) {
-            abort(403);
-        }
+    Route::middleware(['role:SUPER_ADMIN,DEVELOPER,ADMIN'])->get('/activity-logs', function () {
         return view('admin.activity-logs');
     })->name('admin.activity-logs');
     
@@ -190,14 +256,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
 });
 
 // Kasir Routes - Protected
-Route::middleware(['auth'])->prefix('kasir')->group(function () {
+Route::middleware(['auth', 'role:KASIR', 'log.activity'])->prefix('kasir')->group(function () {
     // Kasir Dashboard
     Route::get('/', function () {
         return view('kasir.dashboard');
     })->name('kasir.dashboard');
     
-    // POS Access for Kasir
-    Route::get('/pos', function () {
+    // POS Access for Kasir (requires active shift)
+    Route::middleware(['cashier.shift'])->get('/pos', function () {
         return view('admin.pos');
     })->name('kasir.pos');
     

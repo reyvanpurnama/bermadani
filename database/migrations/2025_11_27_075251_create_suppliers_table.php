@@ -43,7 +43,7 @@ return new class extends Migration
             $table->integer('currentActiveProducts')->default(0);
             
             // Approval workflow
-            $table->enum('status', ['PENDING', 'PENDING_REVIEW', 'APPROVED_PENDING_PAYMENT', 'PAID_PENDING_APPROVAL', 'ACTIVE', 'REJECTED', 'SUSPENDED'])->default('PENDING');
+            $table->enum('status', ['PENDING', 'APPROVED', 'ACTIVE', 'REJECTED', 'SUSPENDED'])->default('PENDING');
             $table->timestamp('approvedAt')->nullable();
             $table->unsignedBigInteger('approvedById')->nullable();
             $table->text('rejectedReason')->nullable();

@@ -5,23 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\StockMovement;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => 'required|string|unique:products,sku|max:50',
-            'categoryId' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'sellPrice' => 'required|numeric|min:0',
-            'buyPrice' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'threshold' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         $validated['id'] = Str::uuid();
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
@@ -44,20 +36,11 @@ class ProductController extends Controller
             ->with('message', 'Produk berhasil ditambahkan');
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'sku' => 'required|string|max:50|unique:products,sku,' . $id,
-            'categoryId' => 'required|exists:categories,id',
-            'description' => 'nullable|string',
-            'sellPrice' => 'required|numeric|min:0',
-            'buyPrice' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'threshold' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
 

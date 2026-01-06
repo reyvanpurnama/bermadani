@@ -14,6 +14,14 @@ return Application::configure(basePath: dirname(__DIR__))
         // Redirect authenticated users away from guest routes
         $middleware->redirectGuestsTo('/login');
         $middleware->redirectUsersTo('/admin');
+        
+        // Register custom middleware aliases
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'supplier.status' => \App\Http\Middleware\CheckSupplierStatus::class,
+            'cashier.shift' => \App\Http\Middleware\CheckCashierShift::class,
+            'log.activity' => \App\Http\Middleware\LogActivity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

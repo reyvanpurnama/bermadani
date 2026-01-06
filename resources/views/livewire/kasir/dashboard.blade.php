@@ -243,7 +243,8 @@
     </div>
     @else
     {{-- Quick Stats --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {{-- 1. Modal Awal --}}
         <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <div class="flex items-center justify-between">
                 <div>
@@ -256,10 +257,11 @@
             </div>
         </div>
 
+        {{-- 2. Omzet (ganti dari Penjualan Shift) --}}
         <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Penjualan Shift</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Omzet</p>
                     <h3 class="text-xl font-bold text-emerald-600">Rp {{ number_format($this->todaySales, 0, ',', '.') }}</h3>
                 </div>
                 <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center text-emerald-600 dark:text-emerald-400">
@@ -268,27 +270,41 @@
             </div>
         </div>
 
+        {{-- 3. Pembayaran Tunai --}}
         <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Jumlah Transaksi</p>
-                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">{{ $this->todayTransactionsCount }}</h3>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pembayaran Tunai</p>
+                    <h3 class="text-xl font-bold text-blue-600">Rp {{ number_format($this->cashSales, 0, ',', '.') }}</h3>
                 </div>
                 <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
-                    <i class='bx bx-receipt text-xl'></i>
+                    <i class='bx bx-money-withdraw text-xl'></i>
                 </div>
             </div>
         </div>
 
+        {{-- 4. Pembayaran Digital --}}
         <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Kas di Laci</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pembayaran Digital</p>
+                    <h3 class="text-xl font-bold text-purple-600">Rp {{ number_format($this->digitalSales, 0, ',', '.') }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400">
+                    <i class='bx bx-credit-card text-xl'></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- 5. Total Kas di Laci --}}
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Kas di Laci</p>
                     <h3 class="text-xl font-bold text-primary">Rp {{ number_format($this->expectedCash, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] text-slate-400">Cash only</p>
                 </div>
                 <div class="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center text-primary">
-                    <i class='bx bx-money text-xl'></i>
+                    <i class='bx bx-box text-xl'></i>
                 </div>
             </div>
         </div>

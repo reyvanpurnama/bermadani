@@ -80,7 +80,7 @@
 
                     <div class="flex items-center gap-4 opacity-50 transition-opacity" id="ind-step-3">
                         <div class="w-8 h-8 rounded-full bg-white/20 text-white flex items-center justify-center font-bold">3</div>
-                        <div><h6 class="font-bold">Akun & Bank</h6><p class="text-xs text-blue-200">Pencairan dana</p></div>
+                        <div><h6 class="font-bold">Akun & Kontak</h6><p class="text-xs text-blue-200">Alamat & login</p></div>
                     </div>
                 </div>
             </div>
@@ -104,7 +104,24 @@
                     </div>
                 </div>
 
-                <form id="wizardForm" action="supplier-dashboard.html">
+                @if(session('success'))
+                <div class="mb-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg text-sm">
+                    {{ session('success') }}
+                </div>
+                @endif
+
+                @if($errors->any())
+                <div class="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg text-sm">
+                    <ul class="list-disc list-inside space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form id="wizardForm" method="POST" action="{{ route('supplier.register.store') }}" enctype="multipart/form-data">
+                    @csrf
                     
                     <div class="step-content active" id="step1">
                         <div class="bg-white dark:bg-darkCard p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
@@ -133,7 +150,7 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Nama Lengkap</label>
-                                    <input type="text" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Nama sesuai KTP">
+                                    <input type="text" name="ownerName" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Nama sesuai KTP">
                                 </div>
 
                                 <div>
@@ -146,7 +163,9 @@
     <div class="relative">
         <span class="absolute inset-y-0 left-4 flex items-center text-slate-500 text-sm font-bold">+62</span>
         
-        <input type="number" 
+        <input type="text" 
+               name="phone"
+               required
                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg pl-12 pr-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none no-spinner" 
                placeholder="812 3456 7890"
                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -169,12 +188,12 @@
                             <div class="space-y-5">
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Nama Brand / Toko</label>
-                                    <input type="text" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Contoh: Keripik Mas Dani">
+                                    <input type="text" name="businessName" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Contoh: Keripik Mas Dani">
                                 </div>
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Kategori Utama</label>
-                                    <select class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
+                                    <select name="productCategory" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none cursor-pointer">
                                         <option>Makanan Ringan (Snack)</option>
                                         <option>Minuman</option>
                                         <option>Fashion / Aksesoris</option>
@@ -185,7 +204,7 @@
 
                                 <div>
                                     <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Deskripsi Singkat</label>
-                                    <textarea rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Jelaskan produk apa yang ingin Anda titip jual..."></textarea>
+                                    <textarea name="description" rows="4" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Jelaskan produk apa yang ingin Anda titip jual..."></textarea>
                                 </div>
                             </div>
 
@@ -202,38 +221,84 @@
 
                     <div class="step-content" id="step3">
                         <div class="bg-white dark:bg-darkCard p-6 lg:p-8 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-                            <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Akun & Pencairan</h2>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Akun & Kontak</h2>
                             
                             <div class="space-y-5">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Alamat Lengkap</label>
+                                    <textarea name="address" rows="2" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="Alamat usaha/rumah"></textarea>
+                                </div>
+
                                 <div class="grid md:grid-cols-2 gap-5">
                                     <div>
                                         <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Email</label>
-                                        <input type="email" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="email@anda.com">
+                                        <input type="email" name="email" required class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="email@anda.com">
                                     </div>
                                     <div>
-                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Password</label>
-                                        <input type="password" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="••••••••">
+                                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Password (min 8 karakter)</label>
+                                        <input type="password" name="password" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none" placeholder="••••••••">
                                     </div>
                                 </div>
 
-                                <div class="p-5 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
-                                    <h4 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-4 flex items-center gap-2">
-                                        <i class='bx bxs-bank'></i> Info Rekening (Penting)
-                                    </h4>
-                                    <div class="grid grid-cols-3 gap-3">
-                                        <div class="col-span-1">
-                                            <select class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none cursor-pointer h-10">
-                                                <option>BCA</option>
-                                                <option>BRI</option>
-                                                <option>Mandiri</option>
-                                            </select>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Konfirmasi Password</label>
+                                    <div class="relative">
+                                        <input type="password" id="passwordConfirmation" name="password_confirmation" required minlength="8" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary/50 outline-none pr-10" placeholder="Ketik ulang password" oninput="validatePasswordMatch()">
+                                        <div id="passwordMatchIcon" class="absolute inset-y-0 right-3 flex items-center pointer-events-none"></div>
+                                    </div>
+                                    <div id="passwordMatchMessage" class="text-xs mt-1 hidden"></div>
+                                </div>
+
+                                <div class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/30">
+                                    <div class="flex items-start gap-3">
+                                        <i class='bx bx-credit-card text-blue-600 dark:text-blue-400 text-xl flex-shrink-0 mt-0.5'></i>
+                                        <div class="w-full">
+                                            <h4 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-2">Biaya Pendaftaran</h4>
+                                            <p class="text-sm font-bold text-blue-900 dark:text-blue-200 mb-3">Rp 25.000</p>
+                                            
+                                            <div class="mb-3">
+                                                <p class="text-xs text-blue-600 dark:text-blue-400 mb-2"><strong>Scan QR Code di bawah:</strong></p>
+                                                @php
+                                                    $qrPath = public_path('assets/payment-qr/registration-fee.png');
+                                                    $qrExists = file_exists($qrPath);
+                                                @endphp
+                                                
+                                                @if($qrExists)
+                                                    <div class="bg-white dark:bg-slate-800 p-3 rounded-lg inline-block">
+                                                        <img src="{{ asset('assets/payment-qr/registration-fee.png') }}" alt="QR Code Pembayaran" class="w-32 h-32 object-contain">
+                                                    </div>
+                                                @else
+                                                    <div class="bg-slate-100 dark:bg-slate-800 p-6 rounded-lg text-center">
+                                                        <i class='bx bx-qr text-3xl text-slate-400 mb-2'></i>
+                                                        <p class="text-xs text-slate-500 dark:text-slate-400">QR Code sedang dalam tahap pengembangan</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            
+                                            <p class="text-[10px] text-blue-600 dark:text-blue-400 italic">💡 Tip: Pastikan nominal yang Anda transfer sesuai dengan nominal yang tertera di aplikasi dompet digital Anda.</p>
                                         </div>
-                                        <div class="col-span-2">
-                                            <input type="text" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none h-10" placeholder="Nomor Rekening">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5">Bukti Transfer Pembayaran Pendaftaran <span class="text-rose-500">*</span></label>
+                                    <div class="relative">
+                                        <div id="paymentProofPreview" class="hidden mb-3">
+                                            <img id="paymentProofImg" src="" alt="Bukti Pembayaran" class="w-full h-40 object-cover rounded-lg border border-slate-200 dark:border-slate-600">
+                                            <button type="button" onclick="document.getElementById('paymentProof').value = ''; document.getElementById('paymentProofPreview').classList.add('hidden');" class="mt-2 text-xs text-rose-600 hover:text-rose-700 dark:text-rose-400 font-bold">
+                                                Hapus Gambar
+                                            </button>
                                         </div>
-                                        <div class="col-span-3">
-                                            <input type="text" class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs outline-none h-10" placeholder="Atas Nama Pemilik">
-                                        </div>
+                                        <label for="paymentProof" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-700 hover:bg-slate-100 dark:border-slate-600 dark:hover:border-slate-500 transition-colors">
+                                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                                <i class='bx bx-receipt text-2xl text-slate-400 mb-2'></i>
+                                                <p class="text-xs text-slate-500 dark:text-slate-400">
+                                                    <span class="font-semibold">Klik upload</span> atau drag file
+                                                </p>
+                                                <p class="text-[10px] text-slate-400 mt-1">PNG, JPG (Max 2MB)</p>
+                                            </div>
+                                            <input id="paymentProof" type="file" name="registrationPaymentProof" accept="image/*" class="hidden" onchange="previewPaymentProof(this)">
+                                        </label>
                                     </div>
                                 </div>
 
@@ -259,7 +324,7 @@
                 </form>
                 
                 <div class="mt-8 text-center">
-                    <p class="text-xs text-slate-500">Sudah punya akun? <a href="login-campus.html" class="text-primary font-bold hover:underline">Masuk disini</a></p>
+                    <p class="text-xs text-slate-500">Sudah punya akun? <a href="{{ route('login') }}" class="text-primary font-bold hover:underline">Masuk disini</a></p>
                 </div>
 
             </div>
@@ -270,6 +335,45 @@
         function toggleIdentity(type) {
             const label = document.getElementById('id-label');
             label.innerText = type === 'student' ? 'NIM / NIP' : 'Nomor KTP (NIK)';
+        }
+
+        function previewPaymentProof(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('paymentProofImg').src = e.target.result;
+                    document.getElementById('paymentProofPreview').classList.remove('hidden');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function validatePasswordMatch() {
+            const password = document.querySelector('input[name="password"]').value;
+            const passwordConfirmation = document.getElementById('passwordConfirmation').value;
+            const icon = document.getElementById('passwordMatchIcon');
+            const message = document.getElementById('passwordMatchMessage');
+            
+            if (!passwordConfirmation) {
+                icon.innerHTML = '';
+                message.classList.add('hidden');
+                return;
+            }
+            
+            if (password === passwordConfirmation && password.length >= 8) {
+                icon.innerHTML = '<i class="bx bx-check-circle text-lg text-emerald-500"></i>';
+                message.textContent = 'Password cocok ✓';
+                message.className = 'text-xs mt-1 text-emerald-600 dark:text-emerald-400 flex items-center gap-1';
+                message.classList.remove('hidden');
+            } else if (password !== passwordConfirmation && passwordConfirmation) {
+                icon.innerHTML = '<i class="bx bx-x-circle text-lg text-rose-500"></i>';
+                message.textContent = 'Password tidak cocok';
+                message.className = 'text-xs mt-1 text-rose-600 dark:text-rose-400 flex items-center gap-1';
+                message.classList.remove('hidden');
+            } else {
+                icon.innerHTML = '';
+                message.classList.add('hidden');
+            }
         }
 
         function nextStep(step) {
@@ -313,7 +417,7 @@
             mobTextStep.innerText = `Langkah ${step} dari 3`;
             if(step === 1) { mobTextName.innerText = 'Data Pemilik'; mobProgress.style.width = '33%'; }
             if(step === 2) { mobTextName.innerText = 'Info Produk'; mobProgress.style.width = '66%'; }
-            if(step === 3) { mobTextName.innerText = 'Akun & Bank'; mobProgress.style.width = '100%'; }
+            if(step === 3) { mobTextName.innerText = 'Akun & Kontak'; mobProgress.style.width = '100%'; }
         }
     </script>
 
