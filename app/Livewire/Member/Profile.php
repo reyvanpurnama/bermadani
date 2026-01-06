@@ -15,7 +15,7 @@ class Profile extends Component
     public $email;
     public $phone;
     public $address;
-    public $birthDate;
+    // public $birthDate; // Column not exists in production
     
     // Password change
     public $currentPassword = '';
@@ -32,7 +32,7 @@ class Profile extends Component
             $this->email = $this->member->email;
             $this->phone = $this->member->phone;
             $this->address = $this->member->address;
-            $this->birthDate = $this->member->birthDate?->format('Y-m-d');
+            // $this->birthDate = $this->member->birthDate?->format('Y-m-d'); // Column not exists
         }
     }
 
@@ -42,14 +42,14 @@ class Profile extends Component
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
-            'birthDate' => 'nullable|date',
+            // 'birthDate' => 'nullable|date', // Column not exists
         ]);
 
         $this->member->update([
             'name' => $this->name,
             'phone' => $this->phone,
             'address' => $this->address,
-            'birthDate' => $this->birthDate,
+            // 'birthDate' => $this->birthDate, // Column not exists
         ]);
 
         session()->flash('success', 'Profil berhasil diperbarui!');
