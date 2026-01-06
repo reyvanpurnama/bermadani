@@ -45,28 +45,28 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nama Lengkap</label>
-                            <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white" placeholder="Nama lengkap">
+                            <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Nama lengkap">
                             @error('name') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                            <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400" readonly>
+                            <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed" readonly>
                             <p class="text-[10px] text-slate-400 mt-1">Email tidak dapat diubah</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nomor Telepon</label>
-                            <input type="text" wire:model="phone" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white" placeholder="08xxxxxxxxxx">
+                            <input type="text" wire:model="phone" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="08xxxxxxxxxx">
                             @error('phone') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tanggal Lahir</label>
-                            <input type="date" wire:model="birthDate" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white">
+                            <input type="date" wire:model="birthDate" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors">
                             @error('birthDate') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Alamat</label>
-                        <textarea wire:model="address" rows="3" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white resize-none" placeholder="Alamat lengkap"></textarea>
+                        <textarea wire:model="address" rows="3" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white resize-none transition-colors" placeholder="Alamat lengkap"></textarea>
                         @error('address') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
                     <button type="submit" class="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2">
@@ -84,17 +84,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password Lama</label>
-                            <input type="password" wire:model="currentPassword" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white" placeholder="••••••••">
+                            <input type="password" wire:model="currentPassword" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="••••••••">
                             @error('currentPassword') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Password Baru</label>
-                            <input type="password" wire:model="newPassword" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white" placeholder="••••••••">
+                            <input type="password" wire:model="newPassword" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="••••••••">
                             @error('newPassword') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Konfirmasi Password</label>
-                            <input type="password" wire:model="newPassword_confirmation" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-darkInput text-slate-800 dark:text-white" placeholder="••••••••">
+                            <input type="password" wire:model="newPassword_confirmation" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="••••••••">
                         </div>
                     </div>
                     <button type="submit" class="px-6 py-2.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-colors flex items-center gap-2">
@@ -106,13 +106,13 @@
     </div>
 
     @if(session()->has('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
             <i class='bx bx-check-circle'></i> {{ session('success') }}
         </div>
     @endif
 
     @if(session()->has('error'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-rose-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2">
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 3000)" class="fixed bottom-4 right-4 bg-rose-500 text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 z-50">
             <i class='bx bx-error-circle'></i> {{ session('error') }}
         </div>
     @endif

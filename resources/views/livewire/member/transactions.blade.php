@@ -43,7 +43,7 @@
         <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
                 <label class="text-sm text-slate-500 dark:text-slate-400">Filter Bulan:</label>
-                <input type="month" wire:model.live="filterMonth" class="px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-darkInput text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
+                <input type="month" wire:model.live="filterMonth" class="px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
             </div>
             @if($filterMonth)
                 <button wire:click="$set('filterMonth', '')" class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1">
