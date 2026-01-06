@@ -107,7 +107,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
                             @forelse($wajibTransactions as $trx)
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-5 py-3">{{ $trx->createdAt->format('d M Y, H:i') }}</td>
+                                    <td class="px-5 py-3">{{ $trx->created_at->format('d M Y, H:i') }}</td>
                                     <td class="px-5 py-3 text-slate-500">{{ $trx->notes }}</td>
                                     <td class="px-5 py-3 font-mono text-emerald-600">+ Rp {{ number_format($trx->amount, 0, ',', '.') }}</td>
                                     <td class="px-5 py-3 text-[11px]">{{ $trx->processor->name ?? 'System' }}</td>
@@ -172,7 +172,7 @@
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
                             @forelse($sukarelaTransactions as $trx)
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                                    <td class="px-5 py-3">{{ $trx->createdAt->format('d M, H:i') }}</td>
+                                    <td class="px-5 py-3">{{ $trx->created_at->format('d M, H:i') }}</td>
                                     <td class="px-5 py-3">
                                         <span class="font-bold {{ $trx->transactionType === 'SETOR' ? 'text-emerald-600' : 'text-rose-500' }}">
                                             {{ $trx->transactionTypeLabel }}
@@ -225,7 +225,7 @@
                             <p class="text-xs text-slate-400 mb-2">Riwayat Transaksi</p>
                             @foreach($pokokTransactions as $trx)
                                 <div class="text-xs text-slate-600 dark:text-slate-400">
-                                    {{ $trx->createdAt->format('d M Y') }} - Rp {{ number_format($trx->amount, 0, ',', '.') }}
+                                    {{ $trx->created_at->format('d M Y') }} - Rp {{ number_format($trx->amount, 0, ',', '.') }}
                                 </div>
                             @endforeach
                         </div>
