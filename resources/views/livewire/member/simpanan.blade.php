@@ -111,10 +111,8 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                         @foreach($simpanan as $item)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors {{ in_array($item->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']) ? 'cursor-pointer' : '' }}" 
-                                @if(in_array($item->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
-                                    wire:click="viewReceipt({{ $item->id }})"
-                                @endif
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" 
+                                wire:click="viewReceipt({{ $item->id }})"
                             >
                                 <td class="px-6 py-4">
                                     <span class="text-sm text-slate-800 dark:text-white">{{ $item->created_at->format('d M Y') }}</span>
@@ -171,17 +169,9 @@
                                     <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($item->balanceAfter, 0, ',', '.') }}</span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full {{ $item->status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : ($item->status === 'PENDING' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-600' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400') }}">
-                                            {{ $item->status === 'APPROVED' ? 'Lunas' : $item->status }}
-                                        </span>
-                                        @if(in_array($item->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
-                                            <button wire:click.stop="viewReceipt({{ $item->id }})" 
-                                                class="inline-flex items-center gap-1 px-2.5 py-1 bg-primary hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors">
-                                                <i class='bx bx-receipt'></i> Struk
-                                            </button>
-                                        @endif
-                                    </div>
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full {{ $item->status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : ($item->status === 'PENDING' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-600' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400') }}">
+                                        {{ $item->status === 'APPROVED' ? 'Lunas' : $item->status }}
+                                    </span>
                                 </td>
                             </tr>
                         @endforeach
@@ -202,7 +192,7 @@
         @endif
     </div>
 
-    {{-- Receipt Modal (Same as Transfer History) --}}
+    {{-- Receipt Modal for All Transactions --}}
     @if($showReceiptModal && $selectedTransfer)
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" wire:click="closeReceipt">
             <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-md w-full my-8" wire:click.stop>
@@ -213,18 +203,28 @@
                         <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
                             <i class='bx bx-check text-3xl sm:text-4xl'></i>
                         </div>
-                        <h3 class="text-lg sm:text-xl font-bold">Transfer Berhasil</h3>
+                        <h3 class="text-lg sm:text-xl font-bold">
+                            @if(in_array($selectedTransfer->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
+                                Transfer Berhasil
+                            @elseif($selectedTransfer->transactionType === 'SETOR')
+                                Setoran Berhasil
+                            @else
+                                Penarikan Berhasil
+                            @endif
+                        </h3>
                         <p class="text-blue-100 text-xs sm:text-sm mt-1">Transaksi telah diproses</p>
                     </div>
                 </div>
 
                 {{-- Content --}}
                 <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[60vh] sm:max-h-none overflow-y-auto">
-                    {{-- Reference Number --}}
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 sm:p-4 text-center">
-                        <p class="text-xs text-slate-500 mb-1">Nomor Referensi</p>
-                        <p class="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white break-all">{{ $selectedTransfer->transferReference }}</p>
-                    </div>
+                    {{-- Reference Number (for transfers only) --}}
+                    @if(in_array($selectedTransfer->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 sm:p-4 text-center">
+                            <p class="text-xs text-slate-500 mb-1">Nomor Referensi</p>
+                            <p class="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white break-all">{{ $selectedTransfer->transferReference }}</p>
+                        </div>
+                    @endif
 
                     {{-- Details --}}
                     <div class="space-y-2 sm:space-y-3">
@@ -236,12 +236,30 @@
                         </div>
 
                         <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Tipe Transfer</span>
-                            <span class="text-xs sm:text-sm font-bold {{ $selectedTransfer->transactionType === 'TRANSFER_IN' ? 'text-emerald-600' : 'text-rose-600' }} text-right">
-                                {{ $selectedTransfer->transactionType === 'TRANSFER_IN' ? 'Transfer Masuk' : 'Transfer Keluar' }}
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Jenis Simpanan</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white text-right">
+                                Simpanan {{ ucfirst(strtolower($selectedTransfer->type)) }}
                             </span>
                         </div>
 
+                        <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Tipe Transaksi</span>
+                            <span class="text-xs sm:text-sm font-bold 
+                                @if($selectedTransfer->transactionType === 'TRANSFER_IN') text-emerald-600 
+                                @elseif($selectedTransfer->transactionType === 'TRANSFER_OUT') text-rose-600 
+                                @elseif($selectedTransfer->transactionType === 'SETOR') text-emerald-600
+                                @else text-rose-600
+                                @endif text-right">
+                                @switch($selectedTransfer->transactionType)
+                                    @case('SETOR') Setoran @break
+                                    @case('TARIK') Penarikan @break
+                                    @case('TRANSFER_IN') Transfer Masuk @break
+                                    @case('TRANSFER_OUT') Transfer Keluar @break
+                                @endswitch
+                            </span>
+                        </div>
+
+                        {{-- Transfer Details --}}
                         @if($selectedTransfer->transactionType === 'TRANSFER_OUT')
                             <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
                                 <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Pengirim</span>
@@ -257,7 +275,7 @@
                                     <p class="text-[10px] sm:text-xs text-slate-500">{{ $selectedTransfer->relatedMember->nomorAnggota ?? '-' }}</p>
                                 </div>
                             </div>
-                        @else
+                        @elseif($selectedTransfer->transactionType === 'TRANSFER_IN')
                             <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
                                 <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Pengirim</span>
                                 <div class="text-right">
@@ -279,9 +297,16 @@
                             <span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white text-right">Rp {{ number_format($selectedTransfer->amount, 0, ',', '.') }}</span>
                         </div>
 
+                        @if(in_array($selectedTransfer->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
+                            <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Biaya Admin</span>
+                                <span class="text-xs sm:text-sm font-bold text-emerald-600">GRATIS</span>
+                            </div>
+                        @endif
+
                         <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Biaya Admin</span>
-                            <span class="text-xs sm:text-sm font-bold text-emerald-600">GRATIS</span>
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Saldo Akhir</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white text-right">Rp {{ number_format($selectedTransfer->balanceAfter, 0, ',', '.') }}</span>
                         </div>
 
                         @if($selectedTransfer->notes)
@@ -294,7 +319,15 @@
                         <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-2.5 sm:p-3 mt-3 sm:mt-4">
                             <div class="flex items-start gap-2">
                                 <i class='bx bx-check-circle text-emerald-600 text-lg sm:text-xl flex-shrink-0'></i>
-                                <p class="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400">Transfer berhasil diproses dan saldo telah diperbarui</p>
+                                <p class="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400">
+                                    @if(in_array($selectedTransfer->transactionType, ['TRANSFER_IN', 'TRANSFER_OUT']))
+                                        Transfer berhasil diproses dan saldo telah diperbarui
+                                    @elseif($selectedTransfer->transactionType === 'SETOR')
+                                        Setoran berhasil dicatat dan saldo telah diperbarui
+                                    @else
+                                        Penarikan berhasil diproses dan saldo telah diperbarui
+                                    @endif
+                                </p>
                             </div>
                         </div>
                     </div>
