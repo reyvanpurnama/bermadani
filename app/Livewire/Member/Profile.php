@@ -12,13 +12,15 @@ class Profile extends Component
 {
     public $member;
     public $name;
+    public $email;
     public $phone;
     public $address;
+    public $birthDate;
     
     // Password change
     public $currentPassword = '';
     public $newPassword = '';
-    public $confirmPassword = '';
+    public $newPassword_confirmation = '';
 
     public function mount()
     {
@@ -27,8 +29,10 @@ class Profile extends Component
         
         if ($this->member) {
             $this->name = $this->member->name;
+            $this->email = $this->member->email;
             $this->phone = $this->member->phone;
             $this->address = $this->member->address;
+            $this->birthDate = $this->member->birthDate?->format('Y-m-d');
         }
     }
 
@@ -38,12 +42,14 @@ class Profile extends Component
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
+            'birthDate' => 'nullable|date',
         ]);
 
         $this->member->update([
             'name' => $this->name,
             'phone' => $this->phone,
             'address' => $this->address,
+            'birthDate' => $this->birthDate,
         ]);
 
         session()->flash('success', 'Profil berhasil diperbarui!');
@@ -53,8 +59,7 @@ class Profile extends Component
     {
         $this->validate([
             'currentPassword' => 'required',
-            'newPassword' => 'required|min:8',
-            'confirmPassword' => 'required|same:newPassword',
+            'newPassword' => 'required|min:8|confirmed',
         ]);
 
         $user = auth()->user();
@@ -68,8 +73,8 @@ class Profile extends Component
             'password' => Hash::make($this->newPassword),
         ]);
 
-        $this->reset(['currentPassword', 'newPassword', 'confirmPassword']);
-        session()->flash('password-success', 'Password berhasil diubah!');
+        $this->reset(['currentPassword', 'newPassword', 'newPassword_confirmation']);
+        session()->flash('success', 'Password berhasil diubah!');
     }
 
     public function render()

@@ -29,7 +29,7 @@ class Dashboard extends Component
 
             // Recent simpanan activities
             $this->recentSimpanan = SimpananTransaction::where('memberId', $this->member->id)
-                ->where('status', 'PAID')
+                ->where('status', 'APPROVED')
                 ->latest()
                 ->take(5)
                 ->get();

@@ -78,13 +78,12 @@
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-slate-50 dark:bg-slate-800">
-                        <tr class="text-left text-xs font-bold text-slate-500 uppercase tracking-wider">
+                        <tr class="text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                             <th class="px-6 py-4">Tanggal</th>
-                            <th class="px-6 py-4">Jenis</th>
-                            <th class="px-6 py-4">Tipe</th>
-                            <th class="px-6 py-4">Jumlah</th>
-                            <th class="px-6 py-4">Saldo</th>
-                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4">Jenis & Tipe</th>
+                            <th class="px-6 py-4 text-right">Nominal</th>
+                            <th class="px-6 py-4 text-right">Saldo Akhir</th>
+                            <th class="px-6 py-4 text-center">Status</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -95,32 +94,30 @@
                                     <p class="text-[10px] text-slate-400">{{ $item->created_at->format('H:i') }}</p>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full
-                                        {{ $item->type === 'POKOK' ? 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300' : '' }}
-                                        {{ $item->type === 'WAJIB' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : '' }}
-                                        {{ $item->type === 'SUKARELA' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : '' }}
-                                    ">
-                                        {{ $item->type }}
-                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-full
+                                            {{ $item->type === 'POKOK' ? 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300' : '' }}
+                                            {{ $item->type === 'WAJIB' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : '' }}
+                                            {{ $item->type === 'SUKARELA' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : '' }}
+                                        ">
+                                            {{ $item->type }}
+                                        </span>
+                                        <span class="text-sm {{ $item->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
+                                            {{ $item->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }}
+                                        </span>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center gap-1 text-sm font-medium {{ $item->transactionType === 'SETOR' ? 'text-emerald-600' : 'text-rose-500' }}">
-                                        <i class='bx {{ $item->transactionType === 'SETOR' ? 'bx-down-arrow-alt' : 'bx-up-arrow-alt' }}'></i>
-                                        {{ $item->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm font-bold {{ $item->transactionType === 'SETOR' ? 'text-emerald-600' : 'text-rose-500' }}">
+                                <td class="px-6 py-4 text-right">
+                                    <span class="text-sm font-bold {{ $item->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
                                         {{ $item->transactionType === 'SETOR' ? '+' : '-' }}Rp {{ number_format($item->amount, 0, ',', '.') }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($item->balance, 0, ',', '.') }}</span>
+                                <td class="px-6 py-4 text-right">
+                                    <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($item->balanceAfter, 0, ',', '.') }}</span>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full {{ $item->status === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
-                                        <i class='bx {{ $item->status === 'PAID' ? 'bx-check-circle' : 'bx-time' }}'></i>
-                                        {{ $item->status }}
+                                <td class="px-6 py-4 text-center">
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full {{ $item->status === 'APPROVED' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : ($item->status === 'PENDING' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-600' : 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400') }}">
+                                        {{ $item->status === 'APPROVED' ? 'Lunas' : $item->status }}
                                     </span>
                                 </td>
                             </tr>

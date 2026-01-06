@@ -36,7 +36,7 @@ class Simpanan extends Component
 
         if ($this->member) {
             $query = SimpananTransaction::where('memberId', $this->member->id)
-                ->where('status', 'PAID')
+                ->where('status', 'APPROVED')
                 ->orderBy('created_at', 'desc');
 
             if ($this->filterType && $this->filterType !== 'all') {
