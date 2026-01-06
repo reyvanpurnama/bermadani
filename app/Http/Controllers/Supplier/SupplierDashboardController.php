@@ -21,8 +21,8 @@ class SupplierDashboardController extends Controller
         // Total Omzet (Total penjualan kotor bulan ini)
         $totalOmzet = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
-                $query->whereMonth('createdAt', now()->month)
-                    ->whereYear('createdAt', now()->year)
+                $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year)
                     ->where('status', 'COMPLETED');
             })
             ->sum(DB::raw('quantity * unitPrice'));
@@ -31,8 +31,8 @@ class SupplierDashboardController extends Controller
         // Fee koperasi dihitung dari profitShareRate masing-masing produk
         $totalPendapatan = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
-                $query->whereMonth('createdAt', now()->month)
-                    ->whereYear('createdAt', now()->year)
+                $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year)
                     ->where('status', 'COMPLETED');
             })
             ->join('products', 'transaction_items.productId', '=', 'products.id')
@@ -41,8 +41,8 @@ class SupplierDashboardController extends Controller
         // Unit terjual bulan ini
         $unitTerjual = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
-                $query->whereMonth('createdAt', now()->month)
-                    ->whereYear('createdAt', now()->year)
+                $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year)
                     ->where('status', 'COMPLETED');
             })
             ->sum('quantity');
@@ -50,8 +50,8 @@ class SupplierDashboardController extends Controller
         // Omzet bulan lalu untuk hitung growth
         $omzetBulanLalu = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
-                $query->whereMonth('createdAt', now()->subMonth()->month)
-                    ->whereYear('createdAt', now()->subMonth()->year)
+                $query->whereMonth('created_at', now()->subMonth()->month)
+                    ->whereYear('created_at', now()->subMonth()->year)
                     ->where('status', 'COMPLETED');
             })
             ->sum(DB::raw('quantity * unitPrice'));
