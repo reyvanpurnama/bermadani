@@ -123,110 +123,110 @@
 
     {{-- Receipt Modal --}}
     @if($showReceiptModal && $selectedTransfer)
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" wire:click="closeReceipt">
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-md w-full" wire:click.stop>
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" wire:click="closeReceipt">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-md w-full my-8" wire:click.stop>
                 {{-- Header --}}
-                <div class="bg-gradient-to-r from-primary to-blue-600 p-6 rounded-t-2xl text-white relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                <div class="bg-gradient-to-r from-primary to-blue-600 p-4 sm:p-6 rounded-t-2xl text-white relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <div class="relative z-10 text-center">
-                        <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class='bx bx-check text-4xl'></i>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
+                            <i class='bx bx-check text-3xl sm:text-4xl'></i>
                         </div>
-                        <h3 class="text-xl font-bold">Transfer Berhasil</h3>
-                        <p class="text-blue-100 text-sm mt-1">Transaksi telah diproses</p>
+                        <h3 class="text-lg sm:text-xl font-bold">Transfer Berhasil</h3>
+                        <p class="text-blue-100 text-xs sm:text-sm mt-1">Transaksi telah diproses</p>
                     </div>
                 </div>
 
                 {{-- Content --}}
-                <div class="p-6 space-y-4">
+                <div class="p-4 sm:p-6 space-y-3 sm:space-y-4 max-h-[60vh] sm:max-h-none overflow-y-auto">
                     {{-- Reference Number --}}
-                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 text-center">
+                    <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-3 sm:p-4 text-center">
                         <p class="text-xs text-slate-500 mb-1">Nomor Referensi</p>
-                        <p class="text-lg font-mono font-bold text-slate-900 dark:text-white">{{ $selectedTransfer->transferReference }}</p>
+                        <p class="text-base sm:text-lg font-mono font-bold text-slate-900 dark:text-white break-all">{{ $selectedTransfer->transferReference }}</p>
                     </div>
 
                     {{-- Details --}}
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-sm text-slate-500">Tanggal & Waktu</span>
-                            <span class="text-sm font-bold text-slate-900 dark:text-white text-right">
+                    <div class="space-y-2 sm:space-y-3">
+                        <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Tanggal & Waktu</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white text-right">
                                 {{ $selectedTransfer->created_at->format('d M Y, H:i') }} WIB
                             </span>
                         </div>
 
-                        <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-sm text-slate-500">Tipe Transfer</span>
-                            <span class="text-sm font-bold {{ $selectedTransfer->transactionType === 'TRANSFER_IN' ? 'text-emerald-600' : 'text-rose-600' }}">
+                        <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Tipe Transfer</span>
+                            <span class="text-xs sm:text-sm font-bold {{ $selectedTransfer->transactionType === 'TRANSFER_IN' ? 'text-emerald-600' : 'text-rose-600' }} text-right">
                                 {{ $selectedTransfer->transactionType === 'TRANSFER_IN' ? 'Transfer Masuk' : 'Transfer Keluar' }}
                             </span>
                         </div>
 
                         @if($selectedTransfer->transactionType === 'TRANSFER_OUT')
-                            <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                                <span class="text-sm text-slate-500">Pengirim</span>
+                            <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Pengirim</span>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ $member->name }}</p>
-                                    <p class="text-xs text-slate-500">{{ $member->nomorAnggota }}</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{{ $member->name }}</p>
+                                    <p class="text-[10px] sm:text-xs text-slate-500">{{ $member->nomorAnggota }}</p>
                                 </div>
                             </div>
-                            <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                                <span class="text-sm text-slate-500">Penerima</span>
+                            <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Penerima</span>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ $selectedTransfer->relatedMember->name ?? 'Member' }}</p>
-                                    <p class="text-xs text-slate-500">{{ $selectedTransfer->relatedMember->nomorAnggota ?? '-' }}</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white break-words">{{ $selectedTransfer->relatedMember->name ?? 'Member' }}</p>
+                                    <p class="text-[10px] sm:text-xs text-slate-500">{{ $selectedTransfer->relatedMember->nomorAnggota ?? '-' }}</p>
                                 </div>
                             </div>
                         @else
-                            <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                                <span class="text-sm text-slate-500">Pengirim</span>
+                            <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Pengirim</span>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ $selectedTransfer->relatedMember->name ?? 'Member' }}</p>
-                                    <p class="text-xs text-slate-500">{{ $selectedTransfer->relatedMember->nomorAnggota ?? '-' }}</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white break-words">{{ $selectedTransfer->relatedMember->name ?? 'Member' }}</p>
+                                    <p class="text-[10px] sm:text-xs text-slate-500">{{ $selectedTransfer->relatedMember->nomorAnggota ?? '-' }}</p>
                                 </div>
                             </div>
-                            <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                                <span class="text-sm text-slate-500">Penerima</span>
+                            <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                                <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Penerima</span>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white">{{ $member->name }}</p>
-                                    <p class="text-xs text-slate-500">{{ $member->nomorAnggota }}</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">{{ $member->name }}</p>
+                                    <p class="text-[10px] sm:text-xs text-slate-500">{{ $member->nomorAnggota }}</p>
                                 </div>
                             </div>
                         @endif
 
-                        <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-sm text-slate-500">Nominal</span>
-                            <span class="text-lg font-bold text-slate-900 dark:text-white">Rp {{ number_format($selectedTransfer->amount, 0, ',', '.') }}</span>
+                        <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Nominal</span>
+                            <span class="text-base sm:text-lg font-bold text-slate-900 dark:text-white text-right">Rp {{ number_format($selectedTransfer->amount, 0, ',', '.') }}</span>
                         </div>
 
-                        <div class="flex justify-between items-start py-2 border-b border-slate-100 dark:border-slate-700">
-                            <span class="text-sm text-slate-500">Biaya Admin</span>
-                            <span class="text-sm font-bold text-emerald-600">GRATIS</span>
+                        <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
+                            <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Biaya Admin</span>
+                            <span class="text-xs sm:text-sm font-bold text-emerald-600">GRATIS</span>
                         </div>
 
                         @if($selectedTransfer->notes)
                             <div class="py-2">
-                                <p class="text-xs text-slate-500 mb-1">Catatan</p>
-                                <p class="text-sm text-slate-900 dark:text-white">{{ $selectedTransfer->notes }}</p>
+                                <p class="text-[10px] sm:text-xs text-slate-500 mb-1">Catatan</p>
+                                <p class="text-xs sm:text-sm text-slate-900 dark:text-white break-words">{{ $selectedTransfer->notes }}</p>
                             </div>
                         @endif
 
-                        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 mt-4">
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-2.5 sm:p-3 mt-3 sm:mt-4">
                             <div class="flex items-start gap-2">
-                                <i class='bx bx-check-circle text-emerald-600 text-xl flex-shrink-0'></i>
-                                <p class="text-xs text-emerald-700 dark:text-emerald-400">Transfer berhasil diproses dan saldo telah diperbarui</p>
+                                <i class='bx bx-check-circle text-emerald-600 text-lg sm:text-xl flex-shrink-0'></i>
+                                <p class="text-[10px] sm:text-xs text-emerald-700 dark:text-emerald-400">Transfer berhasil diproses dan saldo telah diperbarui</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {{-- Actions --}}
-                <div class="p-6 border-t border-slate-100 dark:border-slate-700 flex gap-3">
+                <div class="p-4 sm:p-6 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row gap-2 sm:gap-3">
                     <button wire:click="closeReceipt"
-                        class="flex-1 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-xl font-bold transition-colors">
+                        class="w-full sm:flex-1 py-2.5 sm:py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-xl text-sm font-bold transition-colors">
                         Tutup
                     </button>
                     <button onclick="window.print()"
-                        class="flex-1 py-3 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+                        class="w-full sm:flex-1 py-2.5 sm:py-3 bg-primary hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
                         <i class='bx bx-printer'></i> Cetak
                     </button>
                 </div>
