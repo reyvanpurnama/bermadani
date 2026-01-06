@@ -10,7 +10,7 @@
                         {{ substr($member->name ?? 'M', 0, 1) }}
                     </div>
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white">{{ $member->name ?? 'Member' }}</h3>
-                    <p class="text-sm text-slate-500">{{ $member->email ?? '-' }}</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">{{ $member->email ?? '-' }}</p>
                     <div class="mt-3">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full {{ $member->tier === 'PLATINUM' ? 'bg-purple-100 text-purple-700' : ($member->tier === 'GOLD' ? 'bg-amber-100 text-amber-700' : ($member->tier === 'SILVER' ? 'bg-slate-200 text-slate-700' : 'bg-orange-100 text-orange-700')) }}">
                             <i class='bx bxs-medal'></i> {{ $member->tier ?? 'Bronze' }}
@@ -19,15 +19,15 @@
                 </div>
                 <div class="space-y-3 text-sm">
                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
-                        <span class="text-slate-500">Nomor Anggota</span>
+                        <span class="text-slate-500 dark:text-slate-400">Nomor Anggota</span>
                         <span class="font-mono font-bold text-slate-800 dark:text-white">{{ $member->nomorAnggota ?? '-' }}</span>
                     </div>
                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
-                        <span class="text-slate-500">Bergabung Sejak</span>
+                        <span class="text-slate-500 dark:text-slate-400">Bergabung Sejak</span>
                         <span class="font-bold text-slate-800 dark:text-white">{{ $member->created_at?->format('d M Y') ?? '-' }}</span>
                     </div>
                     <div class="flex justify-between py-2">
-                        <span class="text-slate-500">Total Poin</span>
+                        <span class="text-slate-500 dark:text-slate-400">Total Poin</span>
                         <span class="font-bold text-amber-500">{{ number_format($member->points ?? 0) }} Pts</span>
                     </div>
                 </div>
@@ -50,7 +50,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                            <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500" readonly>
+                            <input type="email" wire:model="email" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400" readonly>
                             <p class="text-[10px] text-slate-400 mt-1">Email tidak dapat diubah</p>
                         </div>
                         <div>

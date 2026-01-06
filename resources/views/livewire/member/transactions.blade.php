@@ -9,7 +9,7 @@
                     <i class='bx bx-shopping-bag text-2xl'></i>
                 </div>
                 <div>
-                    <p class="text-[11px] text-slate-500 uppercase tracking-wider">Total Transaksi</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Transaksi</p>
                     <h3 class="text-2xl font-bold text-slate-800 dark:text-white">{{ $stats['totalTransactions'] }}</h3>
                 </div>
             </div>
@@ -20,7 +20,7 @@
                     <i class='bx bx-money text-2xl'></i>
                 </div>
                 <div>
-                    <p class="text-[11px] text-slate-500 uppercase tracking-wider">Total Belanja</p>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Belanja</p>
                     <h3 class="text-xl font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['totalSpent'], 0, ',', '.') }}</h3>
                 </div>
             </div>
@@ -42,11 +42,11 @@
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 mb-6">
         <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-                <label class="text-sm text-slate-500">Filter Bulan:</label>
+                <label class="text-sm text-slate-500 dark:text-slate-400">Filter Bulan:</label>
                 <input type="month" wire:model.live="filterMonth" class="px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-darkInput text-slate-800 dark:text-white focus:ring-2 focus:ring-primary focus:border-primary">
             </div>
             @if($filterMonth)
-                <button wire:click="$set('filterMonth', '')" class="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1">
+                <button wire:click="$set('filterMonth', '')" class="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 flex items-center gap-1">
                     <i class='bx bx-x'></i> Reset Filter
                 </button>
             @endif
@@ -70,31 +70,27 @@
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($trx->total, 0, ',', '.') }}</p>
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold rounded-full {{ $trx->paymentStatus === 'PAID' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
-                                    {{ $trx->paymentStatus }}
+                                <p class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($trx->totalAmount, 0, ',', '.') }}</p>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-bold rounded-full {{ $trx->status === 'COMPLETED' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700' }}">
+                                    {{ $trx->status }}
                                 </span>
                             </div>
                         </div>
                         
                         {{-- Expanded Details --}}
                         <div x-show="expanded" x-collapse class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
                                 <div>
-                                    <p class="text-slate-500">Subtotal</p>
-                                    <p class="font-bold text-slate-800 dark:text-white">Rp {{ number_format($trx->subtotal, 0, ',', '.') }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-slate-500">Diskon</p>
-                                    <p class="font-bold text-rose-500">-Rp {{ number_format($trx->discount ?? 0, 0, ',', '.') }}</p>
+                                    <p class="text-slate-500">Total Belanja</p>
+                                    <p class="font-bold text-slate-800 dark:text-white">Rp {{ number_format($trx->totalAmount, 0, ',', '.') }}</p>
                                 </div>
                                 <div>
                                     <p class="text-slate-500">Metode Bayar</p>
-                                    <p class="font-bold text-slate-800 dark:text-white">{{ $trx->paymentMethod ?? 'Cash' }}</p>
+                                    <p class="font-bold text-slate-800 dark:text-white">{{ $trx->paymentMethod ?? 'CASH' }}</p>
                                 </div>
                                 <div>
                                     <p class="text-slate-500">Poin Didapat</p>
-                                    <p class="font-bold text-amber-500">+{{ floor($trx->total / 1000) }} Pts</p>
+                                    <p class="font-bold text-amber-500">+{{ floor($trx->totalAmount / 1000) }} Pts</p>
                                 </div>
                             </div>
                             @if($trx->items && $trx->items->count() > 0)
@@ -104,7 +100,7 @@
                                         @foreach($trx->items->take(5) as $item)
                                             <div class="flex justify-between text-sm bg-slate-50 dark:bg-slate-800 px-3 py-2 rounded-lg">
                                                 <span class="text-slate-700 dark:text-slate-300">{{ $item->product->name ?? 'Produk' }} x{{ $item->quantity }}</span>
-                                                <span class="font-bold text-slate-800 dark:text-white">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</span>
+                                                <span class="font-bold text-slate-800 dark:text-white">Rp {{ number_format($item->totalPrice ?? 0, 0, ',', '.') }}</span>
                                             </div>
                                         @endforeach
                                         @if($trx->items->count() > 5)

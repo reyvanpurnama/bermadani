@@ -174,8 +174,8 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-800 dark:text-white">-Rp {{ number_format($trx->total, 0, ',', '.') }}</p>
-                                    <p class="text-[10px] text-emerald-500 font-bold">{{ $trx->paymentStatus }}</p>
+                                    <p class="text-sm font-bold text-slate-800 dark:text-white">-Rp {{ number_format($trx->totalAmount, 0, ',', '.') }}</p>
+                                    <p class="text-[10px] text-emerald-500 font-bold">{{ $trx->status }}</p>
                                 </div>
                             </div>
                         @endforeach

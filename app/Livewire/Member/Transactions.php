@@ -42,7 +42,7 @@ class Transactions extends Component
         }
 
         $this->stats = [
-            'totalSpent' => $query->sum('total'),
+            'totalSpent' => $query->sum('totalAmount'),
             'totalTransactions' => $query->count(),
         ];
     }
