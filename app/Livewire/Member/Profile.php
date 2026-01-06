@@ -41,19 +41,15 @@ class Profile extends Component
     public function updateProfile()
     {
         $this->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:500',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string|max:500',
             'unitKerja' => 'required|string|max:255',
-            // 'birthDate' => 'nullable|date', // Column not exists
         ]);
 
         $this->member->update([
-            'name' => $this->name,
             'phone' => $this->phone,
             'address' => $this->address,
             'unitKerja' => $this->unitKerja,
-            // 'birthDate' => $this->birthDate, // Column not exists
         ]);
 
         session()->flash('success', 'Profil berhasil diperbarui!');

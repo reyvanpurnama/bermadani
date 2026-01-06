@@ -45,8 +45,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nama Lengkap</label>
-                            <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Nama lengkap">
-                            @error('name') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                            <input type="text" wire:model="name" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed" readonly>
+                            <p class="text-[10px] text-slate-400 mt-1">Nama tidak dapat diubah</p>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
@@ -54,13 +54,13 @@
                             <p class="text-[10px] text-slate-400 mt-1">Email tidak dapat diubah</p>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nomor Telepon</label>
-                            <input type="text" wire:model="phone" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="08xxxxxxxxxx">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nomor Telepon <span class="text-rose-500">*</span></label>
+                            <input type="text" wire:model="phone" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Contoh: 081234567890" required>
                             @error('phone') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Unit Kerja <span class="text-rose-500">*</span></label>
-                            <input type="text" wire:model="unitKerja" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Contoh: Fakultas Teknik, HRD, Marketing, dll">
+                            <input type="text" wire:model="unitKerja" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Contoh: Fakultas Teknik, Bagian HRD, Marketing" required>
                             @error('unitKerja') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                         {{-- Tanggal Lahir - Disabled (column not exists in production) --}}
@@ -71,8 +71,8 @@
                         </div> --}}
                     </div>
                     <div class="mb-6">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Alamat</label>
-                        <textarea wire:model="address" rows="3" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white resize-none transition-colors" placeholder="Alamat lengkap"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Alamat Lengkap <span class="text-rose-500">*</span></label>
+                        <textarea wire:model="address" rows="3" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white resize-none transition-colors" placeholder="Contoh: Jl. Meruya Selatan No. 1, Kembangan, Jakarta Barat" required></textarea>
                         @error('address') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
                     <button type="submit" class="px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-blue-700 transition-colors flex items-center gap-2">
