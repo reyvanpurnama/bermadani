@@ -313,7 +313,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="text-sm text-slate-600 dark:text-slate-400">
-                                            {{ $transaction->member->unitKerja ?? '-' }}
+                                            {{ $transaction->member->unitKerja === 'unknown' ? 'Belum Diisi' : ($transaction->member->unitKerja ?? '-') }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">

@@ -87,7 +87,7 @@
             <div class="space-y-3 text-[13px]">
                 <div class="flex justify-between">
                     <span class="text-slate-500">Unit Kerja/Prodi</span>
-                    <span class="font-medium text-slate-800 dark:text-white">{{ $member->unitKerja ?? '-' }}</span>
+                    <span class="font-medium text-slate-800 dark:text-white">{{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : ($member->unitKerja ?? '-') }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-500">Email</span>

@@ -212,7 +212,7 @@
                                 </div>
                             </td>
                             <td class="px-5 py-3.5 align-top">
-                                <span class="block font-medium text-slate-700 dark:text-slate-300">{{ $member->unitKerja }}</span>
+                                <span class="block font-medium text-slate-700 dark:text-slate-300">{{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : $member->unitKerja }}</span>
                                 <span class="text-[10px] text-slate-400">{{ $member->email }}</span>
                             </td>
                             <td class="px-5 py-3.5 align-top">

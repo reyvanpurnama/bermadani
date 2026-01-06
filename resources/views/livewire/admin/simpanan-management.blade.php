@@ -19,7 +19,7 @@
                 class="w-10 h-10 rounded-full" alt="{{ $member->user->name }}">
             <div>
                 <h2 class="text-sm font-bold text-slate-900 dark:text-white">{{ $member->user->name }}</h2>
-                <p class="text-[11px] text-slate-500">{{ $member->nomorAnggota }} • {{ $member->unitKerja ?? '-' }}</p>
+                <p class="text-[11px] text-slate-500">{{ $member->nomorAnggota }} • {{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : ($member->unitKerja ?? '-') }}</p>
             </div>
         </div>
         <div class="text-right">
