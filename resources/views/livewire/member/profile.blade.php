@@ -24,7 +24,7 @@
                     </div>
                     <div class="flex justify-between py-2 border-b border-slate-100 dark:border-slate-700">
                         <span class="text-slate-500 dark:text-slate-400">Bergabung Sejak</span>
-                        <span class="font-bold text-slate-800 dark:text-white">{{ $member->created_at?->format('d M Y') ?? '-' }}</span>
+                        <span class="font-bold text-slate-800 dark:text-white">{{ $member->joinDate?->format('d M Y') ?? '-' }}</span>
                     </div>
                     <div class="flex justify-between py-2">
                         <span class="text-slate-500 dark:text-slate-400">Total Poin</span>
