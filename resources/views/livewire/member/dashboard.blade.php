@@ -94,9 +94,14 @@
 
     {{-- Simpanan Portfolio --}}
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 mb-8">
-        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
-            <i class='bx bxs-wallet text-emerald-600'></i> Portofolio Simpanan
-        </h3>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <i class='bx bxs-wallet text-emerald-600'></i> Portofolio Simpanan
+            </h3>
+            <button wire:click="toggleBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="{{ $showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo' }}">
+                <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-xl'></i>
+            </button>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {{-- Simpanan Pokok --}}
@@ -106,7 +111,13 @@
                     <i class='bx bxs-lock-alt text-slate-300 text-lg'></i>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance)
+                            Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }}
+                        @else
+                            Rp ••••••
+                        @endif
+                    </h4>
                     <p class="text-[10px] text-slate-400 mt-1">Sekali (Saat Daftar)</p>
                 </div>
             </div>
@@ -118,7 +129,13 @@
                     <i class='bx bxs-calendar text-slate-300 text-lg'></i>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance)
+                            Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }}
+                        @else
+                            Rp ••••••
+                        @endif
+                    </h4>
                     <p class="text-[10px] text-slate-400 mt-1">Akumulasi Bulanan</p>
                 </div>
             </div>
@@ -130,7 +147,13 @@
                     <i class='bx bxs-bank text-emerald-300 text-lg'></i>
                 </div>
                 <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance)
+                            Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}
+                        @else
+                            Rp ••••••
+                        @endif
+                    </h4>
                     <p class="text-[10px] text-slate-400 mt-1">Dapat Ditarik</p>
                 </div>
             </div>
@@ -143,10 +166,28 @@
                 <div class="absolute right-0 top-0 w-16 h-16 bg-white opacity-10 rounded-bl-full -mr-2 -mt-2"></div>
                 <div class="relative z-10">
                     <span class="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Total Aset</span>
-                    <h3 class="text-2xl font-bold mt-1">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</h3>
+                    <h3 class="text-2xl font-bold mt-1">
+                        @if($showBalance)
+                            Rp {{ number_format($totalSimpanan, 0, ',', '.') }}
+                        @else
+                            Rp ••••••••
+                        @endif
+                    </h3>
                     <p class="text-[10px] text-blue-100 mt-2 opacity-80">Saldo aktif di Koperasi</p>
                 </div>
             </div>
+        </div>
+
+        {{-- Quick Actions --}}
+        <div class="flex gap-4 mt-4">
+            <a href="{{ route('member.transfer') }}" class="flex-1 py-3 px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+                <i class='bx bx-transfer text-xl'></i>
+                <span>Transfer Sukarela</span>
+            </a>
+            <a href="{{ route('member.simpanan') }}" class="flex-1 py-3 px-6 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+                <i class='bx bx-history text-xl'></i>
+                <span>Riwayat</span>
+            </a>
         </div>
     </div>
 

@@ -289,4 +289,5 @@ Route::middleware(['auth'])->prefix('member')->name('member.')->group(function (
     Route::get('/profile', \App\Livewire\Member\Profile::class)->name('profile');
     Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
     Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
+    Route::get('/transfer', \App\Livewire\Member\Transfer::class)->name('transfer');
 });

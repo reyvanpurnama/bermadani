@@ -1,7 +1,14 @@
 <div>
     @section('page-title', 'Simpanan Saya')
 
-    {{-- Summary Cards --}}
+    {{-- Summary Cards with Hide/Unhide --}}
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Ringkasan Simpanan</h2>
+        <button wire:click="toggleBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="{{ $showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo' }}">
+            <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-xl'></i>
+        </button>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
@@ -10,7 +17,9 @@
                 </div>
                 <div>
                     <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Pokok</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }}</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance) Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                    </h3>
                 </div>
             </div>
         </div>
@@ -21,7 +30,9 @@
                 </div>
                 <div>
                     <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Wajib</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }}</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance) Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                    </h3>
                 </div>
             </div>
         </div>
@@ -32,7 +43,9 @@
                 </div>
                 <div>
                     <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Sukarela</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</h3>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                        @if($showBalance) Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                    </h3>
                 </div>
             </div>
         </div>
@@ -46,10 +59,20 @@
                 </div>
                 <div>
                     <p class="text-[11px] text-blue-100 uppercase tracking-wider">Total Aset</p>
-                    <h3 class="text-lg font-bold">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</h3>
+                    <h3 class="text-lg font-bold">
+                        @if($showBalance) Rp {{ number_format($totalSimpanan, 0, ',', '.') }} @else Rp •••••• @endif
+                    </h3>
                 </div>
             </div>
         </div>
+    </div>
+
+    {{-- Quick Transfer Button --}}
+    <div class="mb-6">
+        <a href="{{ route('member.transfer') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors">
+            <i class='bx bx-transfer text-xl'></i>
+            <span>Transfer Simpanan Sukarela</span>
+        </a>
     </div>
 
     {{-- Filter Tabs --}}
@@ -102,14 +125,42 @@
                                         ">
                                             {{ $item->type }}
                                         </span>
-                                        <span class="text-sm {{ $item->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
-                                            {{ $item->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }}
+                                        <span class="text-sm 
+                                            @if($item->transactionType === 'SETOR' || $item->transactionType === 'TRANSFER_IN') 
+                                                text-emerald-600 dark:text-emerald-400 
+                                            @else 
+                                                text-rose-500 
+                                            @endif
+                                        ">
+                                            @switch($item->transactionType)
+                                                @case('SETOR') Setoran @break
+                                                @case('TARIK') Penarikan @break
+                                                @case('TRANSFER_IN') 
+                                                    <i class='bx bx-down-arrow-alt'></i> Transfer Masuk
+                                                    @if($item->relatedMember)
+                                                        <span class="text-[10px] text-slate-400 block">dari {{ $item->relatedMember->name }}</span>
+                                                    @endif
+                                                    @break
+                                                @case('TRANSFER_OUT') 
+                                                    <i class='bx bx-up-arrow-alt'></i> Transfer Keluar
+                                                    @if($item->relatedMember)
+                                                        <span class="text-[10px] text-slate-400 block">ke {{ $item->relatedMember->name }}</span>
+                                                    @endif
+                                                    @break
+                                                @default {{ $item->transactionType }}
+                                            @endswitch
                                         </span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <span class="text-sm font-bold {{ $item->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
-                                        {{ $item->transactionType === 'SETOR' ? '+' : '-' }}Rp {{ number_format($item->amount, 0, ',', '.') }}
+                                    <span class="text-sm font-bold 
+                                        @if($item->transactionType === 'SETOR' || $item->transactionType === 'TRANSFER_IN')
+                                            text-emerald-600 dark:text-emerald-400
+                                        @else
+                                            text-rose-500
+                                        @endif
+                                    ">
+                                        {{ in_array($item->transactionType, ['SETOR', 'TRANSFER_IN']) ? '+' : '-' }}Rp {{ number_format($item->amount, 0, ',', '.') }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 text-right">

@@ -8,6 +8,7 @@ class SimpananTransaction extends Model
 {
     protected $fillable = [
         'memberId',
+        'relatedMemberId',
         'type',
         'transactionType',
         'amount',
@@ -22,6 +23,7 @@ class SimpananTransaction extends Model
         'billingMonth',
         'billStatus',
         'paidAmount',
+        'transferReference',
     ];
 
     protected $casts = [
@@ -39,6 +41,11 @@ class SimpananTransaction extends Model
     public function member()
     {
         return $this->belongsTo(Member::class, 'memberId');
+    }
+
+    public function relatedMember()
+    {
+        return $this->belongsTo(Member::class, 'relatedMemberId');
     }
 
     public function processor()

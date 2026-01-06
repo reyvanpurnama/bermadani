@@ -16,11 +16,17 @@ class Simpanan extends Component
     public $member;
     public $activeTab = 'all';
     public $filterType = '';
+    public $showBalance = true;
 
     public function mount()
     {
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
+    }
+
+    public function toggleBalance()
+    {
+        $this->showBalance = !$this->showBalance;
     }
 
     public function setTab($tab)

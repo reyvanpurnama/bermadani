@@ -14,6 +14,7 @@ class Dashboard extends Component
     public $member;
     public $recentTransactions = [];
     public $recentSimpanan = [];
+    public $showBalance = true;
 
     public function mount()
     {
@@ -34,6 +35,11 @@ class Dashboard extends Component
                 ->take(5)
                 ->get();
         }
+    }
+
+    public function toggleBalance()
+    {
+        $this->showBalance = !$this->showBalance;
     }
 
     public function render()

@@ -40,6 +40,13 @@
             <span class="text-sm {{ request()->routeIs('member.simpanan') ? 'font-bold' : 'font-medium' }}">Simpanan Saya</span>
         </a>
 
+        <a href="{{ route('member.transfer') }}" 
+           class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('member.transfer') ? 'bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+            <i class='bx bx-transfer text-lg mr-3'></i> 
+            <span class="text-sm {{ request()->routeIs('member.transfer') ? 'font-bold' : 'font-medium' }}">Transfer</span>
+            <span class="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-emerald-500 text-white rounded-full">NEW</span>
+        </a>
+
         <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Akun</p>
 
         <a href="{{ route('member.profile') }}" 
