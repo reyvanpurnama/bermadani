@@ -18,6 +18,8 @@ class Simpanan extends Component
     public $filterType = '';
     public $showBalance = true;
     public $unreadCount = 0;
+    public $selectedTransfer = null;
+    public $showReceiptModal = false;
 
     public function mount()
     {
@@ -45,6 +47,19 @@ class Simpanan extends Component
                 ->where('isRead', false)
                 ->update(['isRead' => true]);
         }
+    }
+
+    public function viewReceipt($transferId)
+    {
+        $this->selectedTransfer = SimpananTransaction::with(['member', 'relatedMember'])
+            ->findOrFail($transferId);
+        $this->showReceiptModal = true;
+    }
+
+    public function closeReceipt()
+    {
+        $this->showReceiptModal = false;
+        $this->selectedTransfer = null;
     }
 
     public function render()
