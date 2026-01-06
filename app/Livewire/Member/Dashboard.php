@@ -15,6 +15,8 @@ class Dashboard extends Component
     public $recentTransactions = [];
     public $recentSimpanan = [];
     public $showBalance = true;
+    public $unreadTransfers = [];
+    public $unreadCount = 0;
 
     public function mount()
     {
@@ -34,6 +36,17 @@ class Dashboard extends Component
                 ->latest()
                 ->take(5)
                 ->get();
+
+            // Check unread transfers (today only)
+            $this->unreadTransfers = SimpananTransaction::where('memberId', $this->member->id)
+                ->where('transactionType', 'TRANSFER_IN')
+                ->where('isRead', false)
+                ->whereDate('created_at', today())
+                ->with('relatedMember')
+                ->latest()
+                ->get();
+
+            $this->unreadCount = $this->unreadTransfers->count();
         }
     }
 

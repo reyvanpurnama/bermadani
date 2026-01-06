@@ -1,6 +1,36 @@
 <div>
     @section('page-title', 'Dashboard Anggota')
 
+    {{-- Toast Notification for Unread Transfers --}}
+    @if($unreadCount > 0)
+        <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" class="mb-6">
+            <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-5 shadow-xl shadow-emerald-500/30 border border-emerald-400 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <div class="flex items-start gap-4 relative z-10">
+                    <div class="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center text-white flex-shrink-0">
+                        <i class='bx bx-transfer text-2xl'></i>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-bold text-lg mb-1">💰 Transfer Masuk!</h4>
+                        @if($unreadCount === 1)
+                            @php $transfer = $unreadTransfers->first(); @endphp
+                            <p class="text-emerald-50 text-sm leading-relaxed">Anda menerima transfer <span class="font-bold text-white">Rp {{ number_format($transfer->amount, 0, ',', '.') }}</span> dari <span class="font-bold text-white">{{ $transfer->relatedMember->name ?? 'Member' }}</span></p>
+                        @else
+                            <p class="text-emerald-50 text-sm leading-relaxed">Anda menerima <span class="font-bold text-white">{{ $unreadCount }} transfer</span> hari ini. Total <span class="font-bold text-white">Rp {{ number_format($unreadTransfers->sum('amount'), 0, ',', '.') }}</span></p>
+                        @endif
+                        <a href="{{ route('member.simpanan') }}" class="inline-flex items-center gap-1 mt-3 px-4 py-2 bg-white text-emerald-600 rounded-lg text-sm font-bold hover:bg-emerald-50 transition-colors">
+                            Lihat Detail
+                            <i class='bx bx-right-arrow-alt'></i>
+                        </a>
+                    </div>
+                    <button @click="show = false" class="text-white/80 hover:text-white transition-colors p-1">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {{-- Member Card --}}
         <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-2xl text-white relative overflow-hidden group h-full flex flex-col justify-between border border-slate-700/50 min-h-[220px]">

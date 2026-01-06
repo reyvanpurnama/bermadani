@@ -17,11 +17,13 @@ class Simpanan extends Component
     public $activeTab = 'all';
     public $filterType = '';
     public $showBalance = true;
+    public $unreadCount = 0;
 
     public function mount()
     {
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
+        $this->markAsRead();
     }
 
     public function toggleBalance()
@@ -34,6 +36,15 @@ class Simpanan extends Component
         $this->activeTab = $tab;
         $this->filterType = $tab === 'all' ? '' : strtoupper($tab);
         $this->resetPage();
+    }
+
+    public function markAsRead()
+    {
+        if ($this->member) {
+            SimpananTransaction::where('memberId', $this->member->id)
+                ->where('isRead', false)
+                ->update(['isRead' => true]);
+        }
     }
 
     public function render()

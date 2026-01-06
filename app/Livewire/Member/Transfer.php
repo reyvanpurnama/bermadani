@@ -237,6 +237,7 @@ class Transfer extends Component
                 'approvedBy' => auth()->id(),
                 'approvedAt' => now(),
                 'transferReference' => $transferRef,
+                'isRead' => false, // Mark as unread for notification
             ]);
 
             DB::commit();

@@ -184,7 +184,7 @@ class SimpananManagement extends Component
         return SimpananTransaction::where('memberId', $this->memberId)
             ->where('type', 'WAJIB')
             ->with('processor')
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
@@ -193,7 +193,7 @@ class SimpananManagement extends Component
         return SimpananTransaction::where('memberId', $this->memberId)
             ->where('type', 'SUKARELA')
             ->with('processor')
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
 
@@ -202,7 +202,7 @@ class SimpananManagement extends Component
         return SimpananTransaction::where('memberId', $this->memberId)
             ->where('type', 'POKOK')
             ->with('processor')
-            ->orderBy('createdAt', 'desc')
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 
