@@ -61,6 +61,28 @@
         </div>
 
         <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            
+            {{-- Quick Transfer (Recent) --}}
+            @if(count($recentRecipients) > 0 && !$recipientMember)
+            <div class="p-6 pb-0 border-b border-slate-50 dark:border-slate-800/50">
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">
+                    Terakhir Transfer
+                </label>
+                <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+                    @foreach($recentRecipients as $recent)
+                        <button wire:click="selectRecipient({{ $recent->id }})" class="flex flex-col items-center gap-2 min-w-[72px] group relative">
+                            <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-700 border-2 border-transparent group-hover:border-primary flex items-center justify-center text-xl font-bold text-slate-600 dark:text-slate-300 group-hover:text-primary transition-all shadow-sm">
+                                {{ strtoupper(substr($recent->name, 0, 1)) }}
+                            </div>
+                            <span class="text-xs text-center text-slate-600 dark:text-slate-400 font-medium truncate w-full group-hover:text-primary transition-colors">
+                                {{ Str::limit(explode(' ', $recent->name)[0], 8) }}
+                            </span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+
             {{-- Search Recipient --}}
              <div class="p-6 border-b border-slate-100 dark:border-slate-800">
                 <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">

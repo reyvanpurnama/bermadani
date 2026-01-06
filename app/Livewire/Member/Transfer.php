@@ -21,30 +21,62 @@ class Transfer extends Component
 
     public $member;
     public $step = 1; // 1: form, 2: confirm, 3: success
-    
+
     // Form fields
     public $recipientNumber = '';
     public $recipientMember = null;
     public $amount = '';
     public $notes = '';
     public $password = '';
-    
+
     // Hide/show saldo
     public $showBalance = true;
-    
+
     // Transfer result
     public $transferResult = null;
-    
+
     // Daily transfer tracking
     public $todayTransferred = 0;
+
+    // Recent recipients
+    public $recentRecipients = [];
 
     public function mount()
     {
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
-        
+
         if ($this->member) {
             $this->calculateTodayTransferred();
+            $this->loadRecentRecipients();
+        }
+    }
+
+    public function loadRecentRecipients()
+    {
+        // Get last 20 transfers to find unique recipients
+        $transactions = SimpananTransaction::where('memberId', $this->member->id)
+            ->where('transactionType', 'TRANSFER_OUT')
+            ->where('status', 'APPROVED')
+            ->whereNotNull('relatedMemberId')
+            ->with('relatedMember')
+            ->orderBy('created_at', 'desc')
+            ->take(20)
+            ->get();
+
+        $this->recentRecipients = $transactions->pluck('relatedMember')
+            ->unique('id')
+            ->take(10)
+            ->values()
+            ->all();
+    }
+
+    public function selectRecipient($memberId)
+    {
+        $member = Member::find($memberId);
+        if ($member) {
+            $this->recipientNumber = $member->nomorAnggota;
+            $this->searchRecipient();
         }
     }
 
@@ -65,7 +97,7 @@ class Transfer extends Component
     public function searchRecipient()
     {
         $this->resetErrorBag();
-        
+
         if (empty($this->recipientNumber)) {
             $this->addError('recipientNumber', 'Masukkan nomor anggota tujuan');
             return;
@@ -95,7 +127,7 @@ class Transfer extends Component
     public function proceedToConfirm()
     {
         $this->resetErrorBag();
-        
+
         // Validate recipient
         if (!$this->recipientMember) {
             $this->addError('recipientNumber', 'Pilih penerima terlebih dahulu');
@@ -120,7 +152,7 @@ class Transfer extends Component
         // Validate daily limit
         $this->calculateTodayTransferred();
         $remainingDaily = self::MAX_PER_DAY - $this->todayTransferred;
-        
+
         if ($amount > $remainingDaily) {
             $this->addError('amount', 'Melebihi limit harian. Sisa limit: Rp ' . number_format($remainingDaily, 0, ',', '.'));
             return;
@@ -237,6 +269,7 @@ class Transfer extends Component
         $this->reset(['step', 'recipientNumber', 'recipientMember', 'amount', 'notes', 'password', 'transferResult']);
         $this->step = 1;
         $this->calculateTodayTransferred();
+        $this->loadRecentRecipients();
     }
 
     private function parseAmount($value): float
