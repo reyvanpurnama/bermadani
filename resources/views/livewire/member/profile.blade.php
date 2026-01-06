@@ -58,6 +58,11 @@
                             <input type="text" wire:model="phone" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="08xxxxxxxxxx">
                             @error('phone') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Unit Kerja <span class="text-rose-500">*</span></label>
+                            <input type="text" wire:model="unitKerja" class="w-full px-4 py-2.5 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-primary focus:border-primary bg-white dark:bg-slate-800 text-slate-800 dark:text-white transition-colors" placeholder="Contoh: Fakultas Teknik, HRD, Marketing, dll">
+                            @error('unitKerja') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                        </div>
                         {{-- Tanggal Lahir - Disabled (column not exists in production) --}}
                         {{-- <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Tanggal Lahir</label>
