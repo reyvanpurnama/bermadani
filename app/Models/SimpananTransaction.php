@@ -24,6 +24,7 @@ class SimpananTransaction extends Model
         'billStatus',
         'paidAmount',
         'transferReference',
+        'isRead',
     ];
 
     protected $casts = [
