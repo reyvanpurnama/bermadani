@@ -19,6 +19,11 @@ class MemberEdit extends Component
     public $unitKerja;
     public $address;
     public $status;
+    
+    // Payment preferences
+    public $simwa_payment_method;
+    public $sukarela_payment_method;
+    public $monthly_sukarela_amount;
 
     protected function rules()
     {
@@ -29,6 +34,9 @@ class MemberEdit extends Component
             'unitKerja' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'status' => 'required|in:ACTIVE,INACTIVE,SUSPENDED',
+            'simwa_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
+            'sukarela_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
+            'monthly_sukarela_amount' => 'required|numeric|min:0',
         ];
     }
 
@@ -52,6 +60,11 @@ class MemberEdit extends Component
         $this->unitKerja = $this->member->unitKerja;
         $this->address = $this->member->address;
         $this->status = $this->member->status;
+        
+        // Payment preferences
+        $this->simwa_payment_method = $this->member->simwa_payment_method ?? 'SALARY_DEDUCTION';
+        $this->sukarela_payment_method = $this->member->sukarela_payment_method ?? 'MANUAL';
+        $this->monthly_sukarela_amount = $this->member->monthly_sukarela_amount ?? 0;
     }
 
     public function getUnitKerjaListProperty()
@@ -83,6 +96,14 @@ class MemberEdit extends Component
                 'unitKerja' => $this->unitKerja,
                 'address' => $this->address,
                 'status' => $this->status,
+                'simwa_payment_method' => $this->simwa_payment_method,
+                'sukarela_payment_method' => $this->sukarela_payment_method,
+                'monthly_sukarela_amount' => $this->sukarela_payment_method === 'SALARY_DEDUCTION' 
+                    ? $this->monthly_sukarela_amount 
+                    : 0,
+                'salary_deduction_consent_date' => ($this->simwa_payment_method === 'SALARY_DEDUCTION' || $this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                    ? now()->toDateString()
+                    : null,
             ]);
 
             DB::commit();

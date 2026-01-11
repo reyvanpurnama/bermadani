@@ -147,6 +147,129 @@
                             @error('address') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
+                </div>
+
+                <!-- Payment Preferences Card -->
+                @if($member->isMemberKoperasi)
+                <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">
+                            <i class='bx bx-wallet mr-2'></i>Preferensi Pembayaran Simpanan
+                        </h3>
+                        <span class="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-full font-semibold">
+                            Untuk Potong Gaji
+                        </span>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- SIMWA Payment Method -->
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                Simpanan Wajib (SIMWA)
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode Pembayaran</label>
+                                    <select wire:model.live="simwa_payment_method"
+                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                        <option value="MANUAL">Bayar Manual</option>
+                                    </select>
+                                    @error('simwa_payment_method') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan (Tetap)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                        <input type="text" value="50.000" disabled readonly
+                                            class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none dark:text-white opacity-70 cursor-not-allowed">
+                                    </div>
+                                    <p class="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
+                                        <i class='bx bxs-lock-alt'></i> Jumlah simpanan wajib sudah ditetapkan
+                                    </p>
+                                </div>
+                            </div>
+                            @if($simwa_payment_method === 'MANUAL')
+                            <p class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                <i class='bx bx-info-circle'></i> Member akan bayar simpanan wajib secara manual
+                            </p>
+                            @endif
+                        </div>
+
+                        <!-- Sukarela Payment Method -->
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                Simpanan Sukarela
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode Pembayaran</label>
+                                    <select wire:model.live="sukarela_payment_method"
+                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                        <option value="MANUAL">Bayar Manual (Opsional)</option>
+                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                    </select>
+                                    @error('sukarela_payment_method') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan</label>
+                                    <div class="relative" x-data="{ 
+                                        rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                        formatted: '',
+                                        init() {
+                                            this.formatted = this.formatNumber(this.rawValue);
+                                        },
+                                        formatNumber(num) {
+                                            return new Intl.NumberFormat('id-ID').format(num);
+                                        },
+                                        parseNumber(str) {
+                                            return parseInt(str.replace(/\./g, '')) || 0;
+                                        },
+                                        updateValue(e) {
+                                            this.rawValue = this.parseNumber(e.target.value);
+                                            this.formatted = this.formatNumber(this.rawValue);
+                                            $wire.set('monthly_sukarela_amount', this.rawValue);
+                                        }
+                                    }">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                        <input type="text" 
+                                            x-model="formatted"
+                                            @input="updateValue($event)"
+                                            @blur="updateValue($event)"
+                                            @focus="$el.select()"
+                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                            {{ $sukarela_payment_method === 'MANUAL' ? 'disabled' : '' }}
+                                            placeholder="0">
+                                    </div>
+                                    @error('monthly_sukarela_amount') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                                </div>
+                            </div>
+                            @if($sukarela_payment_method === 'SALARY_DEDUCTION' && $monthly_sukarela_amount > 0)
+                            <p class="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <i class='bx bx-check-circle'></i> Simpanan sukarela Rp {{ number_format($monthly_sukarela_amount, 0, ',', '.') }} akan dipotong dari gaji
+                            </p>
+                            @endif
+                        </div>
+
+                        <!-- Summary -->
+                        <div class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                            <div class="flex justify-between items-center">
+                                <span class="text-[12px] font-semibold text-indigo-700 dark:text-indigo-300">Total Potongan Gaji per Bulan</span>
+                                <span class="text-[15px] font-bold text-indigo-800 dark:text-indigo-200">
+                                    Rp {{ number_format(
+                                        ($simwa_payment_method === 'SALARY_DEDUCTION' ? 50000 : 0) +
+                                        ($sukarela_payment_method === 'SALARY_DEDUCTION' ? ($monthly_sukarela_amount ?? 0) : 0),
+                                        0, ',', '.'
+                                    ) }}
+                                </span>
+                            </div>
+                            <p class="mt-1 text-[10px] text-indigo-600 dark:text-indigo-400">
+                                Belum termasuk angsuran pinjaman (jika ada)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                     <!-- Action Buttons -->
                     <div class="pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">

@@ -24,6 +24,10 @@ class Member extends Model
         'simpananPokok',
         'simpananWajib',
         'monthly_simpanan_wajib',
+        'simwa_payment_method',
+        'sukarela_payment_method',
+        'monthly_sukarela_amount',
+        'salary_deduction_consent_date',
         'simpananSukarela',
         'points',
         'tier',
@@ -41,6 +45,8 @@ class Member extends Model
         'simpananPokok' => 'decimal:2',
         'simpananWajib' => 'decimal:2',
         'monthly_simpanan_wajib' => 'decimal:2',
+        'monthly_sukarela_amount' => 'decimal:2',
+        'salary_deduction_consent_date' => 'date',
         'simpananSukarela' => 'decimal:2',
         'totalSpent' => 'decimal:2',
         'points' => 'integer',
@@ -68,7 +74,7 @@ class Member extends Model
 
     public function loans()
     {
-        return $this->hasMany(Loan::class, 'memberId');
+        return $this->hasMany(Loan::class, 'member_id');
     }
 
     public function transactions()
@@ -108,6 +114,41 @@ class Member extends Model
             'BRONZE' => 'secondary',
             default => 'secondary',
         };
+    }
+
+    /**
+     * Check if member has salary deduction for SIMWA
+     */
+    public function hasSalaryDeductionSimwa(): bool
+    {
+        return $this->simwa_payment_method === 'SALARY_DEDUCTION';
+    }
+
+    /**
+     * Check if member has salary deduction for Sukarela
+     */
+    public function hasSalaryDeductionSukarela(): bool
+    {
+        return $this->sukarela_payment_method === 'SALARY_DEDUCTION' 
+            && $this->monthly_sukarela_amount > 0;
+    }
+
+    /**
+     * Get total monthly salary deduction amount
+     */
+    public function getTotalSalaryDeductionAttribute(): float
+    {
+        $total = 0;
+        
+        if ($this->hasSalaryDeductionSimwa()) {
+            $total += $this->monthly_simpanan_wajib ?? 50000;
+        }
+        
+        if ($this->hasSalaryDeductionSukarela()) {
+            $total += $this->monthly_sukarela_amount ?? 0;
+        }
+        
+        return $total;
     }
 
     /**
