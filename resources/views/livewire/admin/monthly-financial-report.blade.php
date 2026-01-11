@@ -22,7 +22,7 @@
                 <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Bulan</label>
                 <div class="relative">
                     <select wire:model="selectedMonth"
-                        class="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
+                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
                         <option value="01">Januari</option>
                         <option value="02">Februari</option>
                         <option value="03">Maret</option>
@@ -46,7 +46,7 @@
                 <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tahun</label>
                 <div class="relative">
                     <select wire:model="selectedYear"
-                        class="w-full bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
+                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
                         @for ($year = now()->year; $year >= 2020; $year--)
                             <option value="{{ $year }}">{{ $year }}</option>
                         @endfor
