@@ -66,7 +66,7 @@ class MonthlyFinancialReport extends Component
         $totalSukarela = 0;
         $processedMemberIds = [];
 
-        // 1. Ambil semua member dengan pinjaman aktif
+        // 1. Ambil semua member dengan pinjaman aktif (angsuran selalu potong gaji)
         $membersWithLoans = Member::whereHas('loans', function ($query) use ($endDate) {
             $query->where('status', 'ACTIVE')
                   ->where('startDate', '<=', $endDate);
@@ -82,31 +82,29 @@ class MonthlyFinancialReport extends Component
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
                 
-                // Get SIMWA untuk bulan ini
-                $simwaTransaction = SimpananTransaction::where('memberId', $member->id)
-                    ->where('type', 'WAJIB')
-                    ->where('billingMonth', $billingMonth)
-                    ->whereIn('status', $validStatuses)
-                    ->first();
-                $simwaAmount = $simwaTransaction ? $simwaTransaction->amount : 50000; // Default 50k jika tidak ada
+                // SIMWA: cek preferensi pembayaran member
+                $simwaAmount = 0;
+                if ($member->hasSalaryDeductionSimwa()) {
+                    $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
+                }
 
-                // Get Sukarela untuk bulan ini
-                $sukarelaTransaction = SimpananTransaction::where('memberId', $member->id)
-                    ->where('type', 'SUKARELA')
-                    ->where('transactionType', 'SETOR')
-                    ->where('billingMonth', $billingMonth)
-                    ->whereIn('status', $validStatuses)
-                    ->first();
-                $sukarelaAmount = $sukarelaTransaction ? $sukarelaTransaction->amount : 0;
+                // Sukarela: cek preferensi pembayaran member
+                $sukarelaAmount = 0;
+                if ($member->hasSalaryDeductionSukarela()) {
+                    $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
+                }
 
                 $reportItems[] = [
                     'nama' => $member->name,
+                    'unit_kerja' => $member->unitKerja ?? '-',
                     'angsuran' => $monthlyPayment,
                     'simwa' => $simwaAmount,
                     'sukarela' => $sukarelaAmount,
                     'total' => $monthlyPayment + $simwaAmount + $sukarelaAmount,
                     'tenor_remaining' => ($loan->tenor ?? 0) - ($loan->paidInstallments ?? 0),
-                    'has_loan' => true
+                    'has_loan' => true,
+                    'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
+                    'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
                 ];
 
                 $totalAngsuran += $monthlyPayment;
@@ -116,40 +114,48 @@ class MonthlyFinancialReport extends Component
             }
         }
 
-        // 2. Ambil semua member yang bayar SIMWA di bulan ini (tanpa pinjaman)
-        $membersWithSimwa = Member::where('isMemberKoperasi', true)
+        // 2. Ambil semua member koperasi yang SIMWA-nya potong gaji (tanpa pinjaman)
+        $membersWithSalaryDeduction = Member::where('isMemberKoperasi', true)
             ->whereNotIn('id', $processedMemberIds ?: [0])
-            ->whereHas('simpananTransactions', function ($query) use ($billingMonth, $validStatuses) {
-                $query->where('type', 'WAJIB')
-                      ->where('billingMonth', $billingMonth)
-                      ->whereIn('status', $validStatuses);
+            ->where(function ($query) {
+                // Member yang SIMWA atau Sukarela-nya potong gaji
+                $query->where('simwa_payment_method', 'SALARY_DEDUCTION')
+                      ->orWhere(function ($q) {
+                          $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')
+                            ->where('monthly_sukarela_amount', '>', 0);
+                      });
             })
-            ->with(['simpananTransactions' => function ($query) use ($billingMonth, $validStatuses) {
-                $query->where('billingMonth', $billingMonth)
-                      ->whereIn('status', $validStatuses);
-            }])
             ->get();
 
-        foreach ($membersWithSimwa as $member) {
-            // SIMWA amount
-            $simwaAmount = $member->simpananTransactions
-                ->where('type', 'WAJIB')
-                ->sum('amount');
+        foreach ($membersWithSalaryDeduction as $member) {
+            // SIMWA: cek preferensi pembayaran
+            $simwaAmount = 0;
+            if ($member->hasSalaryDeductionSimwa()) {
+                $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
+            }
 
-            // Sukarela amount
-            $sukarelaAmount = $member->simpananTransactions
-                ->where('type', 'SUKARELA')
-                ->where('transactionType', 'SETOR')
-                ->sum('amount');
+            // Sukarela: cek preferensi pembayaran
+            $sukarelaAmount = 0;
+            if ($member->hasSalaryDeductionSukarela()) {
+                $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
+            }
+
+            // Skip jika tidak ada yang perlu dipotong
+            if ($simwaAmount == 0 && $sukarelaAmount == 0) {
+                continue;
+            }
 
             $reportItems[] = [
                 'nama' => $member->name,
+                'unit_kerja' => $member->unitKerja ?? '-',
                 'angsuran' => 0,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'total' => $simwaAmount + $sukarelaAmount,
                 'tenor_remaining' => 0,
-                'has_loan' => false
+                'has_loan' => false,
+                'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
+                'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
             ];
 
             $totalSimwa += $simwaAmount;
