@@ -68,7 +68,7 @@ class Member extends Model
 
     public function loans()
     {
-        return $this->hasMany(Loan::class, 'memberId');
+        return $this->hasMany(Loan::class, 'member_id');
     }
 
     public function transactions()

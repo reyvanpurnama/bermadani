@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Loan extends Model
 {
     protected $fillable = [
-        'memberId',
+        'member_id',
         'amount',
         'interestRate',
         'tenor',
@@ -35,7 +35,7 @@ class Loan extends Model
 
     public function member()
     {
-        return $this->belongsTo(Member::class, 'memberId');
+        return $this->belongsTo(Member::class, 'member_id');
     }
 
     public function payments()
