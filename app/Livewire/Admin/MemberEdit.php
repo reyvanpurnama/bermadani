@@ -23,7 +23,6 @@ class MemberEdit extends Component
     // Payment preferences
     public $simwa_payment_method;
     public $sukarela_payment_method;
-    public $monthly_simpanan_wajib;
     public $monthly_sukarela_amount;
 
     protected function rules()
@@ -37,7 +36,6 @@ class MemberEdit extends Component
             'status' => 'required|in:ACTIVE,INACTIVE,SUSPENDED',
             'simwa_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
             'sukarela_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
-            'monthly_simpanan_wajib' => 'required|numeric|min:0',
             'monthly_sukarela_amount' => 'required|numeric|min:0',
         ];
     }
@@ -66,7 +64,6 @@ class MemberEdit extends Component
         // Payment preferences
         $this->simwa_payment_method = $this->member->simwa_payment_method ?? 'SALARY_DEDUCTION';
         $this->sukarela_payment_method = $this->member->sukarela_payment_method ?? 'MANUAL';
-        $this->monthly_simpanan_wajib = $this->member->monthly_simpanan_wajib ?? 50000;
         $this->monthly_sukarela_amount = $this->member->monthly_sukarela_amount ?? 0;
     }
 
@@ -101,7 +98,6 @@ class MemberEdit extends Component
                 'status' => $this->status,
                 'simwa_payment_method' => $this->simwa_payment_method,
                 'sukarela_payment_method' => $this->sukarela_payment_method,
-                'monthly_simpanan_wajib' => $this->monthly_simpanan_wajib,
                 'monthly_sukarela_amount' => $this->sukarela_payment_method === 'SALARY_DEDUCTION' 
                     ? $this->monthly_sukarela_amount 
                     : 0,

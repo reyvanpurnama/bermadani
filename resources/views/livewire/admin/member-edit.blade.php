@@ -178,14 +178,15 @@
                                     @error('simwa_payment_method') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                                 </div>
                                 <div>
-                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan</label>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan (Tetap)</label>
                                     <div class="relative">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
-                                        <input type="number" wire:model="monthly_simpanan_wajib" min="0" step="10000"
-                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white {{ $simwa_payment_method === 'MANUAL' ? 'opacity-50' : '' }}"
-                                            {{ $simwa_payment_method === 'MANUAL' ? 'disabled' : '' }}>
+                                        <input type="text" value="50.000" disabled readonly
+                                            class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none dark:text-white opacity-70 cursor-not-allowed">
                                     </div>
-                                    @error('monthly_simpanan_wajib') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                                    <p class="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
+                                        <i class='bx bxs-lock-alt'></i> Jumlah simpanan wajib sudah ditetapkan
+                                    </p>
                                 </div>
                             </div>
                             @if($simwa_payment_method === 'MANUAL')
@@ -212,10 +213,30 @@
                                 </div>
                                 <div>
                                     <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan</label>
-                                    <div class="relative">
+                                    <div class="relative" x-data="{ 
+                                        value: @entangle('monthly_sukarela_amount'),
+                                        formatted: '',
+                                        init() {
+                                            this.formatted = this.formatNumber(this.value || 0);
+                                        },
+                                        formatNumber(num) {
+                                            return new Intl.NumberFormat('id-ID').format(num);
+                                        },
+                                        parseNumber(str) {
+                                            return parseInt(str.replace(/\./g, '')) || 0;
+                                        },
+                                        updateValue(e) {
+                                            const num = this.parseNumber(e.target.value);
+                                            this.value = num;
+                                            this.formatted = this.formatNumber(num);
+                                        }
+                                    }">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
-                                        <input type="number" wire:model="monthly_sukarela_amount" min="0" step="10000"
-                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50' : '' }}"
+                                        <input type="text" 
+                                            x-model="formatted"
+                                            @input="updateValue($event)"
+                                            @focus="$el.select()"
+                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                             {{ $sukarela_payment_method === 'MANUAL' ? 'disabled' : '' }}
                                             placeholder="0">
                                     </div>
@@ -235,7 +256,7 @@
                                 <span class="text-[12px] font-semibold text-indigo-700 dark:text-indigo-300">Total Potongan Gaji per Bulan</span>
                                 <span class="text-[15px] font-bold text-indigo-800 dark:text-indigo-200">
                                     Rp {{ number_format(
-                                        ($simwa_payment_method === 'SALARY_DEDUCTION' ? ($monthly_simpanan_wajib ?? 50000) : 0) +
+                                        ($simwa_payment_method === 'SALARY_DEDUCTION' ? 50000 : 0) +
                                         ($sukarela_payment_method === 'SALARY_DEDUCTION' ? ($monthly_sukarela_amount ?? 0) : 0),
                                         0, ',', '.'
                                     ) }}
