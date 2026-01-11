@@ -214,10 +214,10 @@
                                 <div>
                                     <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan</label>
                                     <div class="relative" x-data="{ 
-                                        value: @entangle('monthly_sukarela_amount'),
+                                        rawValue: {{ $monthly_sukarela_amount ?? 0 }},
                                         formatted: '',
                                         init() {
-                                            this.formatted = this.formatNumber(this.value || 0);
+                                            this.formatted = this.formatNumber(this.rawValue);
                                         },
                                         formatNumber(num) {
                                             return new Intl.NumberFormat('id-ID').format(num);
@@ -226,15 +226,16 @@
                                             return parseInt(str.replace(/\./g, '')) || 0;
                                         },
                                         updateValue(e) {
-                                            const num = this.parseNumber(e.target.value);
-                                            this.value = num;
-                                            this.formatted = this.formatNumber(num);
+                                            this.rawValue = this.parseNumber(e.target.value);
+                                            this.formatted = this.formatNumber(this.rawValue);
+                                            $wire.set('monthly_sukarela_amount', this.rawValue);
                                         }
                                     }">
                                         <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                         <input type="text" 
                                             x-model="formatted"
                                             @input="updateValue($event)"
+                                            @blur="updateValue($event)"
                                             @focus="$el.select()"
                                             class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50 cursor-not-allowed' : '' }}"
                                             {{ $sukarela_payment_method === 'MANUAL' ? 'disabled' : '' }}
