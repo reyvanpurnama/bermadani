@@ -50,60 +50,54 @@ class MonthlyFinancialReport extends Component
 
     private function collectReportData()
     {
+        // Format billingMonth sebagai YYYY-MM
+        $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
+        
         $startDate = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
+        
+        // Status yang dianggap valid untuk laporan
+        $validStatuses = ['APPROVED', 'PENDING'];
 
-        // 1. Ambil semua member aktif dengan pinjaman aktif
-        $membersWithLoans = Member::whereHas('loans', function ($query) use ($startDate, $endDate) {
-            $query->where('status', 'ACTIVE')
-                  ->where('startDate', '<=', $endDate);
-        })
-        ->with(['loans' => function ($query) use ($startDate, $endDate) {
-            $query->where('status', 'ACTIVE')
-                  ->where('startDate', '<=', $endDate)
-                  ->with(['payments' => function ($q) use ($startDate, $endDate) {
-                      $q->whereBetween('paymentDate', [$startDate, $endDate]);
-                  }]);
-        }])
-        ->get();
-
-        // 2. Ambil semua member yang bayar SIMWA di bulan ini
-        $membersWithSimwa = Member::where('isMemberKoperasi', true)
-            ->whereHas('simpananTransactions', function ($query) use ($startDate, $endDate) {
-                $query->where('type', 'WAJIB')
-                      ->where('transactionType', 'SETOR')
-                      ->whereBetween('created_at', [$startDate, $endDate]);
-            })
-            ->with(['simpananTransactions' => function ($query) use ($startDate, $endDate) {
-                $query->where('type', 'WAJIB')
-                      ->where('transactionType', 'SETOR')
-                      ->whereBetween('created_at', [$startDate, $endDate]);
-            }])
-            ->get();
-
-        // 3. Format data untuk laporan
+        // Format data untuk laporan
         $reportItems = [];
         $totalAngsuran = 0;
         $totalSimwa = 0;
         $totalSukarela = 0;
+        $processedMemberIds = [];
+
+        // 1. Ambil semua member dengan pinjaman aktif
+        $membersWithLoans = Member::whereHas('loans', function ($query) use ($endDate) {
+            $query->where('status', 'ACTIVE')
+                  ->where('startDate', '<=', $endDate);
+        })
+        ->with(['loans' => function ($query) use ($endDate) {
+            $query->where('status', 'ACTIVE')
+                  ->where('startDate', '<=', $endDate);
+        }])
+        ->get();
 
         // Process members with loans (angsuran)
         foreach ($membersWithLoans as $member) {
             foreach ($member->loans as $loan) {
-                $monthlyPayment = $loan->monthlyPayment;
-                $simwaAmount = 50000; // Default SIMWA
-                $sukarelaAmount = 0;
+                $monthlyPayment = $loan->monthlyPayment ?? 0;
+                
+                // Get SIMWA untuk bulan ini
+                $simwaTransaction = SimpananTransaction::where('memberId', $member->id)
+                    ->where('type', 'WAJIB')
+                    ->where('billingMonth', $billingMonth)
+                    ->whereIn('status', $validStatuses)
+                    ->first();
+                $simwaAmount = $simwaTransaction ? $simwaTransaction->amount : 50000; // Default 50k jika tidak ada
 
-                // Check if member has sukarela deduction this month
+                // Get Sukarela untuk bulan ini
                 $sukarelaTransaction = SimpananTransaction::where('memberId', $member->id)
                     ->where('type', 'SUKARELA')
                     ->where('transactionType', 'SETOR')
-                    ->whereBetween('created_at', [$startDate, $endDate])
+                    ->where('billingMonth', $billingMonth)
+                    ->whereIn('status', $validStatuses)
                     ->first();
-
-                if ($sukarelaTransaction) {
-                    $sukarelaAmount = $sukarelaTransaction->amount;
-                }
+                $sukarelaAmount = $sukarelaTransaction ? $sukarelaTransaction->amount : 0;
 
                 $reportItems[] = [
                     'nama' => $member->name,
@@ -111,48 +105,55 @@ class MonthlyFinancialReport extends Component
                     'simwa' => $simwaAmount,
                     'sukarela' => $sukarelaAmount,
                     'total' => $monthlyPayment + $simwaAmount + $sukarelaAmount,
-                    'tenor_remaining' => $loan->tenor - $loan->payments->count(),
+                    'tenor_remaining' => ($loan->tenor ?? 0) - ($loan->paidInstallments ?? 0),
                     'has_loan' => true
                 ];
 
                 $totalAngsuran += $monthlyPayment;
                 $totalSimwa += $simwaAmount;
                 $totalSukarela += $sukarelaAmount;
+                $processedMemberIds[] = $member->id;
             }
         }
 
-        // Process members with SIMWA only (no loan)
-        $memberIdsWithLoans = $membersWithLoans->pluck('id')->toArray();
-        
+        // 2. Ambil semua member yang bayar SIMWA di bulan ini (tanpa pinjaman)
+        $membersWithSimwa = Member::where('isMemberKoperasi', true)
+            ->whereNotIn('id', $processedMemberIds ?: [0])
+            ->whereHas('simpananTransactions', function ($query) use ($billingMonth, $validStatuses) {
+                $query->where('type', 'WAJIB')
+                      ->where('billingMonth', $billingMonth)
+                      ->whereIn('status', $validStatuses);
+            })
+            ->with(['simpananTransactions' => function ($query) use ($billingMonth, $validStatuses) {
+                $query->where('billingMonth', $billingMonth)
+                      ->whereIn('status', $validStatuses);
+            }])
+            ->get();
+
         foreach ($membersWithSimwa as $member) {
-            if (!in_array($member->id, $memberIdsWithLoans)) {
-                $simwaAmount = $member->simpananTransactions->sum('amount');
-                $sukarelaAmount = 0;
+            // SIMWA amount
+            $simwaAmount = $member->simpananTransactions
+                ->where('type', 'WAJIB')
+                ->sum('amount');
 
-                // Check sukarela
-                $sukarelaTransaction = SimpananTransaction::where('memberId', $member->id)
-                    ->where('type', 'SUKARELA')
-                    ->where('transactionType', 'SETOR')
-                    ->whereBetween('created_at', [$startDate, $endDate])
-                    ->first();
+            // Sukarela amount
+            $sukarelaAmount = $member->simpananTransactions
+                ->where('type', 'SUKARELA')
+                ->where('transactionType', 'SETOR')
+                ->sum('amount');
 
-                if ($sukarelaTransaction) {
-                    $sukarelaAmount = $sukarelaTransaction->amount;
-                }
+            $reportItems[] = [
+                'nama' => $member->name,
+                'angsuran' => 0,
+                'simwa' => $simwaAmount,
+                'sukarela' => $sukarelaAmount,
+                'total' => $simwaAmount + $sukarelaAmount,
+                'tenor_remaining' => 0,
+                'has_loan' => false
+            ];
 
-                $reportItems[] = [
-                    'nama' => $member->name,
-                    'angsuran' => 0,
-                    'simwa' => $simwaAmount,
-                    'sukarela' => $sukarelaAmount,
-                    'total' => $simwaAmount + $sukarelaAmount,
-                    'tenor_remaining' => 0,
-                    'has_loan' => false
-                ];
-
-                $totalSimwa += $simwaAmount;
-                $totalSukarela += $sukarelaAmount;
-            }
+            $totalSimwa += $simwaAmount;
+            $totalSukarela += $sukarelaAmount;
         }
 
         // Sort by name
