@@ -251,6 +251,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.activity-logs');
     })->name('admin.activity-logs');
     
+    // Monthly Financial Report
+    Route::get('/reports/monthly-financial', \App\Livewire\Admin\MonthlyFinancialReport::class)->name('admin.reports.monthly-financial');
+    
     // Receipt
     Route::get('/transaction/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');
 });
