@@ -12,50 +12,88 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $filter = 'today';
+    public $dateFilter = 'this_month';
+    public $startDate;
+    public $endDate;
     public $chartData = [];
 
     public function mount()
     {
-        $this->filter = 'today';
+        $this->dateFilter = 'this_month';
+        $this->updateDateRange();
         $this->calculateChartData();
     }
 
-    public function updatedFilter()
+    public function updatedDateFilter()
     {
+        $this->updateDateRange();
         $this->calculateChartData();
     }
 
-    public function setFilter($filter)
+    public function updatedStartDate()
     {
-        $this->filter = $filter;
+        $this->dateFilter = 'custom';
         $this->calculateChartData();
+    }
+
+    public function updatedEndDate()
+    {
+        $this->dateFilter = 'custom';
+        $this->calculateChartData();
+    }
+
+    private function updateDateRange()
+    {
+        switch ($this->dateFilter) {
+            case 'today':
+                $this->startDate = today()->format('Y-m-d');
+                $this->endDate = today()->format('Y-m-d');
+                break;
+            case 'yesterday':
+                $this->startDate = today()->subDay()->format('Y-m-d');
+                $this->endDate = today()->subDay()->format('Y-m-d');
+                break;
+            case 'this_week':
+                $this->startDate = now()->startOfWeek()->format('Y-m-d');
+                $this->endDate = now()->endOfWeek()->format('Y-m-d');
+                break;
+            case 'this_month':
+                $this->startDate = now()->startOfMonth()->format('Y-m-d');
+                $this->endDate = now()->endOfMonth()->format('Y-m-d');
+                break;
+            case 'last_month':
+                $this->startDate = now()->subMonth()->startOfMonth()->format('Y-m-d');
+                $this->endDate = now()->subMonth()->endOfMonth()->format('Y-m-d');
+                break;
+            case 'this_year':
+                $this->startDate = now()->startOfYear()->format('Y-m-d');
+                $this->endDate = now()->endOfYear()->format('Y-m-d');
+                break;
+            case 'custom':
+                // Do nothing, user sets manually
+                break;
+            default:
+                $this->startDate = now()->startOfMonth()->format('Y-m-d');
+                $this->endDate = now()->endOfMonth()->format('Y-m-d');
+        }
     }
 
     public function getTotalSalesProperty()
     {
-        $query = Transaction::where('type', 'SALE')->where('status', 'COMPLETED');
-
-        return match ($this->filter) {
-            'today' => $query->whereDate('date', today())->sum('totalAmount'),
-            'week' => $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->sum('totalAmount'),
-            'month' => $query->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('totalAmount'),
-            'year' => $query->whereYear('date', now()->year)->sum('totalAmount'),
-            default => $query->whereDate('date', today())->sum('totalAmount'),
-        };
+        return Transaction::where('type', 'SALE')
+            ->where('status', 'COMPLETED')
+            ->whereDate('date', '>=', $this->startDate)
+            ->whereDate('date', '<=', $this->endDate)
+            ->sum('totalAmount');
     }
 
     public function getTotalTransactionsProperty()
     {
-        $query = Transaction::where('type', 'SALE')->where('status', 'COMPLETED');
-
-        return match ($this->filter) {
-            'today' => $query->whereDate('date', today())->count(),
-            'week' => $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count(),
-            'month' => $query->whereMonth('date', now()->month)->whereYear('date', now()->year)->count(),
-            'year' => $query->whereYear('date', now()->year)->count(),
-            default => $query->whereDate('date', today())->count(),
-        };
+        return Transaction::where('type', 'SALE')
+            ->where('status', 'COMPLETED')
+            ->whereDate('date', '>=', $this->startDate)
+            ->whereDate('date', '<=', $this->endDate)
+            ->count();
     }
 
     public function calculateChartData()
@@ -64,94 +102,99 @@ class Dashboard extends Component
         $incomeData = [];
         $expenseData = [];
 
-        if ($this->filter === 'today') {
+        $start = \Carbon\Carbon::parse($this->startDate);
+        $end = \Carbon\Carbon::parse($this->endDate);
+
+        $diffInDays = $start->diffInDays($end);
+
+        if ($diffInDays <= 1) {
             // Hourly breakdown (08:00 - 22:00)
             $hours = [8, 10, 12, 14, 16, 18, 20, 22];
             foreach ($hours as $h) {
                 $categories[] = sprintf("%02d:00", $h);
 
-                // POS Sales + Historical + Other Income
+                // Aggregation logic for Hourly
+                // Only consider transactions on that specific day within the hour range
                 $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
-                    ->whereDate('date', today())
+                    ->whereDate('date', $start)
                     ->whereTime('date', '>=', sprintf("%02d:00:00", $h))
                     ->whereTime('date', '<', sprintf("%02d:59:59", $h + 1))
                     ->sum('totalAmount');
 
                 $manualIncome = FinancialTransaction::income()
-                    ->whereDate('transactionDate', today())
+                    ->whereDate('transactionDate', $start)
                     ->whereTime('transactionDate', '>=', sprintf("%02d:00:00", $h))
                     ->whereTime('transactionDate', '<', sprintf("%02d:59:59", $h + 1))
                     ->sum('amount');
 
                 $incomeData[] = $pos + $manualIncome;
 
-                // Expenses
                 $expense = FinancialTransaction::expense()
-                    ->whereDate('transactionDate', today())
+                    ->whereDate('transactionDate', $start)
                     ->whereTime('transactionDate', '>=', sprintf("%02d:00:00", $h))
                     ->whereTime('transactionDate', '<', sprintf("%02d:59:59", $h + 1))
                     ->sum('amount');
                 $expenseData[] = $expense;
             }
-        } elseif ($this->filter === 'week') {
-            // Daily breakdown (Mon - Sun)
-            $start = now()->startOfWeek();
-            for ($i = 0; $i < 7; $i++) {
-                $day = $start->copy()->addDays($i);
-                $categories[] = $day->format('D'); // Mon, Tue...
-
-                $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
-                    ->whereDate('date', $day)->sum('totalAmount');
-                $manualIncome = FinancialTransaction::income()->whereDate('transactionDate', $day)->sum('amount');
-                $incomeData[] = $pos + $manualIncome;
-
-                $expense = FinancialTransaction::expense()->whereDate('transactionDate', $day)->sum('amount');
-                $expenseData[] = $expense;
-            }
-        } elseif ($this->filter === 'month') {
-            // Daily breakdown (1 - End of Month)
-            $start = now()->startOfMonth();
-            $end = now()->endOfMonth();
-            // Simplify: Group by weeks if too many days? No, days are fine for chart.
-            // But strict requirement says "Week 1, Week 2..." in template? 
-            // The template said: categories: ["Week 1", "Week 2", "Week 3", "Week 4"].
-            // Let's implement Weeks 1-4/5 for cleanliness
-
+        } elseif ($diffInDays <= 35) {
+            // Daily breakdown
             $current = $start->copy();
-            $weekNum = 1;
             while ($current <= $end) {
-                $weekEnd = $current->copy()->endOfWeek();
-                if ($weekEnd > $end)
-                    $weekEnd = $end;
-
-                $categories[] = "Week " . $weekNum++;
+                $categories[] = $current->format('d M');
 
                 $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
-                    ->whereBetween('date', [$current, $weekEnd])->sum('totalAmount');
+                    ->whereDate('date', $current)
+                    ->sum('totalAmount');
+
                 $manualIncome = FinancialTransaction::income()
-                    ->whereBetween('transactionDate', [$current, $weekEnd])->sum('amount');
+                    ->whereDate('transactionDate', $current)
+                    ->sum('amount');
+
                 $incomeData[] = $pos + $manualIncome;
 
                 $expense = FinancialTransaction::expense()
-                    ->whereBetween('transactionDate', [$current, $weekEnd])->sum('amount');
+                    ->whereDate('transactionDate', $current)
+                    ->sum('amount');
                 $expenseData[] = $expense;
 
-                $current = $weekEnd->addDay()->startOfDay();
+                $current->addDay();
             }
-        } elseif ($this->filter === 'year') {
-            // Monthly breakdown (Jan - Dec)
-            for ($i = 1; $i <= 12; $i++) {
-                $categories[] = date("M", mktime(0, 0, 0, $i, 1)); // Jan, Feb...
+        } else {
+            // Monthly breakdown
+            $current = $start->copy()->startOfMonth();
+
+            while ($current <= $end) {
+                $monthEnd = $current->copy()->endOfMonth();
+                // Clamp to actual start/end
+                $clampStart = $current->gt($start) ? $current : $start;
+                $clampEnd = $monthEnd->lt($end) ? $monthEnd : $end;
+
+                if ($clampStart > $clampEnd) {
+                    $current->addMonth();
+                    continue;
+                }
+
+                $categories[] = $current->format('M Y');
 
                 $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
-                    ->whereYear('date', now()->year)->whereMonth('date', $i)->sum('totalAmount');
+                    ->whereDate('date', '>=', $clampStart)
+                    ->whereDate('date', '<=', $clampEnd)
+                    ->sum('totalAmount');
+
                 $manualIncome = FinancialTransaction::income()
-                    ->whereYear('transactionDate', now()->year)->whereMonth('transactionDate', $i)->sum('amount');
+                    ->whereDate('transactionDate', '>=', $clampStart)
+                    ->whereDate('transactionDate', '<=', $clampEnd)
+                    ->sum('amount');
+
                 $incomeData[] = $pos + $manualIncome;
 
                 $expense = FinancialTransaction::expense()
-                    ->whereYear('transactionDate', now()->year)->whereMonth('transactionDate', $i)->sum('amount');
+                    ->whereDate('transactionDate', '>=', $clampStart)
+                    ->whereDate('transactionDate', '<=', $clampEnd)
+                    ->sum('amount');
                 $expenseData[] = $expense;
+
+                $current->addMonth();
             }
         }
 
@@ -162,7 +205,6 @@ class Dashboard extends Component
         ];
     }
 
-    // Profitability Metrics
     public function getGrossProfitProperty()
     {
         // Margin Kotor = Penjualan POS + Omset Historis (dari transaksi manual)
@@ -175,13 +217,9 @@ class Dashboard extends Component
         $query = FinancialTransaction::income()
             ->where('category', 'Omset Penjualan (Historis)');
 
-        return match ($this->filter) {
-            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
-            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
-            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
-            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
-            default => $query->whereDate('transactionDate', today())->sum('amount'),
-        };
+        return $query->whereDate('transactionDate', '>=', $this->startDate)
+            ->whereDate('transactionDate', '<=', $this->endDate)
+            ->sum('amount');
     }
 
     public function getTotalCogsProperty()
@@ -191,13 +229,9 @@ class Dashboard extends Component
             ->where('status', 'COMPLETED')
             ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transactionId');
 
-        $cogs = match ($this->filter) {
-            'today' => $query->whereDate('transactions.date', today())->sum('transaction_items.totalCogs'),
-            'week' => $query->whereBetween('transactions.date', [now()->startOfWeek(), now()->endOfWeek()])->sum('transaction_items.totalCogs'),
-            'month' => $query->whereMonth('transactions.date', now()->month)->whereYear('transactions.date', now()->year)->sum('transaction_items.totalCogs'),
-            'year' => $query->whereYear('transactions.date', now()->year)->sum('transaction_items.totalCogs'),
-            default => $query->whereDate('transactions.date', today())->sum('transaction_items.totalCogs'),
-        };
+        $cogs = $query->whereDate('transactions.date', '>=', $this->startDate)
+            ->whereDate('transactions.date', '<=', $this->endDate)
+            ->sum('transaction_items.totalCogs');
 
         return $cogs ?? 0;
     }
@@ -224,13 +258,9 @@ class Dashboard extends Component
         // Ambil total pengeluaran dari financial_transactions berdasarkan filter
         $query = FinancialTransaction::expense();
 
-        $expenses = match ($this->filter) {
-            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
-            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
-            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
-            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
-            default => $query->whereDate('transactionDate', today())->sum('amount'),
-        };
+        $expenses = $query->whereDate('transactionDate', '>=', $this->startDate)
+            ->whereDate('transactionDate', '<=', $this->endDate)
+            ->sum('amount');
 
         return $expenses ?? 0;
     }
@@ -241,13 +271,9 @@ class Dashboard extends Component
         $query = FinancialTransaction::income()
             ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)']);
 
-        $income = match ($this->filter) {
-            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
-            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
-            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
-            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
-            default => $query->whereDate('transactionDate', today())->sum('amount'),
-        };
+        $income = $query->whereDate('transactionDate', '>=', $this->startDate)
+            ->whereDate('transactionDate', '<=', $this->endDate)
+            ->sum('amount');
 
         return $income ?? 0;
     }
@@ -326,35 +352,36 @@ class Dashboard extends Component
 
     public function getPreviousPeriodLabelProperty()
     {
-        return match ($this->filter) {
+        return match ($this->dateFilter) {
             'today' => 'vs Kemarin',
-            'week' => 'vs Minggu Lalu',
-            'month' => 'vs Bulan Lalu',
-            'year' => 'vs Tahun Lalu',
-            default => 'vs Kemarin',
+            'yesterday' => 'vs Hari Sebelumnya',
+            'this_week' => 'vs Minggu Lalu',
+            'this_month' => 'vs Bulan Lalu',
+            'last_month' => 'vs Bulan Sebelumnya',
+            'this_year' => 'vs Tahun Lalu',
+            'custom' => 'vs Periode Sebelumnya',
+            default => 'vs Periode Sebelumnya',
         };
     }
 
     private function getCurrentPeriodRange()
     {
-        return match ($this->filter) {
-            'today' => [today()->startOfDay(), today()->endOfDay()],
-            'week' => [now()->startOfWeek(), now()->endOfWeek()],
-            'month' => [now()->startOfMonth(), now()->endOfMonth()],
-            'year' => [now()->startOfYear(), now()->endOfYear()],
-            default => [today()->startOfDay(), today()->endOfDay()],
-        };
+        return [
+            \Carbon\Carbon::parse($this->startDate),
+            \Carbon\Carbon::parse($this->endDate)
+        ];
     }
 
     private function getPreviousPeriodRange()
     {
-        return match ($this->filter) {
-            'today' => [today()->subDay()->startOfDay(), today()->subDay()->endOfDay()],
-            'week' => [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()],
-            'month' => [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()],
-            'year' => [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()],
-            default => [today()->subDay()->startOfDay(), today()->subDay()->endOfDay()],
-        };
+        $start = \Carbon\Carbon::parse($this->startDate);
+        $end = \Carbon\Carbon::parse($this->endDate);
+        $diff = $start->diffInDays($end) + 1;
+
+        return [
+            $start->copy()->subDays($diff),
+            $end->copy()->subDays($diff)
+        ];
     }
 
     // ALL-TIME METRICS (untuk card atas)
@@ -448,10 +475,8 @@ class Dashboard extends Component
             ->join('transactions', 'transaction_items.transactionId', '=', 'transactions.id')
             ->where('transactions.type', 'SALE')
             ->where('transactions.status', 'COMPLETED')
-            ->when($this->filter === 'today', fn($q) => $q->whereDate('transactions.date', today()))
-            ->when($this->filter === 'week', fn($q) => $q->whereBetween('transactions.date', [now()->startOfWeek(), now()->endOfWeek()]))
-            ->when($this->filter === 'month', fn($q) => $q->whereMonth('transactions.date', now()->month)->whereYear('transactions.date', now()->year))
-            ->when($this->filter === 'year', fn($q) => $q->whereYear('transactions.date', now()->year))
+            ->whereDate('transactions.date', '>=', $this->startDate)
+            ->whereDate('transactions.date', '<=', $this->endDate)
             ->groupBy('products.id', 'products.name', 'products.categoryId')
             ->orderByDesc('total_sold')
             ->limit(5)

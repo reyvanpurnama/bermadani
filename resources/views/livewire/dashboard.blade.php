@@ -91,33 +91,75 @@
                                             class="text-[10px] text-slate-500 font-medium">Beban</span></div>
                                 </div>
                                 <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
-                                <div class="relative group">
-                                    <select wire:model.live="filter"
-                                        class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
-                                        <option value="today">Hari Ini</option>
-                                        <option value="week">Minggu Ini</option>
-                                        <option value="month">Bulan Ini</option>
-                                        <option value="year">Tahun Ini</option>
-                                    </select>
-                                    <div
-                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                                        <i class='bx bx-chevron-down text-sm'></i>
-                                    </div>
-                                    {{-- Tooltip hint --}}
-                                    <div
-                                        class="absolute top-full right-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
-                                        <div
-                                            class="bg-slate-800 dark:bg-slate-900 text-white text-[9px] px-2 py-1 rounded shadow-lg whitespace-nowrap">
-                                            @if($filter === 'today')
-                                                📅 {{ now()->format('d M Y') }}
-                                            @elseif($filter === 'week')
-                                                📅 {{ now()->startOfWeek()->format('d M') }} -
-                                                {{ now()->endOfWeek()->format('d M Y') }}
-                                            @elseif($filter === 'month')
-                                                📅 1 - {{ now()->endOfMonth()->format('d M Y') }}
-                                            @elseif($filter === 'year')
-                                                📅 Jan - Des {{ now()->year }}
+                                {{-- Date Range Picker --}}
+                                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                                    <button @click="open = !open"
+                                        class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
+                                        <i class='bx bx-calendar text-slate-500 text-sm'></i>
+                                        <span>
+                                            @if($dateFilter === 'custom')
+                                                {{ \Carbon\Carbon::parse($startDate)->format('d M y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d M y') }}
+                                            @else
+                                                {{ match($dateFilter) {
+                                                    'today' => 'Hari Ini',
+                                                    'yesterday' => 'Kemarin',
+                                                    'this_week' => 'Minggu Ini',
+                                                    'this_month' => 'Bulan Ini',
+                                                    'last_month' => 'Bulan Lalu',
+                                                    'this_year' => 'Tahun Ini',
+                                                    default => 'Bulan Ini'
+                                                } }}
                                             @endif
+                                        </span>
+                                        <i class='bx bx-chevron-down text-slate-400'></i>
+                                    </button>
+
+                                    <div x-show="open" x-transition.origin.top.right x-cloak style="display: none !important;"
+                                        class="absolute right-0 top-full mt-2 w-auto min-w-[320px] md:w-[450px] bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden flex flex-col md:flex-row">
+                                        
+                                        {{-- Presets Sidebar --}}
+                                        <div class="w-full md:w-36 bg-slate-50 dark:bg-slate-900 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 p-2 flex flex-col gap-1">
+                                            @foreach([
+                                                'today' => 'Hari Ini',
+                                                'yesterday' => 'Kemarin',
+                                                'this_week' => 'Minggu Ini',
+                                                'this_month' => 'Bulan Ini',
+                                                'last_month' => 'Bulan Lalu',
+                                                'this_year' => 'Tahun Ini'
+                                            ] as $key => $label)
+                                                <button wire:click="$set('dateFilter', '{{ $key }}')" @click="open = false"
+                                                    class="text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors w-full {{ $dateFilter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                                                    {{ $label }}
+                                                </button>
+                                            @endforeach
+                                            <div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+                                            <button @click="document.getElementById('startDate').focus()"
+                                                class="text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors w-full {{ $dateFilter === 'custom' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                                                Custom Range
+                                            </button>
+                                        </div>
+
+                                        {{-- Custom Range Area --}}
+                                        <div class="flex-1 p-4 bg-white dark:bg-slate-800 flex flex-col justify-center">
+                                            <h4 class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Pilih Rentang Tanggal</h4>
+                                            <div class="grid grid-cols-2 gap-3 mb-4">
+                                                <div>
+                                                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Dari</label>
+                                                    <input type="date" wire:model.live.debounce.500ms="startDate" id="startDate"
+                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                                </div>
+                                                <div>
+                                                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Sampai</label>
+                                                    <input type="date" wire:model.live.debounce.500ms="endDate"
+                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-700">
+                                                <button type="button" @click="open = false"
+                                                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] uppercase font-bold px-4 py-2 rounded-md transition-colors shadow-sm shadow-indigo-200 dark:shadow-none">
+                                                    Selesai
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
