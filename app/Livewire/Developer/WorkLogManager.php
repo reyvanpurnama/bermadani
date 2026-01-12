@@ -104,12 +104,14 @@ class WorkLogManager extends Component
                     continue;
                 }
 
-                // Skip footer/summary rows
+                // Avoid processing footer rows like signatures or totals
                 $firstCol = strtoupper(trim($columns[0] ?? ''));
                 if (
                     in_array($firstCol, ['JUMLAH LEMBUR', 'TOTAL JAM', '']) ||
                     str_starts_with($firstCol, 'JUMLAH') ||
-                    str_starts_with($firstCol, 'TOTAL')
+                    str_starts_with($firstCol, 'TOTAL') ||
+                    str_starts_with($firstCol, 'KETUA') ||
+                    str_starts_with($firstCol, 'MENGETAHUI')
                 ) {
                     continue;
                 }
@@ -135,13 +137,18 @@ class WorkLogManager extends Component
                         $startTime = trim($columns[1]) ?: null;
                         $endTime = trim($columns[2]) ?: null;
 
-                        // Normalize time format (0:00 -> 00:00)
+                        // Normalize time format (H:MM -> HH:MM)
                         if ($startTime && preg_match('/^\d:\d{2}$/', $startTime)) {
                             $startTime = '0' . $startTime;
                         }
                         if ($endTime && preg_match('/^\d:\d{2}$/', $endTime)) {
                             $endTime = '0' . $endTime;
                         }
+                        // Explicitly handle 0:00 -> 00:00 just in case
+                        if ($startTime === '0:00')
+                            $startTime = '00:00';
+                        if ($endTime === '0:00')
+                            $endTime = '00:00';
 
                         $hoursWorked = floatval(trim($columns[3]));
                         $description = trim($columns[4]);

@@ -1,0 +1,30 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,
+NIM,220102007,,,
+BULAN,NOVEMBER,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Sabtu, 01 November 2025",18:00,0:00,6,Setup Env & Review Project
+"Minggu, 02 November 2025",18:00,0:00,6,Riset & Desain UI Tablet
+"Senin, 03 November 2025",18:00,0:00,6,Impl. UI Tablet & Monitoring
+"Selasa, 04 November 2025",18:00,0:00,6,Desain Sistem Konsinyasi
+"Rabu, 05 November 2025",18:00,0:00,6,Impl. Settlement Konsinyasi
+"Kamis, 06 November 2025",18:00,0:00,6,Testing Settlement & Config
+"Jumat, 07 November 2025",18:00,0:00,6,Finalisasi Fitur & Merge Main
+"Sabtu, 08 November 2025",18:00,0:00,6,Integrasi Akuntansi & Return
+"Minggu, 09 November 2025",18:00,0:00,6,Code Review & Integration Test
+"Senin, 10 November 2025",18:00,0:00,6,Dev. Return Sisa Konsinyasi
+"Selasa, 11 November 2025",18:00,0:00,6,Finalisasi Return & History Modal
+"Rabu, 12 November 2025",18:00,0:00,6,Dev. Supplier & Stock Adj.
+"Kamis, 13 November 2025",18:00,0:00,6,Impl. Stock Adj. & UX
+"Jumat, 14 November 2025",18:00,0:00,6,"Integrasi Auth, Security & Supplier"
+"Sabtu, 15 November 2025",18:00,0:00,6,Testing Supplier & Bugfix
+"Minggu, 16 November 2025",18:00,0:00,6,Dokumentasi & Tech Review
+"Senin, 17 November 2025",18:00,0:00,6,Refinement UI/UX Supplier
+"Selasa, 18 November 2025",18:00,0:00,6,Dev. Evaluasi Supplier & UAT
+"Rabu, 19 November 2025",18:00,0:00,6,Impl. Rating & Evaluasi
+"Kamis, 20 November 2025",18:00,0:00,6,Testing Evaluasi Supplier
+"Jumat, 21 November 2025",18:00,0:00,6,Setup Environment UAT
+"Sabtu, 22 November 2025",18:00,0:00,6,Integration Test & Final Check
+"Minggu, 23 November 2025",18:00,0:00,6,Final Review & Dokumentasi

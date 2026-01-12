@@ -1,0 +1,38 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,
+NIM,220102007,,,
+PERIODE,24 NOVEMBER - 24 DESEMBER 2025,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 02.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Senin, 24 November 2025",18:01,0:01,6,Dark Mode Support untuk Komponen
+"Selasa, 25 November 2025",20:27,1:27,5,Manajemen Transaksi Keuangan Manual
+"Rabu, 26 November 2025",18:26,23:26,5,Perbaikan Logika Tanggal Laporan
+"Kamis, 27 November 2025",20:35,0:35,4,Sistem Logging Aktivitas User
+"Jumat, 28 November 2025",21:54,1:54,4,Role Kasir & Dashboard Khusus
+"Sabtu, 29 November 2025",19:27,23:27,4,Form Tambah Anggota dengan Wizard
+"Minggu, 30 November 2025",19:26,1:26,6,Optimasi Tampilan Quick Stats
+"Senin, 01 Desember 2025",18:56,22:56,4,Refactoring Kode Controller
+"Selasa, 02 Desember 2025",19:25,1:25,6,Penyesuaian Timezone & Konfigurasi Dasar
+"Rabu, 03 Desember 2025",19:14,23:14,4,User Management & Tracking Owner Transaksi
+"Kamis, 04 Desember 2025",19:13,0:13,5,Sistem Upload Bukti Transaksi
+"Jumat, 05 Desember 2025",19:52,0:52,5,Routing & Menu Admin untuk Anggota
+"Sabtu, 06 Desember 2025",19:37,1:37,6,Sistem Auto-Debit Simpanan Wajib
+"Minggu, 07 Desember 2025",18:33,0:33,6,History Debit Bulanan & Detail
+"Senin, 08 Desember 2025",18:20,0:20,6,Manajemen Produk & Inventaris
+"Selasa, 09 Desember 2025",19:30,1:30,6,Fondasi Manajemen Anggota (Model & Migrasi)
+"Rabu, 10 Desember 2025",19:15,0:15,5,Widget Profitabilitas pada Dashboard
+"Kamis, 11 Desember 2025",21:59,1:59,4,Testing & Debugging Fitur Baru
+"Jumat, 12 Desember 2025",18:51,22:51,4,Fitur Skip Check-in untuk Kasir
+"Sabtu, 13 Desember 2025",18:57,23:57,5,Update Desain Halaman Login Responsif
+"Minggu, 14 Desember 2025",20:29,1:29,5,Implementasi Core System POS (Point of Sales)
+"Senin, 15 Desember 2025",18:41,22:41,4,Popup Detail Riwayat Transaksi
+"Selasa, 16 Desember 2025",20:07,0:07,4,Integrasi UI Template ke Sistem
+"Rabu, 17 Desember 2025",18:07,0:07,6,Fitur Transaksi & Detail Penjualan
+"Kamis, 18 Desember 2025",20:49,0:49,4,Fitur Import Anggota via Excel
+"Jumat, 19 Desember 2025",20:42,0:42,4,Approval Workflow Auto-Debit
+"Sabtu, 20 Desember 2025",19:47,1:47,6,Desain Dashboard & Login Page
+"Minggu, 21 Desember 2025",19:19,0:19,5,Inisialisasi Project Laravel & Filament
+"Senin, 22 Desember 2025",19:26,23:26,4,Halaman Manajemen Simpanan
+"Selasa, 23 Desember 2025",18:48,23:48,5,Tooltip Hover untuk Dropdown Filter
+"Rabu, 24 Desember 2025",18:01,0:01,6,Halaman Manajemen Simpanan Anggota
