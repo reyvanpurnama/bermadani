@@ -96,7 +96,17 @@
                     class="sidebar-text text-xs {{ request()->routeIs('admin.reports.balance-sheet') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Neraca</span>
             </a>
 
-            {{-- ADMIN: RETAIL MENU --}}
+            {{-- DEVELOPER: WORK LOG MENU --}}
+            @if(auth()->user()->isDeveloper())
+                <a href="{{ route('developer.work-logs') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('developer.work-logs') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-time-five text-sm mr-2 {{ request()->routeIs('developer.work-logs') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('developer.work-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Log Kerja</span>
+                </a>
+            @endif
+
             <div x-show="workspace === 'retail'" x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-x-[-10px]" x-transition:enter-end="opacity-100 translate-x-0">
                 <p
@@ -250,6 +260,14 @@
                     <span
                         class="sidebar-text text-xs {{ request()->routeIs('admin.activity-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Activity
                         Log</span>
+                </a>
+                <a href="{{ route('admin.developer-payroll') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-money text-sm mr-2 {{ request()->routeIs('admin.developer-payroll') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.developer-payroll') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Payroll
+                        Dev</span>
                 </a>
             @endif
         @endif
