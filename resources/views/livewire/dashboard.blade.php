@@ -40,7 +40,8 @@
                     </p>
                     <div class="flex items-end gap-2">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp
-                            {{ number_format($this->allTimeProfit, 0, ',', '.') }}</h3>
+                            {{ number_format($this->allTimeProfit, 0, ',', '.') }}
+                        </h3>
                     </div>
                     <p class="text-[9px] text-slate-400 mt-0.5">Sejak {{ $this->firstTransactionDate }}</p>
                 </div>
@@ -54,7 +55,8 @@
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Omzet</p>
                     <div class="flex items-end gap-2">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp
-                            {{ number_format($this->allTimeSales, 0, ',', '.') }}</h3>
+                            {{ number_format($this->allTimeSales, 0, ',', '.') }}
+                        </h3>
                     </div>
                     <p class="text-[9px] text-slate-400 mt-0.5">Sejak {{ $this->firstTransactionDate }}</p>
                 </div>
@@ -99,7 +101,8 @@
                                     </select>
                                     <div
                                         class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
-                                        <i class='bx bx-chevron-down text-sm'></i></div>
+                                        <i class='bx bx-chevron-down text-sm'></i>
+                                    </div>
                                     {{-- Tooltip hint --}}
                                     <div
                                         class="absolute top-full right-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 pointer-events-none">
@@ -122,16 +125,81 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 w-full min-h-[260px]">
-                        <div class="text-center py-12 text-slate-400">
-                            <i class='bx bx-line-chart text-5xl opacity-30'></i>
-                            <p class="text-xs mt-2">Chart akan ditampilkan di sini</p>
-                            <div class="mt-3 text-xs">
-                                <span class="font-bold text-slate-700 dark:text-white">Omzet:</span>
-                                <span class="text-emerald-600 dark:text-emerald-400 font-bold">Rp
-                                    {{ number_format($this->totalSales, 0, ',', '.') }}</span>
-                            </div>
-                        </div>
+                    <div class="flex-1 w-full min-h-[260px]" x-data="{
+                            chart: null,
+                            get isDark() { return document.documentElement.classList.contains('dark') },
+                            init() {
+                                let colors = {
+                                    text: this.isDark ? '#94a3b8' : '#64748b',
+                                    grid: this.isDark ? '#334155' : '#f1f5f9',
+                                    tooltip: this.isDark ? 'dark' : 'light'
+                                };
+
+                                var options = {
+                                    series: [],
+                                    chart: {
+                                        height: '100%',
+                                        type: 'area',
+                                        toolbar: { show: false },
+                                        fontFamily: 'Inter',
+                                        foreColor: colors.text,
+                                        background: 'transparent',
+                                        animations: { enabled: true }
+                                    },
+                                    colors: ['#4F46E5', '#cbd5e1'],
+                                    dataLabels: { enabled: false },
+                                    stroke: { curve: 'smooth', width: 2 },
+                                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                                    xaxis: { categories: [], axisBorder: { show: false }, axisTicks: { show: false } },
+                                    grid: { borderColor: colors.grid, strokeDashArray: 4 },
+                                    legend: { show: false },
+                                    tooltip: { theme: colors.tooltip }
+                                };
+
+                                this.chart = new ApexCharts(this.$refs.revenueChart, options);
+                                this.chart.render();
+
+                                // Initial Data
+                                this.update($wire.chartData);
+
+                                // Watch Livewire Data
+                                $wire.watch('chartData', (value) => {
+                                    this.update(value);
+                                });
+                                
+                                // Clean up
+                                $watch('isDark', () => {
+                                    // You might need a mutation observer for real dark mode switching if it's outside Alpine component
+                                    // But since we navigate away, it's fine.
+                                    // Actually, let's use a mutation observer for theme toggle
+                                });
+                                
+                                const observer = new MutationObserver((mutations) => {
+                                    mutations.forEach((mutation) => {
+                                        if (mutation.attributeName === 'class') {
+                                            const darkNow = document.documentElement.classList.contains('dark');
+                                            this.chart.updateOptions({
+                                                chart: { foreColor: darkNow ? '#94a3b8' : '#64748b' },
+                                                grid: { borderColor: darkNow ? '#334155' : '#f1f5f9' },
+                                                tooltip: { theme: darkNow ? 'dark' : 'light' }
+                                            });
+                                        }
+                                    });
+                                });
+                                observer.observe(document.documentElement, { attributes: true });
+                            },
+                            update(data) {
+                                if(!data || !data.categories) return;
+                                this.chart.updateOptions({
+                                    xaxis: { categories: data.categories },
+                                    series: [
+                                        { name: 'Pemasukan', data: data.income },
+                                        { name: 'Pengeluaran', data: data.expense }
+                                    ]
+                                });
+                            }
+                        }" wire:ignore>
+                        <div x-ref="revenueChart" class="w-full h-full"></div>
                     </div>
                 </div>
 
@@ -196,7 +264,8 @@
                                     style="width: {{ min(100, $this->grossMarginPercent) }}%"></div>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp
-                                {{ number_format($this->grossProfit, 0, ',', '.') }}</p>
+                                {{ number_format($this->grossProfit, 0, ',', '.') }}
+                            </p>
                         </div>
 
                         @if($this->otherIncome > 0)
@@ -217,7 +286,8 @@
                                         style="width: {{ $otherIncomePercent }}%"></div>
                                 </div>
                                 <p class="text-[9px] text-slate-400 mt-0.5">Rp
-                                    {{ number_format($this->otherIncome, 0, ',', '.') }}</p>
+                                    {{ number_format($this->otherIncome, 0, ',', '.') }}
+                                </p>
                             </div>
                         @endif
 
@@ -244,7 +314,8 @@
                                     style="width: {{ $expenseBarPercent }}%"></div>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp
-                                {{ number_format($this->operatingExpenses, 0, ',', '.') }}</p>
+                                {{ number_format($this->operatingExpenses, 0, ',', '.') }}
+                            </p>
                         </div>
 
                         <p class="text-[9px] text-slate-400 mt-2 italic">*Laba Bersih = Omzet + Pendapatan Lain - Beban
@@ -272,7 +343,8 @@
                         <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5 leading-none">
                             Saldo Kasir</p>
                         <h6 class="text-[13px] font-bold text-slate-800 dark:text-white leading-tight truncate">Rp
-                            {{ number_format($this->totalSales, 0, ',', '.') }}</h6>
+                            {{ number_format($this->totalSales, 0, ',', '.') }}
+                        </h6>
                     </div>
                 </div>
                 <div
@@ -408,7 +480,8 @@
                                     </div>
                                     <div>
                                         <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none">
-                                            {{ $product->name }}</h6>
+                                            {{ $product->name }}
+                                        </h6>
                                         <p class="text-[9px] text-slate-400">{{ $product->category?->name ?? '-' }}</p>
                                     </div>
                                 </div>
@@ -441,7 +514,8 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h6 class="text-[12px] font-semibold text-slate-800 dark:text-white leading-none truncate">
-                                    {{ $product->name }}</h6>
+                                    {{ $product->name }}
+                                </h6>
                                 <div class="flex items-center gap-2 mt-1">
                                     <span class="text-[9px] text-slate-400">{{ $product->category?->name ?? '-' }}</span>
                                 </div>
@@ -503,7 +577,8 @@
                             </td>
                             <td class="px-6 py-3 text-xs">{{ $trx->date?->format('d M Y, H:i') }}</td>
                             <td class="px-6 py-3 font-bold text-slate-900 dark:text-white text-xs">Rp
-                                {{ number_format($trx->totalAmount, 0, ',', '.') }}</td>
+                                {{ number_format($trx->totalAmount, 0, ',', '.') }}
+                            </td>
                             <td class="px-6 py-3">
                                 <span
                                     class="{{ $trx->status === 'COMPLETED' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' }} px-2 py-1 rounded-full text-[10px] font-semibold">
