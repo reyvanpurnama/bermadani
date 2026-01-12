@@ -57,7 +57,7 @@ class FinancialTransaction extends Model
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('transactionDate', now()->month)
-                     ->whereYear('transactionDate', now()->year);
+            ->whereYear('transactionDate', now()->year);
     }
 
     public function scopeThisYear($query)

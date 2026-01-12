@@ -42,9 +42,15 @@ class ManualTransaction extends Component
 
     public function mount()
     {
+        // Capture unit from query parameter if present
+        $requestUnit = request()->query('unit');
+        if (in_array($requestUnit, ['KOPERASI', 'BISNIS'])) {
+            $this->unit = $requestUnit;
+        }
+
         $this->transactionDate = today()->format('Y-m-d');
         $this->category = $this->expenseCategories[0];
-        $this->startCash = $this->pettyCash; // Capture initial cash
+        $this->startCash = $this->pettyCash; // Capture initial cash (uses current unit)
     }
 
     public function updatedType($value)

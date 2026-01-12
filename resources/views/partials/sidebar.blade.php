@@ -139,6 +139,18 @@
 
                 <p
                     class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
+                    Keuangan</p>
+                <a href="{{ route('admin.manual-transaction', ['unit' => 'BISNIS']) }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-transfer text-sm mr-2 {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat
+                        Keuangan</span>
+                </a>
+
+                <p
+                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
                     Laporan</p>
                 <a href="{{ route('admin.transactions') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
@@ -194,13 +206,13 @@
                 <p
                     class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
                     Keuangan</p>
-                <a href="{{ route('admin.manual-transaction') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <a href="{{ route('admin.manual-transaction', ['unit' => 'KOPERASI']) }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i
-                        class='bx bx-transfer text-sm mr-2 {{ request()->routeIs('admin.manual-transaction') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                        class='bx bx-transfer text-sm mr-2 {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                     <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.manual-transaction') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Transaksi
-                        Manual</span>
+                        class="sidebar-text text-xs {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat
+                        Keuangan</span>
                 </a>
                 <a href="{{ route('admin.reports.monthly-financial') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
