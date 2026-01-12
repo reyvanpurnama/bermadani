@@ -63,6 +63,16 @@ class User extends Authenticatable
         return $this->hasOne(Member::class, 'userId');
     }
 
+    public function cashierShifts()
+    {
+        return $this->hasMany(CashierShift::class, 'user_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'userId');
+    }
+
     /**
      * Check if user can access admin panel
      */

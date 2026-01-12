@@ -251,6 +251,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.activity-logs');
     })->name('admin.activity-logs');
 
+    // Kasir History (Admin only)
+    Route::middleware(['role:SUPER_ADMIN,ADMIN,DEVELOPER'])->get('/kasir-history', \App\Livewire\Admin\KasirHistory::class)->name('admin.kasir-history');
+
     // Monthly Financial Report
     Route::get('/reports/monthly-financial', \App\Livewire\Admin\MonthlyFinancialReport::class)->name('admin.reports.monthly-financial');
 

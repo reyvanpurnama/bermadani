@@ -251,6 +251,13 @@
                         class="sidebar-text text-xs {{ request()->routeIs('admin.activity-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Activity
                         Log</span>
                 </a>
+                <a href="{{ route('admin.kasir-history') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.kasir-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-user-check text-sm mr-2 {{ request()->routeIs('admin.kasir-history') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.kasir-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat Kasir</span>
+                </a>
             @endif
         @endif
     </nav>
