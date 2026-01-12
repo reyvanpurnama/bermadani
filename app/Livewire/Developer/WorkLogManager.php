@@ -3,13 +3,15 @@
 namespace App\Livewire\Developer;
 
 use App\Models\WorkLog;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 use Livewire\WithPagination;
 
 class WorkLogManager extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     // Form inputs
     public $developerName;
@@ -28,6 +30,11 @@ class WorkLogManager extends Component
     public $showForm = false;
     public $editingId = null;
 
+    // Import
+    public $showImportModal = false;
+    public $importFile;
+    public $importSummary = null;
+
     protected $rules = [
         'developerName' => 'required|string|min:2|max:100',
         'date' => 'required|date',
@@ -45,6 +52,147 @@ class WorkLogManager extends Component
         $this->developerName = '';
     }
 
+    // ========== Import CSV ==========
+    public function openImportModal()
+    {
+        $this->showImportModal = true;
+        $this->importFile = null;
+        $this->importSummary = null;
+    }
+
+    public function closeImportModal()
+    {
+        $this->showImportModal = false;
+        $this->importFile = null;
+        $this->importSummary = null;
+    }
+
+    public function importCSV()
+    {
+        $this->validate([
+            'importFile' => 'required|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $filePath = $this->importFile->getRealPath();
+            $content = file_get_contents($filePath);
+            $lines = preg_split('/\r\n|\r|\n/', $content);
+
+            $developerName = '';
+            $dataStarted = false;
+            $success = 0;
+            $skipped = 0;
+            $errors = [];
+
+            foreach ($lines as $lineNumber => $line) {
+                $line = trim($line);
+                if (empty($line))
+                    continue;
+
+                // Parse CSV line
+                $columns = str_getcsv($line);
+
+                // Look for developer name in row 2 (NAMA,value,,,)
+                if (isset($columns[0]) && strtoupper(trim($columns[0])) === 'NAMA' && isset($columns[1])) {
+                    $developerName = trim($columns[1]);
+                    continue;
+                }
+
+                // Skip header row
+                if (isset($columns[0]) && strtolower(trim($columns[0])) === 'tanggal') {
+                    $dataStarted = true;
+                    continue;
+                }
+
+                // Process data rows
+                if ($dataStarted && count($columns) >= 5) {
+                    try {
+                        // Parse date: "Senin, 24 November 2025" or similar
+                        $dateStr = trim($columns[0], '"');
+                        // Try to extract date part after the comma
+                        if (preg_match('/,\s*(.+)/', $dateStr, $matches)) {
+                            $dateStr = trim($matches[1]);
+                        }
+                        $date = Carbon::parse($dateStr);
+
+                        $startTime = trim($columns[1]) ?: null;
+                        $endTime = trim($columns[2]) ?: null;
+                        $hoursWorked = floatval(trim($columns[3]));
+                        $description = trim($columns[4]);
+
+                        if ($hoursWorked > 0 && !empty($description)) {
+                            WorkLog::create([
+                                'userId' => auth()->id(),
+                                'developerName' => $developerName ?: 'Unknown Developer',
+                                'date' => $date->format('Y-m-d'),
+                                'startTime' => $startTime,
+                                'endTime' => $endTime,
+                                'hoursWorked' => $hoursWorked,
+                                'description' => $description,
+                                'hourlyRate' => 6000.00,
+                                'status' => 'PENDING',
+                            ]);
+                            $success++;
+                        } else {
+                            $skipped++;
+                        }
+                    } catch (\Exception $e) {
+                        $errors[] = "Baris " . ($lineNumber + 1) . ": " . $e->getMessage();
+                    }
+                }
+            }
+
+            $this->importSummary = [
+                'success' => $success,
+                'skipped' => $skipped,
+                'errors' => count($errors),
+                'error_details' => array_slice($errors, 0, 5), // Show first 5 errors
+                'developer' => $developerName,
+            ];
+
+            if ($success > 0) {
+                session()->flash('success', "Import berhasil! {$success} log ditambahkan untuk {$developerName}.");
+            } else {
+                session()->flash('error', 'Tidak ada data yang berhasil diimport.');
+            }
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal import: ' . $e->getMessage());
+        }
+    }
+
+    // ========== Export PDF ==========
+    public function downloadPDF()
+    {
+        $logs = WorkLog::whereYear('date', $this->filterYear)
+            ->whereMonth('date', $this->filterMonth)
+            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper))
+            ->orderBy('developerName')
+            ->orderBy('date')
+            ->get();
+
+        $stats = $this->stats;
+        $monthName = Carbon::create()->month($this->filterMonth)->locale('id')->translatedFormat('F');
+
+        $pdf = Pdf::loadView('admin.reports.developer-payroll-pdf', [
+            'logs' => $logs,
+            'stats' => $stats,
+            'month' => $this->filterMonth,
+            'year' => $this->filterYear,
+            'monthName' => $monthName,
+            'filterDeveloper' => $this->filterDeveloper,
+            'developerNames' => $this->developerNames,
+            'generatedAt' => now()->locale('id')->translatedFormat('d F Y H:i')
+        ]);
+
+        $fileName = "Laporan_Jam_Kerja_Developer_{$this->filterYear}_{$this->filterMonth}.pdf";
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $fileName);
+    }
+
+    // ========== Form CRUD ==========
     public function openForm()
     {
         $this->resetForm();
@@ -131,6 +279,7 @@ class WorkLogManager extends Component
         }
     }
 
+    // ========== Computed Properties ==========
     public function getDeveloperNamesProperty()
     {
         return WorkLog::select('developerName')

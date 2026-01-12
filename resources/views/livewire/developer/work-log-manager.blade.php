@@ -5,10 +5,20 @@
             <h1 class="text-xl font-bold text-slate-900 dark:text-white">Log Jam Kerja</h1>
             <p class="text-[11px] text-slate-500 mt-0.5">Catat dan kelola jam kerja Anda sebagai developer.</p>
         </div>
-        <button wire:click="openForm"
-            class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
-            <i class='bx bx-plus text-lg'></i> Tambah Log
-        </button>
+        <div class="flex flex-wrap gap-2">
+            <button wire:click="openImportModal"
+                class="bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white px-4 py-2 rounded-lg text-[12px] font-bold transition-colors flex items-center gap-2">
+                <i class='bx bx-upload text-lg'></i> Import CSV
+            </button>
+            <button wire:click="downloadPDF"
+                class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-rose-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bxs-file-pdf text-lg'></i> Export PDF
+            </button>
+            <button wire:click="openForm"
+                class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bx-plus text-lg'></i> Tambah Log
+            </button>
+        </div>
     </div>
 
     {{-- Flash Messages --}}
@@ -199,11 +209,11 @@
                             </td>
                             <td class="px-5 py-3">
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase
-                                            @if($log->status === 'PENDING') bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20
-                                            @elseif($log->status === 'APPROVED') bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20
-                                            @elseif($log->status === 'PAID') bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20
-                                            @else bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20
-                                            @endif">
+                                                    @if($log->status === 'PENDING') bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20
+                                                    @elseif($log->status === 'APPROVED') bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20
+                                                    @elseif($log->status === 'PAID') bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20
+                                                    @else bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20
+                                                    @endif">
                                     {{ $log->statusLabel }}
                                 </span>
                             </td>
@@ -348,6 +358,113 @@
                                 {{ $editingId ? 'Simpan Perubahan' : 'Simpan Log' }}
                             </button>
                             <button type="button" wire:click="closeForm"
+                                class="px-5 py-2.5 bg-white dark:bg-darkCard border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Import CSV Modal --}}
+    @if($showImportModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" wire:click="closeImportModal">
+                </div>
+
+                <div
+                    class="inline-block align-bottom bg-white dark:bg-darkCard rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                    <form wire:submit="importCSV">
+                        <div class="bg-white dark:bg-darkCard px-6 pt-6 pb-4">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-500/10">
+                                    <i class='bx bx-upload text-2xl text-emerald-600'></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                                        Import CSV Logbook
+                                    </h3>
+                                    <p class="text-[11px] text-slate-500">Import data jam kerja dari file CSV logbook</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                {{-- File Upload --}}
+                                <div>
+                                    <label
+                                        class="text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-2 block">File
+                                        CSV *</label>
+                                    <div class="border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-lg p-6 text-center"
+                                        x-data="{ dragging: false }" @dragover.prevent="dragging = true"
+                                        @dragleave.prevent="dragging = false"
+                                        @drop.prevent="dragging = false; $refs.fileInput.files = $event.dataTransfer.files; $refs.fileInput.dispatchEvent(new Event('change'))"
+                                        :class="{ 'border-indigo-500 bg-indigo-50 dark:bg-indigo-500/10': dragging }">
+                                        <input type="file" wire:model="importFile" accept=".csv,.txt" class="hidden"
+                                            x-ref="fileInput" id="importFile">
+                                        <label for="importFile" class="cursor-pointer">
+                                            <i class='bx bx-cloud-upload text-4xl text-slate-400 mb-2'></i>
+                                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                                <span class="text-indigo-600 font-bold">Klik untuk upload</span> atau drag &
+                                                drop
+                                            </p>
+                                            <p class="text-[10px] text-slate-400 mt-1">Format: CSV Logbook Lembur</p>
+                                        </label>
+                                    </div>
+                                    @if($importFile)
+                                        <p class="text-xs text-emerald-600 mt-2 flex items-center gap-1">
+                                            <i class='bx bx-check-circle'></i> {{ $importFile->getClientOriginalName() }}
+                                        </p>
+                                    @endif
+                                    @error('importFile') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                {{-- Format Info --}}
+                                <div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 text-xs">
+                                    <p class="font-bold text-slate-700 dark:text-white mb-2">Format CSV yang didukung:</p>
+                                    <div class="text-slate-500 dark:text-slate-400 space-y-1 font-mono text-[10px]">
+                                        <p>REKAPITULASI ABSENSI KERJA ...</p>
+                                        <p>NAMA, <span class="text-indigo-600">NAMA DEVELOPER</span>, ...</p>
+                                        <p>NIM, ...</p>
+                                        <p>PERIODE, ...</p>
+                                        <p>...</p>
+                                        <p>Tanggal, Jam Mulai, Jam Selesai, Durasi, Uraian</p>
+                                        <p>"Senin, 24 Nov 2025", 18:00, 00:00, 6, Deskripsi...</p>
+                                    </div>
+                                </div>
+
+                                {{-- Import Summary --}}
+                                @if($importSummary)
+                                    <div
+                                        class="bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 rounded-lg p-4">
+                                        <p class="font-bold text-emerald-700 dark:text-emerald-400 mb-2">Hasil Import:</p>
+                                        <ul class="text-sm text-emerald-600 dark:text-emerald-400 space-y-1">
+                                            <li>✓ Developer: <strong>{{ $importSummary['developer'] }}</strong></li>
+                                            <li>✓ Berhasil: <strong>{{ $importSummary['success'] }}</strong> log</li>
+                                            @if($importSummary['skipped'] > 0)
+                                                <li>⊘ Dilewati: {{ $importSummary['skipped'] }} baris</li>
+                                            @endif
+                                            @if($importSummary['errors'] > 0)
+                                                <li class="text-rose-500">✗ Error: {{ $importSummary['errors'] }} baris</li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-800 px-6 py-4 flex flex-row-reverse gap-2">
+                            <button type="submit" wire:loading.attr="disabled" wire:target="importCSV,importFile"
+                                class="px-5 py-2.5 bg-emerald-600 text-white rounded-lg font-bold text-sm shadow-md shadow-emerald-500/20 hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center gap-2">
+                                <span wire:loading wire:target="importCSV,importFile"><i
+                                        class='bx bx-loader-alt animate-spin'></i></span>
+                                <span wire:loading.remove wire:target="importCSV,importFile">Import Data</span>
+                            </button>
+                            <button type="button" wire:click="closeImportModal"
                                 class="px-5 py-2.5 bg-white dark:bg-darkCard border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                                 Batal
                             </button>
