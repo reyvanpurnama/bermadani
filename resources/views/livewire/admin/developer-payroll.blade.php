@@ -5,6 +5,12 @@
             <h1 class="text-xl font-bold text-slate-900 dark:text-white">Payroll Developer</h1>
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola dan proses pembayaran jam kerja developer.</p>
         </div>
+        <div>
+            <button wire:click="downloadPDF"
+                class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-rose-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bxs-file-pdf text-lg'></i> Export Report
+            </button>
+        </div>
     </div>
 
     {{-- Flash Messages --}}
@@ -100,22 +106,26 @@
     {{-- Developer Summary --}}
     @if($devSummary->count() > 0)
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 mb-6">
-            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3">Ringkasan per Developer</h3>
+            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                <i class='bx bx-group'></i> Ringkasan per Developer
+            </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 @foreach($devSummary as $summary)
-                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                    <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg group hover:ring-1 ring-indigo-500/30 transition-all">
                         <div class="flex items-center gap-3">
                             <div
-                                class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs">
-                                {{ strtoupper(substr($summary->user->name ?? 'X', 0, 1)) }}
+                                class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-xs shadow-md shadow-indigo-500/20">
+                                {{ strtoupper(substr($summary->developerName ?? 'X', 0, 1)) }}
                             </div>
                             <div>
                                 <p class="text-sm font-bold text-slate-800 dark:text-white">
-                                    {{ $summary->user->name ?? 'Unknown' }}</p>
-                                <p class="text-[10px] text-slate-400">{{ number_format($summary->total_hours, 1) }} jam</p>
+                                    {{ $summary->developerName ?? 'Unknown' }}</p>
+                                <p class="text-[10px] text-slate-400 flex items-center gap-1">
+                                    <i class='bx bx-time'></i> {{ number_format($summary->total_hours, 1) }} jam
+                                </p>
                             </div>
                         </div>
-                        <span class="text-sm font-bold text-primary">Rp
+                        <span class="text-sm font-bold text-primary dark:text-indigo-400">Rp
                             {{ number_format($summary->total_amount, 0, ',', '.') }}</span>
                     </div>
                 @endforeach
@@ -149,8 +159,8 @@
             <select wire:model.live="filterDeveloper"
                 class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
                 <option value="">Semua Developer</option>
-                @foreach($developers as $dev)
-                    <option value="{{ $dev->id }}">{{ $dev->name }}</option>
+                @foreach($developers as $name)
+                    <option value="{{ $name }}">{{ $name }}</option>
                 @endforeach
             </select>
         </div>
@@ -165,22 +175,28 @@
                 <option value="REJECTED">Rejected</option>
             </select>
         </div>
+        
+        <div class="ml-auto flex items-end">
+             <div class="text-xs text-slate-500 bg-slate-50 dark:bg-slate-800 px-3 py-2 rounded-md">
+                <i class='bx bx-info-circle'></i> Menampilkan: <span class="font-bold text-slate-800 dark:text-white">{{ $logs->total() }}</span> log work
+            </div>
+        </div>
     </div>
 
     {{-- Bulk Actions --}}
     @if(count($selectedLogs) > 0)
         <div
-            class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 rounded-xl p-4 mb-4 flex flex-wrap items-center justify-between gap-4">
-            <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                <i class='bx bx-check-square'></i> {{ count($selectedLogs) }} log terpilih
+            class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 rounded-xl p-4 mb-4 flex flex-wrap items-center justify-between gap-4 sticky top-4 z-20 shadow-lg shadow-indigo-100 dark:shadow-none backdrop-blur-sm">
+            <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                <i class='bx bx-check-square text-lg'></i> {{ count($selectedLogs) }} log terpilih
             </span>
             <div class="flex gap-2">
                 <button wire:click="approveSelected"
-                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1">
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition-colors flex items-center gap-1 shadow-md shadow-emerald-500/20">
                     <i class='bx bx-check'></i> Approve Selected
                 </button>
                 <button wire:click="markAsPaid"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1">
+                    class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 transition-colors flex items-center gap-1 shadow-md shadow-blue-500/20">
                     <i class='bx bx-money'></i> Mark as Paid
                 </button>
             </div>
@@ -195,7 +211,7 @@
                 <thead
                     class="bg-slate-50 dark:bg-slate-800/50 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-widest">
                     <tr>
-                        <th class="px-4 py-3 w-12">
+                        <th class="px-4 py-3 w-12 text-center">
                             <input type="checkbox" wire:model.live="selectAll"
                                 class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
                         </th>
@@ -211,19 +227,19 @@
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
                     @forelse ($logs as $log)
                         <tr
-                            class="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors {{ in_array($log->id, $selectedLogs) ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : '' }}">
-                            <td class="px-4 py-3">
+                            class="group hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors {{ in_array($log->id, $selectedLogs) ? 'bg-indigo-50/50 dark:bg-indigo-900/10' : '' }}">
+                            <td class="px-4 py-3 text-center">
                                 <input type="checkbox" wire:model.live="selectedLogs" value="{{ $log->id }}"
-                                    class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer">
+                                    class="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-slate-300 dark:border-slate-600 dark:bg-slate-700 cursor-pointer opacity-40 group-hover:opacity-100 {{ in_array($log->id, $selectedLogs) ? 'opacity-100' : '' }} transition-opacity">
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
                                     <div
                                         class="w-7 h-7 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-[10px]">
-                                        {{ strtoupper(substr($log->user->name ?? 'X', 0, 1)) }}
+                                        {{ strtoupper(substr($log->developerName ?? 'X', 0, 1)) }}
                                     </div>
                                     <span
-                                        class="font-medium text-slate-800 dark:text-white">{{ $log->user->name ?? '-' }}</span>
+                                        class="font-medium text-slate-800 dark:text-white">{{ $log->developerName ?? 'Unknown' }}</span>
                                 </div>
                             </td>
                             <td class="px-4 py-3 font-medium">
@@ -254,11 +270,11 @@
                                 @if($log->status === 'PENDING')
                                     <div class="flex items-center justify-center gap-1">
                                         <button wire:click="approveSingle({{ $log->id }})"
-                                            class="text-slate-400 hover:text-emerald-600 transition-colors p-1" title="Approve">
+                                            class="w-6 h-6 flex items-center justify-center rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100 hover:text-emerald-700 transition-colors" title="Approve">
                                             <i class='bx bx-check text-lg'></i>
                                         </button>
                                         <button wire:click="rejectLog({{ $log->id }})" wire:confirm="Yakin tolak log ini?"
-                                            class="text-slate-400 hover:text-rose-500 transition-colors p-1" title="Reject">
+                                            class="w-6 h-6 flex items-center justify-center rounded bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100 hover:text-rose-700 transition-colors" title="Reject">
                                             <i class='bx bx-x text-lg'></i>
                                         </button>
                                     </div>

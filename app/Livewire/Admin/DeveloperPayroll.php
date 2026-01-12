@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
 use App\Models\WorkLog;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -36,6 +36,37 @@ class DeveloperPayroll extends Component
         } else {
             $this->selectedLogs = [];
         }
+    }
+
+    public function downloadPDF()
+    {
+        $logs = WorkLog::whereYear('date', $this->filterYear)
+            ->whereMonth('date', $this->filterMonth)
+            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper))
+            ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
+            ->orderBy('developerName')
+            ->orderBy('date')
+            ->get();
+
+        $stats = $this->stats;
+        $monthName = Carbon::create()->month($this->filterMonth)->locale('id')->translatedFormat('F');
+
+        $pdf = Pdf::loadView('admin.reports.developer-payroll-pdf', [
+            'logs' => $logs,
+            'stats' => $stats,
+            'month' => $this->filterMonth,
+            'year' => $this->filterYear,
+            'monthName' => $monthName,
+            'filterDeveloper' => $this->filterDeveloper,
+            // 'developerNames' => $this->developerNames, // Unused in PDF view actually? Check view.
+            'generatedAt' => now()->locale('id')->translatedFormat('d F Y H:i')
+        ]);
+
+        $fileName = "Laporan_Payroll_Developer_{$this->filterYear}_{$this->filterMonth}.pdf";
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $fileName);
     }
 
     public function approveSelected()
@@ -124,7 +155,7 @@ class DeveloperPayroll extends Component
         return WorkLog::with('user')
             ->whereYear('date', $this->filterYear)
             ->whereMonth('date', $this->filterMonth)
-            ->when($this->filterDeveloper, fn($q) => $q->where('userId', $this->filterDeveloper))
+            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper))
             ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
@@ -133,17 +164,18 @@ class DeveloperPayroll extends Component
 
     public function getDevelopersProperty()
     {
-        return User::where('role', 'DEVELOPER')
-            ->where('isActive', true)
-            ->orderBy('name')
-            ->get();
+        // Fetch distinct developer names from WorkLog table
+        return WorkLog::select('developerName')
+            ->distinct()
+            ->orderBy('developerName')
+            ->pluck('developerName');
     }
 
     public function getStatsProperty()
     {
         $baseQuery = WorkLog::whereYear('date', $this->filterYear)
             ->whereMonth('date', $this->filterMonth)
-            ->when($this->filterDeveloper, fn($q) => $q->where('userId', $this->filterDeveloper));
+            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper));
 
         return [
             'totalHours' => (clone $baseQuery)->sum('hoursWorked'),
@@ -157,11 +189,11 @@ class DeveloperPayroll extends Component
 
     public function getDevSummaryProperty()
     {
-        return WorkLog::select('userId', DB::raw('SUM(hoursWorked) as total_hours'), DB::raw('SUM(totalAmount) as total_amount'))
+        return WorkLog::select('developerName', DB::raw('SUM(hoursWorked) as total_hours'), DB::raw('SUM(totalAmount) as total_amount'))
             ->whereYear('date', $this->filterYear)
             ->whereMonth('date', $this->filterMonth)
-            ->groupBy('userId')
-            ->with('user')
+            ->groupBy('developerName')
+            ->orderBy('developerName')
             ->get();
     }
 
