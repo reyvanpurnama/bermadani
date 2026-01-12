@@ -3,7 +3,8 @@
         <div>
             <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Neraca Saldo (Balance Sheet)</h1>
             <p class="text-slate-500 dark:text-slate-400 text-sm">Konsolidasi Unit Koperasi & Retail per
-                {{ now()->format('d F Y') }}</p>
+                {{ now()->format('d F Y') }}
+            </p>
         </div>
         <button onclick="window.print()"
             class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">
@@ -149,33 +150,32 @@
             dan pinjaman telah tercatat dengan benar.
         </p>
     </div>
+    <style>
+        @media print {
+
+            #main-sidebar,
+            #sidebar-header {
+                display: none;
+            }
+
+            .no-print {
+                display: none;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .bg-white,
+            .dark\:bg-darkCard {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .text-white {
+                color: black !important;
+            }
+        }
+    </style>
 </div>
-
-<style>
-    @media print {
-
-        #main-sidebar,
-        #sidebar-header {
-            display: none;
-        }
-
-        .no-print {
-            display: none;
-        }
-
-        body {
-            background: white;
-            color: black;
-        }
-
-        .bg-white,
-        .dark\:bg-darkCard {
-            box-shadow: none;
-            border: 1px solid #ddd;
-        }
-
-        .text-white {
-            color: black !important;
-        }
-    }
-</style>
