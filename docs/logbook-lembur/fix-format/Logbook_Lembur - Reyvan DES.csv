@@ -1,31 +1,30 @@
 REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
 NAMA,M. REYVAN PURNAMA,,,
 NIM,220102043,,,
-PERIODE,01 DESEMBER - 24 DESEMBER 2025,,,
-JAM KERJA,6 Jam/ Hari (18.00 s.d 02.00 WIB),,,
+PERIODE,01 DESEMBER - 23 DESEMBER 2025,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
 ,,,,
 Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
-"Senin, 01 Desember 2025",18:59,22:59,4,Halaman Manajemen Simpanan
-"Selasa, 02 Desember 2025",20:41,1:41,5,Fitur Import Anggota via Excel
-"Rabu, 03 Desember 2025",20:36,1:36,5,Implementasi Core System POS (Point of Sales)
-"Kamis, 04 Desember 2025",18:18,22:18,4,Fitur Registrasi Supplier
-"Jumat, 05 Desember 2025",18:27,22:27,4,Fitur Skip Check-in untuk Kasir
-"Sabtu, 06 Desember 2025",20:19,1:19,5,Form Edit Data Anggota
-"Minggu, 07 Desember 2025",18:55,0:55,6,Desain Dashboard & Login Page
-"Senin, 08 Desember 2025",18:01,23:01,5,Fitur Transaksi & Detail Penjualan
-"Selasa, 09 Desember 2025",18:48,23:48,5,Dokumentasi Teknis & API
-"Rabu, 10 Desember 2025",21:10,1:10,4,Optimasi Tampilan Quick Stats
-"Kamis, 11 Desember 2025",18:26,0:26,6,Perbaikan Skema Database & Foreign Keys
-"Jumat, 12 Desember 2025",19:28,1:28,6,Optimasi Query Database
-"Sabtu, 13 Desember 2025",18:09,23:09,5,Form Tambah Anggota dengan Wizard
-"Minggu, 14 Desember 2025",20:14,1:14,5,Approval Workflow Auto-Debit
-"Senin, 15 Desember 2025",19:24,0:24,5,Manajemen Shift Kasir (Check-in/out)
-"Selasa, 16 Desember 2025",19:55,1:55,6,Sistem Auto-Debit Simpanan Wajib
-"Rabu, 17 Desember 2025",20:52,0:52,4,Widget Profitabilitas pada Dashboard
-"Kamis, 18 Desember 2025",18:08,23:08,5,Manajemen Produk & Inventaris
-"Jumat, 19 Desember 2025",19:27,0:27,5,Perbaikan Logika Tanggal Laporan
-"Sabtu, 20 Desember 2025",19:10,0:10,5,Inisialisasi Project Laravel & Filament
-"Minggu, 21 Desember 2025",19:17,0:17,5,Sistem Upload Bukti Transaksi
-"Senin, 22 Desember 2025",20:45,1:45,5,Setup Environment Production
-"Selasa, 23 Desember 2025",21:28,1:28,4,Mempelajari Simpan Pinjam & Konsep Dasar
-"Rabu, 24 Desember 2025",20:52,1:52,5,Studi Mekanisme Pinjaman untuk Anggota
+"Senin, 01 Desember 2025",18:00,0:00,6,Halaman Manajemen Simpanan
+"Selasa, 02 Desember 2025",18:00,0:00,6,Fitur Import Anggota via Excel
+"Rabu, 03 Desember 2025",18:00,0:00,6,Implementasi Core System POS (Point of Sales)
+"Kamis, 04 Desember 2025",18:00,0:00,6,Fitur Registrasi Supplier
+"Jumat, 05 Desember 2025",18:00,0:00,6,Fitur Skip Check-in untuk Kasir
+"Sabtu, 06 Desember 2025",18:00,0:00,6,Form Edit Data Anggota
+"Minggu, 07 Desember 2025",18:00,0:00,6,Desain Dashboard & Login Page
+"Senin, 08 Desember 2025",18:00,0:00,6,Fitur Transaksi & Detail Penjualan
+"Selasa, 09 Desember 2025",18:00,0:00,6,Dokumentasi Teknis & API
+"Rabu, 10 Desember 2025",18:00,0:00,6,Optimasi Tampilan Quick Stats
+"Kamis, 11 Desember 2025",18:00,0:00,6,Perbaikan Skema Database & Foreign Keys
+"Jumat, 12 Desember 2025",18:00,0:00,6,Optimasi Query Database
+"Sabtu, 13 Desember 2025",18:00,0:00,6,Form Tambah Anggota dengan Wizard
+"Minggu, 14 Desember 2025",18:00,0:00,6,Approval Workflow Auto-Debit
+"Senin, 15 Desember 2025",18:00,0:00,6,Manajemen Shift Kasir (Check-in/out)
+"Selasa, 16 Desember 2025",18:00,0:00,6,Sistem Auto-Debit Simpanan Wajib
+"Rabu, 17 Desember 2025",18:00,0:00,6,Widget Profitabilitas pada Dashboard
+"Kamis, 18 Desember 2025",18:00,0:00,6,Manajemen Produk & Inventaris
+"Jumat, 19 Desember 2025",18:00,0:00,6,Perbaikan Logika Tanggal Laporan
+"Sabtu, 20 Desember 2025",18:00,0:00,6,Inisialisasi Project Laravel & Filament
+"Minggu, 21 Desember 2025",18:00,0:00,6,Sistem Upload Bukti Transaksi
+"Senin, 22 Desember 2025",18:00,0:00,6,Setup Environment Production
+"Selasa, 23 Desember 2025",18:00,0:00,6,Mempelajari Simpan Pinjam & Konsep Dasar
