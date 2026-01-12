@@ -1,17 +1,10 @@
 REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
 NAMA,AEGNER BILLIK,,,
 NIM,220102007,,,
-PERIODE,24 NOVEMBER - 24 DESEMBER 2025,,,
+PERIODE,01 DESEMBER - 24 DESEMBER 2025,,,
 JAM KERJA,6 Jam/ Hari (18.00 s.d 02.00 WIB),,,
 ,,,,
 Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
-"Senin, 24 November 2025",18:01,0:01,6,Dark Mode Support untuk Komponen
-"Selasa, 25 November 2025",20:27,1:27,5,Manajemen Transaksi Keuangan Manual
-"Rabu, 26 November 2025",18:26,23:26,5,Perbaikan Logika Tanggal Laporan
-"Kamis, 27 November 2025",20:35,0:35,4,Sistem Logging Aktivitas User
-"Jumat, 28 November 2025",21:54,1:54,4,Role Kasir & Dashboard Khusus
-"Sabtu, 29 November 2025",19:27,23:27,4,Form Tambah Anggota dengan Wizard
-"Minggu, 30 November 2025",19:26,1:26,6,Optimasi Tampilan Quick Stats
 "Senin, 01 Desember 2025",18:56,22:56,4,Refactoring Kode Controller
 "Selasa, 02 Desember 2025",19:25,1:25,6,Penyesuaian Timezone & Konfigurasi Dasar
 "Rabu, 03 Desember 2025",19:14,23:14,4,User Management & Tracking Owner Transaksi

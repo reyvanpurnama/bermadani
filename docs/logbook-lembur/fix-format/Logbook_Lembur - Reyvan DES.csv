@@ -1,17 +1,10 @@
 REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
 NAMA,M. REYVAN PURNAMA,,,
 NIM,220102043,,,
-PERIODE,24 NOVEMBER - 24 DESEMBER 2025,,,
+PERIODE,01 DESEMBER - 24 DESEMBER 2025,,,
 JAM KERJA,6 Jam/ Hari (18.00 s.d 02.00 WIB),,,
 ,,,,
 Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
-"Senin, 24 November 2025",21:05,1:05,4,Perbaikan Layout Sidebar & Navigasi
-"Selasa, 25 November 2025",18:37,0:37,6,Dark Mode Support untuk Komponen
-"Rabu, 26 November 2025",18:10,22:10,4,Popup Detail Riwayat Transaksi
-"Kamis, 27 November 2025",18:02,23:02,5,Routing & Menu Admin untuk Anggota
-"Jumat, 28 November 2025",19:41,1:41,6,Sistem Logging Aktivitas User
-"Sabtu, 29 November 2025",20:57,1:57,5,Manajemen Transaksi Keuangan Manual
-"Minggu, 30 November 2025",19:40,0:40,5,Update Desain Halaman Login Responsif
 "Senin, 01 Desember 2025",18:59,22:59,4,Halaman Manajemen Simpanan
 "Selasa, 02 Desember 2025",20:41,1:41,5,Fitur Import Anggota via Excel
 "Rabu, 03 Desember 2025",20:36,1:36,5,Implementasi Core System POS (Point of Sales)

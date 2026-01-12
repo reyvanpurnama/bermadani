@@ -132,6 +132,26 @@ class WorkLogManager extends Component
                             continue;
                         }
 
+                        // Translate Indonesian months to English for Carbon
+                        $indonesianMonths = [
+                            'Januari' => 'January',
+                            'Februari' => 'February',
+                            'Maret' => 'March',
+                            'April' => 'April',
+                            'Mei' => 'May',
+                            'Juni' => 'June',
+                            'Juli' => 'July',
+                            'Agustus' => 'August',
+                            'September' => 'September',
+                            'Oktober' => 'October',
+                            'November' => 'November',
+                            'Desember' => 'December',
+                        ];
+
+                        foreach ($indonesianMonths as $indo => $eng) {
+                            $dateStr = str_ireplace($indo, $eng, $dateStr);
+                        }
+
                         $date = Carbon::parse($dateStr);
 
                         $startTime = trim($columns[1]) ?: null;
