@@ -165,9 +165,9 @@
                     @foreach($devLogs as $index => $log)
                         <tr>
                             <td class="center">{{ $index + 1 }}</td>
-                            <td>{{ $log->date->translatedFormat('l, d F Y') }}</td>
-                            <td class="center">{{ $log->startTime ? \Carbon\Carbon::parse($log->startTime)->format('H:i') : '-' }}</td>
-                            <td class="center">{{ $log->endTime ? \Carbon\Carbon::parse($log->endTime)->format('H:i') : '-' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($log->date)->locale('id')->translatedFormat('l, d F Y') }}</td>
+                            <td class="center">{{ $log->startTime ?? '-' }}</td>
+                            <td class="center">{{ $log->endTime ?? '-' }}</td>
                             <td class="center">{{ number_format($log->hoursWorked, 0) }}</td>
                             <td>{{ $log->description }}</td>
                         </tr>
