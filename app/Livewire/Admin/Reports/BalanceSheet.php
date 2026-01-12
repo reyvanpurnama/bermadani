@@ -30,7 +30,7 @@ class BalanceSheet extends Component
         // Note: We might need to subtract COGS if we assume money was spent on restocking, 
         // but restocking is usually 'StockMovement' or 'ManualTransaction' (Expense).
         // For simple Cash view: Just Add Sales Revenue.
-        $posRevenue = Transaction::where('status', 'completed')->sum('total');
+        $posRevenue = Transaction::where('status', 'COMPLETED')->sum('totalAmount');
 
         // Savings (In - Out)
         // Check if we assume 'SimpananTransaction' reflects cash movement.
