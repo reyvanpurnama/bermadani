@@ -104,6 +104,16 @@ class WorkLogManager extends Component
                     continue;
                 }
 
+                // Skip footer/summary rows
+                $firstCol = strtoupper(trim($columns[0] ?? ''));
+                if (
+                    in_array($firstCol, ['JUMLAH LEMBUR', 'TOTAL JAM', '']) ||
+                    str_starts_with($firstCol, 'JUMLAH') ||
+                    str_starts_with($firstCol, 'TOTAL')
+                ) {
+                    continue;
+                }
+
                 // Process data rows
                 if ($dataStarted && count($columns) >= 5) {
                     try {
@@ -113,10 +123,26 @@ class WorkLogManager extends Component
                         if (preg_match('/,\s*(.+)/', $dateStr, $matches)) {
                             $dateStr = trim($matches[1]);
                         }
+
+                        // Skip if dateStr doesn't look like a date
+                        if (empty($dateStr) || !preg_match('/\d{1,2}\s+\w+\s+\d{4}/', $dateStr)) {
+                            $skipped++;
+                            continue;
+                        }
+
                         $date = Carbon::parse($dateStr);
 
                         $startTime = trim($columns[1]) ?: null;
                         $endTime = trim($columns[2]) ?: null;
+
+                        // Normalize time format (0:00 -> 00:00)
+                        if ($startTime && preg_match('/^\d:\d{2}$/', $startTime)) {
+                            $startTime = '0' . $startTime;
+                        }
+                        if ($endTime && preg_match('/^\d:\d{2}$/', $endTime)) {
+                            $endTime = '0' . $endTime;
+                        }
+
                         $hoursWorked = floatval(trim($columns[3]));
                         $description = trim($columns[4]);
 
