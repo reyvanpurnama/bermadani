@@ -87,6 +87,16 @@
                     class="sidebar-text text-xs {{ request()->routeIs('admin.dashboard') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Dashboard</span>
             </a>
 
+            {{-- NERACA SALDO (CONSOLIDATED) --}}
+            <a href="{{ route('admin.reports.balance-sheet') }}"
+                class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <i
+                    class='bx bx-spreadsheet text-sm mr-2 {{ request()->routeIs('admin.reports.balance-sheet') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                <span
+                    class="sidebar-text text-xs {{ request()->routeIs('admin.reports.balance-sheet') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Neraca
+                    Saldo</span>
+            </a>
+
             {{-- ADMIN: RETAIL MENU --}}
             <div x-show="workspace === 'retail'" x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-x-[-10px]" x-transition:enter-end="opacity-100 translate-x-0">
@@ -200,14 +210,6 @@
                     <span
                         class="sidebar-text text-xs {{ request()->routeIs('admin.reports.monthly-financial') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan
                         Bulanan</span>
-                </a>
-                <a href="{{ route('admin.reports.balance-sheet') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-spreadsheet text-sm mr-2 {{ request()->routeIs('admin.reports.balance-sheet') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.reports.balance-sheet') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Neraca
-                        Saldo</span>
                 </a>
             </div>
 
