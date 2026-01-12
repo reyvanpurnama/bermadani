@@ -32,7 +32,7 @@
             </div>
         </div>
 
-        <div class="lg:col-span-4 h-full flex flex-col gap-4">
+        <div class="lg:col-span-4 h-full grid grid-cols-2 lg:flex lg:flex-col gap-4">
             <div
                 class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group relative">
                 <div>
@@ -96,7 +96,7 @@
                                     <button @click="open = !open"
                                         class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
                                         <i class='bx bx-calendar text-slate-500 text-sm'></i>
-                                        <span>
+                                        <span class="truncate max-w-[120px] sm:max-w-none">
                                             @if($dateFilter === 'custom')
                                                 {{ \Carbon\Carbon::parse($startDate)->format('d M y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d M y') }}
                                             @else
@@ -114,11 +114,31 @@
                                         <i class='bx bx-chevron-down text-slate-400'></i>
                                     </button>
 
-                                    <div x-show="open" x-transition.origin.top.right x-cloak style="display: none !important;"
-                                        class="absolute right-0 top-full mt-2 w-auto min-w-[320px] md:w-[450px] bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 z-50 overflow-hidden flex flex-col md:flex-row">
+                                    {{-- Mobile Backdrop --}}
+                                    <div x-show="open" x-transition.opacity 
+                                        @click="open = false"
+                                        class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
+                                        x-cloak></div>
+
+                                    <div x-show="open" 
+                                        x-transition:enter="transition ease-out duration-300"
+                                        x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:opacity-0 md:scale-95"
+                                        x-transition:enter-end="opacity-100 translate-y-0 md:opacity-100 md:scale-100"
+                                        x-transition:leave="transition ease-in duration-200"
+                                        x-transition:leave-start="opacity-100 translate-y-0 md:opacity-100 md:scale-100"
+                                        x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:opacity-0 md:scale-95"
+                                        x-cloak 
+                                        class="fixed bottom-0 left-0 right-0 z-50 w-full bg-white dark:bg-slate-800 rounded-t-2xl shadow-2xl border-t border-slate-200 dark:border-slate-700 
+                                               md:absolute md:bottom-auto md:left-auto md:right-0 md:top-full md:mt-2 md:w-auto md:min-w-[450px] md:max-w-[450px] md:rounded-xl md:border md:shadow-xl md:flex md:flex-row overflow-hidden
+                                               flex flex-col max-h-[85vh] md:max-h-none">
                                         
+                                        {{-- Mobile Handle --}}
+                                        <div class="flex justify-center p-3 md:hidden">
+                                            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
+                                        </div>
+
                                         {{-- Presets Sidebar --}}
-                                        <div class="w-full md:w-36 bg-slate-50 dark:bg-slate-900 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 p-2 flex flex-col gap-1">
+                                        <div class="w-full md:w-36 bg-slate-50 dark:bg-slate-900/50 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 p-2 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible">
                                             @foreach([
                                                 'today' => 'Hari Ini',
                                                 'yesterday' => 'Kemarin',
@@ -128,35 +148,45 @@
                                                 'this_year' => 'Tahun Ini'
                                             ] as $key => $label)
                                                 <button wire:click="$set('dateFilter', '{{ $key }}')" @click="open = false"
-                                                    class="text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors w-full {{ $dateFilter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                                                    class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $dateFilter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
                                                     {{ $label }}
                                                 </button>
                                             @endforeach
-                                            <div class="h-px bg-slate-200 dark:bg-slate-700 my-1"></div>
+                                            <div class="w-px md:w-full h-8 md:h-px bg-slate-200 dark:bg-slate-700 mx-1 md:mx-0 md:my-1 flex-shrink-0"></div>
                                             <button @click="document.getElementById('startDate').focus()"
-                                                class="text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors w-full {{ $dateFilter === 'custom' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                                                class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $dateFilter === 'custom' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
                                                 Custom Range
                                             </button>
                                         </div>
 
                                         {{-- Custom Range Area --}}
-                                        <div class="flex-1 p-4 bg-white dark:bg-slate-800 flex flex-col justify-center">
-                                            <h4 class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3">Pilih Rentang Tanggal</h4>
+                                        <div class="flex-1 p-4 bg-white dark:bg-slate-800 flex flex-col justify-center pb-10 md:pb-4">
+                                            <h4 class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3 hidden md:block">Pilih Rentang Tanggal</h4>
+                                            
+                                            {{-- Mobile Title --}}
+                                            <div class="mb-4 md:hidden">
+                                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Pilih Tanggal</h3>
+                                                <p class="text-[11px] text-slate-500">Sesuaikan rentang waktu laporan</p>
+                                            </div>
+
                                             <div class="grid grid-cols-2 gap-3 mb-4">
                                                 <div>
                                                     <label class="block text-[10px] font-medium text-slate-500 mb-1">Dari</label>
                                                     <input type="date" wire:model.live.debounce.500ms="startDate" id="startDate"
-                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-2 md:py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                                 </div>
                                                 <div>
                                                     <label class="block text-[10px] font-medium text-slate-500 mb-1">Sampai</label>
                                                     <input type="date" wire:model.live.debounce.500ms="endDate"
-                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-2 md:py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                                                 </div>
                                             </div>
-                                            <div class="flex justify-end pt-2 border-t border-slate-100 dark:border-slate-700">
+                                            <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-700">
+                                                <span class="text-[10px] text-slate-400">
+                                                    {{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} Hari
+                                                </span>
                                                 <button type="button" @click="open = false"
-                                                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] uppercase font-bold px-4 py-2 rounded-md transition-colors shadow-sm shadow-indigo-200 dark:shadow-none">
+                                                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] uppercase font-bold px-4 py-2.5 md:py-2 rounded-md transition-colors shadow-sm shadow-indigo-200 dark:shadow-none w-full md:w-auto ml-3 md:ml-0">
                                                     Selesai
                                                 </button>
                                             </div>
