@@ -225,7 +225,7 @@ class WorkLogManager extends Component
             ->get();
 
         $stats = $this->stats;
-        $monthName = Carbon::create()->month($this->filterMonth)->locale('id')->translatedFormat('F');
+        $monthName = Carbon::createFromFormat('m', $this->filterMonth)->locale('id')->translatedFormat('F');
 
         $pdf = Pdf::loadView('admin.reports.developer-payroll-pdf', [
             'logs' => $logs,
