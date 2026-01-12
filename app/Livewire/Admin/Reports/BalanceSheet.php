@@ -96,41 +96,44 @@ class BalanceSheet extends Component
 
     public function getLiabilitiesProperty()
     {
-        // 1. Simpanan Anggota (Member Savings)
-        $pokok = Member::sum('simpananPokok');
-        $wajib = Member::sum('simpananWajib');
+        // 1. Simpanan Anggota (Liablitas Jangka Pendek)
+        // Menurut PSAK 27: Simpanan Sukarela adalah Hutang karena sifatnya cair.
         $sukarela = Member::sum('simpananSukarela');
-
-        $totalSavings = $pokok + $wajib + $sukarela;
 
         // 2. Utang (Maybe to Suppliers? Not tracked yet).
 
         return [
-            'simpanan_pokok' => $pokok,
-            'simpanan_wajib' => $wajib,
             'simpanan_sukarela' => $sukarela,
-            'total' => $totalSavings
+            'total' => $sukarela
         ];
     }
 
     public function getEquityProperty()
     {
-        // 1. Modal Awal / Suntikan Modal
+        // 1. Modal Anggota (Ekuitas)
+        // Menurut PSAK 27: Simpanan Pokok & Wajib adalah Ekuitas.
+        $pokok = Member::sum('simpananPokok');
+        $wajib = Member::sum('simpananWajib');
+
+        // 2. Modal Awal / Suntikan Modal (Hibah/Donasi)
         $capital = FinancialTransaction::income()
             ->where('category', 'Suntikan Modal')
             ->sum('amount');
 
-        // 2. SHU (Sisa Hasil Usaha)
-        // Assets - Liabilities - Capital
+        // 3. SHU (Sisa Hasil Usaha)
+        // Assets - Liabilities - (Modal Anggota + Modal Disetor)
         $assets = $this->assets['total'];
         $liabilities = $this->liabilities['total'];
+        $totalModal = $pokok + $wajib + $capital;
 
-        $shu = $assets - $liabilities - $capital;
+        $shu = $assets - $liabilities - $totalModal;
 
         return [
+            'simpanan_pokok' => $pokok,
+            'simpanan_wajib' => $wajib,
             'capital' => $capital,
             'shu' => $shu,
-            'total' => $capital + $shu
+            'total' => $totalModal + $shu
         ];
     }
 

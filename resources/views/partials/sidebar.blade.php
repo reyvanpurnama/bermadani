@@ -93,8 +93,7 @@
                 <i
                     class='bx bx-spreadsheet text-sm mr-2 {{ request()->routeIs('admin.reports.balance-sheet') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                 <span
-                    class="sidebar-text text-xs {{ request()->routeIs('admin.reports.balance-sheet') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Neraca
-                    Saldo</span>
+                    class="sidebar-text text-xs {{ request()->routeIs('admin.reports.balance-sheet') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Neraca</span>
             </a>
 
             {{-- ADMIN: RETAIL MENU --}}
