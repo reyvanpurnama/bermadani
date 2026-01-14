@@ -109,111 +109,132 @@
             @endif
 
             <div x-show="workspace === 'retail'" x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-[-10px]" x-transition:enter-end="opacity-100 translate-x-0">
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Retail Ops</p>
-                <a href="{{ route('admin.pos') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-desktop text-sm mr-2 {{ request()->routeIs('admin.pos') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.pos') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">POS
-                        System</span>
-                </a>
+                x-transition:enter-start="opacity-0 translate-x-[-10px]" x-transition:enter-end="opacity-100 translate-x-0"
+                class="space-y-1 mt-4">
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Inventory</p>
-                <a href="{{ route('admin.products') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-package text-sm mr-2 {{ request()->routeIs('admin.products*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.products*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Stok
-                        Barang</span>
-                </a>
-                <a href="{{ route('admin.stock-mutation') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-transfer-alt text-sm mr-2 {{ request()->routeIs('admin.stock-mutation') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.stock-mutation') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Mutasi
-                        Stok</span>
-                </a>
-                <a href="{{ route('admin.restock-requests') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.restock-requests') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-cart-download text-sm mr-2 {{ request()->routeIs('admin.restock-requests') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.restock-requests') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Request
-                        Masuk</span>
-                </a>
-                <a href="{{ route('admin.stock-adjustment') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-adjustment') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-slider-alt text-sm mr-2 {{ request()->routeIs('admin.stock-adjustment') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.stock-adjustment') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Penyesuaian</span>
-                </a>
-                <a href="{{ route('admin.product-review') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-check-shield text-sm mr-2 {{ request()->routeIs('admin.product-review') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.product-review') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Review
-                        Produk</span>
-                </a>
-                <a href="{{ route('admin.suppliers') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-store-alt text-sm mr-2 {{ request()->routeIs('admin.suppliers*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.suppliers*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Supplier</span>
-                </a>
+                {{-- Retail Ops Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.pos') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Retail Ops</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.pos') }}"
+                            class="nav-item flex items-center px-4 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i
+                                class='bx bx-desktop text-sm mr-2 {{ request()->routeIs('admin.pos') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                            <span
+                                class="sidebar-text text-xs {{ request()->routeIs('admin.pos') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">POS
+                                System</span>
+                        </a>
+                    </div>
+                </div>
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Konsinyasi</p>
-                <a href="{{ route('admin.consignment-batches') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-batches') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-notepad text-sm mr-2 {{ request()->routeIs('admin.consignment-batches') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.consignment-batches') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Daftar
-                        Batch</span>
-                </a>
-                <a href="{{ route('admin.consignment-report') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-file text-sm mr-2 {{ request()->routeIs('admin.consignment-report') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.consignment-report') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan</span>
-                </a>
+                {{-- Inventory Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.products*', 'admin.stock*', 'admin.restock*', 'admin.suppliers*', 'admin.product-review') ? 'true' : 'false' }} }"
+                    class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Inventory</span>
+                        </div>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.products') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-package text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Stok Barang</span>
+                        </a>
+                        <a href="{{ route('admin.stock-mutation') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-transfer-alt text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Mutasi Stok</span>
+                        </a>
+                        <a href="{{ route('admin.restock-requests') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.restock-requests') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-cart-download text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Request Masuk</span>
+                        </a>
+                        <a href="{{ route('admin.stock-adjustment') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-adjustment') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-slider-alt text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Penyesuaian</span>
+                        </a>
+                        <a href="{{ route('admin.product-review') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.product-review') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-check-shield text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Review Produk</span>
+                        </a>
+                        <a href="{{ route('admin.suppliers') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-store-alt text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Supplier</span>
+                        </a>
+                    </div>
+                </div>
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keuangan</p>
-                <a href="{{ route('admin.manual-transaction', ['unit' => 'BISNIS']) }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-transfer text-sm mr-2 {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat
-                        Keuangan</span>
-                </a>
+                {{-- Konsinyasi Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.consignment*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Konsinyasi</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.consignment-batches') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-batches') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-notepad text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Daftar Batch</span>
+                        </a>
+                        <a href="{{ route('admin.consignment-report') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-report') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-file text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Laporan</span>
+                        </a>
+                    </div>
+                </div>
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Laporan</p>
-                <a href="{{ route('admin.transactions') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-receipt text-sm mr-2 {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
-                        Penjualan</span>
-                </a>
+                {{-- Keuangan Group (Single but kept for structure) --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.manual-transaction') ? 'true' : 'false' }} }"
+                    class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Keuangan</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.manual-transaction', ['unit' => 'BISNIS']) }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-transfer text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Catat Keuangan</span>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Laporan Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.transactions*') ? 'true' : 'false' }} }"
+                    class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Laporan</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.transactions') }}"
+                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-receipt text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Riwayat Penjualan</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
             {{-- ADMIN: CORE (KOPERASI) MENU --}}
