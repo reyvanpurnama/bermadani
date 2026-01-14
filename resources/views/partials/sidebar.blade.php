@@ -156,6 +156,14 @@
                     <span
                         class="sidebar-text text-xs {{ request()->routeIs('admin.stock-adjustment') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Penyesuaian</span>
                 </a>
+                <a href="{{ route('admin.product-review') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-check-shield text-sm mr-2 {{ request()->routeIs('admin.product-review') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.product-review') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Review
+                        Produk</span>
+                </a>
                 <a href="{{ route('admin.suppliers') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i
