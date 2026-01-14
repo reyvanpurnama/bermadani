@@ -156,6 +156,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::put('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('admin.products.destroy');
 
+    // Konsinyasi
+    Route::get('/konsinyasi/batch', \App\Livewire\Admin\ConsignmentBatches::class)->name('admin.consignment-batches');
+
     // Categories
     Route::get('/kategori', function () {
         return view('admin.categories.index');
