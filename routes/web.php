@@ -143,6 +143,11 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/inventaris/tambah', function () {
         return view('admin.products.create');
     })->name('admin.products.create');
+    // Product Approvals
+    Route::get('/product-approvals', [App\Http\Controllers\ProductController::class, 'approvals'])->name('admin.product-approvals');
+    Route::post('/products/{id}/approve', [App\Http\Controllers\ProductController::class, 'approve'])->name('admin.products.approve');
+    Route::post('/products/{id}/reject', [App\Http\Controllers\ProductController::class, 'reject'])->name('admin.products.reject');
+
     Route::post('/inventaris', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/inventaris/mutasi', \App\Livewire\Admin\StockMutation::class)->name('admin.stock-mutation');
     Route::get('/inventaris/{id}/edit', function ($id) {
