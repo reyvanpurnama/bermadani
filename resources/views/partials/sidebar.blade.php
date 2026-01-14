@@ -103,7 +103,8 @@
                     <i
                         class='bx bx-time-five text-sm mr-2 {{ request()->routeIs('developer.work-logs') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                     <span
-                        class="sidebar-text text-xs {{ request()->routeIs('developer.work-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Log Kerja</span>
+                        class="sidebar-text text-xs {{ request()->routeIs('developer.work-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Log
+                        Kerja</span>
                 </a>
             @endif
 
@@ -129,8 +130,7 @@
                     <i
                         class='bx bx-package text-sm mr-2 {{ request()->routeIs('admin.products*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                     <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.products*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Stok
-                        Barang</span>
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.products*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Produk</span>
                 </a>
                 <a href="{{ route('admin.categories') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.categories*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
@@ -145,6 +145,18 @@
                         class='bx bx-store-alt text-sm mr-2 {{ request()->routeIs('admin.suppliers*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                     <span
                         class="sidebar-text text-xs {{ request()->routeIs('admin.suppliers*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Supplier</span>
+                </a>
+                <a href="#"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+                    <i
+                        class='bx bx-archive-in text-sm mr-2 opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pengajuan Produk</span>
+                </a>
+                <a href="#"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+                    <i
+                        class='bx bx-cart-download text-sm mr-2 opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Permintaan Restock</span>
                 </a>
 
                 <p
@@ -266,7 +278,8 @@
                     <i
                         class='bx bx-user-check text-sm mr-2 {{ request()->routeIs('admin.kasir-history') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                     <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.kasir-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat Kasir</span>
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.kasir-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
+                        Kasir</span>
                 </a>
                 <a href="{{ route('admin.developer-payroll') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
