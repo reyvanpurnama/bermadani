@@ -44,14 +44,14 @@ class ConsignmentReport extends Component
             ->select(
                 'suppliers.id',
                 'suppliers.businessName',
-                'suppliers.supplierType',
+                'suppliers.productCategory',
                 DB::raw('COUNT(DISTINCT consignment_items.productId) as productCount'),
                 DB::raw('SUM(consignment_items.soldQty) as totalSold'),
                 DB::raw('SUM(consignment_items.initialQty) as totalInitial'),
                 DB::raw('SUM(consignment_items.soldQty * consignment_items.sellPrice) as totalOmzet'),
                 DB::raw('SUM(consignment_items.soldQty * consignment_items.sellPrice * consignment_items.feePercent / 100) as totalFee')
             )
-            ->groupBy('suppliers.id', 'suppliers.businessName', 'suppliers.supplierType')
+            ->groupBy('suppliers.id', 'suppliers.businessName', 'suppliers.productCategory')
             ->orderByDesc('totalOmzet')
             ->get();
 
