@@ -183,12 +183,12 @@
 
             if (isCollapsed) {
                 sidebar?.classList.remove('w-20');
-                sidebar?.classList.add('w-64');
+                sidebar?.classList.add('w-[180px]');
                 mainContent?.classList.remove('md:ml-20');
-                mainContent?.classList.add('md:ml-64');
+                mainContent?.classList.add('md:ml-[180px]');
                 if (bottomBar) {
                     bottomBar.classList.remove('md:ml-20');
-                    bottomBar.classList.add('md:ml-64');
+                    bottomBar.classList.add('md:ml-[180px]');
                 }
 
                 sidebarTexts.forEach(el => {
@@ -198,12 +198,12 @@
 
                 localStorage.setItem('sidebar-collapsed', 'false');
             } else {
-                sidebar?.classList.remove('w-64');
+                sidebar?.classList.remove('w-[180px]');
                 sidebar?.classList.add('w-20');
-                mainContent?.classList.remove('md:ml-64');
+                mainContent?.classList.remove('md:ml-[180px]');
                 mainContent?.classList.add('md:ml-20');
                 if (bottomBar) {
-                    bottomBar.classList.remove('md:ml-64');
+                    bottomBar.classList.remove('md:ml-[180px]');
                     bottomBar.classList.add('md:ml-20');
                 }
 
@@ -220,13 +220,13 @@
         // Init Sidebar State
         const savedState = localStorage.getItem('sidebar-collapsed');
         if (savedState === 'true') {
-            sidebar?.classList.remove('w-64');
+            sidebar?.classList.remove('w-[180px]');
             sidebar?.classList.add('w-20');
-            mainContent?.classList.remove('md:ml-64');
+            mainContent?.classList.remove('md:ml-[180px]');
             mainContent?.classList.add('md:ml-20');
             const bottomBar = document.getElementById('pos-bottom-bar');
             if (bottomBar) {
-                bottomBar.classList.remove('md:ml-64');
+                bottomBar.classList.remove('md:ml-[180px]');
                 bottomBar.classList.add('md:ml-20');
             }
 
