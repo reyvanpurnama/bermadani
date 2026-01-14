@@ -55,11 +55,11 @@ class StockMutation extends Component
             $query->where('movementType', $this->filterType);
         }
 
-        $mutations = $query->orderBy('occurredAt', 'desc')->paginate(10);
+        $movements = $query->orderBy('occurredAt', 'desc')->paginate(10);
         $products = Product::where('isActive', true)->orderBy('name')->get();
 
         return view('livewire.admin.stock-mutation', [
-            'mutations' => $mutations,
+            'movements' => $movements,
             'products' => $products
         ])->layout('layouts.admin');
     }
