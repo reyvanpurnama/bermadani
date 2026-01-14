@@ -277,9 +277,11 @@
                             update(data) {
                                 if(!data || !data.categories) return;
 
-                                // Crypto-style Horizontal Scroll Logic
+                                // Responsive Logic
                                 const count = data.categories.length;
-                                // Threshold: if more than 30 points, each point gets 30px
+                                const isMobile = window.innerWidth < 768;
+                                
+                                // Threshold Logic (Scrollable)
                                 const threshold = 30; 
                                 const minWidth = 30; // px per point
                                 
@@ -292,20 +294,29 @@
                                     this.$refs.chartContainer.style.width = newWidth;
                                 }
 
+                                // Tick Calculation
+                                // Mobile: Max 6 ticks, Desktop: Max 15
+                                const maxTicks = isMobile ? 6 : 15;
+                                
                                 this.chart.updateOptions({
                                     xaxis: { 
                                         categories: data.categories,
-                                        tickAmount: Math.min(count, 12), // Prevent overcrowding
+                                        tickAmount: Math.min(count, maxTicks), 
                                         labels: {
+                                            rotate: 0, // Keep horizontal for readability
+                                            hideOverlappingLabels: true,
                                             formatter: function(val) {
                                                 try {
                                                     const d = new Date(val);
                                                     if(isNaN(d.getTime())) return val;
                                                     const day = d.getDate();
                                                     const month = d.toLocaleString('default', { month: 'short' });
-                                                    // Jika range tahunan/panjang, tampilkan tahun
+                                                    
+                                                    // Jika range tahunan/panjang atau cross-year
+                                                    // Format: Jan '25 (lebih pendek dari Jan 2025)
                                                     if (count > 60) {
-                                                        return `${month} '${d.getFullYear().toString().substr(-2)}`;
+                                                        const yearShort = d.getFullYear().toString().substr(-2);
+                                                        return `${month} '${yearShort}`;
                                                     }
                                                     return `${day} ${month}`;
                                                 } catch(e) { return val; }
