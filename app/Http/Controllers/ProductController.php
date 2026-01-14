@@ -23,12 +23,11 @@ class ProductController extends Controller
         // Record initial stock movement
         if ($product->stock > 0) {
             StockMovement::create([
-                'id' => Str::uuid(),
                 'productId' => $product->id,
-                'type' => 'RESTOCK',
+                'movementType' => 'RESTOCK',
                 'quantity' => $product->stock,
-                'reference' => 'Initial Stock',
-                'date' => now(),
+                'note' => 'Initial Stock',
+                'occurredAt' => now(),
             ]);
         }
 
@@ -47,14 +46,13 @@ class ProductController extends Controller
         // Track stock changes
         if ($product->stock != $validated['stock']) {
             $diff = $validated['stock'] - $product->stock;
-            
+
             StockMovement::create([
-                'id' => Str::uuid(),
                 'productId' => $product->id,
-                'type' => $diff > 0 ? 'RESTOCK' : 'ADJUSTMENT',
+                'movementType' => $diff > 0 ? 'RESTOCK' : 'ADJUSTMENT',
                 'quantity' => abs($diff),
-                'reference' => 'Manual Adjustment',
-                'date' => now(),
+                'note' => 'Manual Adjustment',
+                'occurredAt' => now(),
             ]);
         }
 

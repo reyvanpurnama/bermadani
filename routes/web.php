@@ -143,12 +143,22 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/inventaris/tambah', function () {
         return view('admin.products.create');
     })->name('admin.products.create');
+
+
+    Route::get('/restock-requests', \App\Livewire\Admin\RestockManagement::class)->name('admin.restock-requests');
     Route::post('/inventaris', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
+    Route::get('/inventaris/mutasi', \App\Livewire\Admin\StockMutation::class)->name('admin.stock-mutation');
+    Route::get('/inventaris/penyesuaian', \App\Livewire\Admin\StockAdjustment::class)->name('admin.stock-adjustment');
+    Route::get('/inventaris/review', \App\Livewire\Admin\ProductReview::class)->name('admin.product-review');
     Route::get('/inventaris/{id}/edit', function ($id) {
         return view('admin.products.edit', ['productId' => $id]);
     })->name('admin.products.edit');
     Route::put('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/inventaris/{id}', [App\Http\Controllers\ProductController::class, 'destroy'])->name('admin.products.destroy');
+
+    // Konsinyasi
+    Route::get('/konsinyasi/batch', \App\Livewire\Admin\ConsignmentBatches::class)->name('admin.consignment-batches');
+    Route::get('/konsinyasi/laporan', \App\Livewire\Admin\ConsignmentReport::class)->name('admin.consignment-report');
 
     // Categories
     Route::get('/kategori', function () {
