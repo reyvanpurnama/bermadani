@@ -14,6 +14,9 @@
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola produk, stok, dan harga.</p>
         </div>
         <div class="flex gap-2">
+            <button wire:click="openCategoryModal" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-category'></i> Kategori
+            </button>
             <button wire:click="$refresh" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-refresh'></i> Refresh
             </button>
@@ -201,4 +204,184 @@
             </div>
         @endif
     </div>
+
+    {{-- Category Modal --}}
+    @if($showCategoryModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto">
+            <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                {{-- Overlay --}}
+                <div wire:click="closeCategoryModal" class="fixed inset-0 transition-opacity bg-slate-900/70 backdrop-blur-sm"></div>
+
+                {{-- Modal Panel --}}
+                <div class="inline-block w-full max-w-4xl p-6 my-8 text-left align-middle transition-all transform bg-white dark:bg-darkCard shadow-xl rounded-2xl relative">
+                    {{-- Modal Header --}}
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-700">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+                                <i class='bx bx-category text-primary'></i> Kelola Kategori
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1">Tambah, edit, atau hapus kategori produk.</p>
+                        </div>
+                        <button wire:click="closeCategoryModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
+                            <i class='bx bx-x text-2xl'></i>
+                        </button>
+                    </div>
+
+                    {{-- Flash Messages --}}
+                    @if (session()->has('categoryMessage'))
+                        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 my-4 flex items-center gap-2">
+                            <i class='bx bx-check-circle text-xl text-emerald-600 dark:text-emerald-400'></i>
+                            <span class="text-sm font-medium text-emerald-700 dark:text-emerald-400">{{ session('categoryMessage') }}</span>
+                        </div>
+                    @endif
+                    @if (session()->has('categoryError'))
+                        <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-lg p-3 my-4 flex items-center gap-2">
+                            <i class='bx bx-error-circle text-xl text-rose-600 dark:text-rose-400'></i>
+                            <span class="text-sm font-medium text-rose-700 dark:text-rose-400">{{ session('categoryError') }}</span>
+                        </div>
+                    @endif
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+                        {{-- Left: Category List --}}
+                        <div class="lg:col-span-2">
+                            {{-- Search --}}
+                            <div class="relative mb-4">
+                                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                                    <i class='bx bx-search'></i>
+                                </span>
+                                <input wire:model.live.debounce.300ms="categorySearch" type="text" 
+                                       class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-lg pl-10 pr-3 py-2.5 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white" 
+                                       placeholder="Cari kategori...">
+                            </div>
+
+                            {{-- Category Table --}}
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 max-h-[400px] overflow-y-auto">
+                                <table class="w-full text-left text-[13px]">
+                                    <thead class="bg-slate-100 dark:bg-slate-700 sticky top-0">
+                                        <tr>
+                                            <th class="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
+                                            <th class="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Produk</th>
+                                            <th class="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
+                                            <th class="px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                                        @forelse($categoryList as $category)
+                                            <tr class="hover:bg-white dark:hover:bg-slate-800 transition-colors {{ $categoryId == $category->id ? 'bg-indigo-50 dark:bg-indigo-900/20' : '' }}">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <span class="text-xl">{{ $category->icon ?: '📦' }}</span>
+                                                        <div>
+                                                            <h6 class="font-semibold text-slate-800 dark:text-white">{{ $category->name }}</h6>
+                                                            <p class="text-[10px] text-slate-400 font-mono">/{{ $category->slug }}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="font-bold text-slate-700 dark:text-white">{{ $category->products_count }}</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button wire:click="toggleCategoryStatus('{{ $category->id }}')" 
+                                                            class="{{ $category->isActive ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-slate-200 text-slate-500 dark:bg-slate-600 dark:text-slate-400' }} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide hover:opacity-80">
+                                                        {{ $category->isActive ? 'Aktif' : 'Hidden' }}
+                                                    </button>
+                                                </td>
+                                                <td class="px-4 py-3 text-right">
+                                                    <div class="flex items-center justify-end gap-1">
+                                                        <button wire:click="editCategory('{{ $category->id }}')" 
+                                                                class="text-slate-400 hover:text-primary transition-colors p-1">
+                                                            <i class='bx bx-edit-alt text-lg'></i>
+                                                        </button>
+                                                        <button wire:click="deleteCategory('{{ $category->id }}')" 
+                                                                wire:confirm="Yakin ingin menghapus kategori ini?"
+                                                                class="text-slate-400 hover:text-rose-500 transition-colors p-1">
+                                                            <i class='bx bx-trash text-lg'></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="px-4 py-8 text-center">
+                                                    <div class="flex flex-col items-center justify-center text-slate-400">
+                                                        <i class='bx bx-category text-3xl mb-2 opacity-50'></i>
+                                                        <p class="text-sm">Belum ada kategori</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {{-- Right: Add/Edit Form --}}
+                        <div class="lg:col-span-1">
+                            <div class="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-sm font-bold text-slate-700 dark:text-white">
+                                        {{ $isEditingCategory ? '✏️ Edit Kategori' : '➕ Tambah Baru' }}
+                                    </h4>
+                                    @if($isEditingCategory)
+                                        <button wire:click="resetCategoryForm" class="text-xs text-primary hover:underline">
+                                            Batal Edit
+                                        </button>
+                                    @endif
+                                </div>
+
+                                <form wire:submit="saveCategory" class="space-y-4">
+                                    {{-- Name --}}
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Nama Kategori *</label>
+                                        <input wire:model="categoryName" type="text" 
+                                               class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[13px] rounded-lg px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white" 
+                                               placeholder="Contoh: Minuman">
+                                        @error('categoryName') <span class="text-rose-500 text-xs mt-1">{{ $message }}</span> @enderror
+                                    </div>
+
+                                    {{-- Icon --}}
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Icon (Emoji)</label>
+                                        <input wire:model="categoryIcon" type="text" 
+                                               class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[13px] rounded-lg px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white" 
+                                               placeholder="🥤">
+                                    </div>
+
+                                    {{-- Slug --}}
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Slug (Opsional)</label>
+                                        <input wire:model="categorySlug" type="text" 
+                                               class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[13px] rounded-lg px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white font-mono" 
+                                               placeholder="minuman">
+                                    </div>
+
+                                    {{-- Description --}}
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-1">Deskripsi</label>
+                                        <textarea wire:model="categoryDescription" rows="2"
+                                                  class="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-[13px] rounded-lg px-3 py-2.5 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white resize-none" 
+                                                  placeholder="Deskripsi singkat..."></textarea>
+                                    </div>
+
+                                    {{-- Status --}}
+                                    <div class="flex items-center gap-2">
+                                        <input wire:model="categoryIsActive" type="checkbox" id="categoryActive"
+                                               class="w-4 h-4 text-primary bg-slate-100 border-slate-300 rounded focus:ring-primary">
+                                        <label for="categoryActive" class="text-sm text-slate-600 dark:text-slate-300">Aktif</label>
+                                    </div>
+
+                                    {{-- Submit Button --}}
+                                    <button type="submit" 
+                                            class="w-full bg-primary hover:bg-indigo-700 text-white font-bold py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
+                                        <i class='bx {{ $isEditingCategory ? "bx-save" : "bx-plus" }}'></i>
+                                        {{ $isEditingCategory ? 'Simpan Perubahan' : 'Tambah Kategori' }}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
 </div>
