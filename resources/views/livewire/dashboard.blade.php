@@ -288,12 +288,15 @@
                                 // Threshold Logic (Scrollable)
                                 // Hourly: 24, Daily: 30, Monthly: 12 (karena label monthly lebar)
                                 const threshold = granularity === 'monthly' ? 12 : 30; 
-                                const minWidth = granularity === 'monthly' ? 50 : 30; // px per point
+                                const minWidth = granularity === 'monthly' ? 60 : 30; // px per point
                                 
                                 let newWidth = '100%';
+                                let isScrollable = false;
+
                                 // Hanya aktifkan scroll jika data melebihi threshold layar
                                 if (count > threshold) {
                                     newWidth = `${count * minWidth}px`;
+                                    isScrollable = true;
                                 }
                                 
                                 if (this.$refs.chartContainer) {
@@ -301,15 +304,23 @@
                                 }
 
                                 // Tick Calculation
-                                const maxTicks = isMobile ? 6 : 15;
+                                let tickAmount = undefined;
+                                let hideOverlapping = true;
+
+                                if (isScrollable) {
+                                    tickAmount = count;
+                                    hideOverlapping = false;
+                                } else {
+                                    tickAmount = isMobile ? 6 : 15;
+                                }
                                 
                                 this.chart.updateOptions({
                                     xaxis: { 
                                         categories: data.categories, // Harus format ISO YYYY-MM-DD
-                                        tickAmount: Math.min(count, maxTicks), 
+                                        tickAmount: tickAmount, 
                                         labels: {
                                             rotate: 0, 
-                                            hideOverlappingLabels: true,
+                                            hideOverlappingLabels: hideOverlapping,
                                             showDuplicates: false, // Fix duplicates
                                             formatter: function(val, timestamp) {
                                                 try {
