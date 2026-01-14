@@ -211,19 +211,9 @@
                                     series: [],
                                     chart: {
                                         height: '100%',
-                                        type: 'area', // Area chart
+                                        type: 'area',
                                         toolbar: { 
-                                            show: true,
-                                            offsetY: -25,
-                                            offsetX: 0,
-                                            tools: {
-                                                download: false,
-                                                selection: true,
-                                                zoom: true,
-                                                zoomin: true,
-                                                zoomout: true,
-                                                pan: true,
-                                            }
+                                            show: false
                                         },
                                         fontFamily: 'Inter',
                                         foreColor: colors.text,
@@ -235,7 +225,7 @@
                                     stroke: { curve: 'smooth', width: 2 },
                                     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
                                     xaxis: { 
-                                        type: 'datetime', // Penting: Type Datetime agar scale benar
+                                        type: 'datetime', 
                                         categories: [], 
                                         axisBorder: { show: false }, 
                                         axisTicks: { show: false },
@@ -243,22 +233,35 @@
                                             style: { fontSize: '10px' },
                                             rotate: 0,
                                             hideOverlappingLabels: true,
-                                            showDuplicates: false // Fix: Prevent repeating labels (e.g. Mar '25, Mar '25)
+                                            datetimeFormatter: {
+                                                year: 'yyyy',
+                                                month: 'MMM \'yy',
+                                                day: 'dd MMM',
+                                                hour: 'HH:mm'
+                                            }
                                         },
                                         tooltip: { enabled: false }
                                     },
                                     grid: { borderColor: colors.grid, strokeDashArray: 4 },
                                     legend: { show: false },
-                                    tooltip: { theme: colors.tooltip }
+                                    tooltip: { theme: colors.tooltip },
+                                    responsive: [
+                                        {
+                                            breakpoint: 768,
+                                            options: {
+                                                xaxis: {
+                                                    tickAmount: 6,
+                                                }
+                                            }
+                                        }
+                                    ]
                                 };
 
                                 this.chart = new ApexCharts(this.$refs.revenueChart, options);
                                 this.chart.render();
 
-                                // Initial Data
                                 this.update($wire.chartData);
 
-                                // Watch Livewire Data
                                 $wire.watch('chartData', (value) => {
                                     this.update(value);
                                 });
@@ -280,67 +283,33 @@
                             update(data) {
                                 if(!data || !data.categories) return;
 
-                                // Responsive Logic
-                                const count = data.categories.length;
-                                const isMobile = window.innerWidth < 768;
-                                const granularity = data.granularity || 'daily';
-                                
-                                // Threshold Logic (Scrollable)
-                                // Hourly: 24, Daily: 30, Monthly: 12 (karena label monthly lebar)
-                                const threshold = granularity === 'monthly' ? 12 : 30; 
-                                const minWidth = granularity === 'monthly' ? 60 : 30; // px per point
-                                
-                                let newWidth = '100%';
-                                let isScrollable = false;
-
-                                // Hanya aktifkan scroll jika data melebihi threshold layar
-                                if (count > threshold) {
-                                    newWidth = `${count * minWidth}px`;
-                                    isScrollable = true;
-                                }
-                                
+                                // Clean Update - Width is always 100%
                                 if (this.$refs.chartContainer) {
-                                    this.$refs.chartContainer.style.width = newWidth;
-                                }
-
-                                // Tick Calculation
-                                let tickAmount = undefined;
-                                let hideOverlapping = true;
-
-                                if (isScrollable) {
-                                    tickAmount = count;
-                                    hideOverlapping = false;
-                                } else {
-                                    tickAmount = isMobile ? 6 : 15;
+                                    this.$refs.chartContainer.style.width = '100%';
                                 }
                                 
+                                const granularity = data.granularity || 'daily';
+
                                 this.chart.updateOptions({
                                     xaxis: { 
-                                        categories: data.categories, // Harus format ISO YYYY-MM-DD
-                                        tickAmount: tickAmount, 
+                                        categories: data.categories,
+                                        tickAmount: undefined, // Let ApexCharts decide
                                         labels: {
-                                            rotate: 0, 
-                                            hideOverlappingLabels: hideOverlapping,
-                                            showDuplicates: false, // Fix duplicates
                                             formatter: function(val, timestamp) {
-                                                try {
-                                                    // ApexCharts mengirim timestamp untuk axis datetime
-                                                    const d = new Date(timestamp || val);
-                                                    if(isNaN(d.getTime())) return val;
-                                                    
-                                                    if (granularity === 'hourly') {
-                                                        return d.getHours().toString().padStart(2, '0') + ':00';
-                                                    } else if (granularity === 'monthly') {
-                                                         const month = d.toLocaleString('default', { month: 'short' });
-                                                         const yearShort = d.getFullYear().toString().substr(-2);
-                                                         return `${month} '${yearShort}`;
-                                                    } else {
-                                                         // Daily
-                                                         const day = d.getDate();
-                                                         const month = d.toLocaleString('default', { month: 'short' });
-                                                         return `${day} ${month}`;
-                                                    }
-                                                } catch(e) { return val; }
+                                                const d = new Date(timestamp || val);
+                                                if(isNaN(d.getTime())) return val;
+                                                
+                                                if (granularity === 'hourly') {
+                                                    return d.getHours().toString().padStart(2, '0') + ':00';
+                                                } else if (granularity === 'monthly') {
+                                                     const month = d.toLocaleString('default', { month: 'short' });
+                                                     const yearShort = d.getFullYear().toString().substr(-2);
+                                                     return `${month} '${yearShort}`;
+                                                } else {
+                                                     const day = d.getDate();
+                                                     const month = d.toLocaleString('default', { month: 'short' });
+                                                     return `${day} ${month}`;
+                                                }
                                             }
                                         }
                                     },
