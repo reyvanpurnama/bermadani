@@ -197,7 +197,7 @@
                         </div>
                     </div>
 
-                    <div class="flex-1 w-full min-h-[260px]" x-data="{
+                    <div class="flex-1 w-full min-h-[260px] relative group/chart" x-data="{
                             chart: null,
                             get isDark() { return document.documentElement.classList.contains('dark') },
                             init() {
@@ -212,7 +212,19 @@
                                     chart: {
                                         height: '100%',
                                         type: 'area',
-                                        toolbar: { show: false },
+                                        toolbar: { 
+                                            show: true,
+                                            offsetY: -25,
+                                            offsetX: 0,
+                                            tools: {
+                                                download: false,
+                                                selection: true,
+                                                zoom: true,
+                                                zoomin: true,
+                                                zoomout: true,
+                                                pan: true,
+                                            }
+                                        },
                                         fontFamily: 'Inter',
                                         foreColor: colors.text,
                                         background: 'transparent',
@@ -222,7 +234,16 @@
                                     dataLabels: { enabled: false },
                                     stroke: { curve: 'smooth', width: 2 },
                                     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
-                                    xaxis: { categories: [], axisBorder: { show: false }, axisTicks: { show: false } },
+                                    xaxis: { 
+                                        categories: [], 
+                                        axisBorder: { show: false }, 
+                                        axisTicks: { show: false },
+                                        labels: {
+                                            style: { fontSize: '10px' },
+                                            rotate: 0,
+                                            hideOverlappingLabels: true
+                                        }
+                                    },
                                     grid: { borderColor: colors.grid, strokeDashArray: 4 },
                                     legend: { show: false },
                                     tooltip: { theme: colors.tooltip }
@@ -237,13 +258,6 @@
                                 // Watch Livewire Data
                                 $wire.watch('chartData', (value) => {
                                     this.update(value);
-                                });
-                                
-                                // Clean up
-                                $watch('isDark', () => {
-                                    // You might need a mutation observer for real dark mode switching if it's outside Alpine component
-                                    // But since we navigate away, it's fine.
-                                    // Actually, let's use a mutation observer for theme toggle
                                 });
                                 
                                 const observer = new MutationObserver((mutations) => {
@@ -262,8 +276,42 @@
                             },
                             update(data) {
                                 if(!data || !data.categories) return;
+
+                                // Crypto-style Horizontal Scroll Logic
+                                const count = data.categories.length;
+                                // Threshold: if more than 30 points, each point gets 30px
+                                const threshold = 30; 
+                                const minWidth = 30; // px per point
+                                
+                                let newWidth = '100%';
+                                if (count > threshold) {
+                                    newWidth = `${count * minWidth}px`;
+                                }
+                                
+                                if (this.$refs.chartContainer) {
+                                    this.$refs.chartContainer.style.width = newWidth;
+                                }
+
                                 this.chart.updateOptions({
-                                    xaxis: { categories: data.categories },
+                                    xaxis: { 
+                                        categories: data.categories,
+                                        tickAmount: Math.min(count, 12), // Prevent overcrowding
+                                        labels: {
+                                            formatter: function(val) {
+                                                try {
+                                                    const d = new Date(val);
+                                                    if(isNaN(d.getTime())) return val;
+                                                    const day = d.getDate();
+                                                    const month = d.toLocaleString('default', { month: 'short' });
+                                                    // Jika range tahunan/panjang, tampilkan tahun
+                                                    if (count > 60) {
+                                                        return `${month} '${d.getFullYear().toString().substr(-2)}`;
+                                                    }
+                                                    return `${day} ${month}`;
+                                                } catch(e) { return val; }
+                                            }
+                                        }
+                                    },
                                     series: [
                                         { name: 'Pemasukan', data: data.income },
                                         { name: 'Pengeluaran', data: data.expense }
@@ -271,7 +319,16 @@
                                 });
                             }
                         }" wire:ignore>
-                        <div x-ref="revenueChart" class="w-full h-full"></div>
+                        <div class="absolute inset-0 overflow-x-auto custom-scroll pb-2">
+                            <div x-ref="chartContainer" class="h-full min-w-full transition-all duration-300">
+                                <div x-ref="revenueChart" class="w-full h-full"></div>
+                            </div>
+                        </div>
+                        {{-- Hint Overlay for Scroll --}}
+                        <div x-show="$refs.chartContainer && $refs.chartContainer.style.width !== '100%'" 
+                             class="absolute bottom-2 right-2 pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity bg-black/50 text-white text-[9px] px-2 py-1 rounded-full backdrop-blur-sm z-10">
+                            Scroll for more <i class='bx bx-right-arrow-alt align-middle'></i>
+                        </div>
                     </div>
                 </div>
 
