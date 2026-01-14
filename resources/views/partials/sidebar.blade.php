@@ -183,6 +183,13 @@
                         class="sidebar-text text-xs {{ request()->routeIs('admin.consignment-batches') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Daftar
                         Batch</span>
                 </a>
+                <a href="{{ route('admin.consignment-report') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-file text-sm mr-2 {{ request()->routeIs('admin.consignment-report') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.consignment-report') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan</span>
+                </a>
 
                 <p
                     class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">

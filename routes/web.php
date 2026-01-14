@@ -158,6 +158,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
     // Konsinyasi
     Route::get('/konsinyasi/batch', \App\Livewire\Admin\ConsignmentBatches::class)->name('admin.consignment-batches');
+    Route::get('/konsinyasi/laporan', \App\Livewire\Admin\ConsignmentReport::class)->name('admin.consignment-report');
 
     // Categories
     Route::get('/kategori', function () {
