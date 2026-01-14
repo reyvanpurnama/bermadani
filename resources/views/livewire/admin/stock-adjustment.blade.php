@@ -40,7 +40,8 @@
                                         class="w-full px-4 py-3 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left">
                                         <div>
                                             <p class="text-[12px] font-medium text-slate-800 dark:text-white">
-                                                {{ $product->name }}</p>
+                                                {{ $product->name }}
+                                            </p>
                                             <p class="text-[10px] text-slate-500">{{ $product->sku }}</p>
                                         </div>
                                         <span class="text-[11px] font-bold text-primary">{{ $product->stock }} Pcs</span>
@@ -59,7 +60,8 @@
                                         📦</div>
                                     <div>
                                         <p class="text-[12px] font-bold text-slate-800 dark:text-white">
-                                            {{ $selectedProduct->name }}</p>
+                                            {{ $selectedProduct->name }}
+                                        </p>
                                         <p class="text-[10px] text-slate-500">SKU: {{ $selectedProduct->sku }}</p>
                                     </div>
                                 </div>
@@ -105,7 +107,7 @@
                                     class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-l-lg border-y border-l border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-slate-500"><i
                                         class='bx bx-minus'></i></button>
                                 <input wire:model="quantity" type="number"
-                                    class="w-full h-10 bg-white dark:bg-slate-800 border-y border-slate-200 dark:border-slate-600 text-center text-[14px] font-bold text-slate-800 dark:text-white outline-none">
+                                    class="w-full h-10 bg-white dark:bg-slate-800 border-y border-slate-200 dark:border-slate-600 text-center text-[14px] font-bold text-slate-800 dark:text-white outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                                 <button wire:click="incrementQty" type="button"
                                     class="w-10 h-10 bg-slate-100 dark:bg-slate-700 rounded-r-lg border-y border-r border-slate-200 dark:border-slate-600 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors text-slate-500"><i
                                         class='bx bx-plus'></i></button>
