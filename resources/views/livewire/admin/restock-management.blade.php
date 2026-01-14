@@ -30,7 +30,7 @@
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Diterima Hari Ini</p>
                 <h4 class="text-lg font-bold text-slate-800 dark:text-white">
-                    {{ $requests->where('status', 'COMPLETED')->whereDate('completedAt', today())->count() }} Batch</h4>
+                    {{ $requests->where('status', 'COMPLETED')->filter(fn($r) => $r->completedAt && $r->completedAt->isToday())->count() }} Batch</h4>
             </div>
             <div
                 class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 text-xl">
@@ -41,7 +41,9 @@
             class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border-l-4 border-l-blue-500 border-y border-r border-slate-100 dark:border-slate-700 flex items-center justify-between">
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Estimasi Tagihan</p>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white">-</h4>
+                <h4 class="text-lg font-bold text-slate-800 dark:text-white">
+                    Rp {{ number_format($requests->whereIn('status', ['PENDING', 'ACCEPTED'])->sum(fn($r) => $r->requestedQty * ($r->product->buyPrice ?? 0)), 0, ',', '.') }}
+                </h4>
             </div>
             <div
                 class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl">
