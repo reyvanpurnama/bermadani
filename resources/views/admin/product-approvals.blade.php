@@ -129,11 +129,15 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <a href="{{ route('admin.suppliers.detail', $product->supplier->id) }}" 
-                                   class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
-                                    {{ $product->supplier->businessName ?? '-' }}
-                                </a>
-                                <p class="text-xs text-gray-500">{{ $product->supplier->supplierCode ?? '-' }}</p>
+                                @if($product->supplier)
+                                    <a href="{{ route('admin.suppliers.detail', $product->supplier->id) }}" 
+                                       class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                                        {{ $product->supplier->businessName }}
+                                    </a>
+                                    <p class="text-xs text-gray-500">{{ $product->supplier->supplierCode ?? '-' }}</p>
+                                @else
+                                    <span class="text-sm text-gray-500">-</span>
+                                @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">
                                 {{ $product->category->name ?? '-' }}
