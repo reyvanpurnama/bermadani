@@ -145,6 +145,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     })->name('admin.products.create');
 
 
+    Route::get('/restock-requests', \App\Livewire\Admin\RestockManagement::class)->name('admin.restock-requests');
     Route::post('/inventaris', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/inventaris/mutasi', \App\Livewire\Admin\StockMutation::class)->name('admin.stock-mutation');
     Route::get('/inventaris/{id}/edit', function ($id) {
