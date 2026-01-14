@@ -141,13 +141,6 @@
                         class="sidebar-text text-xs {{ request()->routeIs('admin.stock-mutation') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Mutasi
                         Stok</span>
                 </a>
-                <a href="{{ route('admin.suppliers') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-store-alt text-sm mr-2 {{ request()->routeIs('admin.suppliers*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.suppliers*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Supplier</span>
-                </a>
                 <a href="{{ route('admin.restock-requests') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.restock-requests') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i
@@ -155,6 +148,13 @@
                     <span
                         class="sidebar-text text-xs {{ request()->routeIs('admin.restock-requests') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Request
                         Masuk</span>
+                </a>
+                <a href="{{ route('admin.suppliers') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i
+                        class='bx bx-store-alt text-sm mr-2 {{ request()->routeIs('admin.suppliers*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span
+                        class="sidebar-text text-xs {{ request()->routeIs('admin.suppliers*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Supplier</span>
                 </a>
 
                 <p
