@@ -211,7 +211,7 @@
                                     series: [],
                                     chart: {
                                         height: '100%',
-                                        type: 'area',
+                                        type: 'area', // Area chart
                                         toolbar: { 
                                             show: true,
                                             offsetY: -25,
@@ -235,6 +235,7 @@
                                     stroke: { curve: 'smooth', width: 2 },
                                     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
                                     xaxis: { 
+                                        type: 'datetime', // Penting: Type Datetime agar scale benar
                                         categories: [], 
                                         axisBorder: { show: false }, 
                                         axisTicks: { show: false },
@@ -242,7 +243,8 @@
                                             style: { fontSize: '10px' },
                                             rotate: 0,
                                             hideOverlappingLabels: true
-                                        }
+                                        },
+                                        tooltip: { enabled: false }
                                     },
                                     grid: { borderColor: colors.grid, strokeDashArray: 4 },
                                     legend: { show: false },
@@ -280,12 +282,15 @@
                                 // Responsive Logic
                                 const count = data.categories.length;
                                 const isMobile = window.innerWidth < 768;
+                                const granularity = data.granularity || 'daily';
                                 
                                 // Threshold Logic (Scrollable)
-                                const threshold = 30; 
-                                const minWidth = 30; // px per point
+                                // Hourly: 24, Daily: 30, Monthly: 12 (karena label monthly lebar)
+                                const threshold = granularity === 'monthly' ? 12 : 30; 
+                                const minWidth = granularity === 'monthly' ? 50 : 30; // px per point
                                 
                                 let newWidth = '100%';
+                                // Hanya aktifkan scroll jika data melebihi threshold layar
                                 if (count > threshold) {
                                     newWidth = `${count * minWidth}px`;
                                 }
@@ -295,32 +300,40 @@
                                 }
 
                                 // Tick Calculation
-                                // Mobile: Max 6 ticks, Desktop: Max 15
                                 const maxTicks = isMobile ? 6 : 15;
                                 
                                 this.chart.updateOptions({
                                     xaxis: { 
-                                        categories: data.categories,
+                                        categories: data.categories, // Harus format ISO YYYY-MM-DD
                                         tickAmount: Math.min(count, maxTicks), 
                                         labels: {
-                                            rotate: 0, // Keep horizontal for readability
+                                            rotate: 0, 
                                             hideOverlappingLabels: true,
-                                            formatter: function(val) {
+                                            formatter: function(val, timestamp) {
                                                 try {
-                                                    const d = new Date(val);
+                                                    // ApexCharts mengirim timestamp untuk axis datetime
+                                                    const d = new Date(timestamp || val);
                                                     if(isNaN(d.getTime())) return val;
-                                                    const day = d.getDate();
-                                                    const month = d.toLocaleString('default', { month: 'short' });
                                                     
-                                                    // Jika range tahunan/panjang atau cross-year
-                                                    // Format: Jan '25 (lebih pendek dari Jan 2025)
-                                                    if (count > 60) {
-                                                        const yearShort = d.getFullYear().toString().substr(-2);
-                                                        return `${month} '${yearShort}`;
+                                                    if (granularity === 'hourly') {
+                                                        return d.getHours().toString().padStart(2, '0') + ':00';
+                                                    } else if (granularity === 'monthly') {
+                                                         const month = d.toLocaleString('default', { month: 'short' });
+                                                         const yearShort = d.getFullYear().toString().substr(-2);
+                                                         return `${month} '${yearShort}`;
+                                                    } else {
+                                                         // Daily
+                                                         const day = d.getDate();
+                                                         const month = d.toLocaleString('default', { month: 'short' });
+                                                         return `${day} ${month}`;
                                                     }
-                                                    return `${day} ${month}`;
                                                 } catch(e) { return val; }
                                             }
+                                        }
+                                    },
+                                    tooltip: {
+                                        x: {
+                                            format: granularity === 'hourly' ? 'dd MMM HH:mm' : (granularity === 'monthly' ? 'MMM yyyy' : 'dd MMM yyyy')
                                         }
                                     },
                                     series: [

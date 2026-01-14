@@ -110,8 +110,10 @@ class Dashboard extends Component
         if ($diffInDays <= 1) {
             // Hourly breakdown (08:00 - 22:00)
             $hours = [8, 10, 12, 14, 16, 18, 20, 22];
+            $baseDate = $start->format('Y-m-d');
             foreach ($hours as $h) {
-                $categories[] = sprintf("%02d:00", $h);
+                // Use ISO format for datetime axis
+                $categories[] = sprintf("%s %02d:00:00", $baseDate, $h);
 
                 // Aggregation logic for Hourly
                 // Only consider transactions on that specific day within the hour range
@@ -140,7 +142,7 @@ class Dashboard extends Component
             // Daily breakdown
             $current = $start->copy();
             while ($current <= $end) {
-                $categories[] = $current->format('d M');
+                $categories[] = $current->format('Y-m-d');
 
                 $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
                     ->whereDate('date', $current)
@@ -174,7 +176,7 @@ class Dashboard extends Component
                     continue;
                 }
 
-                $categories[] = $current->format('M Y');
+                $categories[] = $current->format('Y-m-01');
 
                 $pos = Transaction::where('type', 'SALE')->where('status', 'COMPLETED')
                     ->whereDate('date', '>=', $clampStart)
@@ -198,10 +200,13 @@ class Dashboard extends Component
             }
         }
 
+        $granularity = ($diffInDays <= 1) ? 'hourly' : (($diffInDays <= 35) ? 'daily' : 'monthly');
+
         $this->chartData = [
             'categories' => $categories,
             'income' => $incomeData,
-            'expense' => $expenseData
+            'expense' => $expenseData,
+            'granularity' => $granularity
         ];
     }
 
