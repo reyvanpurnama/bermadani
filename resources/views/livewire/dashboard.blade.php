@@ -242,7 +242,8 @@
                                         labels: {
                                             style: { fontSize: '10px' },
                                             rotate: 0,
-                                            hideOverlappingLabels: true
+                                            hideOverlappingLabels: true,
+                                            showDuplicates: false // Fix: Prevent repeating labels (e.g. Mar '25, Mar '25)
                                         },
                                         tooltip: { enabled: false }
                                     },
@@ -309,6 +310,7 @@
                                         labels: {
                                             rotate: 0, 
                                             hideOverlappingLabels: true,
+                                            showDuplicates: false, // Fix duplicates
                                             formatter: function(val, timestamp) {
                                                 try {
                                                     // ApexCharts mengirim timestamp untuk axis datetime
