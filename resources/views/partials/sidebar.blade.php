@@ -238,110 +238,98 @@
             </div>
 
             {{-- ADMIN: CORE (KOPERASI) MENU --}}
+            {{-- ADMIN: CORE (KOPERASI) MENU --}}
             <div x-show="workspace === 'core'" x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-x-[10px]" x-transition:enter-end="opacity-100 translate-x-0"
-                style="display: none;">
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keanggotaan</p>
-                <a href="{{ route('admin.members.index') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-user-circle text-sm mr-2 {{ request()->routeIs('admin.members*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.members*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Anggota</span>
-                </a>
+                style="display: none;" class="space-y-1 mt-4">
+                
+                {{-- Keanggotaan Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.members*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Keanggotaan</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.members.index') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-user-circle text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Anggota</span>
+                        </a>
+                    </div>
+                </div>
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Simpan Pinjam</p>
-                <a href="{{ route('admin.savings') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-wallet text-sm mr-2 {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Simpanan</span>
-                </a>
-                <a href="{{ route('admin.loans') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-money text-sm mr-2 {{ request()->routeIs('admin.loans*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.loans*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Pinjaman</span>
-                </a>
-                <a href="{{ route('admin.payments.create') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-plus-circle text-sm mr-2 {{ request()->routeIs('admin.payments*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.payments*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat
-                        Setoran</span>
-                </a>
+                {{-- Simpan Pinjam Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.savings*', 'admin.loans*', 'admin.payments*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Simpan Pinjam</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.savings') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-wallet text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Simpanan</span>
+                        </a>
+                        <a href="{{ route('admin.loans') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-money text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Pinjaman</span>
+                        </a>
+                        <a href="{{ route('admin.payments.create') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.payments*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-plus-circle text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Catat Setoran</span>
+                        </a>
+                    </div>
+                </div>
 
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keuangan</p>
-                <a href="{{ route('admin.manual-transaction', ['unit' => 'KOPERASI']) }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-transfer text-sm mr-2 {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Catat
-                        Keuangan</span>
-                </a>
-                <a href="{{ route('admin.reports.monthly-financial') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-file text-sm mr-2 {{ request()->routeIs('admin.reports.monthly-financial') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.reports.monthly-financial') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan
-                        Bulanan</span>
-                </a>
+                {{-- Keuangan Group --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.manual-transaction', 'admin.reports*') ? 'true' : 'false' }} }" class="space-y-1">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Keuangan</span>
+                        <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-collapse style="display: none;">
+                        <a href="{{ route('admin.manual-transaction', ['unit' => 'KOPERASI']) }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-transfer text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Catat Keuangan</span>
+                        </a>
+                        <a href="{{ route('admin.reports.monthly-financial') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-file text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Laporan Bulanan</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
 
             @if(auth()->user()->isSuperAdmin() || auth()->user()->isDeveloper() || auth()->user()->isAdmin())
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    System</p>
-                <a href="{{ route('admin.users') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-group text-sm mr-2 {{ request()->routeIs('admin.users*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.users*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Kelola
-                        User</span>
-                </a>
-                <a href="{{ route('admin.settings') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.settings*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-cog text-sm mr-2 {{ request()->routeIs('admin.settings*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.settings*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Pengaturan</span>
-                </a>
-                <a href="{{ route('admin.activity-logs') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.activity-logs') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-history text-sm mr-2 {{ request()->routeIs('admin.activity-logs') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.activity-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Activity
-                        Log</span>
-                </a>
-                <a href="{{ route('admin.kasir-history') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.kasir-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-user-check text-sm mr-2 {{ request()->routeIs('admin.kasir-history') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.kasir-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
-                        Kasir</span>
-                </a>
-                <a href="{{ route('admin.developer-payroll') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i
-                        class='bx bx-money text-sm mr-2 {{ request()->routeIs('admin.developer-payroll') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                    <span
-                        class="sidebar-text text-xs {{ request()->routeIs('admin.developer-payroll') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Payroll
-                        Dev</span>
-                </a>
+                <div class="mt-4 px-2">
+                    <div x-data="{ open: {{ request()->routeIs('admin.users*', 'admin.settings*', 'admin.activity-logs', 'admin.kasir-history', 'admin.developer-payroll') ? 'true' : 'false' }} }">
+                        <button @click="open = !open" class="w-full flex items-center justify-between py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-0 sidebar-text">System</span>
+                            <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text" :class="open ? 'rotate-180' : ''"></i>
+                        </button>
+                        <div x-show="open" x-collapse style="display: none;" class="space-y-1 mt-1">
+                            <a href="{{ route('admin.users') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class='bx bx-group text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Kelola User</span>
+                            </a>
+                            <a href="{{ route('admin.settings') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.settings*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class='bx bx-cog text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Pengaturan</span>
+                            </a>
+                            <a href="{{ route('admin.activity-logs') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.activity-logs') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class='bx bx-history text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Activity Log</span>
+                            </a>
+                            <a href="{{ route('admin.kasir-history') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.kasir-history') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class='bx bx-user-check text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Riwayat Kasir</span>
+                            </a>
+                            <a href="{{ route('admin.developer-payroll') }}" class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                                <i class='bx bx-money text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Payroll Dev</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             @endif
         @endif
     </nav>
