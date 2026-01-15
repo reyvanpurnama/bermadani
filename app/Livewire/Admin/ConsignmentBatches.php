@@ -35,9 +35,17 @@ class ConsignmentBatches extends Component
         'items' => 'required|array|min:1',
         'items.*.productId' => 'required|exists:products,id',
         'items.*.initialQty' => 'required|integer|min:1',
-        'items.*.sellPrice' => 'required|numeric|min:0',
         'items.*.feePercent' => 'required|numeric|min:0|max:100',
     ];
+
+    // Auto-filter products when supplier changes
+    public function updatedSupplierId($value)
+    {
+        // Reset items when supplier changes
+        $this->items = [
+            ['productId' => '', 'initialQty' => 1, 'feePercent' => 10]
+        ];
+    }
 
     public function setStatus($status)
     {
@@ -49,14 +57,14 @@ class ConsignmentBatches extends Component
     {
         $this->reset(['supplierId', 'note', 'items']);
         $this->items = [
-            ['productId' => '', 'initialQty' => 1, 'sellPrice' => 0, 'feePercent' => 10]
+            ['productId' => '', 'initialQty' => 1, 'feePercent' => 10]
         ];
         $this->showCreateModal = true;
     }
 
     public function addItem()
     {
-        $this->items[] = ['productId' => '', 'initialQty' => 1, 'sellPrice' => 0, 'feePercent' => 10];
+        $this->items[] = ['productId' => '', 'initialQty' => 1, 'feePercent' => 10];
     }
 
     public function removeItem($index)
@@ -82,25 +90,27 @@ class ConsignmentBatches extends Component
 
             $totalValue = 0;
             foreach ($this->items as $item) {
-                $priceAfterFee = $item['sellPrice'] * (1 - ($item['feePercent'] / 100));
+                // Get sell price from the product (already set during approval)
+                $product = Product::find($item['productId']);
+                if (!$product) continue;
+
+                $sellPrice = $product->sellPrice;
+                $priceAfterFee = $sellPrice * (1 - ($item['feePercent'] / 100));
 
                 ConsignmentItem::create([
                     'batchId' => $batch->id,
                     'productId' => $item['productId'],
                     'initialQty' => $item['initialQty'],
                     'remainingQty' => $item['initialQty'],
-                    'sellPrice' => $item['sellPrice'],
+                    'sellPrice' => $sellPrice,
                     'feePercent' => $item['feePercent'],
                     'priceAfterFee' => $priceAfterFee,
                 ]);
 
-                $totalValue += $item['sellPrice'] * $item['initialQty'];
+                $totalValue += $sellPrice * $item['initialQty'];
 
                 // Add stock to product
-                $product = Product::find($item['productId']);
-                if ($product) {
-                    $product->increment('stock', $item['initialQty']);
-                }
+                $product->increment('stock', $item['initialQty']);
             }
 
             $batch->update(['totalValue' => $totalValue]);
@@ -231,7 +241,16 @@ class ConsignmentBatches extends Component
         ];
 
         $suppliers = Supplier::where('isActive', true)->orderBy('businessName')->get();
-        $products = Product::where('isActive', true)->orderBy('name')->get();
+        
+        // Filter products by selected supplier (only APPROVED products)
+        $products = collect();
+        if ($this->supplierId) {
+            $products = Product::where('isActive', true)
+                ->where('supplierId', $this->supplierId)
+                ->where('approvalStatus', 'APPROVED')
+                ->orderBy('name')
+                ->get();
+        }
 
         return view('livewire.admin.consignment-batches', [
             'batches' => $batches,

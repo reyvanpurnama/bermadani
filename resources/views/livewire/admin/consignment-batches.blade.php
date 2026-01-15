@@ -183,68 +183,94 @@
     @if($showCreateModal)
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
             <div
-                class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden animate-fade-in-up my-8">
-                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                    <h3 class="font-bold text-lg text-slate-800 dark:text-white">Terima Barang Konsinyasi</h3>
+                class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden animate-fade-in-up my-8">
+                <!-- Header -->
+                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
+                             <i class='bx bx-archive-in text-primary'></i> Terima Barang Konsinyasi
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Input data barang titipan baru dari supplier</p>
+                    </div>
                     <button wire:click="$set('showCreateModal', false)"
-                        class="text-slate-400 hover:text-slate-600 transition-colors">
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
                         <i class='bx bx-x text-2xl'></i>
                     </button>
                 </div>
-                <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Supplier</label>
-                        <select wire:model="supplierId"
-                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-primary focus:border-primary text-sm">
+                
+                <div class="p-6 space-y-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                    <!-- Supplier Selection -->
+                    <div class="bg-indigo-50/50 dark:bg-indigo-500/5 p-4 rounded-xl border border-indigo-100 dark:border-indigo-500/10">
+                        <label class="block text-xs font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-wider mb-2">Pilih Supplier</label>
+                        <select wire:model.live="supplierId"
+                            class="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border-0 ring-1 ring-slate-200 dark:ring-slate-700 rounded-lg focus:ring-2 focus:ring-primary text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm transition-all">
                             <option value="">-- Pilih Supplier --</option>
                             @foreach($suppliers as $supplier)
                                 <option value="{{ $supplier->id }}">{{ $supplier->businessName }}</option>
                             @endforeach
                         </select>
-                        @error('supplierId') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
+                        @error('supplierId') <span class="text-xs text-rose-500 mt-1 block font-medium">{{ $message }}</span> @enderror
                     </div>
 
+                    <!-- Items Section -->
+                    @if($supplierId)
                     <div>
-                        <div class="flex justify-between items-center mb-2">
-                            <label class="text-sm font-medium text-slate-700 dark:text-slate-300">Item Barang</label>
+                        <div class="flex justify-between items-end mb-3">
+                            <div>
+                                <label class="text-sm font-bold text-slate-800 dark:text-white">Daftar Item Barang</label>
+                                <p class="text-[11px] text-slate-500">Pilih produk dan masukkan jumlah yang diterima.</p>
+                            </div>
                             <button wire:click="addItem" type="button"
-                                class="text-primary text-xs font-bold hover:underline">+ Tambah Item</button>
+                                class="text-[11px] font-bold bg-primary/10 text-primary hover:bg-primary hover:text-white px-3 py-1.5 rounded-lg transition-all flex items-center gap-1">
+                                <i class='bx bx-plus'></i> Tambah Item
+                            </button>
                         </div>
 
+                        @if($products->count() === 0)
+                            <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-4 text-center">
+                                <i class='bx bx-info-circle text-amber-500 text-2xl mb-2'></i>
+                                <p class="text-[13px] text-amber-700 dark:text-amber-400 font-medium">Supplier ini belum memiliki produk yang disetujui.</p>
+                                <p class="text-[11px] text-slate-500 mt-1">Pastikan produk sudah di-approve terlebih dahulu.</p>
+                            </div>
+                        @else
                         <div class="space-y-3">
                             @foreach($items as $index => $item)
-                                <div
-                                    class="bg-slate-50 dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                                    <div class="grid grid-cols-12 gap-2">
-                                        <div class="col-span-5">
-                                            <label class="text-[10px] text-slate-500">Produk</label>
+                                <div class="group bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 transition-all shadow-sm relative">
+                                    <div class="flex flex-col sm:flex-row gap-3">
+                                        <!-- Product Select -->
+                                        <div class="flex-grow sm:w-6/12">
+                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Produk</label>
                                             <select wire:model="items.{{ $index }}.productId"
-                                                class="w-full px-2 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs">
-                                                <option value="">Pilih...</option>
+                                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary transition-colors">
+                                                <option value="">Pilih Produk...</option>
                                                 @foreach($products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                                    <option value="{{ $product->id }}">{{ $product->name }} — Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-span-2">
-                                            <label class="text-[10px] text-slate-500">Qty</label>
+
+                                        <!-- Qty -->
+                                        <div class="sm:w-28">
+                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Jumlah</label>
                                             <input wire:model="items.{{ $index }}.initialQty" type="number" min="1"
-                                                class="w-full px-2 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs">
+                                                class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary text-center">
                                         </div>
-                                        <div class="col-span-2">
-                                            <label class="text-[10px] text-slate-500">Harga Jual</label>
-                                            <input wire:model="items.{{ $index }}.sellPrice" type="number"
-                                                class="w-full px-2 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs">
+
+                                        <!-- Fee -->
+                                        <div class="sm:w-24">
+                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Fee Koperasi</label>
+                                            <div class="relative">
+                                                <input wire:model="items.{{ $index }}.feePercent" type="number" min="0" max="100"
+                                                    class="w-full px-3 py-2 pr-7 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary text-center">
+                                                <span class="absolute right-3 top-2 text-xs text-slate-400">%</span>
+                                            </div>
                                         </div>
-                                        <div class="col-span-2">
-                                            <label class="text-[10px] text-slate-500">Fee %</label>
-                                            <input wire:model="items.{{ $index }}.feePercent" type="number"
-                                                class="w-full px-2 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs">
-                                        </div>
-                                        <div class="col-span-1 flex items-end justify-center">
+                                        
+                                        <!-- Actions -->
+                                        <div class="flex items-end pb-0.5">
                                             @if(count($items) > 1)
                                                 <button wire:click="removeItem({{ $index }})" type="button"
-                                                    class="text-rose-500 hover:text-rose-700 p-1">
+                                                    class="w-8 h-8 rounded-lg bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors shadow-sm" title="Hapus Item">
                                                     <i class='bx bx-trash'></i>
                                                 </button>
                                             @endif
@@ -253,22 +279,32 @@
                                 </div>
                             @endforeach
                         </div>
-                        @error('items') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
+                        @endif
+                        @error('items') <span class="text-xs text-rose-500 mt-2 block font-medium"><i class='bx bx-error-circle'></i> {{ $message }}</span> @enderror
                     </div>
+                    @else
+                    <div class="bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-8 text-center">
+                        <i class='bx bx-store text-4xl text-slate-300 dark:text-slate-600 mb-2'></i>
+                        <p class="text-[13px] text-slate-500">Pilih supplier terlebih dahulu untuk melihat daftar produk.</p>
+                    </div>
+                    @endif
 
+                    <!-- Note Section -->
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catatan
-                            (Opsional)</label>
-                        <textarea wire:model="note" rows="2"
-                            class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-primary focus:border-primary text-sm"></textarea>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Catatan (Opsional)</label>
+                        <textarea wire:model="note" rows="2" placeholder="Tulis catatan tambahan untuk batch ini..."
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm transition-all resize-none"></textarea>
                     </div>
                 </div>
-                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3">
+                
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
                     <button wire:click="$set('showCreateModal', false)"
-                        class="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 font-medium transition-colors">Batal</button>
+                        class="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700 rounded-lg transition-all uppercase tracking-wide">
+                        Batal
+                    </button>
                     <button wire:click="saveBatch"
-                        class="px-4 py-2 text-sm bg-primary hover:bg-indigo-700 text-white rounded-lg font-bold transition-colors">
-                        Simpan Batch
+                        class="px-5 py-2.5 bg-primary hover:bg-indigo-700 text-white rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 transition-all flex items-center gap-2">
+                        <i class='bx bx-save text-lg'></i> Simpan Batch
                     </button>
                 </div>
             </div>
