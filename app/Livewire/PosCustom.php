@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\ActivityLog;
 use App\Models\CashierShift;
 use App\Models\Category;
+use App\Models\ConsignmentBatch;
 use App\Models\Member;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -157,9 +158,23 @@ class PosCustom extends Component
 
     public function processPayment()
     {
+        // Validate cash payment
         if ($this->paymentMethod === 'CASH' && $this->cashReceived < $this->getCartTotalProperty()) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Uang tidak cukup']);
             return;
+        }
+
+        // Validate SUKARELA payment - must have member and sufficient balance
+        if ($this->paymentMethod === 'SUKARELA') {
+            if (!$this->selectedMember) {
+                $this->dispatch('notify', ['type' => 'error', 'message' => 'Pilih member terlebih dahulu']);
+                return;
+            }
+            $member = Member::find($this->selectedMember['id']);
+            if (!$member || $member->simpananSukarela < $this->getCartTotalProperty()) {
+                $this->dispatch('notify', ['type' => 'error', 'message' => 'Saldo Simpanan Sukarela tidak mencukupi']);
+                return;
+            }
         }
 
         DB::beginTransaction();
@@ -193,14 +208,32 @@ class PosCustom extends Component
                 ]);
 
                 $product->reduceStock($item['quantity']);
+
+                // Update consignment batch if this is a consignment product
+                if ($product->isConsignment) {
+                    $this->updateConsignmentSale($product->id, $item['quantity']);
+                }
             }
 
             if ($this->selectedMember) {
                 $member = Member::find($this->selectedMember['id']);
+
+                // Deduct Simpanan Sukarela if paying with it
+                if ($this->paymentMethod === 'SUKARELA') {
+                    $member->payWithSukarela(
+                        $this->getCartTotalProperty(),
+                        'Belanja ' . $invoiceNumber
+                    );
+                }
+
+                // Award points (1 point per Rp10.000)
                 $pointsEarned = floor($this->getCartTotalProperty() / 10000);
                 if ($pointsEarned > 0) {
-                    $member->addPoints($pointsEarned, 'Belanja ' . $invoiceNumber);
+                    $member->addPoints($pointsEarned, 'Belanja ' . $invoiceNumber, $transaction->id);
                 }
+
+                // Record purchase in member history
+                $member->recordPurchase($this->getCartTotalProperty());
             }
 
             DB::commit();
@@ -265,6 +298,32 @@ class PosCustom extends Component
     public function getCategoriesProperty()
     {
         return Category::where('isActive', true)->orderBy('order')->get();
+    }
+
+    /**
+     * Update consignment batch when a consignment product is sold
+     * Uses FIFO to determine which batch to deduct from
+     */
+    private function updateConsignmentSale(int $productId, int $quantity): void
+    {
+        $remainingQty = $quantity;
+
+        while ($remainingQty > 0) {
+            $consignmentItem = ConsignmentBatch::findActiveItemForProduct($productId);
+
+            if (!$consignmentItem) {
+                // No active consignment batch found, skip
+                break;
+            }
+
+            // Determine how much to deduct from this batch
+            $deductQty = min($remainingQty, $consignmentItem->remainingQty);
+
+            // Record the sale
+            $consignmentItem->recordSale($deductQty);
+
+            $remainingQty -= $deductQty;
+        }
     }
 
     public function render()

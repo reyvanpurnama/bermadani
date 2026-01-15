@@ -291,7 +291,7 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Metode
                         Pembayaran</label>
-                    <div class="grid grid-cols-3 gap-2">
+                    <div class="grid grid-cols-2 gap-2">
                         <button wire:click="$set('paymentMethod', 'CASH')"
                             class="py-3 rounded-lg border-2 transition-colors text-sm {{ $paymentMethod === 'CASH' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
                             💵 Cash
@@ -304,6 +304,20 @@
                             class="py-3 rounded-lg border-2 transition-colors text-sm {{ $paymentMethod === 'CREDIT' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
                             💳 Kredit
                         </button>
+                        @if($selectedMember)
+                            @php
+                                $memberBalance = \App\Models\Member::find($selectedMember['id'])?->simpananSukarela ?? 0;
+                                $hasEnoughBalance = $memberBalance >= $this->cartTotal;
+                            @endphp
+                            <button wire:click="$set('paymentMethod', 'SUKARELA')" @if(!$hasEnoughBalance) disabled @endif
+                                class="py-3 rounded-lg border-2 transition-colors text-sm relative {{ $paymentMethod === 'SUKARELA' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : ($hasEnoughBalance ? 'border-slate-300 dark:border-slate-600' : 'border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed') }}">
+                                🏦 Simpanan
+                                <span
+                                    class="block text-[10px] {{ $hasEnoughBalance ? 'text-emerald-600' : 'text-rose-500' }}">
+                                    Rp {{ number_format($memberBalance, 0, ',', '.') }}
+                                </span>
+                            </button>
+                        @endif
                     </div>
                 </div>
 

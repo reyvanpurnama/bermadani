@@ -97,7 +97,7 @@ class Member extends Model
 
     public function getStatusBadgeAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'ACTIVE' => 'success',
             'INACTIVE' => 'warning',
             'SUSPENDED' => 'danger',
@@ -107,7 +107,7 @@ class Member extends Model
 
     public function getTierBadgeAttribute()
     {
-        return match($this->tier) {
+        return match ($this->tier) {
             'PLATINUM' => 'primary',
             'GOLD' => 'warning',
             'SILVER' => 'info',
@@ -129,7 +129,7 @@ class Member extends Model
      */
     public function hasSalaryDeductionSukarela(): bool
     {
-        return $this->sukarela_payment_method === 'SALARY_DEDUCTION' 
+        return $this->sukarela_payment_method === 'SALARY_DEDUCTION'
             && $this->monthly_sukarela_amount > 0;
     }
 
@@ -139,15 +139,15 @@ class Member extends Model
     public function getTotalSalaryDeductionAttribute(): float
     {
         $total = 0;
-        
+
         if ($this->hasSalaryDeductionSimwa()) {
             $total += $this->monthly_simpanan_wajib ?? 50000;
         }
-        
+
         if ($this->hasSalaryDeductionSukarela()) {
             $total += $this->monthly_sukarela_amount ?? 0;
         }
-        
+
         return $total;
     }
 
@@ -206,6 +206,28 @@ class Member extends Model
         return $saving;
     }
 
+    /**
+     * Pay for shopping using Simpanan Sukarela balance
+     */
+    public function payWithSukarela($amount, $description, $transactionId = null)
+    {
+        if ($this->simpananSukarela < $amount) {
+            throw new \Exception('Saldo Simpanan Sukarela tidak mencukupi');
+        }
+
+        // Record withdrawal with transaction reference
+        $saving = $this->savings()->create([
+            'type' => 'WITHDRAWAL',
+            'amount' => $amount,
+            'description' => $description,
+            'date' => now(),
+        ]);
+
+        $this->decrement('simpananSukarela', $amount);
+
+        return $saving;
+    }
+
     public function addPoints($points, $description, $transactionId = null, $expiresAt = null)
     {
         $newBalance = $this->points + $points;
@@ -249,7 +271,7 @@ class Member extends Model
     {
         // Tier based on POINTS, not totalSpent
         // BRONZE: 0-999, SILVER: 1000-2999, GOLD: 3000-5999, PLATINUM: 6000+
-        $tier = match(true) {
+        $tier = match (true) {
             $this->points >= 6000 => 'PLATINUM',
             $this->points >= 3000 => 'GOLD',
             $this->points >= 1000 => 'SILVER',
@@ -304,14 +326,14 @@ class Member extends Model
         ];
 
         $tierData = $thresholds[$this->tier] ?? $thresholds['BRONZE'];
-        
+
         if ($this->tier === 'PLATINUM') {
             return 100; // Already at max tier
         }
 
         $currentPoints = $this->points - $tierData['current'];
         $requiredPoints = $tierData['next'] - $tierData['current'];
-        
+
         return min(100, ($currentPoints / $requiredPoints) * 100);
     }
 
@@ -328,7 +350,7 @@ class Member extends Model
         ];
 
         $nextThreshold = $thresholds[$this->tier] ?? 1000;
-        
+
         if ($this->tier === 'PLATINUM') {
             return 0; // Already at max tier
         }
