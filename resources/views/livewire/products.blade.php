@@ -503,29 +503,37 @@
 
     {{-- Quick Batch Modal --}}
     @if($showQuickBatchModal && $quickBatchProduct)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div x-data x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 z-[9999]">
             {{-- Backdrop --}}
-            <div wire:click="closeQuickBatchModal"
-                class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"></div>
+            <div wire:click="closeQuickBatchModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
             {{-- Modal Panel --}}
-            <div
-                class="relative bg-white dark:bg-darkCard rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all scale-100">
+            <div x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                class="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden border border-white/10 ring-1 ring-slate-900/5 dark:ring-white/10">
                 <!-- Header with Gradient -->
-                <div class="relative bg-gradient-to-r from-indigo-500 to-purple-600 px-6 py-5 text-white overflow-hidden">
-                    <div class="absolute top-0 right-0 -mr-4 -mt-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
-                    <div class="absolute bottom-0 left-0 -ml-4 -mb-4 w-20 h-20 bg-black/10 rounded-full blur-xl"></div>
+                <div class="relative bg-gradient-to-br from-indigo-600 to-violet-600 px-6 py-5 text-white overflow-hidden">
+                    {{-- Decorative shapes --}}
+                    <div class="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 bg-black/10 rounded-full blur-xl"></div>
 
                     <div class="relative z-10">
-                        <h3 class="font-bold text-lg">Order Restock</h3>
-                        <p class="text-indigo-100 text-xs mt-0.5 flex items-center gap-1.5 opacity-90">
-                            <i class='bx bx-building-house'></i>
+                        <h3 class="font-bold text-lg tracking-tight">Order Restock</h3>
+                        <p class="text-indigo-100 text-xs mt-1 flex items-center gap-1.5 font-medium">
+                            <i class='bx bx-building-house bg-white/20 p-0.5 rounded'></i>
                             {{ $quickBatchProduct->supplier?->businessName ?? 'Supplier Umum' }}
                         </p>
                     </div>
 
                     <button wire:click="closeQuickBatchModal"
-                        class="absolute top-4 right-4 text-white/70 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full p-1">
+                        class="absolute top-4 right-4 text-white/70 hover:text-white hover:rotate-90 transition-all bg-white/10 hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center backdrop-blur-sm">
                         <i class='bx bx-x text-xl'></i>
                     </button>
                 </div>
@@ -533,77 +541,89 @@
                 <div class="p-6 space-y-6">
                     <!-- Product Info Card -->
                     <div
-                        class="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                        class="flex items-start gap-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm relative overflow-hidden group">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:animate-shimmer dark:via-white/5 opacity-50">
+                        </div>
+
                         @if($quickBatchProduct->image)
                             <img src="{{ asset('storage/' . $quickBatchProduct->image) }}" alt="{{ $quickBatchProduct->name }}"
-                                class="w-16 h-16 rounded-lg object-cover shadow-sm bg-white dark:bg-slate-700">
+                                class="w-16 h-16 rounded-lg object-cover shadow-sm bg-white dark:bg-slate-700 z-10">
                         @else
                             <div
-                                class="w-16 h-16 rounded-lg bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-3xl border border-slate-100 dark:border-slate-600">
+                                class="w-16 h-16 rounded-lg bg-white dark:bg-slate-700 shadow-sm flex items-center justify-center text-3xl border border-slate-100 dark:border-slate-600 z-10 shrink-0">
                                 {{ $quickBatchProduct->category?->icon ?? '📦' }}
                             </div>
                         @endif
-                        <div class="flex-grow min-w-0">
+                        <div class="flex-grow min-w-0 z-10">
                             <h4 class="font-bold text-slate-800 dark:text-white text-sm line-clamp-2 leading-snug">
-                                {{ $quickBatchProduct->name }}
-                            </h4>
-                            <p class="text-xs text-slate-500 mt-1 font-mono">{{ $quickBatchProduct->sku }}</p>
+                                {{ $quickBatchProduct->name }}</h4>
+                            <p
+                                class="text-xs text-slate-500 mt-1 font-mono tracking-wide bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded inline-block">
+                                {{ $quickBatchProduct->sku }}</p>
 
-                            <div class="flex items-center gap-2 mt-2">
+                            <div class="flex items-center gap-2 mt-2.5">
                                 <span
-                                    class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide {{ $quickBatchProduct->stock <= $quickBatchProduct->threshold ? 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' }}">
+                                    class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border {{ $quickBatchProduct->stock <= $quickBatchProduct->threshold ? 'bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 border-amber-200 dark:border-amber-500/30' : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/30' }}">
                                     Stok: {{ $quickBatchProduct->stock }}
                                 </span>
-                                <span class="text-[10px] text-slate-400">Target:
-                                    {{ $quickBatchProduct->threshold * 2 }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Qty Input -->
                     <div>
-                        <label
-                            class="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-3">Kuantitas
-                            Order</label>
+                        <div class="flex items-center justify-between mb-3">
+                            <label
+                                class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">Kuantitas
+                                Order</label>
+                            @if($quickBatchProduct->buyPrice > 0)
+                                <span
+                                    class="text-[10px] font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                                    @ Rp {{ number_format($quickBatchProduct->buyPrice, 0, ',', '.') }}
+                                </span>
+                            @endif
+                        </div>
+
                         <div class="flex items-center justify-between gap-3">
                             <button wire:click="$set('quickBatchQty', Math.max(1, {{ $quickBatchQty }} - 10))"
-                                class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-rose-500 transition-all flex items-center justify-center shadow-sm active:scale-95 group">
+                                class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-rose-500 dark:hover:text-rose-400 transition-all flex items-center justify-center shadow-sm active:scale-95 group border border-transparent hover:border-slate-300 dark:hover:border-slate-600">
                                 <i class='bx bx-minus text-xl group-hover:scale-110 transition-transform'></i>
                             </button>
 
-                            <div class="flex-1 relative">
+                            <div class="flex-1 relative group">
                                 <input wire:model="quickBatchQty" type="number" min="1"
-                                    class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full h-12 text-center text-xl font-bold bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-0 text-slate-800 dark:text-white transition-all shadow-sm">
+                                    class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full h-12 text-center text-xl font-bold bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 text-slate-800 dark:text-white transition-all shadow-sm group-hover:border-indigo-300 dark:group-hover:border-indigo-700">
                                 <span
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">PCS</span>
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400 pointer-events-none uppercase tracking-wider">{{ $quickBatchProduct->unit ?? 'PCS' }}</span>
                             </div>
 
                             <button wire:click="$set('quickBatchQty', {{ $quickBatchQty }} + 10)"
-                                class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-emerald-500 transition-all flex items-center justify-center shadow-sm active:scale-95 group">
+                                class="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-emerald-500 dark:hover:text-emerald-400 transition-all flex items-center justify-center shadow-sm active:scale-95 group border border-transparent hover:border-slate-300 dark:hover:border-slate-600">
                                 <i class='bx bx-plus text-xl group-hover:scale-110 transition-transform'></i>
                             </button>
                         </div>
 
                         {{-- Cost Estimation Hint --}}
                         @if($quickBatchProduct->buyPrice > 0)
-                            <div class="mt-3 text-center">
-                                <p class="text-xs text-slate-500">
-                                    Estimasi Biaya: <span class="font-bold text-slate-700 dark:text-slate-300">Rp
-                                        {{ number_format($quickBatchProduct->buyPrice * $quickBatchQty, 0, ',', '.') }}</span>
-                                </p>
+                            <div
+                                class="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg border border-indigo-100 dark:border-indigo-800/50 flex items-center justify-between">
+                                <span class="text-xs text-indigo-600 dark:text-indigo-300 font-medium">Estimasi Total</span>
+                                <span class="font-bold text-indigo-700 dark:text-indigo-200">Rp
+                                    {{ number_format($quickBatchProduct->buyPrice * $quickBatchQty, 0, ',', '.') }}</span>
                             </div>
                         @endif
                     </div>
                 </div>
 
                 <div
-                    class="px-6 py-5 bg-slate-50 dark:bg-slate-800/50 flex gap-3 border-t border-slate-100 dark:border-slate-800/50">
+                    class="px-6 py-5 bg-slate-50 dark:bg-slate-800/80 flex gap-3 border-t border-slate-100 dark:border-slate-800/50 backdrop-blur-sm">
                     <button wire:click="closeQuickBatchModal"
-                        class="flex-1 px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl transition-colors uppercase tracking-wide">
+                        class="flex-1 px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700/80 rounded-xl transition-colors uppercase tracking-wide">
                         Batal
                     </button>
                     <button wire:click="saveQuickBatch"
-                        class="flex-[2] px-4 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-wide">
+                        class="flex-[2] px-4 py-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-indigo-500/25 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 uppercase tracking-wide ring-offset-2 focus:ring-2 focus:ring-indigo-500">
                         <span>Kirim Order</span>
                         <i class='bx bx-send text-lg'></i>
                     </button>
