@@ -18,13 +18,13 @@ class PosCustom extends Component
     public $categoryFilter = '';
     public $cart = [];
     public $selectedMember = null;
-    public $memberSearch = '';
-    
+    public $members = []; // All active members for client-side search
+
     public $showPaymentModal = false;
     public $paymentMethod = 'CASH';
     public $cashReceived = 0;
     public $note = '';
-    
+
     public $lastInvoice = null;
 
     public function mount()
@@ -37,12 +37,19 @@ class PosCustom extends Component
                 return redirect()->route('kasir.dashboard');
             }
         }
+
+        // Load all active members for client-side search
+        $this->members = Member::select('id', 'name', 'nomorAnggota', 'unitKerja', 'tier', 'points')
+            ->where('status', 'ACTIVE')
+            ->orderBy('name')
+            ->get()
+            ->toArray();
     }
 
     public function addToCart($productId)
     {
         $product = Product::find($productId);
-        
+
         if (!$product || !$product->isActive) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Produk tidak tersedia']);
             return;
@@ -82,7 +89,8 @@ class PosCustom extends Component
 
     public function updateQuantity($index, $newQuantity)
     {
-        if (!isset($this->cart[$index])) return;
+        if (!isset($this->cart[$index]))
+            return;
 
         if ($newQuantity < 1) {
             $this->removeFromCart($index);
@@ -108,7 +116,6 @@ class PosCustom extends Component
     {
         $this->cart = [];
         $this->selectedMember = null;
-        $this->memberSearch = '';
     }
 
     public function selectMember($memberId)
@@ -119,10 +126,10 @@ class PosCustom extends Component
                 'id' => $member->id,
                 'name' => $member->name,
                 'nomorAnggota' => $member->nomorAnggota,
+                'unitKerja' => $member->unitKerja ?? '',
                 'tier' => $member->tier,
                 'points' => $member->points,
             ];
-            $this->memberSearch = '';
         }
     }
 
@@ -173,7 +180,7 @@ class PosCustom extends Component
 
             foreach ($this->cart as $item) {
                 $product = Product::find($item['productId']);
-                
+
                 TransactionItem::create([
                     'transactionId' => $transaction->id,
                     'productId' => $product->id,
@@ -215,7 +222,7 @@ class PosCustom extends Component
 
             $this->lastInvoice = $invoiceNumber;
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Transaksi berhasil!']);
-            
+
             $this->clearCart();
             $this->closePaymentModal();
 
@@ -246,9 +253,9 @@ class PosCustom extends Component
     {
         return Product::with('category')
             ->where('isActive', true)
-            ->when($this->search, fn($q) => $q->where(function($q) {
+            ->when($this->search, fn($q) => $q->where(function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('sku', 'like', '%' . $this->search . '%');
+                    ->orWhere('sku', 'like', '%' . $this->search . '%');
             }))
             ->when($this->categoryFilter, fn($q) => $q->where('categoryId', $this->categoryFilter))
             ->orderBy('name')
@@ -258,19 +265,6 @@ class PosCustom extends Component
     public function getCategoriesProperty()
     {
         return Category::where('isActive', true)->orderBy('order')->get();
-    }
-
-    public function getMembersProperty()
-    {
-        if (strlen($this->memberSearch) < 2) return collect();
-        
-        return Member::where('status', 'ACTIVE')
-            ->where(function($q) {
-                $q->where('name', 'like', '%' . $this->memberSearch . '%')
-                  ->orWhere('nomorAnggota', 'like', '%' . $this->memberSearch . '%');
-            })
-            ->limit(5)
-            ->get();
     }
 
     public function render()

@@ -63,9 +63,38 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Harga Ajuan (Per Unit) <span class="text-rose-500">*</span></label>
-                            <div class="relative">
+                            <div class="relative"
+                                x-data="{
+                                    displayValue: '',
+                                    rawValue: '{{ old('price', (int)$product->buyPrice) }}',
+                                    formatRupiah(value) {
+                                        let number = String(value).replace(/[^0-9]/g, '');
+                                        if (number === '') return '';
+                                        return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                    },
+                                    init() {
+                                        if (this.rawValue && this.rawValue !== '0') {
+                                            this.displayValue = this.formatRupiah(this.rawValue);
+                                        }
+                                    }
+                                }">
                                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
-                                <input type="number" name="price" value="{{ old('price', $product->buyPrice) }}" min="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" required>
+                                <input type="hidden" name="price" x-bind:value="rawValue">
+                                <input type="text" 
+                                    x-model="displayValue"
+                                    placeholder="0"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" 
+                                    required
+                                    x-on:input="
+                                        let cleanValue = String($el.value).replace(/[^0-9]/g, '');
+                                        if (cleanValue === '') {
+                                            displayValue = '';
+                                            rawValue = '';
+                                            return;
+                                        }
+                                        displayValue = formatRupiah(cleanValue);
+                                        rawValue = cleanValue;
+                                    ">
                             </div>
                             <p class="text-xs text-slate-500 mt-1">Harga yang Anda ajukan. Admin akan menentukan harga jual final.</p>
                             @error('price') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
