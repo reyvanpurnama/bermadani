@@ -98,7 +98,8 @@ class ConsignmentBatches extends Component
             foreach ($this->items as $item) {
                 // Get sell price from the product (already set during approval)
                 $product = Product::find($item['productId']);
-                if (!$product) continue;
+                if (!$product)
+                    continue;
 
                 $sellPrice = $product->sellPrice;
                 $priceAfterFee = $sellPrice * (1 - ($item['feePercent'] / 100));
@@ -186,13 +187,13 @@ class ConsignmentBatches extends Component
 
         DB::transaction(function () {
             $notes = [];
-            
+
             // Process each item
             foreach ($this->receiveItems as $receiveItem) {
                 $item = ConsignmentItem::find($receiveItem['itemId']);
                 $requestedQty = $receiveItem['requestedQty'];
                 $receivedQty = $receiveItem['receivedQty'];
-                
+
                 // Update item with actual received qty
                 $item->update([
                     'initialQty' => $receivedQty,
@@ -218,7 +219,7 @@ class ConsignmentBatches extends Component
                         'productId' => $item->productId,
                         'movementType' => 'CONSIGNMENT_IN',
                         'quantity' => $receivedQty,
-                        'referenceType' => 'ConsignmentBatch',
+                        'referenceType' => 'CONSIGNMENT_BATCH',
                         'referenceId' => $this->selectedBatch->id,
                         'note' => $noteText,
                         'occurredAt' => now(),
@@ -302,14 +303,17 @@ class ConsignmentBatches extends Component
     {
         DB::transaction(function () {
             foreach ($this->returItems as $returItem) {
-                if ($returItem['returQty'] <= 0) continue;
+                if ($returItem['returQty'] <= 0)
+                    continue;
 
                 $item = ConsignmentItem::with('product')->find($returItem['itemId']);
-                if (!$item) continue;
+                if (!$item)
+                    continue;
 
                 // Validate retur qty doesn't exceed remaining
                 $returQty = min($returItem['returQty'], $item->remainingQty);
-                if ($returQty <= 0) continue;
+                if ($returQty <= 0)
+                    continue;
 
                 // Update consignment item
                 $item->decrement('remainingQty', $returQty);
@@ -322,7 +326,7 @@ class ConsignmentBatches extends Component
                     'productId' => $item->productId,
                     'movementType' => 'CONSIGNMENT_RETURN',
                     'quantity' => -$returQty,
-                    'referenceType' => 'ConsignmentBatch',
+                    'referenceType' => 'CONSIGNMENT_BATCH',
                     'referenceId' => $this->selectedBatch->id,
                     'note' => "Retur konsinyasi batch {$this->selectedBatch->batchCode}",
                     'occurredAt' => now(),
@@ -363,7 +367,7 @@ class ConsignmentBatches extends Component
         ];
 
         $suppliers = Supplier::where('isActive', true)->orderBy('businessName')->get();
-        
+
         // Filter products by selected supplier (only APPROVED products)
         $products = collect();
         if ($this->supplierId) {
