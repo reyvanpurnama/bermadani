@@ -589,6 +589,7 @@
 
                                 <div class="flex-auto relative">
                                     <input type="number" wire:model.live.debounce.300ms="quickBatchQty" id="quantity"
+                                        @input="$el.value = $el.value.replace(/[^0-9]/g, '')"
                                         class="block w-full h-12 rounded-xl border-0 py-1.5 text-center text-xl font-bold text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-white dark:bg-slate-800 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                         <span
