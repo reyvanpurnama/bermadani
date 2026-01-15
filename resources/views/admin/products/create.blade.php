@@ -77,63 +77,74 @@
             <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="{
+                        buyDisplay: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
+                        buyRaw: '{{ old('buyPrice', '') }}',
+                        sellDisplay: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
+                        sellRaw: '{{ old('sellPrice', '') }}',
+                        formatBuy(e) {
+                            let val = e.target.value.replace(/\D/g, '');
+                            this.buyRaw = val;
+                            this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        },
+                        formatSell(e) {
+                            let val = e.target.value.replace(/\D/g, '');
+                            this.sellRaw = val;
+                            this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        },
+                        get isLoss() {
+                            return this.sellRaw && this.buyRaw && parseInt(this.sellRaw) < parseInt(this.buyRaw);
+                        }
+                    }">
                     {{-- Harga Beli --}}
-                    <div x-data="{
-                            display: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
-                            raw: '{{ old('buyPrice', '') }}',
-                            format(e) {
-                                let val = e.target.value.replace(/\D/g, '');
-                                this.raw = val;
-                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                            }
-                        }">
+                    <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Beli</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
-                            <input type="text" x-model="display" @input="format($event)"
+                            <input type="text" x-model="buyDisplay" @input="formatBuy($event)"
                                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
                                 placeholder="0">
-                            <input type="hidden" name="buyPrice" :value="raw">
+                            <input type="hidden" name="buyPrice" :value="buyRaw">
                         </div>
                     </div>
 
                     {{-- Harga Jual --}}
-                    <div x-data="{
-                            display: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
-                            raw: '{{ old('sellPrice', '') }}',
-                            format(e) {
-                                let val = e.target.value.replace(/\D/g, '');
-                                this.raw = val;
-                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                            }
-                        }">
+                    <div>
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Jual <span
                                 class="text-rose-500">*</span></label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
-                            <input type="text" x-model="display" @input="format($event)" required
+                            <input type="text" x-model="sellDisplay" @input="formatSell($event)" required
                                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('sellPrice') border-rose-500 @enderror"
-                                placeholder="0">
-                            <input type="hidden" name="sellPrice" :value="raw">
+                                :class="isLoss ? 'border-amber-500 ring-2 ring-amber-500/20' : ''" placeholder="0">
+                            <input type="hidden" name="sellPrice" :value="sellRaw">
                         </div>
                         @error('sellPrice')
                             <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                         @enderror
+                    </div>
+
+                    {{-- Warning Alert --}}
+                    <div x-show="isLoss" x-transition class="md:col-span-2">
+                        <div
+                            class="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg text-amber-700 dark:text-amber-400">
+                            <i class='bx bx-error-circle text-lg'></i>
+                            <p class="text-xs font-medium">⚠️ Harga jual lebih rendah dari harga beli. Anda akan merugi!</p>
+                        </div>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Awal --}}
                     <div x-data="{
-                            display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
-                            raw: '{{ old('stock', '') }}',
-                            format(e) {
-                                let val = e.target.value.replace(/\D/g, '');
-                                this.raw = val;
-                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                            }
-                        }">
+                                display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
+                                raw: '{{ old('stock', '') }}',
+                                format(e) {
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    this.raw = val;
+                                    this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                }
+                            }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span
                                 class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required
