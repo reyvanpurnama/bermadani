@@ -20,26 +20,26 @@ class CheckCashierShift
     {
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
-        
+
         // Only check for Kasir role
         if (!$user || !$user->isKasir()) {
             return $next($request);
         }
-        
+
         // Check if kasir has active shift
-        $activeShift = CashierShift::where('userId', $user->id)
-            ->whereNull('endTime')
+        $activeShift = CashierShift::where('user_id', $user->id)
+            ->where('status', 'OPEN')
             ->first();
-        
+
         if (!$activeShift) {
             return redirect()->route('kasir.dashboard')->withErrors([
                 'shift' => 'You must start a shift before accessing POS. Please start your shift first.'
             ]);
         }
-        
+
         // Attach shift to request for easy access in controllers
         $request->attributes->set('cashier_shift', $activeShift);
-        
+
         return $next($request);
     }
 }
