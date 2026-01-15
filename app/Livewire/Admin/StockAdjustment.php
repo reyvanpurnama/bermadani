@@ -91,7 +91,7 @@ class StockAdjustment extends Component
         $this->reset(['selectedProduct', 'quantity', 'note']);
         $this->quantity = 1;
 
-        $this->dispatch('notify', [['message' => 'Penyesuaian stok berhasil disimpan', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Penyesuaian stok berhasil disimpan', 'type' => 'success']);
     }
 
     public function render()

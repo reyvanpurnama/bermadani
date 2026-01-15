@@ -64,7 +64,7 @@ class ProductReview extends Component
         });
 
         $this->closeModal();
-        $this->dispatch('notify', [['message' => 'Produk berhasil disetujui & masuk ke stok', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Produk berhasil disetujui & masuk ke stok', 'type' => 'success']);
     }
 
     public function reject()
@@ -85,7 +85,7 @@ class ProductReview extends Component
         ]);
 
         $this->closeModal();
-        $this->dispatch('notify', [['message' => 'Produk ditolak', 'type' => 'warning']]);
+        $this->dispatch('notify', ['message' => 'Produk ditolak', 'type' => 'warning']);
     }
 
     public function render()

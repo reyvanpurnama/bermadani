@@ -107,7 +107,7 @@ class ConsignmentBatches extends Component
         });
 
         $this->showCreateModal = false;
-        $this->dispatch('notify', [['message' => 'Batch konsinyasi berhasil ditambahkan', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Batch konsinyasi berhasil ditambahkan', 'type' => 'success']);
     }
 
     public function openDetail($batchId)
@@ -136,7 +136,7 @@ class ConsignmentBatches extends Component
         ]);
 
         $this->closeDetail();
-        $this->dispatch('notify', [['message' => 'Settlement berhasil diproses', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Settlement berhasil diproses', 'type' => 'success']);
     }
 
     public function openReturModal()
@@ -210,7 +210,7 @@ class ConsignmentBatches extends Component
 
         $this->closeReturModal();
         $this->closeDetail();
-        $this->dispatch('notify', [['message' => 'Retur berhasil diproses', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Retur berhasil diproses', 'type' => 'success']);
     }
 
     public function render()

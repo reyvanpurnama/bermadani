@@ -89,7 +89,7 @@ class RestockManagement extends Component
         ]);
 
         $this->showModal = false;
-        $this->dispatch('notify', [['message' => 'Request restock berhasil dikirim', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Request restock berhasil dikirim', 'type' => 'success']);
     }
 
     public function openReceiveModal($id)
@@ -127,7 +127,7 @@ class RestockManagement extends Component
         });
 
         $this->showReceiveModal = false;
-        $this->dispatch('notify', [['message' => 'Stok berhasil diterima & ditambahkan', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Stok berhasil diterima & ditambahkan', 'type' => 'success']);
     }
 
     public function cancelRequest($id)
@@ -135,7 +135,7 @@ class RestockManagement extends Component
         $req = RestockRequest::find($id);
         if ($req && $req->status == 'PENDING') {
             $req->delete(); // Or set to CANCELLED/REJECTED if soft deletes
-            $this->dispatch('notify', [['message' => 'Request dibatalkan', 'type' => 'success']]);
+            $this->dispatch('notify', ['message' => 'Request dibatalkan', 'type' => 'success']);
         }
     }
 }

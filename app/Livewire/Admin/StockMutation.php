@@ -116,6 +116,6 @@ class StockMutation extends Component
         });
 
         $this->showModal = false;
-        $this->dispatch('notify', [['message' => 'Mutasi berhasil disimpan', 'type' => 'success']]);
+        $this->dispatch('notify', ['message' => 'Mutasi berhasil disimpan', 'type' => 'success']);
     }
 }
