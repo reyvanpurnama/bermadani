@@ -90,12 +90,14 @@
         </div>
 
         <div class="relative">
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Status Stok</label>
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Status</label>
             <select wire:model.live="stockFilter" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
                 <option value="">Semua Status</option>
                 <option value="available">Tersedia</option>
                 <option value="low">Stok Menipis</option>
                 <option value="out">Stok Habis</option>
+                <option value="pending">Menunggu Review</option>
+                <option value="rejected">Ditolak</option>
             </select>
         </div>
 
@@ -161,7 +163,11 @@
                                 </div>
                             </td>
                             <td class="px-5 py-3.5 text-center">
-                                @if($product->stock == 0)
+                                @if($product->approvalStatus === 'PENDING')
+                                    <span class="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Menunggu Review</span>
+                                @elseif($product->approvalStatus === 'REJECTED')
+                                    <span class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide cursor-help" title="{{ $product->rejectionReason ?? 'Tidak ada alasan' }}">Ditolak</span>
+                                @elseif($product->stock == 0)
                                     <span class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Habis</span>
                                 @elseif($product->stock <= $product->threshold)
                                     <span class="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Menipis</span>

@@ -73,11 +73,15 @@ class Products extends Component
             })
             ->when($this->stockFilter, function ($q) {
                 if ($this->stockFilter === 'low') {
-                    $q->whereRaw('stock <= threshold');
+                    $q->whereRaw('stock <= threshold')->where('approvalStatus', 'APPROVED');
                 } elseif ($this->stockFilter === 'out') {
-                    $q->where('stock', 0);
+                    $q->where('stock', 0)->where('approvalStatus', 'APPROVED');
                 } elseif ($this->stockFilter === 'available') {
-                    $q->whereRaw('stock > threshold');
+                    $q->whereRaw('stock > threshold')->where('approvalStatus', 'APPROVED');
+                } elseif ($this->stockFilter === 'pending') {
+                    $q->where('approvalStatus', 'PENDING');
+                } elseif ($this->stockFilter === 'rejected') {
+                    $q->where('approvalStatus', 'REJECTED');
                 }
             });
 
