@@ -182,11 +182,6 @@
         <header
             class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors duration-300">
             <div class="flex items-center gap-4">
-                <button id="sidebar-toggle"
-                    class="md:hidden w-[34px] h-[34px] flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all"
-                    @click="sidebarOpen = true">
-                    <i class='bx bx-menu text-[20px]'></i>
-                </button>
                 <div>
                     <h1 class="text-[14px] font-bold text-slate-800 dark:text-white">
                         @yield('header-title', 'Dasbor Mitra')</h1>
