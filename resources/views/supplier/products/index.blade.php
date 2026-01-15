@@ -113,9 +113,13 @@
                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
-                                <i class='bx bx-image text-xl'></i>
-                            </div>
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded-lg object-cover">
+                            @else
+                                <div class="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+                                    <i class='bx bx-image text-xl'></i>
+                                </div>
+                            @endif
                             <div>
                                 <h6 class="font-medium text-slate-900 dark:text-white">{{ $product->name }}</h6>
                                 <p class="text-xs text-slate-500">{{ $product->sku }}</p>
