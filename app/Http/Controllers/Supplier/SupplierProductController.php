@@ -61,19 +61,21 @@ class SupplierProductController extends Controller
             'name' => $validated['name'],
             'sku' => $sku,
             'description' => $validated['description'],
-            'sellPrice' => $validated['price'],
+            'buyPrice' => $validated['price'],
+            'sellPrice' => 0,
             'stock' => $validated['stock'],
-            // 'image' => $imagePath, // Product model doesn't have image column in fillable or migration shown?
-            'status' => 'ACTIVE', 
+            'image' => $imagePath,
+            'status' => 'INACTIVE',
             'isConsignment' => true,
             'ownershipType' => 'TITIPAN',
-            'isActive' => true,
+            'isActive' => false,
+            'approvalStatus' => 'PENDING',
         ]);
 
-        // Increment active products count
-        $supplier->increment('currentActiveProducts');
+        // Don't increment active products count until approved
+        // $supplier->increment('currentActiveProducts');
 
-        return redirect()->route('supplier.products.index')->with('success', 'Produk berhasil ditambahkan.');
+        return redirect()->route('supplier.products.index')->with('success', 'Produk berhasil diajukan dan menunggu persetujuan admin.');
     }
 
     public function edit(Product $product)

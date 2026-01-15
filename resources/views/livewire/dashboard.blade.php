@@ -147,7 +147,7 @@
                                                 'last_month' => 'Bulan Lalu',
                                                 'this_year' => 'Tahun Ini'
                                             ] as $key => $label)
-                                                <button wire:click="$set('dateFilter', '{{ $key }}')" @click="open = false"
+                                                <button wire:click="setDateFilter('{{ $key }}')" @click="open = false"
                                                     class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $dateFilter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
                                                     {{ $label }}
                                                 </button>

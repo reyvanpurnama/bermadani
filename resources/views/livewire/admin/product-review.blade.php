@@ -68,7 +68,14 @@
                                 @endif
                             </td>
                             <td class="px-5 py-4 font-medium text-slate-800 dark:text-white">
-                                Rp {{ number_format($product->sellPrice ?? 0, 0, ',', '.') }}
+                                @if($status === 'PENDING')
+                                    <div class="text-[13px]">
+                                        <div class="text-slate-500 text-[11px]">Harga Ajuan</div>
+                                        <div class="font-bold">Rp {{ number_format($product->buyPrice ?? 0, 0, ',', '.') }}</div>
+                                    </div>
+                                @else
+                                    Rp {{ number_format($product->sellPrice ?? 0, 0, ',', '.') }}
+                                @endif
                             </td>
                             <td class="px-5 py-4">
                                 {{ $product->stock }} Pcs
@@ -179,9 +186,28 @@
                                 <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Harga Jual</label>
                                 <div class="relative">
                                     <span class="absolute inset-y-0 left-3 flex items-center text-[13px] text-slate-400">Rp</span>
-                                    <input wire:model="sellPrice" type="number" 
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-[14px] font-bold text-slate-800 dark:text-white outline-none focus:border-primary [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                        {{ $status !== 'PENDING' ? 'disabled' : '' }}>
+                                    <input wire:model.live="sellPrice" type="text" id="sellPriceInput"
+                                        placeholder="0"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-[14px] font-bold text-slate-800 dark:text-white outline-none focus:border-primary"
+                                        {{ $status !== 'PENDING' ? 'disabled' : '' }}
+                                        x-data="{
+                                            formatRupiah(value) {
+                                                let number = value.replace(/[^0-9]/g, '');
+                                                if (number === '') return '';
+                                                return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                            }
+                                        }"
+                                        x-on:input="
+                                            let input = $el;
+                                            let cursorPos = input.selectionStart;
+                                            let oldLength = input.value.length;
+                                            let formatted = formatRupiah(input.value);
+                                            input.value = formatted;
+                                            @this.set('sellPrice', input.value.replace(/\./g, ''));
+                                            let newLength = formatted.length;
+                                            let diff = newLength - oldLength;
+                                            input.setSelectionRange(cursorPos + diff, cursorPos + diff);
+                                        ">
                                 </div>
                             </div>
 
@@ -191,12 +217,15 @@
                             </div>
 
                             @php
-                                $margin = $sellPrice && $selectedProduct->buyPrice ? (($sellPrice - $selectedProduct->buyPrice) / $sellPrice) * 100 : 0;
+                                $margin = ($sellPrice && $selectedProduct->buyPrice && $selectedProduct->buyPrice > 0) 
+                                    ? (($sellPrice - $selectedProduct->buyPrice) / $selectedProduct->buyPrice) * 100 
+                                    : 0;
+                                $marginAmount = $sellPrice - ($selectedProduct->buyPrice ?? 0);
                             @endphp
                             <div class="flex justify-between items-center text-[12px]">
                                 <span class="text-slate-500">Margin</span>
                                 <span class="font-bold {{ $margin > 15 ? 'text-emerald-600' : ($margin > 5 ? 'text-amber-600' : 'text-rose-600') }}">
-                                    {{ number_format($margin, 1) }}%
+                                    {{ number_format($margin, 1) }}% (Rp {{ number_format($marginAmount, 0, ',', '.') }})
                                 </span>
                             </div>
                         </div>

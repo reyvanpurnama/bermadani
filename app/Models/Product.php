@@ -27,7 +27,15 @@ class Product extends Model
         'avgCost',
         'expiryPolicy',
         'lastRestockAt',
+        'image',
+        'approvalStatus',
+        'rejectionReason',
+        'approvedAt',
+        'approvedBy',
+        'isDraft',
     ];
+
+    protected $appends = ['margin', 'marginPercentage'];
 
     protected $casts = [
         'buyPrice' => 'decimal:2',
@@ -64,6 +72,40 @@ class Product extends Model
     public function scopeActive($query)
     {
         return $query->where('isActive', true);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('approvalStatus', 'APPROVED');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('approvalStatus', 'PENDING');
+    }
+
+    public function scopeAvailableForSale($query)
+    {
+        return $query->where('isActive', true)
+                     ->where('approvalStatus', 'APPROVED')
+                     ->where('status', 'ACTIVE')
+                     ->where('stock', '>', 0);
+    }
+
+    public function getMarginAttribute()
+    {
+        if (!$this->sellPrice || !$this->buyPrice) {
+            return 0;
+        }
+        return $this->sellPrice - $this->buyPrice;
+    }
+
+    public function getMarginPercentageAttribute()
+    {
+        if (!$this->buyPrice || $this->buyPrice == 0) {
+            return 0;
+        }
+        return (($this->sellPrice - $this->buyPrice) / $this->buyPrice) * 100;
     }
 
     public function scopeLowStock($query)

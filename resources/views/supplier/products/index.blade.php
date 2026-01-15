@@ -115,7 +115,15 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 text-center">
-                        @if($product->status === 'ACTIVE')
+                        @if($product->approvalStatus === 'PENDING')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                Menunggu Review
+                            </span>
+                        @elseif($product->approvalStatus === 'REJECTED')
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 cursor-help" title="Alasan: {{ $product->rejectionReason ?? 'Tidak ada alasan' }}">
+                                Ditolak
+                            </span>
+                        @elseif($product->status === 'ACTIVE')
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                                 Aktif
                             </span>

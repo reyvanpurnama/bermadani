@@ -28,7 +28,7 @@ class ProductReview extends Component
     public function openDetail($productId)
     {
         $this->selectedProduct = Product::with('supplier')->find($productId);
-        $this->sellPrice = $this->selectedProduct->sellPrice ?? 0;
+        $this->sellPrice = 0;
         $this->adminNote = '';
         $this->showModal = true;
     }
@@ -47,12 +47,17 @@ class ProductReview extends Component
         DB::transaction(function () {
             $this->selectedProduct->update([
                 'approvalStatus' => 'APPROVED',
+                'status' => 'ACTIVE',
                 'sellPrice' => $this->sellPrice,
                 'approvedAt' => now(),
                 'approvedBy' => auth()->id(),
                 'isDraft' => false,
                 'isActive' => true,
             ]);
+
+            if ($this->selectedProduct->supplier) {
+                $this->selectedProduct->supplier->increment('currentActiveProducts');
+            }
         });
 
         $this->closeModal();
