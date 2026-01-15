@@ -79,13 +79,6 @@
             <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Laporan Penjualan</span>
         </a>
 
-        <p class="supplier-sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Aksi</p>
-        
-        <a href="{{ route('supplier.products.create') }}" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('supplier.products.create') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}" :class="{'justify-center': sidebarCollapsed}">
-            <i class='bx bx-plus-circle text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
-            <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Ajukan Barang</span>
-        </a>
-
         <a href="{{ route('supplier.restock') }}" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('supplier.restock') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}" :class="{'justify-center': sidebarCollapsed}">
             <i class='bx bx-archive-in text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
             <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Permintaan Restock</span>

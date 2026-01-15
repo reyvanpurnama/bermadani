@@ -11,7 +11,7 @@
     <div class="flex gap-2">
         <a href="{{ route('supplier.products.create') }}" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
             <i class='bx bx-plus'></i>
-            Tambah Produk
+            Ajukan Produk
         </a>
     </div>
 </div>
