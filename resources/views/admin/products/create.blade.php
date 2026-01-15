@@ -77,57 +77,135 @@
             <div class="space-y-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" x-data="{
-                        buyDisplay: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
-                        buyRaw: '{{ old('buyPrice', '') }}',
-                        sellDisplay: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
-                        sellRaw: '{{ old('sellPrice', '') }}',
-                        formatBuy(e) {
-                            let val = e.target.value.replace(/\D/g, '');
-                            this.buyRaw = val;
-                            this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        },
-                        formatSell(e) {
-                            let val = e.target.value.replace(/\D/g, '');
-                            this.sellRaw = val;
-                            this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        },
-                        get profit() {
-                            if (!this.sellRaw || !this.buyRaw) return null;
-                            return parseInt(this.sellRaw) - parseInt(this.buyRaw);
-                        },
-                        get marginPercent() {
-                            if (!this.buyRaw || parseInt(this.buyRaw) === 0) return null;
-                            return ((parseInt(this.sellRaw) - parseInt(this.buyRaw)) / parseInt(this.buyRaw) * 100).toFixed(1);
-                        },
-                        get isLoss() {
-                            return this.profit !== null && this.profit < 0;
-                        },
-                        get hasValidPrices() {
-                            return this.sellRaw && this.buyRaw && parseInt(this.buyRaw) > 0;
-                        }
-                    }">
-                    {{-- Harga Beli --}}
+                <div class="space-y-4" x-data="{
+                            mode: 'manual',
+                            buyDisplay: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
+                            buyRaw: '{{ old('buyPrice', '') }}',
+                            sellDisplay: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
+                            sellRaw: '{{ old('sellPrice', '') }}',
+                            percent: 30,
+
+                            formatBuy(e) {
+                                let val = e.target.value.replace(/\D/g, '');
+                                this.buyRaw = val;
+                                this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                this.recalculate();
+                            },
+                            formatSell(e) {
+                                let val = e.target.value.replace(/\D/g, '');
+                                this.sellRaw = val;
+                                this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                            },
+                            recalculate() {
+                                if (!this.buyRaw || parseInt(this.buyRaw) === 0) return;
+                                let buy = parseInt(this.buyRaw);
+                                let sell = 0;
+
+                                if (this.mode === 'markup') {
+                                    sell = Math.round(buy * (1 + this.percent / 100));
+                                } else if (this.mode === 'profit') {
+                                    if (this.percent >= 100) return;
+                                    sell = Math.round(buy / (1 - this.percent / 100));
+                                } else {
+                                    return;
+                                }
+
+                                this.sellRaw = sell.toString();
+                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+                            },
+                            setMode(m) {
+                                this.mode = m;
+                                if (m !== 'manual') this.recalculate();
+                            },
+                            get profit() {
+                                if (!this.sellRaw || !this.buyRaw) return null;
+                                return parseInt(this.sellRaw) - parseInt(this.buyRaw);
+                            },
+                            get marginPercent() {
+                                if (!this.buyRaw || parseInt(this.buyRaw) === 0) return null;
+                                return ((parseInt(this.sellRaw) - parseInt(this.buyRaw)) / parseInt(this.buyRaw) * 100).toFixed(1);
+                            },
+                            get isLoss() {
+                                return this.profit !== null && this.profit < 0;
+                            },
+                            get hasValidPrices() {
+                                return this.sellRaw && this.buyRaw && parseInt(this.buyRaw) > 0;
+                            }
+                        }">
+
+                    {{-- Mode Switcher --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Beli</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
-                            <input type="text" x-model="buyDisplay" @input="formatBuy($event)"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
-                                placeholder="0">
-                            <input type="hidden" name="buyPrice" :value="buyRaw">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Mode
+                            Penghitungan</label>
+                        <div class="flex gap-2">
+                            <button type="button" @click="setMode('manual')"
+                                class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
+                                :class="mode === 'manual' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
+                                ✏️ Manual
+                            </button>
+                            <button type="button" @click="setMode('markup')"
+                                class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
+                                :class="mode === 'markup' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
+                                📈 Markup %
+                            </button>
+                            <button type="button" @click="setMode('profit')"
+                                class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
+                                :class="mode === 'profit' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
+                                💰 Profit %
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1.5" x-show="mode === 'manual'">Input harga jual secara
+                            langsung</p>
+                        <p class="text-[10px] text-slate-400 mt-1.5" x-show="mode === 'markup'">Hitung dari % tambahan harga
+                            beli (markup dari modal)</p>
+                        <p class="text-[10px] text-slate-400 mt-1.5" x-show="mode === 'profit'">Hitung dari % keuntungan
+                            target (profit dari harga jual)</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Harga Beli --}}
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Beli
+                                (Modal)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
+                                <input type="text" x-model="buyDisplay" @input="formatBuy($event)"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
+                                    placeholder="0">
+                                <input type="hidden" name="buyPrice" :value="buyRaw">
+                            </div>
+                        </div>
+
+                        {{-- Percentage Input (for Markup/Profit modes) --}}
+                        <div x-show="mode !== 'manual'" x-transition>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                <span x-text="mode === 'markup' ? 'Markup' : 'Profit Target'"></span> (%)
+                            </label>
+                            <div class="relative">
+                                <input type="number" x-model="percent" @input="recalculate()" min="1" max="99" step="1"
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
+                                    placeholder="30">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
+                            </div>
                         </div>
                     </div>
 
                     {{-- Harga Jual --}}
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Jual <span
-                                class="text-rose-500">*</span></label>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            Harga Jual <span class="text-rose-500">*</span>
+                            <span x-show="mode !== 'manual'"
+                                class="text-[10px] text-slate-400 ml-1">(auto-calculated)</span>
+                        </label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
                             <input type="text" x-model="sellDisplay" @input="formatSell($event)" required
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('sellPrice') border-rose-500 @enderror"
-                                :class="isLoss ? 'border-amber-500 ring-2 ring-amber-500/20' : ''" placeholder="0">
+                                :readonly="mode !== 'manual'"
+                                class="w-full border text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('sellPrice') border-rose-500 @enderror"
+                                :class="[
+                                        mode !== 'manual' ? 'bg-slate-100 dark:bg-slate-700 cursor-not-allowed' : 'bg-slate-50 dark:bg-slate-800',
+                                        isLoss ? 'border-rose-500 ring-2 ring-rose-500/20 text-rose-600' : 'border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white'
+                                    ]" placeholder="0">
                             <input type="hidden" name="sellPrice" :value="sellRaw">
                         </div>
                         @error('sellPrice')
@@ -137,24 +215,26 @@
 
                     {{-- Profit & Margin Display --}}
                     <template x-if="hasValidPrices">
-                        <div class="md:col-span-2">
-                            <div class="p-3 rounded-lg" :class="isLoss ? 'bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700' : 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700'">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <i class='bx text-lg' :class="isLoss ? 'bx-trending-down text-rose-500' : 'bx-trending-up text-emerald-500'"></i>
-                                        <span class="text-xs font-medium" :class="isLoss ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'">
-                                            <span x-text="isLoss ? 'Rugi' : 'Untung'"></span>: 
-                                            <span class="font-bold">Rp <span x-text="new Intl.NumberFormat('id-ID').format(Math.abs(profit))"></span></span>
-                                            <span class="ml-1">(<span x-text="marginPercent"></span>%)</span>
-                                        </span>
-                                    </div>
-                                    <span x-show="isLoss" class="text-[10px] text-rose-500 dark:text-rose-400">
-                                        Yakin mau rugi? 😅
-                                    </span>
-                                    <span x-show="!isLoss" class="text-[10px] text-emerald-500 dark:text-emerald-400">
-                                        Margin sehat 👍
+                        <div class="p-3 rounded-lg"
+                            :class="isLoss ? 'bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700' : 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700'">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <i class='bx text-lg'
+                                        :class="isLoss ? 'bx-trending-down text-rose-500' : 'bx-trending-up text-emerald-500'"></i>
+                                    <span class="text-xs font-medium"
+                                        :class="isLoss ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'">
+                                        <span x-text="isLoss ? 'Rugi' : 'Untung'"></span>:
+                                        <span class="font-bold">Rp <span
+                                                x-text="new Intl.NumberFormat('id-ID').format(Math.abs(profit))"></span></span>
+                                        <span class="ml-1">(<span x-text="marginPercent"></span>% dari modal)</span>
                                     </span>
                                 </div>
+                                <span x-show="isLoss" class="text-[10px] text-rose-500 dark:text-rose-400">
+                                    Yakin mau rugi? 😅
+                                </span>
+                                <span x-show="!isLoss" class="text-[10px] text-emerald-500 dark:text-emerald-400">
+                                    Margin sehat 👍
+                                </span>
                             </div>
                         </div>
                     </template>
@@ -163,14 +243,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Awal --}}
                     <div x-data="{
-                                display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
-                                raw: '{{ old('stock', '') }}',
-                                format(e) {
-                                    let val = e.target.value.replace(/\D/g, '');
-                                    this.raw = val;
-                                    this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                }
-                            }">
+                                    display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
+                                    raw: '{{ old('stock', '') }}',
+                                    format(e) {
+                                        let val = e.target.value.replace(/\D/g, '');
+                                        this.raw = val;
+                                        this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                    }
+                                }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span
                                 class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required
