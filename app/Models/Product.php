@@ -47,6 +47,7 @@ class Product extends Model
         'isConsignment' => 'boolean',
         'isActive' => 'boolean',
         'lastRestockAt' => 'datetime',
+        'approvedAt' => 'datetime',
     ];
 
     public function category()
