@@ -28,7 +28,7 @@ class ProductReview extends Component
     public function openDetail($productId)
     {
         $this->selectedProduct = Product::with('supplier')->find($productId);
-        $this->sellPrice = 0;
+        $this->sellPrice = $this->selectedProduct->sellPrice ?? null;
         $this->adminNote = '';
         $this->showModal = true;
     }
