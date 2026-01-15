@@ -184,34 +184,38 @@
                         <div class="space-y-3">
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Harga Jual</label>
-                                <div class="relative">
+                                <div class="relative" 
+                                    x-data="{
+                                        displayValue: '',
+                                        formatRupiah(value) {
+                                            let number = String(value).replace(/[^0-9]/g, '');
+                                            if (number === '') return '';
+                                            return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        },
+                                        init() {
+                                            let initial = '{{ $sellPrice ?? '' }}';
+                                            if (initial && initial !== '' && initial !== '0') {
+                                                this.displayValue = this.formatRupiah(initial);
+                                            }
+                                        }
+                                    }">
                                     <span class="absolute inset-y-0 left-3 flex items-center text-[13px] text-slate-400">Rp</span>
-                                    <input wire:model.live="sellPrice" type="text" id="sellPriceInput"
+                                    <input type="text" 
+                                        x-model="displayValue"
                                         placeholder="0"
                                         class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-[14px] font-bold text-slate-800 dark:text-white outline-none focus:border-primary"
                                         {{ $status !== 'PENDING' ? 'disabled' : '' }}
-                                        x-data="{
-                                            formatRupiah(value) {
-                                                let number = String(value).replace(/[^0-9]/g, '');
-                                                if (number === '') return '';
-                                                return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                            }
-                                        }"
                                         x-on:input="
-                                            let input = $el;
-                                            let rawValue = String(input.value);
-                                            
-                                            // Remove non-numeric except dots
+                                            let rawValue = String($el.value);
                                             let cleanValue = rawValue.replace(/[^0-9]/g, '');
                                             
                                             if (cleanValue === '') {
-                                                input.value = '';
+                                                displayValue = '';
                                                 @this.set('sellPrice', '');
                                                 return;
                                             }
                                             
-                                            let formatted = formatRupiah(cleanValue);
-                                            input.value = formatted;
+                                            displayValue = formatRupiah(cleanValue);
                                             @this.set('sellPrice', cleanValue);
                                         ">
                                 </div>
