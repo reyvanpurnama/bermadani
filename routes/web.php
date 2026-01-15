@@ -22,10 +22,34 @@ Route::middleware('guest')->group(function () {
     })->name('login');
 
     Route::post('/login', function () {
-        $credentials = request()->validate([
-            'email' => 'required|email',
+        $input = request()->validate([
+            'email' => 'required|string',
             'password' => 'required',
         ]);
+
+        $loginInput = trim($input['email']);
+        $password = $input['password'];
+        $email = $loginInput;
+
+        // If input doesn't contain @, try to resolve it as member number
+        if (!str_contains($loginInput, '@')) {
+            // Try to find member by nomorAnggota
+            $member = \App\Models\Member::where('nomorAnggota', $loginInput)->first();
+
+            if ($member && $member->user) {
+                $email = $member->user->email;
+            } else {
+                // Not found as member number - show error
+                return back()->withErrors([
+                    'email' => 'Nomor anggota tidak ditemukan.',
+                ])->onlyInput('email');
+            }
+        }
+
+        $credentials = [
+            'email' => $email,
+            'password' => $password,
+        ];
 
         // Coba login sebagai User (admin/kasir) dulu
         if (Auth::attempt($credentials, request()->boolean('remember'))) {
