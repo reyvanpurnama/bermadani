@@ -78,16 +78,36 @@
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {{-- Harga Beli --}}
+                    <div x-data="{
+                            display: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
+                            raw: '{{ old('buyPrice', '') }}',
+                            format(e) {
+                                let val = e.target.value.replace(/\D/g, '');
+                                this.raw = val;
+                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                            }
+                        }">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Beli</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
+                            <input type="text" x-model="display" @input="format($event)"
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
+                                placeholder="0">
+                            <input type="hidden" name="buyPrice" :value="raw">
+                        </div>
+                    </div>
+
                     {{-- Harga Jual --}}
                     <div x-data="{
-                        display: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
-                        raw: '{{ old('sellPrice', '') }}',
-                        format(e) {
-                            let val = e.target.value.replace(/\D/g, '');
-                            this.raw = val;
-                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        }
-                    }">
+                            display: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
+                            raw: '{{ old('sellPrice', '') }}',
+                            format(e) {
+                                let val = e.target.value.replace(/\D/g, '');
+                                this.raw = val;
+                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                            }
+                        }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Jual <span
                                 class="text-rose-500">*</span></label>
                         <div class="relative">
@@ -101,40 +121,21 @@
                             <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    {{-- Harga Beli --}}
-                    <div x-data="{
-                        display: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
-                        raw: '{{ old('buyPrice', '') }}',
-                        format(e) {
-                            let val = e.target.value.replace(/\D/g, '');
-                            this.raw = val;
-                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        }
-                    }">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Harga Beli</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
-                            <input type="text" x-model="display" @input="format($event)"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all"
-                                placeholder="0">
-                            <input type="hidden" name="buyPrice" :value="raw">
-                        </div>
-                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Awal --}}
                     <div x-data="{
-                        display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
-                        raw: '{{ old('stock', '') }}',
-                        format(e) {
-                            let val = e.target.value.replace(/\D/g, '');
-                            this.raw = val;
-                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                        }
-                    }">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span class="text-rose-500">*</span></label>
+                            display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
+                            raw: '{{ old('stock', '') }}',
+                            format(e) {
+                                let val = e.target.value.replace(/\D/g, '');
+                                this.raw = val;
+                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                            }
+                        }">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span
+                                class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required
                             class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('stock') border-rose-500 @enderror"
                             placeholder="0">
