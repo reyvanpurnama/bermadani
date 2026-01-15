@@ -70,13 +70,6 @@ class Product extends Model
         return $this->hasMany(StockMovement::class, 'productId');
     }
 
-    public function consignmentItems()
-    {
-        return $this->hasMany(ConsignmentItem::class, 'productId');
-    }
-
-
-
     public function scopeActive($query)
     {
         return $query->where('isActive', true);
@@ -95,9 +88,9 @@ class Product extends Model
     public function scopeAvailableForSale($query)
     {
         return $query->where('isActive', true)
-            ->where('approvalStatus', 'APPROVED')
-            ->where('status', 'ACTIVE')
-            ->where('stock', '>', 0);
+                     ->where('approvalStatus', 'APPROVED')
+                     ->where('status', 'ACTIVE')
+                     ->where('stock', '>', 0);
     }
 
     public function getMarginAttribute()
@@ -180,8 +173,7 @@ class Product extends Model
 
     public function getGrossProfitMarginAttribute()
     {
-        if ($this->sellPrice == 0)
-            return 0;
+        if ($this->sellPrice == 0) return 0;
         return ($this->grossProfit / $this->sellPrice) * 100;
     }
 }
