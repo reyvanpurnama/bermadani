@@ -226,8 +226,8 @@ class PosCustom extends Component
                     );
                 }
 
-                // Award points (1 point per Rp10.000)
-                $pointsEarned = floor($this->getCartTotalProperty() / 10000);
+                // Award points (1 point per Rp1.000)
+                $pointsEarned = floor($this->getCartTotalProperty() / 1000);
                 if ($pointsEarned > 0) {
                     $member->addPoints($pointsEarned, 'Belanja ' . $invoiceNumber, $transaction->id);
                 }
