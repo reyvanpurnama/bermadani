@@ -5,7 +5,7 @@
         <a href="{{ route('supplier.dashboard') }}"
             class="flex flex-col items-center justify-center gap-1 h-full w-full {{ request()->routeIs('supplier.dashboard') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
             <i
-                class='bx {{ request()->routeIs('supplier.dashboard') ? 'bxs-dashboard' : 'bx-dashboard' }} text-[22px] mb-0.5'></i>
+                class='bx {{ request()->routeIs('supplier.dashboard') ? 'bxs-dashboard' : 'bx-grid-alt' }} text-[22px] mb-0.5'></i>
             <span class="text-[10px] font-medium tracking-wide">Dasbor</span>
         </a>
 
