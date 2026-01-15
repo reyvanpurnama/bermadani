@@ -124,12 +124,21 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span
-                                class="text-rose-500">*</span></label>
-                        <input type="number" name="stock" value="{{ old('stock', 0) }}" required min="0"
+                    {{-- Stok Awal --}}
+                    <div x-data="{
+                        display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
+                        raw: '{{ old('stock', '') }}',
+                        format(e) {
+                            let val = e.target.value.replace(/\D/g, '');
+                            this.raw = val;
+                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                        }
+                    }">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span class="text-rose-500">*</span></label>
+                        <input type="text" x-model="display" @input="format($event)" required
                             class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('stock') border-rose-500 @enderror"
                             placeholder="0">
+                        <input type="hidden" name="stock" :value="raw">
                         @error('stock')
                             <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                         @enderror
