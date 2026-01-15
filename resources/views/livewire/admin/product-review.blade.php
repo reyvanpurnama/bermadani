@@ -85,7 +85,22 @@
                                 {{ $product->stock }} Pcs
                             </td>
                             <td class="px-5 py-4 text-slate-500">
-                                {{ $product->created_at->diffForHumans() }}
+                                @if($status === 'APPROVED' && $product->approvedAt)
+                                    <div class="text-[11px]">
+                                        <span class="text-emerald-600">Disetujui</span>
+                                        <span class="block">{{ $product->approvedAt->diffForHumans() }}</span>
+                                    </div>
+                                @elseif($status === 'REJECTED' && $product->updated_at)
+                                    <div class="text-[11px]">
+                                        <span class="text-rose-500">Ditolak</span>
+                                        <span class="block">{{ $product->updated_at->diffForHumans() }}</span>
+                                    </div>
+                                @else
+                                    <div class="text-[11px]">
+                                        <span class="text-slate-400">Diajukan</span>
+                                        <span class="block">{{ $product->created_at->diffForHumans() }}</span>
+                                    </div>
+                                @endif
                             </td>
                             <td class="px-5 py-4 text-right">
                                 @if($status === 'PENDING')
