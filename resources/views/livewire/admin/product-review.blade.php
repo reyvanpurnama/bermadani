@@ -192,21 +192,27 @@
                                         {{ $status !== 'PENDING' ? 'disabled' : '' }}
                                         x-data="{
                                             formatRupiah(value) {
-                                                let number = value.replace(/[^0-9]/g, '');
+                                                let number = String(value).replace(/[^0-9]/g, '');
                                                 if (number === '') return '';
                                                 return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
                                             }
                                         }"
                                         x-on:input="
                                             let input = $el;
-                                            let cursorPos = input.selectionStart;
-                                            let oldLength = input.value.length;
-                                            let formatted = formatRupiah(input.value);
+                                            let rawValue = String(input.value);
+                                            
+                                            // Remove non-numeric except dots
+                                            let cleanValue = rawValue.replace(/[^0-9]/g, '');
+                                            
+                                            if (cleanValue === '') {
+                                                input.value = '';
+                                                @this.set('sellPrice', '');
+                                                return;
+                                            }
+                                            
+                                            let formatted = formatRupiah(cleanValue);
                                             input.value = formatted;
-                                            @this.set('sellPrice', input.value.replace(/\./g, ''));
-                                            let newLength = formatted.length;
-                                            let diff = newLength - oldLength;
-                                            input.setSelectionRange(cursorPos + diff, cursorPos + diff);
+                                            @this.set('sellPrice', cleanValue);
                                         ">
                                 </div>
                             </div>
@@ -217,15 +223,21 @@
                             </div>
 
                             @php
-                                $margin = ($sellPrice && $selectedProduct->buyPrice && $selectedProduct->buyPrice > 0) 
-                                    ? (($sellPrice - $selectedProduct->buyPrice) / $selectedProduct->buyPrice) * 100 
+                                $sellPriceNum = is_numeric($sellPrice) ? (float) $sellPrice : 0;
+                                $buyPriceNum = (float) ($selectedProduct->buyPrice ?? 0);
+                                $margin = ($sellPriceNum > 0 && $buyPriceNum > 0) 
+                                    ? (($sellPriceNum - $buyPriceNum) / $buyPriceNum) * 100 
                                     : 0;
-                                $marginAmount = $sellPrice - ($selectedProduct->buyPrice ?? 0);
+                                $marginAmount = $sellPriceNum - $buyPriceNum;
                             @endphp
                             <div class="flex justify-between items-center text-[12px]">
                                 <span class="text-slate-500">Margin</span>
                                 <span class="font-bold {{ $margin > 15 ? 'text-emerald-600' : ($margin > 5 ? 'text-amber-600' : 'text-rose-600') }}">
-                                    {{ number_format($margin, 1) }}% (Rp {{ number_format($marginAmount, 0, ',', '.') }})
+                                    @if($sellPriceNum > 0)
+                                        {{ number_format($margin, 1) }}% (Rp {{ number_format($marginAmount, 0, ',', '.') }})
+                                    @else
+                                        <span class="text-slate-400">-</span>
+                                    @endif
                                 </span>
                             </div>
                         </div>
