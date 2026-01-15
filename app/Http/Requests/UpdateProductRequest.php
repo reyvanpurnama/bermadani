@@ -24,12 +24,12 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         $productId = $this->route('id'); // Get product ID from route
-        
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($productId)],
-            'categoryId' => ['required', 'uuid', 'exists:categories,id'],
-            'supplierId' => ['nullable', 'uuid', 'exists:suppliers,id'],
+            'categoryId' => ['required', 'exists:categories,id'],
+            'supplierId' => ['nullable', 'exists:suppliers,id'],
             'description' => ['nullable', 'string', 'max:1000'],
             'sellPrice' => ['required', 'numeric', 'min:0', 'max:999999999.99'],
             'buyPrice' => ['nullable', 'numeric', 'min:0', 'max:999999999.99'],

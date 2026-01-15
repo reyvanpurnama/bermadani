@@ -16,6 +16,18 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $validated['id'] = Str::uuid();
+
+        // Generate SKU if not provided
+        if (empty($validated['sku'])) {
+            $prefix = 'PRD'; // You might want dynamic prefix based on category
+            $validated['sku'] = $prefix . date('ymd') . strtoupper(Str::random(4));
+
+            // Ensure uniqueness (simple check, for robust loop usually needed but this is low collision chance)
+            while (Product::where('sku', $validated['sku'])->exists()) {
+                $validated['sku'] = $prefix . date('ymd') . strtoupper(Str::random(4));
+            }
+        }
+
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
 
         $product = Product::create($validated);
