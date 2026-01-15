@@ -17,7 +17,21 @@
 </div>
 
 <!-- Stats Overview -->
-<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+@php
+    $supplier = Auth::guard('supplier')->user();
+    $totalProducts = $products->total();
+    $activeCount = \App\Models\Product::where('supplierId', $supplier->id)
+        ->where('approvalStatus', 'APPROVED')
+        ->where('isActive', true)
+        ->count();
+    $pendingCount = \App\Models\Product::where('supplierId', $supplier->id)
+        ->where('approvalStatus', 'PENDING')
+        ->count();
+    $rejectedCount = \App\Models\Product::where('supplierId', $supplier->id)
+        ->where('approvalStatus', 'REJECTED')
+        ->count();
+@endphp
+<div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
     <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
         <div class="flex items-center gap-3 mb-2">
             <div class="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
@@ -25,7 +39,7 @@
             </div>
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Produk</span>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $products->total() }}</h3>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $totalProducts }}</h3>
     </div>
     
     <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
@@ -35,8 +49,8 @@
             </div>
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Aktif</span>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ Auth::guard('supplier')->user()->currentActiveProducts }}</h3>
-        <p class="text-xs text-slate-500 mt-1">Dari maks {{ Auth::guard('supplier')->user()->maxActiveProducts }} produk</p>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $activeCount }}</h3>
+        <p class="text-xs text-slate-500 mt-1">Dari maks {{ $supplier->maxActiveProducts }} produk</p>
     </div>
 
     <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
@@ -44,9 +58,19 @@
             <div class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400">
                 <i class='bx bx-time text-lg'></i>
             </div>
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pending</span>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Menunggu Review</span>
         </div>
-        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">0</h3> <!-- Placeholder for pending approval count if implemented -->
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $pendingCount }}</h3>
+    </div>
+
+    <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400">
+                <i class='bx bx-x-circle text-lg'></i>
+            </div>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ditolak</span>
+        </div>
+        <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $rejectedCount }}</h3>
     </div>
 </div>
 
@@ -101,8 +125,18 @@
                     <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                         {{ $product->category->name ?? '-' }}
                     </td>
-                    <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-white">
-                        Rp {{ number_format($product->sellPrice, 0, ',', '.') }}
+                    <td class="px-6 py-4 text-sm">
+                        @if($product->approvalStatus === 'APPROVED')
+                            <div>
+                                <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span>
+                                <span class="text-xs text-slate-400 block">Jual</span>
+                            </div>
+                        @else
+                            <div>
+                                <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
+                                <span class="text-xs text-slate-400 block">Harga Ajuan</span>
+                            </div>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-center">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
