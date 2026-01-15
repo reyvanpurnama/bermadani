@@ -67,11 +67,11 @@
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nilai Stok</p>
-                    <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">Rp {{ number_format($stats['total_value'], 0, ',', '.') }}</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Titip Jual Baru</p>
+                    <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">{{ $stats['consignment_waiting'] ?? 0 }}</h3>
                 </div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500">
-                    <i class='bx bx-wallet text-2xl'></i>
+                <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
+                    <i class='bx bx-store text-2xl'></i>
                 </div>
             </div>
         </div>
@@ -96,6 +96,7 @@
                 <option value="available">Tersedia</option>
                 <option value="low">Stok Menipis</option>
                 <option value="out">Stok Habis</option>
+                <option value="consignment_waiting">Titip Jual (Belum Masuk)</option>
                 <option value="pending">Menunggu Review</option>
                 <option value="rejected">Ditolak</option>
             </select>
@@ -141,9 +142,14 @@
                                         {{ $product->category?->icon ?? '📦' }}
                                     </div>
                                     <div>
-                                        <h6 class="font-semibold text-slate-800 dark:text-white leading-none {{ $product->stock == 0 ? 'line-through opacity-50' : '' }}">
-                                            {{ $product->name }}
-                                        </h6>
+                                        <div class="flex items-center gap-2">
+                                            <h6 class="font-semibold text-slate-800 dark:text-white leading-none {{ $product->stock == 0 && !$product->supplierId ? 'line-through opacity-50' : '' }}">
+                                                {{ $product->name }}
+                                            </h6>
+                                            @if($product->supplierId)
+                                                <span class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase">Konsinyasi</span>
+                                            @endif
+                                        </div>
                                         <p class="text-[10px] text-slate-400 mt-0.5">SKU: {{ $product->sku }}</p>
                                     </div>
                                 </div>
@@ -167,6 +173,8 @@
                                     <span class="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Menunggu Review</span>
                                 @elseif($product->approvalStatus === 'REJECTED')
                                     <span class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide cursor-help" title="{{ $product->rejectionReason ?? 'Tidak ada alasan' }}">Ditolak</span>
+                                @elseif($product->stock == 0 && $product->supplierId)
+                                    <span class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Belum Masuk</span>
                                 @elseif($product->stock == 0)
                                     <span class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Habis</span>
                                 @elseif($product->stock <= $product->threshold)
@@ -177,6 +185,28 @@
                             </td>
                             <td class="px-5 py-3.5 text-right">
                                 <div class="flex items-center justify-end gap-2">
+                                    @if($product->supplierId && $product->approvalStatus === 'APPROVED')
+                                        @if($product->stock == 0)
+                                            {{-- Urgent: Stok habis --}}
+                                            <button wire:click="openQuickBatchModal({{ $product->id }})" 
+                                                    class="bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-rose-500/30 hover:shadow-rose-500/50 transition-all flex items-center gap-1 animate-pulse">
+                                                <i class='bx bx-plus-circle'></i> Minta Stok
+                                            </button>
+                                        @elseif($product->stock <= $product->threshold)
+                                            {{-- Warning: Stok menipis --}}
+                                            <button wire:click="openQuickBatchModal({{ $product->id }})" 
+                                                    class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-amber-500/30 hover:shadow-amber-500/50 transition-all flex items-center gap-1">
+                                                <i class='bx bx-plus-circle'></i> Restock
+                                            </button>
+                                        @else
+                                            {{-- Normal: Stok cukup --}}
+                                            <button wire:click="openQuickBatchModal({{ $product->id }})" 
+                                                    class="text-slate-400 hover:text-primary transition-colors text-lg" 
+                                                    title="Tambah Stok">
+                                                <i class='bx bx-plus-circle'></i>
+                                            </button>
+                                        @endif
+                                    @endif
                                     <a href="{{ route('admin.products.edit', $product->id) }}" class="text-slate-400 hover:text-primary transition-colors text-lg">
                                         <i class='bx bx-edit-alt'></i>
                                     </a>
@@ -386,6 +416,88 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Quick Batch Modal --}}
+    @if($showQuickBatchModal && $quickBatchProduct)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+            <div class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <!-- Header -->
+                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-100 dark:border-slate-800 bg-purple-50 dark:bg-purple-500/10">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class='bx bx-plus-circle text-purple-600'></i> Buat Permintaan Stok
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Minta stok baru dari supplier</p>
+                    </div>
+                    <button wire:click="closeQuickBatchModal"
+                        class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <!-- Product Info -->
+                    <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-500/20 flex items-center justify-center text-2xl">
+                                {{ $quickBatchProduct->category?->icon ?? '📦' }}
+                            </div>
+                            <div class="flex-grow">
+                                <h4 class="font-semibold text-slate-800 dark:text-white">{{ $quickBatchProduct->name }}</h4>
+                                <p class="text-[11px] text-slate-500">
+                                    {{ $quickBatchProduct->supplier?->businessName ?? 'Supplier' }} • 
+                                    Rp {{ number_format($quickBatchProduct->sellPrice, 0, ',', '.') }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            <div class="text-center flex-1">
+                                <p class="text-[10px] text-slate-400 uppercase">Stok Saat Ini</p>
+                                <p class="font-bold text-lg {{ $quickBatchProduct->stock == 0 ? 'text-rose-500' : 'text-slate-700 dark:text-white' }}">{{ $quickBatchProduct->stock }}</p>
+                            </div>
+                            <div class="text-center flex-1">
+                                <p class="text-[10px] text-slate-400 uppercase">Threshold</p>
+                                <p class="font-bold text-lg text-slate-700 dark:text-white">{{ $quickBatchProduct->threshold }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Qty Input -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Jumlah Permintaan</label>
+                        <input wire:model="quickBatchQty" type="number" min="1"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center text-xl font-bold focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500">
+                    </div>
+
+                    <!-- Fee Input -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase mb-2">Fee Koperasi (%)</label>
+                        <input wire:model="quickBatchFee" type="number" min="0" max="100"
+                            class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-center font-medium focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500">
+                    </div>
+
+                    <!-- Info -->
+                    <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-3">
+                        <p class="text-[11px] text-amber-700 dark:text-amber-400">
+                            <i class='bx bx-info-circle mr-1'></i>
+                            Supplier akan menerima notifikasi untuk menyiapkan barang.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-100 dark:border-slate-800">
+                    <button wire:click="closeQuickBatchModal"
+                        class="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700 rounded-lg transition-all uppercase tracking-wide">
+                        Batal
+                    </button>
+                    <button wire:click="saveQuickBatch"
+                        class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold uppercase tracking-wide shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 transition-all flex items-center gap-2">
+                        <i class='bx bx-send text-lg'></i> Kirim Permintaan
+                    </button>
                 </div>
             </div>
         </div>

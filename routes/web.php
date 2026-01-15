@@ -146,6 +146,11 @@ Route::middleware(['auth:supplier', 'supplier.status', 'log.activity'])->prefix(
     Route::get('/profile', function () {
         return view('supplier.profile');
     })->name('supplier.profile');
+
+    // Notifications
+    Route::get('/notifikasi', [App\Http\Controllers\Supplier\SupplierNotificationController::class, 'index'])->name('supplier.notifications');
+    Route::post('/notifikasi/{id}/read', [App\Http\Controllers\Supplier\SupplierNotificationController::class, 'markAsRead'])->name('supplier.notifications.mark-read');
+    Route::post('/notifikasi/read-all', [App\Http\Controllers\Supplier\SupplierNotificationController::class, 'markAllAsRead'])->name('supplier.notifications.mark-all-read');
 });
 
 // Admin Routes - Protected

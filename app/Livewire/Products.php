@@ -4,9 +4,13 @@ namespace App\Livewire;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ConsignmentBatch;
+use App\Models\ConsignmentItem;
+use App\Models\SupplierNotification;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class Products extends Component
 {
@@ -27,6 +31,12 @@ class Products extends Component
     public $categoryIsActive = true;
     public $isEditingCategory = false;
     public $categorySearch = '';
+
+    // Quick Batch Modal Properties
+    public $showQuickBatchModal = false;
+    public $quickBatchProduct = null;
+    public $quickBatchQty = 1;
+    public $quickBatchFee = 10;
 
     public function updatingSearch()
     {
@@ -73,15 +83,17 @@ class Products extends Component
             })
             ->when($this->stockFilter, function ($q) {
                 if ($this->stockFilter === 'low') {
-                    $q->whereRaw('stock <= threshold')->where('approvalStatus', 'APPROVED');
+                    $q->whereRaw('stock <= threshold')->where('stock', '>', 0)->where('approvalStatus', 'APPROVED');
                 } elseif ($this->stockFilter === 'out') {
-                    $q->where('stock', 0)->where('approvalStatus', 'APPROVED');
+                    $q->where('stock', 0)->whereNull('supplierId')->where('approvalStatus', 'APPROVED');
                 } elseif ($this->stockFilter === 'available') {
                     $q->whereRaw('stock > threshold')->where('approvalStatus', 'APPROVED');
                 } elseif ($this->stockFilter === 'pending') {
                     $q->where('approvalStatus', 'PENDING');
                 } elseif ($this->stockFilter === 'rejected') {
                     $q->where('approvalStatus', 'REJECTED');
+                } elseif ($this->stockFilter === 'consignment_waiting') {
+                    $q->where('stock', 0)->whereNotNull('supplierId')->where('approvalStatus', 'APPROVED');
                 }
             });
 
@@ -96,10 +108,11 @@ class Products extends Component
     public function getStatsProperty()
     {
         return [
-            'total' => Product::count(),
-            'low_stock' => Product::whereRaw('stock <= threshold')->count(),
-            'out_of_stock' => Product::where('stock', 0)->count(),
-            'total_value' => Product::sum(\DB::raw('stock * sellPrice'))
+            'total' => Product::where('approvalStatus', 'APPROVED')->count(),
+            'low_stock' => Product::where('approvalStatus', 'APPROVED')->whereRaw('stock <= threshold')->where('stock', '>', 0)->count(),
+            'out_of_stock' => Product::where('approvalStatus', 'APPROVED')->where('stock', 0)->whereNull('supplierId')->count(),
+            'consignment_waiting' => Product::where('approvalStatus', 'APPROVED')->where('stock', 0)->whereNotNull('supplierId')->count(),
+            'total_value' => Product::where('approvalStatus', 'APPROVED')->sum(\DB::raw('stock * sellPrice'))
         ];
     }
 
@@ -215,6 +228,75 @@ class Products extends Component
             })
             ->orderBy('name')
             ->get();
+    }
+
+    // ===== Quick Batch Modal Methods =====
+    
+    public function openQuickBatchModal($productId)
+    {
+        $this->quickBatchProduct = Product::with('supplier')->find($productId);
+        $this->quickBatchQty = max(1, $this->quickBatchProduct->threshold ?? 10);
+        $this->quickBatchFee = 10;
+        $this->showQuickBatchModal = true;
+    }
+
+    public function closeQuickBatchModal()
+    {
+        $this->showQuickBatchModal = false;
+        $this->quickBatchProduct = null;
+        $this->quickBatchQty = 1;
+        $this->quickBatchFee = 10;
+    }
+
+    public function saveQuickBatch()
+    {
+        $this->validate([
+            'quickBatchQty' => 'required|integer|min:1',
+            'quickBatchFee' => 'required|numeric|min:0|max:100',
+        ]);
+
+        if (!$this->quickBatchProduct || !$this->quickBatchProduct->supplierId) {
+            $this->dispatch('notify', ['message' => 'Produk tidak valid', 'type' => 'error']);
+            return;
+        }
+
+        DB::transaction(function () {
+            $product = $this->quickBatchProduct;
+            $sellPrice = $product->sellPrice;
+            $priceAfterFee = $sellPrice * (1 - ($this->quickBatchFee / 100));
+
+            $batch = ConsignmentBatch::create([
+                'batchCode' => ConsignmentBatch::generateBatchCode(),
+                'supplierId' => $product->supplierId,
+                'status' => 'ACTIVE',
+                'receivedAt' => now(),
+                'note' => 'Quick batch dari halaman inventaris',
+                'totalValue' => $sellPrice * $this->quickBatchQty,
+            ]);
+
+            ConsignmentItem::create([
+                'batchId' => $batch->id,
+                'productId' => $product->id,
+                'initialQty' => $this->quickBatchQty,
+                'remainingQty' => $this->quickBatchQty,
+                'sellPrice' => $sellPrice,
+                'feePercent' => $this->quickBatchFee,
+                'priceAfterFee' => $priceAfterFee,
+            ]);
+
+            // Add stock to product
+            $product->increment('stock', $this->quickBatchQty);
+
+            // Send notification to supplier
+            SupplierNotification::notifyBatchRequest(
+                $product->supplierId,
+                $batch->batchCode,
+                [['productId' => $product->id, 'initialQty' => $this->quickBatchQty]]
+            );
+        });
+
+        $this->closeQuickBatchModal();
+        $this->dispatch('notify', ['message' => 'Permintaan stok berhasil dibuat & notifikasi terkirim ke supplier', 'type' => 'success']);
     }
 
     public function render()

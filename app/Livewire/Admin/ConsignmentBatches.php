@@ -8,6 +8,7 @@ use App\Models\ConsignmentBatch;
 use App\Models\ConsignmentItem;
 use App\Models\Supplier;
 use App\Models\Product;
+use App\Models\SupplierNotification;
 use Illuminate\Support\Facades\DB;
 
 class ConsignmentBatches extends Component
@@ -114,6 +115,13 @@ class ConsignmentBatches extends Component
             }
 
             $batch->update(['totalValue' => $totalValue]);
+
+            // Send notification to supplier
+            SupplierNotification::notifyBatchRequest(
+                $this->supplierId,
+                $batch->batchCode,
+                $this->items
+            );
         });
 
         $this->showCreateModal = false;

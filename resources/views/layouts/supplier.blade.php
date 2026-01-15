@@ -83,6 +83,17 @@
             <i class='bx bx-archive-in text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
             <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Permintaan Restock</span>
         </a>
+
+        <a href="{{ route('supplier.notifications') }}" class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap relative {{ request()->routeIs('supplier.notifications') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}" :class="{'justify-center': sidebarCollapsed}">
+            <i class='bx bx-bell text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
+            <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Notifikasi</span>
+            @php
+                $unreadCount = \App\Models\SupplierNotification::where('supplierId', auth()->guard('supplier')->id())->where('isRead', false)->count();
+            @endphp
+            @if($unreadCount > 0)
+                <span class="absolute top-0.5 left-5 min-w-[16px] h-4 px-1 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center" :class="{'left-1/2 -ml-2': sidebarCollapsed}">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+            @endif
+        </a>
     </nav>
 
     <div id="supplier-sidebar-collapse" class="hidden md:flex items-center gap-3 px-4 py-3 border-t border-slate-200 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-slate-500 hover:text-emerald-600 whitespace-nowrap overflow-hidden" @click="sidebarCollapsed = !sidebarCollapsed; localStorage.setItem('supplier-sidebar-collapsed', sidebarCollapsed)" :class="{'justify-center': sidebarCollapsed}">
@@ -121,10 +132,12 @@
             <button id="theme-toggle" class="w-[34px] h-[34px] flex items-center justify-center text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all focus:outline-none group">
                 <i id="theme-icon" class='bx bx-moon text-[20px] group-hover:text-emerald-600 transition-colors'></i>
             </button>
-            <button class="w-[34px] h-[34px] flex items-center justify-center relative text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all group">
+            <a href="{{ route('supplier.notifications') }}" class="w-[34px] h-[34px] flex items-center justify-center relative text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md transition-all group">
                 <i class='bx bx-bell text-[20px] group-hover:text-emerald-600 transition-colors'></i>
-                <span class="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full border border-white dark:border-darkCard"></span>
-            </button>
+                @if($unreadCount > 0)
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-rose-500 rounded-full border-2 border-white dark:border-darkCard"></span>
+                @endif
+            </a>
         </div>
     </header>
 

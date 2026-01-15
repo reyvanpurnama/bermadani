@@ -89,9 +89,9 @@
                 <div class="flex items-start gap-3">
                     <i class='bx bx-info-circle text-blue-600 dark:text-blue-400 text-xl flex-shrink-0 mt-0.5'></i>
                     <div class="text-left">
-                        <h5 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-1">Info Penting</h5>
+                        <h5 class="text-xs font-bold text-blue-700 dark:text-blue-300 mb-1">Hampir Selesai!</h5>
                         <p class="text-xs text-blue-600 dark:text-blue-400 leading-relaxed">
-                            Akun Anda akan diaktifkan setelah Admin memverifikasi data dan pembayaran pendaftaran Anda. Proses biasanya memakan waktu 1-2 hari kerja.
+                            Admin kami sedang meninjau pendaftaran dan pembayaran Anda. Mohon tunggu maksimal 1-2 hari kerja hingga akun Anda siap digunakan.
                         </p>
                     </div>
                 </div>
