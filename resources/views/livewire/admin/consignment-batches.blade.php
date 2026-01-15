@@ -405,9 +405,82 @@
                                     <i class='bx bx-money-withdraw'></i> Proses Settlement
                                 </button>
                             @endif
+
+                            @if($selectedBatch->status === 'ACTIVE' && $selectedBatch->items->sum('remainingQty') > 0)
+                                <button wire:click="openReturModal"
+                                    class="w-full mt-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold text-[12px] shadow-md shadow-amber-500/20 transition-colors flex items-center justify-center gap-2">
+                                    <i class='bx bx-undo'></i> Retur Barang Sisa
+                                </button>
+                            @endif
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Retur Modal --}}
+    @if($showReturModal && $selectedBatch)
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
+            <div
+                class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up my-8">
+                <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-amber-50 dark:bg-amber-500/10">
+                    <div>
+                        <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class='bx bx-undo text-amber-500'></i> Retur Barang Konsinyasi
+                        </h3>
+                        <p class="text-[11px] text-slate-500 mt-0.5">Batch #{{ $selectedBatch->batchCode }} - {{ $selectedBatch->supplier->businessName ?? '-' }}</p>
+                    </div>
+                    <button wire:click="closeReturModal" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+                
+                <div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+                    <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-lg p-3">
+                        <p class="text-[12px] text-amber-700 dark:text-amber-400">
+                            <i class='bx bx-info-circle mr-1'></i>
+                            Barang yang diretur akan dikembalikan ke supplier dan stok akan dikurangi.
+                        </p>
+                    </div>
+
+                    <div class="space-y-3">
+                        @foreach($returItems as $index => $item)
+                            <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                                <div class="flex justify-between items-start mb-3">
+                                    <div>
+                                        <h4 class="font-semibold text-slate-800 dark:text-white text-[13px]">{{ $item['productName'] }}</h4>
+                                        <p class="text-[10px] text-slate-500">Sisa: {{ $item['remainingQty'] }} pcs</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <label class="text-[11px] text-slate-600 dark:text-slate-400 whitespace-nowrap">Jumlah Retur:</label>
+                                    <input wire:model="returItems.{{ $index }}.returQty" type="number" min="0" max="{{ $item['remainingQty'] }}"
+                                        class="flex-1 px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-center font-medium">
+                                    <span class="text-[11px] text-slate-500">pcs</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    @if(count($returItems) === 0)
+                        <div class="text-center py-8 text-slate-500">
+                            <i class='bx bx-check-circle text-4xl text-emerald-500 mb-2'></i>
+                            <p class="text-[13px]">Semua barang sudah terjual!</p>
+                        </div>
+                    @endif
+                </div>
+                
+                <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-700">
+                    <button wire:click="closeReturModal"
+                        class="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 font-medium transition-colors">Batal</button>
+                    @if(count($returItems) > 0)
+                        <button wire:click="processRetur"
+                            class="px-4 py-2 text-sm bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-bold transition-colors flex items-center gap-2">
+                            <i class='bx bx-check'></i> Proses Retur
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>

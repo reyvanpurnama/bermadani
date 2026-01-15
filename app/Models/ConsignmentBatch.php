@@ -65,4 +65,47 @@ class ConsignmentBatch extends Model
         $number = $latest ? (intval(substr($latest->batchCode, 5)) + 1) : 1;
         return 'BCH-' . str_pad($number, 4, '0', STR_PAD_LEFT);
     }
+
+    /**
+     * Recalculate batch totals from items
+     */
+    public function recalculateTotals(): void
+    {
+        $this->load('items');
+        
+        $totalSold = 0;
+        $feeAmount = 0;
+        $payableAmount = 0;
+        
+        foreach ($this->items as $item) {
+            $itemSoldValue = $item->soldQty * $item->sellPrice;
+            $itemFee = $itemSoldValue * ($item->feePercent / 100);
+            $itemPayable = $item->soldQty * $item->priceAfterFee;
+            
+            $totalSold += $itemSoldValue;
+            $feeAmount += $itemFee;
+            $payableAmount += $itemPayable;
+        }
+        
+        $this->update([
+            'totalSold' => $totalSold,
+            'feeAmount' => $feeAmount,
+            'payableAmount' => $payableAmount,
+        ]);
+    }
+
+    /**
+     * Find active consignment item for a product
+     * Returns the oldest active batch item (FIFO)
+     */
+    public static function findActiveItemForProduct(int $productId): ?ConsignmentItem
+    {
+        return ConsignmentItem::whereHas('batch', function ($q) {
+                $q->where('status', 'ACTIVE');
+            })
+            ->where('productId', $productId)
+            ->where('remainingQty', '>', 0)
+            ->orderBy('created_at', 'asc') // FIFO
+            ->first();
+    }
 }

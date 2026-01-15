@@ -26,6 +26,10 @@ class ConsignmentBatches extends Component
     public $showDetailModal = false;
     public $selectedBatch = null;
 
+    // Retur Modal
+    public $showReturModal = false;
+    public $returItems = [];
+
     protected $rules = [
         'supplierId' => 'required|exists:suppliers,id',
         'items' => 'required|array|min:1',
@@ -123,6 +127,9 @@ class ConsignmentBatches extends Component
         if (!$this->selectedBatch)
             return;
 
+        // Recalculate totals before settlement
+        $this->selectedBatch->recalculateTotals();
+
         $this->selectedBatch->update([
             'status' => 'SETTLED',
             'settledAt' => now(),
@@ -130,6 +137,80 @@ class ConsignmentBatches extends Component
 
         $this->closeDetail();
         $this->dispatch('notify', [['message' => 'Settlement berhasil diproses', 'type' => 'success']]);
+    }
+
+    public function openReturModal()
+    {
+        if (!$this->selectedBatch)
+            return;
+
+        // Prepare retur items from batch items that have remaining qty
+        $this->returItems = [];
+        foreach ($this->selectedBatch->items as $item) {
+            if ($item->remainingQty > 0) {
+                $this->returItems[] = [
+                    'itemId' => $item->id,
+                    'productName' => $item->product->name,
+                    'remainingQty' => $item->remainingQty,
+                    'returQty' => $item->remainingQty, // Default: return all remaining
+                ];
+            }
+        }
+
+        $this->showReturModal = true;
+    }
+
+    public function closeReturModal()
+    {
+        $this->showReturModal = false;
+        $this->returItems = [];
+    }
+
+    public function processRetur()
+    {
+        DB::transaction(function () {
+            foreach ($this->returItems as $returItem) {
+                if ($returItem['returQty'] <= 0) continue;
+
+                $item = ConsignmentItem::with('product')->find($returItem['itemId']);
+                if (!$item) continue;
+
+                // Validate retur qty doesn't exceed remaining
+                $returQty = min($returItem['returQty'], $item->remainingQty);
+                if ($returQty <= 0) continue;
+
+                // Update consignment item
+                $item->decrement('remainingQty', $returQty);
+
+                // Reduce product stock
+                $item->product->decrement('stock', $returQty);
+
+                // Create stock movement record
+                \App\Models\StockMovement::create([
+                    'productId' => $item->productId,
+                    'movementType' => 'CONSIGNMENT_RETURN',
+                    'quantity' => -$returQty,
+                    'referenceType' => 'ConsignmentBatch',
+                    'referenceId' => $this->selectedBatch->id,
+                    'note' => "Retur konsinyasi batch {$this->selectedBatch->batchCode}",
+                    'occurredAt' => now(),
+                ]);
+            }
+
+            // Recalculate batch totals
+            $this->selectedBatch->recalculateTotals();
+
+            // Check if all items have been sold/returned - change to pending settlement
+            $this->selectedBatch->load('items');
+            $hasRemaining = $this->selectedBatch->items->sum('remainingQty') > 0;
+            if (!$hasRemaining) {
+                $this->selectedBatch->update(['status' => 'PENDING_SETTLEMENT']);
+            }
+        });
+
+        $this->closeReturModal();
+        $this->closeDetail();
+        $this->dispatch('notify', [['message' => 'Retur berhasil diproses', 'type' => 'success']]);
     }
 
     public function render()

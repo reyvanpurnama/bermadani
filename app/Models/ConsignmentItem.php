@@ -40,4 +40,29 @@ class ConsignmentItem extends Model
     {
         return $this->soldQty * $this->priceAfterFee;
     }
+
+    /**
+     * Record a sale for this consignment item
+     * Updates soldQty, remainingQty, and recalculates batch totals
+     */
+    public function recordSale(int $quantity): void
+    {
+        $this->increment('soldQty', $quantity);
+        $this->decrement('remainingQty', $quantity);
+        
+        // Recalculate batch totals
+        $this->batch->recalculateTotals();
+    }
+
+    /**
+     * Record a return (retur) for this consignment item
+     * Decreases remainingQty and recalculates batch totals
+     */
+    public function recordReturn(int $quantity): void
+    {
+        $this->decrement('remainingQty', $quantity);
+        
+        // Recalculate batch totals
+        $this->batch->recalculateTotals();
+    }
 }
