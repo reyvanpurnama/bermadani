@@ -608,7 +608,7 @@
                                     <div class="text-xs font-medium text-indigo-800 dark:text-indigo-300">Estimasi Total Biaya
                                     </div>
                                     <div class="mt-1 text-sm font-bold text-indigo-900 dark:text-indigo-200 sm:mt-0">Rp
-                                        {{ number_format($quickBatchProduct->buyPrice * $quickBatchQty, 0, ',', '.') }}
+                                        {{ number_format((float) $quickBatchProduct->buyPrice * (int) $quickBatchQty, 0, ',', '.') }}
                                     </div>
                                 </div>
                             @endif
