@@ -69,7 +69,7 @@
 
     <!-- Sidebar -->
     <aside id="supplier-sidebar"
-        class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 shadow-2xl md:shadow-none overflow-hidden"
+        class="hidden lg:flex fixed inset-y-0 left-0 bg-white dark:bg-darkCard border-r border-slate-200 dark:border-slate-700 flex-col z-50 transition-all duration-300 shadow-2xl md:shadow-none overflow-hidden"
         :class="{'-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen, 'md:translate-x-0': true, 'w-[180px]': !sidebarCollapsed, 'w-[70px]': sidebarCollapsed}">
 
         <div id="supplier-sidebar-header"
@@ -212,10 +212,14 @@
             </div>
         </header>
 
-        <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        <main class="flex-1 p-6 space-y-6 overflow-y-auto pb-24 lg:pb-6">
             @yield('content')
+            {{ $slot ?? '' }}
         </main>
     </div>
+
+    <!-- Mobile Bottom Nav -->
+    @include('partials.supplier-mobile-nav')
 
     @livewireScripts
     <script>
