@@ -75,10 +75,7 @@ class Product extends Model
         return $this->hasMany(ConsignmentItem::class, 'productId');
     }
 
-    public function consignmentItems()
-    {
-        return $this->hasMany(\App\Models\ConsignmentItem::class, 'productId');
-    }
+
 
     public function scopeActive($query)
     {
