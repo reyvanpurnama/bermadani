@@ -78,7 +78,8 @@
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Titip Jual Baru</p>
                     <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
-                        {{ $stats['consignment_waiting'] ?? 0 }}</h3>
+                        {{ $stats['consignment_waiting'] ?? 0 }}
+                    </h3>
                 </div>
                 <div
                     class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
@@ -187,9 +188,11 @@
                                 </div>
                             </td>
                             <td class="px-5 py-3.5 text-slate-600 dark:text-slate-400">
-                                {{ $product->category?->name ?? '-' }}</td>
+                                {{ $product->category?->name ?? '-' }}
+                            </td>
                             <td class="px-5 py-3.5 font-bold text-slate-800 dark:text-white">Rp
-                                {{ number_format($product->sellPrice, 0, ',', '.') }}</td>
+                                {{ number_format($product->sellPrice, 0, ',', '.') }}
+                            </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex justify-between text-[10px] mb-1">
                                     <span
@@ -372,7 +375,8 @@
                                                         <span class="text-xl">{{ $category->icon ?: '📦' }}</span>
                                                         <div>
                                                             <h6 class="font-semibold text-slate-800 dark:text-white">
-                                                                {{ $category->name }}</h6>
+                                                                {{ $category->name }}
+                                                            </h6>
                                                             <p class="text-[10px] text-slate-400 font-mono">
                                                                 /{{ $category->slug }}</p>
                                                         </div>
@@ -541,7 +545,8 @@
                         @endif
                         <div class="flex-grow min-w-0">
                             <h4 class="font-bold text-slate-800 dark:text-white text-sm line-clamp-2 leading-snug">
-                                {{ $quickBatchProduct->name }}</h4>
+                                {{ $quickBatchProduct->name }}
+                            </h4>
                             <p class="text-xs text-slate-500 mt-1 font-mono">{{ $quickBatchProduct->sku }}</p>
 
                             <div class="flex items-center gap-2 mt-2">
@@ -568,7 +573,7 @@
 
                             <div class="flex-1 relative">
                                 <input wire:model="quickBatchQty" type="number" min="1"
-                                    class="w-full h-12 text-center text-xl font-bold bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-0 text-slate-800 dark:text-white transition-all shadow-sm">
+                                    class="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-full h-12 text-center text-xl font-bold bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl focus:border-primary focus:ring-0 text-slate-800 dark:text-white transition-all shadow-sm">
                                 <span
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 pointer-events-none">PCS</span>
                             </div>
