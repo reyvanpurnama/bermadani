@@ -251,7 +251,8 @@
                     @if($status === 'PENDING')
                     <div class="space-y-3">
                         <button wire:click="approve" 
-                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[13px] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2">
+                            @if(!$sellPrice || $sellPriceNum <= 0) disabled @endif
+                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[13px] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600">
                             <i class='bx bx-check-circle text-lg'></i> Setujui & Masukkan Stok
                         </button>
                         
