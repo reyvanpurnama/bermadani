@@ -173,6 +173,7 @@
         :class="{'md:ml-[180px]': !sidebarCollapsed, 'md:ml-[70px]': sidebarCollapsed}">
 
         @php
+            // Get unread notification count
             $unreadCount = \App\Models\SupplierNotification::where('supplierId', auth()->guard('supplier')->id())
                 ->where('isRead', false)
                 ->count();
