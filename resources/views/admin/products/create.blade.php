@@ -92,8 +92,19 @@
                             this.sellRaw = val;
                             this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
                         },
+                        get profit() {
+                            if (!this.sellRaw || !this.buyRaw) return null;
+                            return parseInt(this.sellRaw) - parseInt(this.buyRaw);
+                        },
+                        get marginPercent() {
+                            if (!this.buyRaw || parseInt(this.buyRaw) === 0) return null;
+                            return ((parseInt(this.sellRaw) - parseInt(this.buyRaw)) / parseInt(this.buyRaw) * 100).toFixed(1);
+                        },
                         get isLoss() {
-                            return this.sellRaw && this.buyRaw && parseInt(this.sellRaw) < parseInt(this.buyRaw);
+                            return this.profit !== null && this.profit < 0;
+                        },
+                        get hasValidPrices() {
+                            return this.sellRaw && this.buyRaw && parseInt(this.buyRaw) > 0;
                         }
                     }">
                     {{-- Harga Beli --}}
@@ -124,14 +135,29 @@
                         @enderror
                     </div>
 
-                    {{-- Warning Alert --}}
-                    <div x-show="isLoss" x-transition class="md:col-span-2">
-                        <div
-                            class="flex items-center gap-2 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg text-amber-700 dark:text-amber-400">
-                            <i class='bx bx-error-circle text-lg'></i>
-                            <p class="text-xs font-medium">⚠️ Harga jual lebih rendah dari harga beli. Anda akan merugi!</p>
+                    {{-- Profit & Margin Display --}}
+                    <template x-if="hasValidPrices">
+                        <div class="md:col-span-2">
+                            <div class="p-3 rounded-lg" :class="isLoss ? 'bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-700' : 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700'">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class='bx text-lg' :class="isLoss ? 'bx-trending-down text-rose-500' : 'bx-trending-up text-emerald-500'"></i>
+                                        <span class="text-xs font-medium" :class="isLoss ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'">
+                                            <span x-text="isLoss ? 'Rugi' : 'Untung'"></span>: 
+                                            <span class="font-bold">Rp <span x-text="new Intl.NumberFormat('id-ID').format(Math.abs(profit))"></span></span>
+                                            <span class="ml-1">(<span x-text="marginPercent"></span>%)</span>
+                                        </span>
+                                    </div>
+                                    <span x-show="isLoss" class="text-[10px] text-rose-500 dark:text-rose-400">
+                                        Yakin mau rugi? 😅
+                                    </span>
+                                    <span x-show="!isLoss" class="text-[10px] text-emerald-500 dark:text-emerald-400">
+                                        Margin sehat 👍
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </template>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
