@@ -28,7 +28,10 @@ class ProductReview extends Component
     public function openDetail($productId)
     {
         $this->selectedProduct = Product::with('supplier')->find($productId);
-        $this->sellPrice = $this->selectedProduct->sellPrice ?? null;
+        // Set sellPrice to empty string if 0 or null, so placeholder shows
+        $this->sellPrice = ($this->selectedProduct->sellPrice && $this->selectedProduct->sellPrice > 0) 
+            ? $this->selectedProduct->sellPrice 
+            : '';
         $this->adminNote = '';
         $this->showModal = true;
     }
