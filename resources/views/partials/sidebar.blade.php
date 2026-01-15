@@ -155,31 +155,32 @@
                         <a href="{{ route('admin.products') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <i class='bx bx-package text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Stok Barang</span>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Katalog Produk</span>
                         </a>
                         <a href="{{ route('admin.stock-mutation') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <i class='bx bx-transfer-alt text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Mutasi Stok</span>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Riwayat Stok</span>
                         </a>
                         <a href="{{ route('admin.restock-requests') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.restock-requests') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <i class='bx bx-cart-download text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Request Masuk</span>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Order Restock</span>
                         </a>
                         <a href="{{ route('admin.stock-adjustment') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-adjustment') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <i class='bx bx-slider-alt text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Penyesuaian</span>
+                            <span class="sidebar-text text-xs transition-opacity duration-300">Stock Opname</span>
                         </a>
                         <a href="{{ route('admin.product-review') }}"
                             class="nav-item flex items-center justify-between pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.product-review') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <div class="flex items-center">
                                 <i class='bx bx-check-shield text-sm mr-2 opacity-70'></i>
-                                <span class="sidebar-text text-xs transition-opacity duration-300">Review Produk</span>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Approval Produk</span>
                             </div>
                             @if($pendingProductsCount > 0)
-                                <span class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingProductsCount }}</span>
+                                <span
+                                    class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingProductsCount }}</span>
                             @endif
                         </a>
                         <a href="{{ route('admin.suppliers') }}"
@@ -189,7 +190,8 @@
                                 <span class="sidebar-text text-xs transition-opacity duration-300">Supplier</span>
                             </div>
                             @if($pendingSuppliersCount > 0)
-                                <span class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingSuppliersCount }}</span>
+                                <span
+                                    class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingSuppliersCount }}</span>
                             @endif
                         </a>
                     </div>
