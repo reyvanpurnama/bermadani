@@ -555,7 +555,8 @@
                             @endif
                             <div class="flex-auto min-w-0 my-auto">
                                 <h4 class="text-sm font-bold text-slate-900 dark:text-white truncate">
-                                    {{ $quickBatchProduct->name }}</h4>
+                                    {{ $quickBatchProduct->name }}
+                                </h4>
                                 <p class="text-xs text-slate-500 font-mono mt-0.5">{{ $quickBatchProduct->sku }}</p>
                                 <div class="mt-2 flex items-center gap-2 text-xs">
                                     <span class="text-slate-500">Stok:</span>
@@ -587,7 +588,7 @@
                                 </button>
 
                                 <div class="flex-auto relative">
-                                    <input type="number" wire:model="quickBatchQty" id="quantity"
+                                    <input type="number" wire:model.live.debounce.300ms="quickBatchQty" id="quantity"
                                         class="block w-full h-12 rounded-xl border-0 py-1.5 text-center text-xl font-bold text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 bg-white dark:bg-slate-800 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                                         <span
@@ -607,7 +608,8 @@
                                     <div class="text-xs font-medium text-indigo-800 dark:text-indigo-300">Estimasi Total Biaya
                                     </div>
                                     <div class="mt-1 text-sm font-bold text-indigo-900 dark:text-indigo-200 sm:mt-0">Rp
-                                        {{ number_format($quickBatchProduct->buyPrice * $quickBatchQty, 0, ',', '.') }}</div>
+                                        {{ number_format($quickBatchProduct->buyPrice * $quickBatchQty, 0, ',', '.') }}
+                                    </div>
                                 </div>
                             @endif
                         </div>
