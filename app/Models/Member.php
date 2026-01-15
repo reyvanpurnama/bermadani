@@ -269,12 +269,12 @@ class Member extends Model
 
     public function updateTier()
     {
-        // Tier based on POINTS, not totalSpent
-        // BRONZE: 0-999, SILVER: 1000-2999, GOLD: 3000-5999, PLATINUM: 6000+
+        // Tier based on POINTS (Rp1.000 = 1 poin)
+        // BRONZE: 0-199, SILVER: 200-749, GOLD: 750-1999, PLATINUM: 2000+
         $tier = match (true) {
-            $this->points >= 6000 => 'PLATINUM',
-            $this->points >= 3000 => 'GOLD',
-            $this->points >= 1000 => 'SILVER',
+            $this->points >= 2000 => 'PLATINUM',
+            $this->points >= 750 => 'GOLD',
+            $this->points >= 200 => 'SILVER',
             default => 'BRONZE',
         };
 
@@ -319,10 +319,10 @@ class Member extends Model
     public function getNextTierProgressAttribute()
     {
         $thresholds = [
-            'BRONZE' => ['current' => 0, 'next' => 1000],
-            'SILVER' => ['current' => 1000, 'next' => 3000],
-            'GOLD' => ['current' => 3000, 'next' => 6000],
-            'PLATINUM' => ['current' => 6000, 'next' => 6000], // Max tier
+            'BRONZE' => ['current' => 0, 'next' => 200],
+            'SILVER' => ['current' => 200, 'next' => 750],
+            'GOLD' => ['current' => 750, 'next' => 2000],
+            'PLATINUM' => ['current' => 2000, 'next' => 2000], // Max tier
         ];
 
         $tierData = $thresholds[$this->tier] ?? $thresholds['BRONZE'];
@@ -343,13 +343,13 @@ class Member extends Model
     public function getPointsToNextTierAttribute()
     {
         $thresholds = [
-            'BRONZE' => 1000,
-            'SILVER' => 3000,
-            'GOLD' => 6000,
+            'BRONZE' => 200,
+            'SILVER' => 750,
+            'GOLD' => 2000,
             'PLATINUM' => 0, // Already at max
         ];
 
-        $nextThreshold = $thresholds[$this->tier] ?? 1000;
+        $nextThreshold = $thresholds[$this->tier] ?? 200;
 
         if ($this->tier === 'PLATINUM') {
             return 0; // Already at max tier
