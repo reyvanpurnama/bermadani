@@ -78,60 +78,60 @@
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
                 <div class="space-y-4" x-data="{
-                            mode: 'manual',
-                            buyDisplay: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
-                            buyRaw: '{{ old('buyPrice', '') }}',
-                            sellDisplay: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
-                            sellRaw: '{{ old('sellPrice', '') }}',
-                            percent: 30,
+                                mode: 'manual',
+                                buyDisplay: '{{ old('buyPrice') ? number_format(old('buyPrice'), 0, ',', '.') : '' }}',
+                                buyRaw: '{{ old('buyPrice', '') }}',
+                                sellDisplay: '{{ old('sellPrice') ? number_format(old('sellPrice'), 0, ',', '.') : '' }}',
+                                sellRaw: '{{ old('sellPrice', '') }}',
+                                percent: 30,
 
-                            formatBuy(e) {
-                                let val = e.target.value.replace(/\D/g, '');
-                                this.buyRaw = val;
-                                this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                this.recalculate();
-                            },
-                            formatSell(e) {
-                                let val = e.target.value.replace(/\D/g, '');
-                                this.sellRaw = val;
-                                this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                            },
-                            recalculate() {
-                                if (!this.buyRaw || parseInt(this.buyRaw) === 0) return;
-                                let buy = parseInt(this.buyRaw);
-                                let sell = 0;
+                                formatBuy(e) {
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    this.buyRaw = val;
+                                    this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                    this.recalculate();
+                                },
+                                formatSell(e) {
+                                    let val = e.target.value.replace(/\D/g, '');
+                                    this.sellRaw = val;
+                                    this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                },
+                                recalculate() {
+                                    if (!this.buyRaw || parseInt(this.buyRaw) === 0) return;
+                                    let buy = parseInt(this.buyRaw);
+                                    let sell = 0;
 
-                                if (this.mode === 'markup') {
-                                    sell = Math.round(buy * (1 + this.percent / 100));
-                                } else if (this.mode === 'profit') {
-                                    if (this.percent >= 100) return;
-                                    sell = Math.round(buy / (1 - this.percent / 100));
-                                } else {
-                                    return;
+                                    if (this.mode === 'markup') {
+                                        sell = Math.round(buy * (1 + this.percent / 100));
+                                    } else if (this.mode === 'profit') {
+                                        if (this.percent >= 100) return;
+                                        sell = Math.round(buy / (1 - this.percent / 100));
+                                    } else {
+                                        return;
+                                    }
+
+                                    this.sellRaw = sell.toString();
+                                    this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+                                },
+                                setMode(m) {
+                                    this.mode = m;
+                                    if (m !== 'manual') this.recalculate();
+                                },
+                                get profit() {
+                                    if (!this.sellRaw || !this.buyRaw) return null;
+                                    return parseInt(this.sellRaw) - parseInt(this.buyRaw);
+                                },
+                                get marginPercent() {
+                                    if (!this.buyRaw || parseInt(this.buyRaw) === 0) return null;
+                                    return ((parseInt(this.sellRaw) - parseInt(this.buyRaw)) / parseInt(this.buyRaw) * 100).toFixed(1);
+                                },
+                                get isLoss() {
+                                    return this.profit !== null && this.profit < 0;
+                                },
+                                get hasValidPrices() {
+                                    return this.sellRaw && this.buyRaw && parseInt(this.buyRaw) > 0;
                                 }
-
-                                this.sellRaw = sell.toString();
-                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
-                            },
-                            setMode(m) {
-                                this.mode = m;
-                                if (m !== 'manual') this.recalculate();
-                            },
-                            get profit() {
-                                if (!this.sellRaw || !this.buyRaw) return null;
-                                return parseInt(this.sellRaw) - parseInt(this.buyRaw);
-                            },
-                            get marginPercent() {
-                                if (!this.buyRaw || parseInt(this.buyRaw) === 0) return null;
-                                return ((parseInt(this.sellRaw) - parseInt(this.buyRaw)) / parseInt(this.buyRaw) * 100).toFixed(1);
-                            },
-                            get isLoss() {
-                                return this.profit !== null && this.profit < 0;
-                            },
-                            get hasValidPrices() {
-                                return this.sellRaw && this.buyRaw && parseInt(this.buyRaw) > 0;
-                            }
-                        }">
+                            }">
 
                     {{-- Mode Switcher --}}
                     <div>
@@ -141,17 +141,17 @@
                             <button type="button" @click="setMode('manual')"
                                 class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
                                 :class="mode === 'manual' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
-                                ✏️ Manual
+                                Manual
                             </button>
                             <button type="button" @click="setMode('markup')"
                                 class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
                                 :class="mode === 'markup' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
-                                📈 Markup %
+                                Markup %
                             </button>
                             <button type="button" @click="setMode('profit')"
                                 class="flex-1 py-2 px-3 text-xs font-medium rounded-lg border-2 transition-all"
                                 :class="mode === 'profit' ? 'bg-primary text-white border-primary' : 'bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-primary'">
-                                💰 Profit %
+                                Profit %
                             </button>
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1.5" x-show="mode === 'manual'">Input harga jual secara
@@ -203,9 +203,9 @@
                                 :readonly="mode !== 'manual'"
                                 class="w-full border text-sm rounded-lg pl-11 pr-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all @error('sellPrice') border-rose-500 @enderror"
                                 :class="[
-                                        mode !== 'manual' ? 'bg-slate-100 dark:bg-slate-700 cursor-not-allowed' : 'bg-slate-50 dark:bg-slate-800',
-                                        isLoss ? 'border-rose-500 ring-2 ring-rose-500/20 text-rose-600' : 'border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white'
-                                    ]" placeholder="0">
+                                            mode !== 'manual' ? 'bg-slate-100 dark:bg-slate-700 cursor-not-allowed' : 'bg-slate-50 dark:bg-slate-800',
+                                            isLoss ? 'border-rose-500 ring-2 ring-rose-500/20 text-rose-600' : 'border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white'
+                                        ]" placeholder="0">
                             <input type="hidden" name="sellPrice" :value="sellRaw">
                         </div>
                         @error('sellPrice')
@@ -243,14 +243,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Awal --}}
                     <div x-data="{
-                                    display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
-                                    raw: '{{ old('stock', '') }}',
-                                    format(e) {
-                                        let val = e.target.value.replace(/\D/g, '');
-                                        this.raw = val;
-                                        this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                    }
-                                }">
+                                        display: '{{ old('stock') ? number_format(old('stock'), 0, ',', '.') : '' }}',
+                                        raw: '{{ old('stock', '') }}',
+                                        format(e) {
+                                            let val = e.target.value.replace(/\D/g, '');
+                                            this.raw = val;
+                                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                        }
+                                    }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Awal <span
                                 class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required
