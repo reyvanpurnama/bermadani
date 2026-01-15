@@ -8,12 +8,12 @@
             <span class="text-[10px] font-medium">Beranda</span>
         </a>
 
-        {{-- 2. Belanja --}}
-        <a href="{{ route('member.products') }}"
-            class="flex flex-col items-center justify-center gap-1 {{ request()->routeIs('member.products') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
-            <i class='bx {{ request()->routeIs('member.products') ? 'bxs-store' : 'bx-store' }} text-2xl mb-0.5'></i>
+        {{-- 2. Belanja (Coming Soon) --}}
+        <button onclick="alert('Fitur Belanja Online segera hadir!')"
+            class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+            <i class='bx bx-store text-2xl mb-0.5'></i>
             <span class="text-[10px] font-medium">Belanja</span>
-        </a>
+        </button>
 
         {{-- 3. SCAN / PAY (Center) --}}
         <div class="relative flex items-center justify-center -top-5">
