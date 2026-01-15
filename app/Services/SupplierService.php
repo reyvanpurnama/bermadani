@@ -43,7 +43,7 @@ class SupplierService
                 // Status: PENDING jika sudah upload proof, tetap PENDING jika belum
                 'status' => 'PENDING',
                 'monthlyFee' => 25000, // Default fee
-                'maxActiveProducts' => 10, // Default limit
+                'maxActiveProducts' => 2, // Default limit (fase awal)
                 'currentActiveProducts' => 0,
                 'paymentGraceDays' => 7,
                 'isPaymentActive' => false,

@@ -145,29 +145,29 @@
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden animate-fade-in-up my-8">
             
             {{-- Header --}}
-            <div class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-                <h3 class="font-bold text-lg text-slate-800 dark:text-white">Detail Pengajuan #{{ $selectedProduct->id }}</h3>
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="font-bold text-base sm:text-lg text-slate-800 dark:text-white">Detail Pengajuan #{{ $selectedProduct->id }}</h3>
                 <button wire:click="closeModal" class="text-slate-400 hover:text-slate-600 transition-colors">
                     <i class='bx bx-x text-2xl'></i>
                 </button>
             </div>
 
-            <div class="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 max-h-[70vh] sm:max-h-[75vh] overflow-y-auto">
                 
                 {{-- Left: Product Info --}}
                 <div class="lg:col-span-2 space-y-4">
-                    <div class="flex gap-4">
+                    <div class="flex flex-col sm:flex-row gap-4">
                         @if($selectedProduct->image)
-                            <img src="{{ asset('storage/' . $selectedProduct->image) }}" alt="{{ $selectedProduct->name }}" class="w-24 h-24 rounded-lg object-cover shadow-md shrink-0">
+                            <img src="{{ asset('storage/' . $selectedProduct->image) }}" alt="{{ $selectedProduct->name }}" class="w-full sm:w-24 h-48 sm:h-24 rounded-lg object-cover shadow-md shrink-0">
                         @else
-                            <div class="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-5xl shadow-inner shrink-0">
+                            <div class="w-full sm:w-24 h-48 sm:h-24 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-5xl shadow-inner shrink-0">
                                 📦
                             </div>
                         @endif
                         <div class="flex-1">
-                            <div class="flex justify-between items-start mb-2">
-                                <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ $selectedProduct->name }}</h2>
-                                <span class="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-2">
+                                <h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">{{ $selectedProduct->name }}</h2>
+                                <span class="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide w-fit">
                                     {{ $selectedProduct->approvalStatus }}
                                 </span>
                             </div>
@@ -201,8 +201,8 @@
                 <div class="lg:col-span-1 space-y-4">
                     
                     {{-- Price Section --}}
-                    <div class="bg-white dark:bg-slate-800/50 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-[13px] font-bold text-slate-800 dark:text-white mb-3">Analisa Harga</h3>
+                    <div class="bg-white dark:bg-slate-800/50 p-3 sm:p-4 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <h3 class="text-[12px] sm:text-[13px] font-bold text-slate-800 dark:text-white mb-3">Analisa Harga</h3>
                         
                         <div class="space-y-3">
                             <div>
@@ -272,23 +272,29 @@
 
                     {{-- Action Buttons (Only for Pending) --}}
                     @if($status === 'PENDING')
+                    <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-3 mb-3">
+                        <p class="text-[11px] text-blue-700 dark:text-blue-400">
+                            <i class='bx bx-info-circle mr-1'></i>
+                            Produk yang disetujui akan tampil di katalog. Stok ditambahkan nanti saat barang datang dari supplier.
+                        </p>
+                    </div>
                     <div class="space-y-3">
                         <button wire:click="approve" 
                             @if(!$sellPrice || $sellPriceNum <= 0) disabled @endif
-                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[13px] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600">
-                            <i class='bx bx-check-circle text-lg'></i> Setujui & Masukkan Stok
+                            class="w-full py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[12px] sm:text-[13px] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600">
+                            <i class='bx bx-check-circle text-base sm:text-lg'></i> Setujui Produk
                         </button>
                         
                         <button wire:click="reject" 
-                            class="w-full py-3 bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/50 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg font-bold text-[13px] transition-all flex items-center justify-center gap-2">
-                            <i class='bx bx-x-circle text-lg'></i> Tolak Pengajuan
+                            class="w-full py-2.5 sm:py-3 bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/50 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg font-bold text-[12px] sm:text-[13px] transition-all flex items-center justify-center gap-2">
+                            <i class='bx bx-x-circle text-base sm:text-lg'></i> Tolak Pengajuan
                         </button>
 
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Catatan Admin (Wajib untuk Tolak)</label>
+                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Catatan untuk Supplier (Wajib jika Ditolak)</label>
                             <textarea wire:model="adminNote" rows="2" 
                                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-[12px] outline-none focus:border-primary placeholder-slate-400" 
-                                placeholder="Alasan penolakan atau catatan revisi..."></textarea>
+                                placeholder="Tulis alasan penolakan atau saran perbaikan produk..."></textarea>
                             @error('adminNote') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
                         </div>
                     </div>
