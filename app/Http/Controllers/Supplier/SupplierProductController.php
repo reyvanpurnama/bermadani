@@ -103,35 +103,21 @@ class SupplierProductController extends Controller
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
-            'status' => 'required|in:ACTIVE,INACTIVE',
         ]);
 
-        $supplier = Auth::guard('supplier')->user();
-        $oldStatus = $product->status;
-        $newStatus = $validated['status'];
-
-        // Check limit if activating
-        if ($oldStatus !== 'ACTIVE' && $newStatus === 'ACTIVE') {
-            if ($supplier->currentActiveProducts >= $supplier->maxActiveProducts) {
-                return back()->with('error', 'Anda telah mencapai batas maksimal produk aktif.');
-            }
-            $supplier->increment('currentActiveProducts');
-        } elseif ($oldStatus === 'ACTIVE' && $newStatus !== 'ACTIVE') {
-            $supplier->decrement('currentActiveProducts');
-        }
-
+        $imagePath = $product->image;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
-            // $product->image = $imagePath; // Need to check if image column exists
         }
 
+        // Update product - supplier can only update buyPrice, not sellPrice
         $product->update([
             'categoryId' => $validated['category_id'],
             'name' => $validated['name'],
             'description' => $validated['description'],
-            'sellPrice' => $validated['price'],
+            'buyPrice' => $validated['price'],
             'stock' => $validated['stock'],
-            'status' => $validated['status'],
+            'image' => $imagePath,
         ]);
 
         return redirect()->route('supplier.products.index')->with('success', 'Produk berhasil diperbarui.');

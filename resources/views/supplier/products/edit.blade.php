@@ -62,21 +62,38 @@
                     <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Harga & Status</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Harga Jual (Per Unit) <span class="text-rose-500">*</span></label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Harga Ajuan (Per Unit) <span class="text-rose-500">*</span></label>
                             <div class="relative">
                                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">Rp</span>
-                                <input type="number" name="price" value="{{ old('price', $product->sellPrice) }}" min="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" required>
+                                <input type="number" name="price" value="{{ old('price', $product->buyPrice) }}" min="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" required>
                             </div>
+                            <p class="text-xs text-slate-500 mt-1">Harga yang Anda ajukan. Admin akan menentukan harga jual final.</p>
                             @error('price') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
-                            <select name="status" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all cursor-pointer">
-                                <option value="ACTIVE" {{ old('status', $product->status) == 'ACTIVE' ? 'selected' : '' }}>Aktif</option>
-                                <option value="INACTIVE" {{ old('status', $product->status) == 'INACTIVE' ? 'selected' : '' }}>Non-aktif</option>
-                            </select>
-                            @error('status') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status Approval</label>
+                            <div class="mt-2">
+                                @if($product->approvalStatus === 'PENDING')
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                        <i class='bx bx-time mr-1.5'></i> Menunggu Review Admin
+                                    </span>
+                                @elseif($product->approvalStatus === 'APPROVED')
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                        <i class='bx bx-check-circle mr-1.5'></i> Disetujui
+                                    </span>
+                                    @if($product->sellPrice)
+                                        <p class="text-xs text-slate-500 mt-2">Harga jual: <span class="font-bold">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span></p>
+                                    @endif
+                                @elseif($product->approvalStatus === 'REJECTED')
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400">
+                                        <i class='bx bx-x-circle mr-1.5'></i> Ditolak
+                                    </span>
+                                    @if($product->rejectionReason)
+                                        <p class="text-xs text-rose-500 mt-2">Alasan: {{ $product->rejectionReason }}</p>
+                                    @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
