@@ -38,9 +38,13 @@
                         <tr wire:click="openDetail({{ $product->id }})" class="hover:bg-indigo-50/30 dark:hover:bg-indigo-900/10 transition-colors group cursor-pointer">
                             <td class="px-5 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xl shrink-0">
-                                        📦
-                                    </div>
+                                    @if($product->image)
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-10 h-10 rounded object-cover shrink-0">
+                                    @else
+                                        <div class="w-10 h-10 rounded bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xl shrink-0">
+                                            📦
+                                        </div>
+                                    @endif
                                     <div>
                                         <div class="flex items-center gap-2">
                                             <h6 class="font-bold text-slate-900 dark:text-white leading-none">{{ $product->name }}</h6>
@@ -138,9 +142,13 @@
                 {{-- Left: Product Info --}}
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex gap-4">
-                        <div class="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-5xl shadow-inner shrink-0">
-                            📦
-                        </div>
+                        @if($selectedProduct->image)
+                            <img src="{{ asset('storage/' . $selectedProduct->image) }}" alt="{{ $selectedProduct->name }}" class="w-24 h-24 rounded-lg object-cover shadow-md shrink-0">
+                        @else
+                            <div class="w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-lg flex items-center justify-center text-5xl shadow-inner shrink-0">
+                                📦
+                            </div>
+                        @endif
                         <div class="flex-1">
                             <div class="flex justify-between items-start mb-2">
                                 <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ $selectedProduct->name }}</h2>
