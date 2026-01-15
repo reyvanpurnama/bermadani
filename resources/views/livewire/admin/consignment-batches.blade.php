@@ -518,8 +518,10 @@
                     <div class="space-y-3">
                         @foreach($receiveItems as $index => $item)
                             @php
-                                $isDifferent = $item['receivedQty'] != $item['requestedQty'];
-                                $diff = $item['receivedQty'] - $item['requestedQty'];
+                                $received = (int) ($item['receivedQty'] ?? 0);
+                                $requested = (int) ($item['requestedQty'] ?? 0);
+                                $isDifferent = $received != $requested;
+                                $diff = $received - $requested;
                             @endphp
                             <div class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border {{ $isDifferent ? 'border-amber-300 dark:border-amber-500/50' : 'border-slate-200 dark:border-slate-700' }}">
                                 <div class="flex justify-between items-start mb-3">
