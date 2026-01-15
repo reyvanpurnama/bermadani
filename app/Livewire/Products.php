@@ -36,7 +36,6 @@ class Products extends Component
     public $showQuickBatchModal = false;
     public $quickBatchProduct = null;
     public $quickBatchQty = 1;
-    public $quickBatchFee = 10;
 
     public function updatingSearch()
     {
@@ -236,7 +235,6 @@ class Products extends Component
     {
         $this->quickBatchProduct = Product::with('supplier')->find($productId);
         $this->quickBatchQty = max(1, $this->quickBatchProduct->threshold ?? 10);
-        $this->quickBatchFee = 10;
         $this->showQuickBatchModal = true;
     }
 
@@ -245,14 +243,12 @@ class Products extends Component
         $this->showQuickBatchModal = false;
         $this->quickBatchProduct = null;
         $this->quickBatchQty = 1;
-        $this->quickBatchFee = 10;
     }
 
     public function saveQuickBatch()
     {
         $this->validate([
             'quickBatchQty' => 'required|integer|min:1',
-            'quickBatchFee' => 'required|numeric|min:0|max:100',
         ]);
 
         if (!$this->quickBatchProduct || !$this->quickBatchProduct->supplierId) {
@@ -263,14 +259,16 @@ class Products extends Component
         DB::transaction(function () {
             $product = $this->quickBatchProduct;
             $sellPrice = $product->sellPrice;
-            $priceAfterFee = $sellPrice * (1 - ($this->quickBatchFee / 100));
+            $feePercent = $product->profitShareRate ?? 10; // Use product's profit share or default 10%
+            $priceAfterFee = $sellPrice * (1 - ($feePercent / 100));
 
+            // Create batch with REQUESTED status (not ACTIVE yet)
             $batch = ConsignmentBatch::create([
                 'batchCode' => ConsignmentBatch::generateBatchCode(),
                 'supplierId' => $product->supplierId,
-                'status' => 'ACTIVE',
-                'receivedAt' => now(),
-                'note' => 'Quick batch dari halaman inventaris',
+                'status' => 'REQUESTED', // Waiting for supplier to deliver
+                'receivedAt' => null, // Not received yet
+                'note' => 'Permintaan stok dari inventaris',
                 'totalValue' => $sellPrice * $this->quickBatchQty,
             ]);
 
@@ -280,12 +278,11 @@ class Products extends Component
                 'initialQty' => $this->quickBatchQty,
                 'remainingQty' => $this->quickBatchQty,
                 'sellPrice' => $sellPrice,
-                'feePercent' => $this->quickBatchFee,
+                'feePercent' => $feePercent,
                 'priceAfterFee' => $priceAfterFee,
             ]);
 
-            // Add stock to product
-            $product->increment('stock', $this->quickBatchQty);
+            // DON'T add stock yet - stock will be added when batch is received/confirmed
 
             // Send notification to supplier
             SupplierNotification::notifyBatchRequest(
@@ -296,7 +293,14 @@ class Products extends Component
         });
 
         $this->closeQuickBatchModal();
-        $this->dispatch('notify', ['message' => 'Permintaan stok berhasil dibuat & notifikasi terkirim ke supplier', 'type' => 'success']);
+        $this->dispatch('notify', ['message' => 'Permintaan stok berhasil dikirim ke supplier', 'type' => 'success']);
+    }
+
+    public function hasPendingBatch($productId)
+    {
+        return ConsignmentBatch::whereHas('items', function($q) use ($productId) {
+            $q->where('productId', $productId);
+        })->where('status', 'REQUESTED')->exists();
     }
 
     public function render()

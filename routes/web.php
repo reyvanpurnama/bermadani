@@ -139,9 +139,7 @@ Route::middleware(['auth:supplier', 'supplier.status', 'log.activity'])->prefix(
 
     Route::get('/sales', [App\Http\Controllers\Supplier\SupplierSalesController::class, 'index'])->name('supplier.sales');
 
-    Route::get('/restock', function () {
-        return view('supplier.restock');
-    })->name('supplier.restock');
+    Route::get('/restock', [App\Http\Controllers\Supplier\SupplierRestockController::class, 'index'])->name('supplier.restock');
 
     Route::get('/profile', function () {
         return view('supplier.profile');
@@ -174,7 +172,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     })->name('admin.products.create');
 
 
-    Route::get('/restock-requests', \App\Livewire\Admin\RestockManagement::class)->name('admin.restock-requests');
+    Route::get('/restock-requests', function () {
+        return redirect()->route('admin.consignment-batches');
+    })->name('admin.restock-requests');
     Route::post('/inventaris', [App\Http\Controllers\ProductController::class, 'store'])->name('admin.products.store');
     Route::get('/inventaris/mutasi', \App\Livewire\Admin\StockMutation::class)->name('admin.stock-mutation');
     Route::get('/inventaris/penyesuaian', \App\Livewire\Admin\StockAdjustment::class)->name('admin.stock-adjustment');

@@ -162,11 +162,6 @@
                             <i class='bx bx-transfer-alt text-sm mr-2 opacity-70'></i>
                             <span class="sidebar-text text-xs transition-opacity duration-300">Riwayat Stok</span>
                         </a>
-                        <a href="{{ route('admin.restock-requests') }}"
-                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.restock-requests') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
-                            <i class='bx bx-cart-download text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Order Restock</span>
-                        </a>
                         <a href="{{ route('admin.stock-adjustment') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-adjustment') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                             <i class='bx bx-slider-alt text-sm mr-2 opacity-70'></i>

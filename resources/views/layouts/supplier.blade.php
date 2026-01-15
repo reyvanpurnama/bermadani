@@ -172,6 +172,12 @@
     <div id="main-content" class="min-h-screen flex flex-col transition-all duration-300"
         :class="{'md:ml-[180px]': !sidebarCollapsed, 'md:ml-[70px]': sidebarCollapsed}">
 
+        @php
+            $unreadCount = \App\Models\SupplierNotification::where('supplierId', auth()->guard('supplier')->id())
+                ->where('isRead', false)
+                ->count();
+        @endphp
+
         <header
             class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20 transition-colors duration-300">
             <div class="flex items-center gap-4">

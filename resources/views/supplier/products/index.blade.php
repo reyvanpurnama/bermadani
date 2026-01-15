@@ -101,8 +101,7 @@
                 <tr>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
-                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga</th>
-                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Fee Koperasi</th>
+                    <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Ajuan</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Stok</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
                     <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
@@ -131,40 +130,45 @@
                     </td>
                     <td class="px-6 py-4 text-sm">
                         @if($product->approvalStatus === 'APPROVED')
-                            <div>
-                                <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span>
-                                <span class="text-xs text-slate-400 block">Jual</span>
-                            </div>
+                            <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span>
                         @else
-                            <div>
-                                <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
-                                <span class="text-xs text-slate-400 block">Harga Ajuan</span>
-                            </div>
+                            <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
                         @endif
                     </td>
                     <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                            {{ number_format($product->profitShareRate ?? 0, 0) }}%
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->stock > 10 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400' }}">
-                            {{ $product->stock }}
-                        </span>
+                        @if($product->approvalStatus === 'APPROVED')
+                            @if($product->stock > 0)
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $product->stock > 10 ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400' }}">
+                                    {{ $product->stock }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                                    0
+                                </span>
+                            @endif
+                        @else
+                            <span class="text-slate-400 text-xs">-</span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($product->approvalStatus === 'PENDING')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
-                                Menunggu Review
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                <i class='bx bx-time-five text-sm'></i> Menunggu Review
                             </span>
                         @elseif($product->approvalStatus === 'REJECTED')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 cursor-help" title="Alasan: {{ $product->rejectionReason ?? 'Tidak ada alasan' }}">
-                                Ditolak
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 cursor-help" title="Alasan: {{ $product->rejectionReason ?? 'Tidak ada alasan' }}">
+                                <i class='bx bx-x-circle text-sm'></i> Ditolak
                             </span>
-                        @elseif($product->status === 'ACTIVE')
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                Aktif
-                            </span>
+                        @elseif($product->approvalStatus === 'APPROVED')
+                            @if($product->stock > 0)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                    <i class='bx bx-store text-sm'></i> Dijual
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                    <i class='bx bx-package text-sm'></i> Menunggu Stok
+                                </span>
+                            @endif
                         @else
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-400">
                                 Non-aktif
@@ -188,7 +192,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                    <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                         <div class="flex flex-col items-center justify-center">
                             <i class='bx bx-box text-4xl mb-2 text-slate-300'></i>
                             <p>Belum ada produk.</p>

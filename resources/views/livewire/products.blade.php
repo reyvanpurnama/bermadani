@@ -217,9 +217,14 @@
                                         class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide cursor-help"
                                         title="{{ $product->rejectionReason ?? 'Tidak ada alasan' }}">Ditolak</span>
                                 @elseif($product->stock == 0 && $product->supplierId)
-                                    <span
-                                        class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Belum
-                                        Masuk</span>
+                                    @if($this->hasPendingBatch($product->id))
+                                        <span
+                                            class="bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">Diminta</span>
+                                    @else
+                                        <span
+                                            class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Belum
+                                            Masuk</span>
+                                    @endif
                                 @elseif($product->stock == 0)
                                     <span
                                         class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Habis</span>
@@ -234,7 +239,15 @@
                             <td class="px-5 py-3.5 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     @if($product->supplierId && $product->approvalStatus === 'APPROVED')
-                                        @if($product->stock == 0)
+                                        @php
+                                            $hasPending = $this->hasPendingBatch($product->id);
+                                        @endphp
+                                        @if($hasPending)
+                                            {{-- Ada batch pending --}}
+                                            <span class="text-cyan-600 dark:text-cyan-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
+                                                <i class='bx bx-time-five'></i> Menunggu Supplier
+                                            </span>
+                                        @elseif($product->stock == 0)
                                             {{-- Urgent: Stok habis --}}
                                             <button wire:click="openQuickBatchModal({{ $product->id }})"
                                                 class="bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-rose-500/30 hover:shadow-rose-500/50 transition-all flex items-center gap-1 animate-pulse">

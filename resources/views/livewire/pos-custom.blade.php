@@ -51,7 +51,13 @@
                         class="bg-card dark:bg-darkCard rounded-xl p-3 shadow-sm border border-slate-200 dark:border-slate-700 cursor-pointer hover:border-indigo-400 dark:hover:border-indigo-500 transition-all group relative">
                         <div
                             class="h-28 w-full bg-slate-50 dark:bg-slate-700 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
-                            <span class="text-4xl">{{ $product->category?->icon ?? '📦' }}</span>
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" 
+                                     alt="{{ $product->name }}" 
+                                     class="w-full h-full object-cover">
+                            @else
+                                <span class="text-4xl">{{ $product->category?->icon ?? '📦' }}</span>
+                            @endif
                         </div>
                         <div class="flex justify-between items-start mb-1">
                             <h5 class="text-[13px] font-bold text-slate-800 dark:text-white line-clamp-2 leading-tight">

@@ -27,6 +27,11 @@ class ConsignmentBatches extends Component
     public $showDetailModal = false;
     public $selectedBatch = null;
 
+    // Receive Confirmation
+    public $showReceiveForm = false;
+    public $receiveItems = [];
+    public $receiveNote = '';
+
     // Retur Modal
     public $showReturModal = false;
     public $returItems = [];
@@ -138,6 +143,115 @@ class ConsignmentBatches extends Component
     {
         $this->showDetailModal = false;
         $this->selectedBatch = null;
+    }
+
+    public function openReceiveForm()
+    {
+        if (!$this->selectedBatch || $this->selectedBatch->status !== 'REQUESTED') {
+            return;
+        }
+
+        // Prepare receive items with default values
+        $this->receiveItems = [];
+        foreach ($this->selectedBatch->items as $item) {
+            $this->receiveItems[] = [
+                'itemId' => $item->id,
+                'productName' => $item->product->name,
+                'requestedQty' => $item->initialQty,
+                'receivedQty' => $item->initialQty, // Default to requested qty
+                'note' => '',
+            ];
+        }
+        $this->receiveNote = '';
+        $this->showReceiveForm = true;
+    }
+
+    public function closeReceiveForm()
+    {
+        $this->showReceiveForm = false;
+        $this->receiveItems = [];
+        $this->receiveNote = '';
+    }
+
+    public function confirmReceive()
+    {
+        if (!$this->selectedBatch || $this->selectedBatch->status !== 'REQUESTED') {
+            return;
+        }
+
+        // Validate receive items
+        $this->validate([
+            'receiveItems.*.receivedQty' => 'required|integer|min:0',
+        ]);
+
+        DB::transaction(function () {
+            $notes = [];
+            
+            // Process each item
+            foreach ($this->receiveItems as $receiveItem) {
+                $item = ConsignmentItem::find($receiveItem['itemId']);
+                $requestedQty = $receiveItem['requestedQty'];
+                $receivedQty = $receiveItem['receivedQty'];
+                
+                // Update item with actual received qty
+                $item->update([
+                    'initialQty' => $receivedQty,
+                    'remainingQty' => $receivedQty,
+                ]);
+
+                // Add stock
+                if ($receivedQty > 0) {
+                    $item->product->increment('stock', $receivedQty);
+
+                    // Build note for stock movement
+                    $noteText = "Terima konsinyasi batch {$this->selectedBatch->batchCode}";
+                    if ($receivedQty != $requestedQty) {
+                        $diff = $receivedQty - $requestedQty;
+                        $noteText .= " (Diminta: {$requestedQty}, Diterima: {$receivedQty}, Selisih: {$diff})";
+                    }
+                    if (!empty($receiveItem['note'])) {
+                        $noteText .= " - {$receiveItem['note']}";
+                    }
+
+                    // Record stock movement
+                    \App\Models\StockMovement::create([
+                        'productId' => $item->productId,
+                        'movementType' => 'CONSIGNMENT_IN',
+                        'quantity' => $receivedQty,
+                        'referenceType' => 'ConsignmentBatch',
+                        'referenceId' => $this->selectedBatch->id,
+                        'note' => $noteText,
+                        'occurredAt' => now(),
+                    ]);
+                }
+
+                // Collect notes for batch
+                if ($receivedQty != $requestedQty) {
+                    $productName = $item->product->name;
+                    $notes[] = "{$productName}: Diminta {$requestedQty}, Diterima {$receivedQty}";
+                    if (!empty($receiveItem['note'])) {
+                        $notes[] = "  → {$receiveItem['note']}";
+                    }
+                }
+            }
+
+            // Build batch note
+            $batchNote = $this->receiveNote;
+            if (!empty($notes)) {
+                $batchNote = (!empty($batchNote) ? $batchNote . "\n\n" : '') . "Penyesuaian Qty:\n" . implode("\n", $notes);
+            }
+
+            // Update batch status to ACTIVE
+            $this->selectedBatch->update([
+                'status' => 'ACTIVE',
+                'receivedAt' => now(),
+                'note' => $batchNote,
+            ]);
+        });
+
+        $this->closeReceiveForm();
+        $this->closeDetail();
+        $this->dispatch('notify', ['message' => 'Barang berhasil diterima dan stok telah ditambahkan', 'type' => 'success']);
     }
 
     public function processSettlement()

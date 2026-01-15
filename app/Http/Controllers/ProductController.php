@@ -30,6 +30,12 @@ class ProductController extends Controller
 
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
 
+        // Admin-created products are auto-approved (owned by koperasi)
+        $validated['approvalStatus'] = 'APPROVED';
+        $validated['approvedAt'] = now();
+        $validated['approvedBy'] = auth()->id();
+        $validated['isActive'] = true;
+
         $product = Product::create($validated);
 
         // Record initial stock movement
