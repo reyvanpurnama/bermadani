@@ -58,6 +58,46 @@
 
                 <hr class="border-slate-100 dark:border-slate-700">
 
+                <!-- Image Upload -->
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Gambar Produk</h3>
+                    <div x-data="{ 
+                        preview: '{{ $product->image ? asset('storage/' . $product->image) : '' }}',
+                        handleFile(e) {
+                            const file = e.target.files[0];
+                            if (file) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => this.preview = e.target.result;
+                                reader.readAsDataURL(file);
+                            }
+                        }
+                    }">
+                        <div class="border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-lg p-6 text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer relative"
+                            :class="preview ? 'border-primary bg-primary/5' : ''">
+                            <input type="file" name="image" accept="image/*" @change="handleFile($event)"
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                            
+                            <template x-if="!preview">
+                                <div>
+                                    <i class='bx bx-image-add text-4xl text-slate-300 mb-2'></i>
+                                    <p class="text-sm text-slate-500">Klik atau drag gambar ke sini</p>
+                                    <p class="text-xs text-slate-400 mt-1">Maksimal 2MB (JPG, PNG)</p>
+                                </div>
+                            </template>
+                            
+                            <template x-if="preview">
+                                <div class="flex flex-col items-center">
+                                    <img :src="preview" class="max-h-48 rounded-lg shadow-md mb-2">
+                                    <p class="text-xs text-primary font-medium">Klik untuk ganti gambar</p>
+                                </div>
+                            </template>
+                        </div>
+                        @error('image') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <hr class="border-slate-100 dark:border-slate-700">
+
                 <!-- Pricing & Status -->
                 <div>
                     <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Harga & Status</h3>
