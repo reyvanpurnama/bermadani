@@ -135,6 +135,8 @@
                 {{-- Inventory Group --}}
                 @php
                     $pendingProductsCount = \App\Models\Product::where('approvalStatus', 'PENDING')->count();
+                    $pendingSuppliersCount = \App\Models\Supplier::where('status', 'PENDING')->count();
+                    $hasPendingInventory = $pendingProductsCount > 0 || $pendingSuppliersCount > 0;
                 @endphp
                 <div x-data="{ open: {{ request()->routeIs('admin.products*', 'admin.stock*', 'admin.restock*', 'admin.suppliers*', 'admin.product-review') ? 'true' : 'false' }} }"
                     class="space-y-1">
@@ -142,7 +144,7 @@
                         class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
                         <div class="flex items-center gap-2">
                             <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Inventory</span>
-                            @if($pendingProductsCount > 0)
+                            @if($hasPendingInventory)
                                 <span class="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
                             @endif
                         </div>
@@ -181,9 +183,14 @@
                             @endif
                         </a>
                         <a href="{{ route('admin.suppliers') }}"
-                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
-                            <i class='bx bx-store-alt text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Supplier</span>
+                            class="nav-item flex items-center justify-between pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <div class="flex items-center">
+                                <i class='bx bx-store-alt text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Supplier</span>
+                            </div>
+                            @if($pendingSuppliersCount > 0)
+                                <span class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingSuppliersCount }}</span>
+                            @endif
                         </a>
                     </div>
                 </div>
