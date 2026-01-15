@@ -208,16 +208,42 @@
             </div>
         </div>
 
-        {{-- Quick Actions --}}
-        <div class="flex gap-4 mt-4">
-            <a href="{{ route('member.transfer') }}" class="flex-1 py-3 px-6 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                <i class='bx bx-transfer text-xl'></i>
-                <span>Transfer Sukarela</span>
+        {{-- Quick Actions (Gojek Style Grid) --}}
+        <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-4 mt-2">Menu Cepat</h4>
+        <div class="grid grid-cols-4 gap-4 mb-2">
+            
+            {{-- Transfer --}}
+            <a href="{{ route('member.transfer') }}" class="flex flex-col items-center gap-2 group">
+                <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 transition-colors">
+                    <i class='bx bx-transfer'></i>
+                </div>
+                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Transfer</span>
             </a>
-            <a href="{{ route('member.simpanan') }}" class="flex-1 py-3 px-6 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-300 font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
-                <i class='bx bx-history text-xl'></i>
-                <span>Riwayat</span>
+
+            {{-- Simpanan --}}
+            <a href="{{ route('member.simpanan') }}" class="flex flex-col items-center gap-2 group">
+                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
+                    <i class='bx bx-wallet'></i>
+                </div>
+                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Simpanan</span>
             </a>
+
+            {{-- Riwayat --}}
+            <a href="{{ route('member.transactions') }}" class="flex flex-col items-center gap-2 group">
+                <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50 transition-colors">
+                    <i class='bx bx-history'></i>
+                </div>
+                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Riwayat</span>
+            </a>
+
+            {{-- Lainnya (Placeholder) --}}
+            <button onclick="alert('Fitur segera hadir!')" class="flex flex-col items-center gap-2 group">
+                <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors">
+                    <i class='bx bx-grid-alt'></i>
+                </div>
+                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Lainnya</span>
+            </button>
+            
         </div>
     </div>
 
