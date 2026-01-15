@@ -41,7 +41,6 @@ class SupplierProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048', // 2MB Max
         ]);
 
@@ -63,7 +62,7 @@ class SupplierProductController extends Controller
             'description' => $validated['description'],
             'buyPrice' => $validated['price'],
             'sellPrice' => 0,
-            'stock' => $validated['stock'],
+            'stock' => 0, // Stock managed via consignment batch
             'image' => $imagePath,
             'status' => 'INACTIVE',
             'isConsignment' => true,
@@ -101,7 +100,6 @@ class SupplierProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|max:2048',
         ]);
 
@@ -110,13 +108,12 @@ class SupplierProductController extends Controller
             $imagePath = $request->file('image')->store('products', 'public');
         }
 
-        // Update product - supplier can only update buyPrice, not sellPrice
+        // Update product - supplier can only update buyPrice, not sellPrice or stock
         $product->update([
             'categoryId' => $validated['category_id'],
             'name' => $validated['name'],
             'description' => $validated['description'],
             'buyPrice' => $validated['price'],
-            'stock' => $validated['stock'],
             'image' => $imagePath,
         ]);
 

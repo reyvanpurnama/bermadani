@@ -42,9 +42,10 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stok <span class="text-rose-500">*</span></label>
-                            <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" min="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" required>
-                            @error('stock') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stok Saat Ini</label>
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm text-slate-500">
+                                {{ $product->stock }} pcs <span class="text-[10px]">(dikelola via konsinyasi)</span>
+                            </div>
                         </div>
 
                         <div class="col-span-2">

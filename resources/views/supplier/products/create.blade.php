@@ -40,12 +40,6 @@
                             @error('category_id') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stok Awal <span class="text-rose-500">*</span></label>
-                            <input type="number" name="stock" value="{{ old('stock', 0) }}" min="0" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" required>
-                            @error('stock') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                        </div>
-
                         <div class="col-span-2">
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Deskripsi</label>
                             <textarea name="description" rows="3" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all" placeholder="Deskripsi lengkap produk...">{{ old('description') }}</textarea>
