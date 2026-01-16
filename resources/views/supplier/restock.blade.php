@@ -52,15 +52,24 @@
             </div>
         </div>
 
-        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 relative group">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
                     <i class='bx bx-wallet text-xl'></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Siap Bayar</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                        Siap Bayar
+                        <i class='bx bx-info-circle text-xs cursor-help'></i>
+                    </p>
                     <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $pendingSettlementCount }}</h3>
                 </div>
+            </div>
+            {{-- Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-slate-800 text-white text-[10px] p-2.5 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                <p class="font-medium mb-1">Kapan batch siap dibayar?</p>
+                <p class="text-slate-300">Batch akan siap dibayar ketika semua stok sudah habis terjual atau di-retur ke supplier.</p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
             </div>
         </div>
     </div>
