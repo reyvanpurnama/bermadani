@@ -45,8 +45,8 @@
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Terjual</p>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white">- <span
-                        class="text-[10px] font-normal text-slate-400">Avg</span></h4>
+                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                    {{ number_format($stats['totalSold'], 0, ',', '.') }}</h4>
             </div>
         </div>
         <div
@@ -250,13 +250,13 @@
                                 <div class="group bg-white dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-primary/30 dark:hover:border-primary/30 transition-all shadow-sm relative">
                                     <div class="flex flex-col sm:flex-row gap-3">
                                         <!-- Product Select -->
-                                        <div class="flex-grow sm:w-6/12">
+                                        <div class="flex-grow">
                                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Produk</label>
                                             <select wire:model="items.{{ $index }}.productId"
                                                 class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary transition-colors">
                                                 <option value="">Pilih Produk...</option>
                                                 @foreach($products as $product)
-                                                    <option value="{{ $product->id }}">{{ $product->name }} — Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</option>
+                                                    <option value="{{ $product->id }}">{{ $product->name }} — Jual: Rp {{ number_format($product->sellPrice, 0, ',', '.') }} | Supplier: Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -266,16 +266,6 @@
                                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Jumlah</label>
                                             <input wire:model="items.{{ $index }}.initialQty" type="number" min="1"
                                                 class="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary text-center">
-                                        </div>
-
-                                        <!-- Fee -->
-                                        <div class="sm:w-24">
-                                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Fee Koperasi</label>
-                                            <div class="relative">
-                                                <input wire:model="items.{{ $index }}.feePercent" type="number" min="0" max="100"
-                                                    class="w-full px-3 py-2 pr-7 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:border-primary focus:ring-primary text-center">
-                                                <span class="absolute right-3 top-2 text-xs text-slate-400">%</span>
-                                            </div>
                                         </div>
                                         
                                         <!-- Actions -->
@@ -389,6 +379,7 @@
                                             <th class="px-4 py-2">Produk</th>
                                             <th class="px-4 py-2 text-right">Harga</th>
                                             <th class="px-4 py-2 text-center">Qty Awal</th>
+                                            <th class="px-4 py-2 text-center">Rusak</th>
                                             <th class="px-4 py-2 text-center">Terjual</th>
                                             <th class="px-4 py-2 text-center">Sisa</th>
                                         </tr>
@@ -403,9 +394,16 @@
                                                 <td class="px-4 py-2 text-right font-medium">Rp
                                                     {{ number_format($item->sellPrice, 0, ',', '.') }}</td>
                                                 <td class="px-4 py-2 text-center">{{ $item->initialQty }}</td>
+                                                <td class="px-4 py-2 text-center">
+                                                    @if($item->damagedQty > 0)
+                                                        <span class="text-rose-500 font-bold">{{ $item->damagedQty }}</span>
+                                                    @else
+                                                        <span class="text-slate-400">-</span>
+                                                    @endif
+                                                </td>
                                                 <td class="px-4 py-2 text-center text-emerald-600 font-bold">
                                                     {{ $item->soldQty }}</td>
-                                                <td class="px-4 py-2 text-center text-rose-500 font-bold">
+                                                <td class="px-4 py-2 text-center text-amber-500 font-bold">
                                                     {{ $item->remainingQty }}</td>
                                             </tr>
                                         @endforeach
@@ -438,22 +436,33 @@
 
                             <div class="space-y-2 text-[12px]">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-slate-500">Total Penjualan</span>
+                                    <span class="text-slate-500">Total Omzet Penjualan</span>
                                     <span class="font-medium text-slate-800 dark:text-white">Rp
                                         {{ number_format($selectedBatch->totalSold, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-slate-500">Bagi Hasil Koperasi</span>
-                                    <span class="font-medium text-rose-500">- Rp
-                                        {{ number_format($selectedBatch->feeAmount, 0, ',', '.') }}</span>
+                                    <span class="text-slate-500">Margin Koperasi</span>
+                                    <span class="font-medium text-emerald-600">Rp
+                                        {{ number_format($selectedBatch->margin, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="border-t border-slate-100 dark:border-slate-700 my-1"></div>
                                 <div class="flex justify-between items-center">
-                                    <span class="font-bold text-slate-700 dark:text-slate-300">Total Bayar Supplier</span>
-                                    <span class="text-[14px] font-bold text-emerald-600 dark:text-emerald-400">Rp
+                                    <span class="font-bold text-slate-700 dark:text-slate-300">Dibayar ke Supplier</span>
+                                    <span class="text-[14px] font-bold text-indigo-600 dark:text-indigo-400">Rp
                                         {{ number_format($selectedBatch->payableAmount, 0, ',', '.') }}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        {{-- Batch Notes (if exists) --}}
+                        @if($selectedBatch->note)
+                        <div class="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 p-3 rounded-lg">
+                            <h4 class="text-[11px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                <i class='bx bx-info-circle'></i> Catatan
+                            </h4>
+                            <p class="text-[12px] text-amber-700 dark:text-amber-400 whitespace-pre-line">{{ $selectedBatch->note }}</p>
+                        </div>
+                        @endif
 
                             @if($selectedBatch->status === 'REQUESTED')
                                 <div class="mt-4 space-y-3">
@@ -483,7 +492,6 @@
                                     <i class='bx bx-undo'></i> Retur Barang Sisa
                                 </button>
                             @endif
-                        </div>
                     </div>
 
                 </div>

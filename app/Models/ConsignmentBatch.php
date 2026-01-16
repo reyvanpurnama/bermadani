@@ -15,7 +15,6 @@ class ConsignmentBatch extends Model
         'status',
         'totalValue',
         'totalSold',
-        'feeAmount',
         'payableAmount',
         'receivedAt',
         'settledAt',
@@ -27,7 +26,6 @@ class ConsignmentBatch extends Model
         'settledAt' => 'datetime',
         'totalValue' => 'decimal:2',
         'totalSold' => 'decimal:2',
-        'feeAmount' => 'decimal:2',
         'payableAmount' => 'decimal:2',
     ];
 
@@ -74,24 +72,28 @@ class ConsignmentBatch extends Model
         $this->load('items');
         
         $totalSold = 0;
-        $feeAmount = 0;
         $payableAmount = 0;
         
         foreach ($this->items as $item) {
             $itemSoldValue = $item->soldQty * $item->sellPrice;
-            $itemFee = $itemSoldValue * ($item->feePercent / 100);
-            $itemPayable = $item->soldQty * $item->priceAfterFee;
+            $itemPayable = $item->soldQty * $item->supplierPrice;
             
             $totalSold += $itemSoldValue;
-            $feeAmount += $itemFee;
             $payableAmount += $itemPayable;
         }
         
         $this->update([
             'totalSold' => $totalSold,
-            'feeAmount' => $feeAmount,
             'payableAmount' => $payableAmount,
         ]);
+    }
+
+    /**
+     * Get total margin (profit) koperasi
+     */
+    public function getMarginAttribute()
+    {
+        return $this->totalSold - $this->payableAmount;
     }
 
     /**

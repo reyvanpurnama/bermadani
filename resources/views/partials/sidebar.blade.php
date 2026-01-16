@@ -136,10 +136,18 @@
                 @php
                     $pendingProductsCount = \App\Models\Product::where('approvalStatus', 'PENDING')->count();
                     $approvedProductsCount = \App\Models\Product::where('approvalStatus', 'APPROVED')
+                        ->where(function($q) {
+                            // Produk yang belum siap dijual (stock 0 atau status bukan ACTIVE)
+                            $q->where('stock', '<=', 0)
+                              ->orWhere('status', '!=', 'ACTIVE');
+                        })
                         ->whereDoesntHave('consignmentItems', function($q) {
                             $q->whereHas('batch', function($b) {
                                 $b->whereIn('status', ['REQUESTED', 'ACTIVE']);
                             });
+                        })
+                        ->whereDoesntHave('restockRequests', function($q) {
+                            $q->whereIn('status', ['PENDING', 'COMPLETED']);
                         })
                         ->count();
                     $pendingSuppliersCount = \App\Models\Supplier::where('status', 'PENDING')->count();

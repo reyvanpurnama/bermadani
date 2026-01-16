@@ -13,17 +13,16 @@ class ConsignmentItem extends Model
         'batchId',
         'productId',
         'initialQty',
+        'damagedQty',
         'soldQty',
         'remainingQty',
         'sellPrice',
-        'feePercent',
-        'priceAfterFee',
+        'supplierPrice',
     ];
 
     protected $casts = [
         'sellPrice' => 'decimal:2',
-        'feePercent' => 'decimal:2',
-        'priceAfterFee' => 'decimal:2',
+        'supplierPrice' => 'decimal:2',
     ];
 
     public function batch()
@@ -38,7 +37,12 @@ class ConsignmentItem extends Model
 
     public function getPayableAmountAttribute()
     {
-        return $this->soldQty * $this->priceAfterFee;
+        return $this->soldQty * $this->supplierPrice;
+    }
+
+    public function getMarginAttribute()
+    {
+        return ($this->sellPrice - $this->supplierPrice) * $this->soldQty;
     }
 
     /**

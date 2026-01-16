@@ -75,6 +75,11 @@ class Product extends Model
         return $this->hasMany(\App\Models\ConsignmentItem::class, 'productId');
     }
 
+    public function restockRequests()
+    {
+        return $this->hasMany(RestockRequest::class, 'productId');
+    }
+
     public function scopeActive($query)
     {
         return $query->where('isActive', true);

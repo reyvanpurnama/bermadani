@@ -41,7 +41,6 @@ class ConsignmentBatches extends Component
         'items' => 'required|array|min:1',
         'items.*.productId' => 'required|exists:products,id',
         'items.*.initialQty' => 'required|integer|min:1',
-        'items.*.feePercent' => 'required|numeric|min:0|max:100',
     ];
 
     // Auto-filter products when supplier changes
@@ -49,7 +48,7 @@ class ConsignmentBatches extends Component
     {
         // Reset items when supplier changes
         $this->items = [
-            ['productId' => '', 'initialQty' => 1, 'feePercent' => 10]
+            ['productId' => '', 'initialQty' => 1]
         ];
     }
 
@@ -63,14 +62,14 @@ class ConsignmentBatches extends Component
     {
         $this->reset(['supplierId', 'note', 'items']);
         $this->items = [
-            ['productId' => '', 'initialQty' => 1, 'feePercent' => 10]
+            ['productId' => '', 'initialQty' => 1]
         ];
         $this->showCreateModal = true;
     }
 
     public function addItem()
     {
-        $this->items[] = ['productId' => '', 'initialQty' => 1, 'feePercent' => 10];
+        $this->items[] = ['productId' => '', 'initialQty' => 1];
     }
 
     public function removeItem($index)
@@ -96,13 +95,13 @@ class ConsignmentBatches extends Component
 
             $totalValue = 0;
             foreach ($this->items as $item) {
-                // Get sell price from the product (already set during approval)
+                // Get prices from the product
                 $product = Product::find($item['productId']);
                 if (!$product)
                     continue;
 
                 $sellPrice = $product->sellPrice;
-                $priceAfterFee = $sellPrice * (1 - ($item['feePercent'] / 100));
+                $supplierPrice = $product->buyPrice; // Harga dari supplier
 
                 ConsignmentItem::create([
                     'batchId' => $batch->id,
@@ -110,8 +109,7 @@ class ConsignmentBatches extends Component
                     'initialQty' => $item['initialQty'],
                     'remainingQty' => $item['initialQty'],
                     'sellPrice' => $sellPrice,
-                    'feePercent' => $item['feePercent'],
-                    'priceAfterFee' => $priceAfterFee,
+                    'supplierPrice' => $supplierPrice,
                 ]);
 
                 $totalValue += $sellPrice * $item['initialQty'];
@@ -193,11 +191,13 @@ class ConsignmentBatches extends Component
                 $item = ConsignmentItem::find($receiveItem['itemId']);
                 $requestedQty = $receiveItem['requestedQty'];
                 $receivedQty = $receiveItem['receivedQty'];
+                $damagedQty = $requestedQty - $receivedQty; // Calculate damaged/lost qty
 
                 // Update item with actual received qty
                 $item->update([
                     'initialQty' => $receivedQty,
                     'remainingQty' => $receivedQty,
+                    'damagedQty' => $damagedQty > 0 ? $damagedQty : 0,
                 ]);
 
                 // Add stock
@@ -242,11 +242,18 @@ class ConsignmentBatches extends Component
                 $batchNote = (!empty($batchNote) ? $batchNote . "\n\n" : '') . "Penyesuaian Qty:\n" . implode("\n", $notes);
             }
 
+            // Recalculate total value based on actual received qty
+            $totalValue = 0;
+            foreach ($this->selectedBatch->items as $item) {
+                $totalValue += $item->sellPrice * $item->initialQty;
+            }
+
             // Update batch status to ACTIVE
             $this->selectedBatch->update([
                 'status' => 'ACTIVE',
                 'receivedAt' => now(),
                 'note' => $batchNote,
+                'totalValue' => $totalValue,
             ]);
         });
 
@@ -360,10 +367,14 @@ class ConsignmentBatches extends Component
         $batches = $query->orderBy('created_at', 'desc')->paginate(10);
 
         // Stats
+        $activeBatches = ConsignmentBatch::where('status', 'ACTIVE')->get();
+        $pendingSettlementBatches = ConsignmentBatch::where('status', 'PENDING_SETTLEMENT')->get();
+        
         $stats = [
-            'activeBatches' => ConsignmentBatch::where('status', 'ACTIVE')->count(),
-            'totalAssetValue' => ConsignmentBatch::where('status', 'ACTIVE')->sum('totalValue'),
-            'pendingPayment' => ConsignmentBatch::where('status', 'PENDING_SETTLEMENT')->sum('payableAmount'),
+            'activeBatches' => $activeBatches->count(),
+            'totalAssetValue' => $activeBatches->sum('totalValue'),
+            'totalSold' => $activeBatches->sum('totalSold') + $pendingSettlementBatches->sum('totalSold'),
+            'pendingPayment' => $pendingSettlementBatches->sum('payableAmount'),
         ];
 
         $suppliers = Supplier::where('isActive', true)->orderBy('businessName')->get();
