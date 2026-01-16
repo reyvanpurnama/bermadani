@@ -108,7 +108,7 @@
                                 </span>
                             @elseif($batch->status === 'ACTIVE')
                                 <span class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
-                                    <i class='bx bx-store'></i> Dijual
+                                    <i class='bx bx-store'></i> Aktif
                                 </span>
                             @elseif($batch->status === 'PENDING_SETTLEMENT')
                                 <span class="bg-amber-50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
@@ -160,7 +160,7 @@
             <div>
                 <h4 class="font-bold text-blue-800 dark:text-blue-300 text-[14px]">Ada {{ $requestedCount }} permintaan stok menunggu!</h4>
                 <p class="text-[12px] text-blue-700 dark:text-blue-400 mt-1">
-                    Silakan kirim barang ke Koperasi UMB sesuai jumlah yang diminta. Setelah barang diterima, status akan berubah menjadi "Dijual".
+                    Silakan kirim barang ke Koperasi UMB sesuai jumlah yang diminta. Setelah barang diterima, status akan berubah menjadi "Aktif".
                 </p>
             </div>
         </div>

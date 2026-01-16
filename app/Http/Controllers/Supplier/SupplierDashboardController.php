@@ -18,17 +18,7 @@ class SupplierDashboardController extends Controller
         // Get supplier's product IDs
         $productIds = Product::where('supplierId', $supplier->id)->pluck('id');
         
-        // Total Omzet (Total penjualan kotor bulan ini)
-        $totalOmzet = TransactionItem::whereIn('productId', $productIds)
-            ->whereHas('transaction', function ($query) {
-                $query->whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->where('status', 'COMPLETED');
-            })
-            ->sum(DB::raw('quantity * unitPrice'));
-        
-        // Hitung Total Pendapatan (Omzet - Fee Koperasi)
-        // Fee koperasi dihitung dari profitShareRate masing-masing produk
+        // Total Pendapatan Supplier (quantity × buyPrice) bulan ini
         $totalPendapatan = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
                 $query->whereMonth('created_at', now()->month)
@@ -36,10 +26,10 @@ class SupplierDashboardController extends Controller
                     ->where('status', 'COMPLETED');
             })
             ->join('products', 'transaction_items.productId', '=', 'products.id')
-            ->sum(DB::raw('transaction_items.quantity * transaction_items.unitPrice * (1 - COALESCE(products.profitShareRate, 0) / 100)'));
+            ->sum(DB::raw('transaction_items.quantity * products.buyPrice'));
         
         // Unit terjual bulan ini
-        $unitTerjual = TransactionItem::whereIn('productId', $productIds)
+        $unitTerjual = TransactionItem::whereIn('productIds', $productIds)
             ->whereHas('transaction', function ($query) {
                 $query->whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
@@ -47,18 +37,19 @@ class SupplierDashboardController extends Controller
             })
             ->sum('quantity');
         
-        // Omzet bulan lalu untuk hitung growth
-        $omzetBulanLalu = TransactionItem::whereIn('productId', $productIds)
+        // Pendapatan bulan lalu untuk hitung growth
+        $pendapatanBulanLalu = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
                 $query->whereMonth('created_at', now()->subMonth()->month)
                     ->whereYear('created_at', now()->subMonth()->year)
                     ->where('status', 'COMPLETED');
             })
-            ->sum(DB::raw('quantity * unitPrice'));
+            ->join('products', 'transaction_items.productId', '=', 'products.id')
+            ->sum(DB::raw('transaction_items.quantity * products.buyPrice'));
         
-        // Hitung pertumbuhan omzet
-        $omzetGrowth = $omzetBulanLalu > 0 
-            ? round((($totalOmzet - $omzetBulanLalu) / $omzetBulanLalu) * 100, 1)
+        // Hitung pertumbuhan pendapatan
+        $pendapatanGrowth = $pendapatanBulanLalu > 0 
+            ? round((($totalPendapatan - $pendapatanBulanLalu) / $pendapatanBulanLalu) * 100, 1)
             : 0;
         
         // Produk aktif
@@ -76,9 +67,8 @@ class SupplierDashboardController extends Controller
         $saldoTertahan = 0;
         
         return view('supplier.dashboard', compact(
-            'totalOmzet',
             'totalPendapatan',
-            'omzetGrowth',
+            'pendapatanGrowth',
             'unitTerjual',
             'produkAktif',
             'lowStock',

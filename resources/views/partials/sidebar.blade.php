@@ -214,18 +214,31 @@
                 </div>
 
                 {{-- Konsinyasi Group --}}
+                @php
+                    $activeConsignmentBatches = \App\Models\ConsignmentBatch::where('status', 'ACTIVE')->count();
+                @endphp
                 <div x-data="{ open: {{ request()->routeIs('admin.consignment*') ? 'true' : 'false' }} }" class="space-y-1">
                     <button @click="open = !open"
                         class="w-full flex items-center justify-between px-2 py-1.5 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group">
-                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Konsinyasi</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-bold uppercase tracking-widest px-2 sidebar-text">Konsinyasi</span>
+                            @if($activeConsignmentBatches > 0)
+                                <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+                            @endif
+                        </div>
                         <i class="bx bx-chevron-down text-sm transition-transform duration-200 sidebar-text"
                             :class="open ? 'rotate-180' : ''"></i>
                     </button>
                     <div x-show="open" x-collapse style="display: none;">
                         <a href="{{ route('admin.consignment-batches') }}"
-                            class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-batches') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
-                            <i class='bx bx-notepad text-sm mr-2 opacity-70'></i>
-                            <span class="sidebar-text text-xs transition-opacity duration-300">Daftar Batch</span>
+                            class="nav-item flex items-center justify-between pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-batches') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                            <div class="flex items-center">
+                                <i class='bx bx-notepad text-sm mr-2 opacity-70'></i>
+                                <span class="sidebar-text text-xs transition-opacity duration-300">Daftar Batch</span>
+                            </div>
+                            @if($activeConsignmentBatches > 0)
+                                <span class="bg-indigo-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $activeConsignmentBatches }}</span>
+                            @endif
                         </a>
                         <a href="{{ route('admin.consignment-report') }}"
                             class="nav-item flex items-center pl-4 pr-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-report') ? 'text-primary dark:text-indigo-400 font-semibold bg-indigo-50/50 dark:bg-indigo-500/5' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">

@@ -21,14 +21,22 @@ class SupplierSalesController extends Controller
             ->paginate(15);
             
         // Calculate stats
-        $totalRevenue = TransactionItem::whereHas('product', function($q) use ($supplier) {
+        $totalOmzet = TransactionItem::whereHas('product', function($q) use ($supplier) {
                 $q->where('supplierId', $supplier->id);
             })->sum('totalPrice');
             
         $totalItemsSold = TransactionItem::whereHas('product', function($q) use ($supplier) {
                 $q->where('supplierId', $supplier->id);
             })->sum('quantity');
+        
+        // Calculate supplier revenue (quantity × buyPrice/supplierPrice)
+        $supplierRevenue = TransactionItem::whereHas('product', function($q) use ($supplier) {
+                $q->where('supplierId', $supplier->id);
+            })
+            ->join('products', 'transaction_items.productId', '=', 'products.id')
+            ->selectRaw('SUM(transaction_items.quantity * products.buyPrice) as total')
+            ->value('total') ?? 0;
 
-        return view('supplier.sales', compact('sales', 'totalRevenue', 'totalItemsSold'));
+        return view('supplier.sales', compact('sales', 'totalOmzet', 'totalItemsSold', 'supplierRevenue'));
     }
 }

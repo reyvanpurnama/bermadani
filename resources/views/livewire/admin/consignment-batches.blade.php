@@ -1,15 +1,9 @@
 <div class="space-y-6">
 
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Batch Konsinyasi</h1>
-            <p class="text-[11px] text-slate-500 mt-0.5">Kelola barang titipan supplier & mahasiswa.</p>
-        </div>
-        <button wire:click="openCreateModal"
-            class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[13px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
-            <i class='bx bx-archive-in text-lg'></i> Terima Barang Baru
-        </button>
+    <div>
+        <h1 class="text-xl font-bold text-slate-900 dark:text-white">Batch Konsinyasi</h1>
+        <p class="text-[11px] text-slate-500 mt-0.5">Kelola barang titipan supplier & mahasiswa.</p>
     </div>
 
     {{-- Stats Cards --}}
@@ -44,7 +38,7 @@
                 <i class='bx bx-trending-up'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Terjual</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Omzet</p>
                 <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
                     {{ number_format($stats['totalSold'], 0, ',', '.') }}</h4>
             </div>
@@ -73,7 +67,7 @@
             Barang</button>
         <button wire:click="setStatus('ACTIVE')"
             class="px-4 py-2 text-[13px] {{ $status === 'ACTIVE' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Aktif
-            (Jualan)</button>
+            (Tersedia)</button>
         <button wire:click="setStatus('PENDING_SETTLEMENT')"
             class="px-4 py-2 text-[13px] {{ $status === 'PENDING_SETTLEMENT' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Siap
             Settlement</button>
@@ -144,7 +138,7 @@
                                         class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">Menunggu</span>
                                 @elseif($batch->status === 'ACTIVE')
                                     <span
-                                        class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Dijual</span>
+                                        class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Aktif</span>
                                 @elseif($batch->status === 'PENDING_SETTLEMENT')
                                     <span
                                         class="bg-amber-50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Siap Bayar</span>
@@ -327,7 +321,7 @@
                                 class="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide animate-pulse">Menunggu Barang</span>
                         @elseif($selectedBatch->status === 'ACTIVE')
                             <span
-                                class="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Dijual</span>
+                                class="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Aktif</span>
                         @elseif($selectedBatch->status === 'PENDING_SETTLEMENT')
                             <span
                                 class="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Siap Bayar</span>
@@ -379,7 +373,7 @@
                                             <th class="px-4 py-2">Produk</th>
                                             <th class="px-4 py-2 text-right">Harga</th>
                                             <th class="px-4 py-2 text-center">Qty Awal</th>
-                                            <th class="px-4 py-2 text-center">Rusak</th>
+                                            <th class="px-4 py-2 text-center">Selisih</th>
                                             <th class="px-4 py-2 text-center">Terjual</th>
                                             <th class="px-4 py-2 text-center">Sisa</th>
                                         </tr>

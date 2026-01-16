@@ -374,7 +374,7 @@ class ConsignmentBatches extends Component
             'activeBatches' => $activeBatches->count(),
             'totalAssetValue' => $activeBatches->sum('totalValue'),
             'totalSold' => $activeBatches->sum('totalSold') + $pendingSettlementBatches->sum('totalSold'),
-            'pendingPayment' => $pendingSettlementBatches->sum('payableAmount'),
+            'pendingPayment' => $activeBatches->sum('payableAmount') + $pendingSettlementBatches->sum('payableAmount'),
         ];
 
         $suppliers = Supplier::where('isActive', true)->orderBy('businessName')->get();

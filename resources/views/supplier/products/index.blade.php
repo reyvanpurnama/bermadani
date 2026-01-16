@@ -162,7 +162,7 @@
                         @elseif($product->approvalStatus === 'APPROVED')
                             @if($product->stock > 0)
                                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                    <i class='bx bx-store text-sm'></i> Dijual
+                                    <i class='bx bx-store text-sm'></i> Aktif
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">

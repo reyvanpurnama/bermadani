@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('consignment_items', function (Blueprint $table) {
-            $table->integer('damagedQty')->default(0)->after('initialQty')->comment('Jumlah rusak/hilang/tidak layak jual');
+            $table->integer('damagedQty')->default(0)->after('initialQty')->comment('Selisih qty (rusak/hilang/tidak layak jual)');
         });
     }
 
