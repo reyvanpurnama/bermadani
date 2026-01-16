@@ -73,7 +73,8 @@
                     <tr>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Batch</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Qty</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Diminta</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Diterima</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Estimasi</th>
                     </tr>
@@ -102,6 +103,26 @@
                             <span class="text-[10px] text-slate-500">pcs</span>
                         </td>
                         <td class="px-6 py-4 text-center">
+                            @php
+                                $totalRequested = $batch->items->sum('initialQty');
+                                $totalReceived = $batch->items->sum('receivedQty');
+                                $totalDamaged = $batch->items->sum('damagedQty');
+                                $hasDiscrepancy = $totalDamaged > 0;
+                            @endphp
+                            @if($batch->status === 'REQUESTED')
+                                <span class="text-[11px] text-slate-400 italic">Belum diterima</span>
+                            @else
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <span class="font-bold text-[13px] {{ $hasDiscrepancy ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400' }}">{{ $totalReceived ?: $totalRequested }}</span>
+                                    @if($hasDiscrepancy)
+                                        <span class="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-1.5 py-0.5 rounded font-bold" title="{{ $totalDamaged }} pcs rusak/hilang/tidak layak jual">
+                                            -{{ $totalDamaged }}
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+                        </td>
+                        <td class="px-6 py-4 text-center">
                             @if($batch->status === 'REQUESTED')
                                 <span class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1 animate-pulse">
                                     <i class='bx bx-time-five'></i> Perlu Dikirim
@@ -128,7 +149,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                             <div class="flex flex-col items-center justify-center">
                                 <div class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-3xl text-slate-300 dark:text-slate-600 mb-4">
                                     <i class='bx bx-archive-in'></i>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Supplier;
 
 use App\Http\Controllers\Controller;
+use App\Models\ConsignmentBatch;
 use App\Models\Product;
 use App\Models\TransactionItem;
 use Illuminate\Support\Facades\Auth;
@@ -29,7 +30,7 @@ class SupplierDashboardController extends Controller
             ->sum(DB::raw('transaction_items.quantity * products.buyPrice'));
         
         // Unit terjual bulan ini
-        $unitTerjual = TransactionItem::whereIn('productIds', $productIds)
+        $unitTerjual = TransactionItem::whereIn('productId', $productIds)
             ->whereHas('transaction', function ($query) {
                 $query->whereMonth('created_at', now()->month)
                     ->whereYear('created_at', now()->year)
@@ -63,8 +64,10 @@ class SupplierDashboardController extends Controller
             ->whereColumn('stock', '<=', 'threshold')
             ->count();
         
-        // Saldo tertahan (placeholder - bisa dikembangkan sesuai business logic)
-        $saldoTertahan = 0;
+        // Saldo tertahan (total payableAmount dari batch yang belum dibayar)
+        $saldoTertahan = ConsignmentBatch::where('supplierId', $supplier->id)
+            ->whereIn('status', ['ACTIVE', 'PENDING_SETTLEMENT'])
+            ->sum('payableAmount');
         
         return view('supplier.dashboard', compact(
             'totalPendapatan',

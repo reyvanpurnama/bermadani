@@ -195,8 +195,8 @@ class ConsignmentBatches extends Component
 
                 // Update item with actual received qty
                 $item->update([
-                    'initialQty' => $receivedQty,
-                    'remainingQty' => $receivedQty,
+                    'receivedQty' => $receivedQty,  // Qty yang benar-benar diterima
+                    'remainingQty' => $receivedQty, // Stock awal = qty diterima
                     'damagedQty' => $damagedQty > 0 ? $damagedQty : 0,
                 ]);
 
