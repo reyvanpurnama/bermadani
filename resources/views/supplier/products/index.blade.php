@@ -95,7 +95,73 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto">
+    {{-- Mobile Card View --}}
+    <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
+        @forelse($products as $product)
+        <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            <div class="flex items-start gap-3">
+                @if($product->image)
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-14 h-14 rounded-lg object-cover flex-shrink-0">
+                @else
+                    <div class="w-14 h-14 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 flex-shrink-0">
+                        <i class='bx bx-image text-2xl'></i>
+                    </div>
+                @endif
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                        <div class="min-w-0">
+                            <h6 class="font-semibold text-slate-900 dark:text-white truncate">{{ $product->name }}</h6>
+                            <p class="text-[11px] text-slate-500">{{ $product->sku }} · {{ $product->category->name ?? '-' }}</p>
+                        </div>
+                        <div class="flex gap-1 flex-shrink-0">
+                            <a href="{{ route('supplier.products.edit', $product->id) }}" class="p-1.5 text-slate-400 hover:text-primary transition-colors">
+                                <i class='bx bx-edit text-lg'></i>
+                            </a>
+                            <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus produk ini?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors">
+                                    <i class='bx bx-trash text-lg'></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-2">
+                        <span class="font-bold text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
+                        @if($product->approvalStatus === 'PENDING')
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">
+                                <i class='bx bx-time-five'></i> Menunggu
+                            </span>
+                        @elseif($product->approvalStatus === 'REJECTED')
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400">
+                                <i class='bx bx-x-circle'></i> Ditolak
+                            </span>
+                        @elseif($product->approvalStatus === 'APPROVED')
+                            @if($product->stock > 0)
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                    <i class='bx bx-store'></i> Stok: {{ $product->stock }}
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+                                    <i class='bx bx-package'></i> Menunggu Stok
+                                </span>
+                            @endif
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+        @empty
+        <div class="p-8 text-center text-slate-500 dark:text-slate-400">
+            <i class='bx bx-box text-4xl mb-2 text-slate-300'></i>
+            <p>Belum ada produk.</p>
+            <a href="{{ route('supplier.products.create') }}" class="text-primary hover:underline mt-1 text-sm">Tambah produk pertama Anda</a>
+        </div>
+        @endforelse
+    </div>
+
+    {{-- Desktop Table View --}}
+    <div class="hidden sm:block overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
                 <tr>
@@ -129,11 +195,7 @@
                         {{ $product->category->name ?? '-' }}
                     </td>
                     <td class="px-6 py-4 text-sm">
-                        @if($product->approvalStatus === 'APPROVED')
-                            <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span>
-                        @else
-                            <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
-                        @endif
+                        <span class="font-medium text-slate-900 dark:text-white">Rp {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($product->approvalStatus === 'APPROVED')

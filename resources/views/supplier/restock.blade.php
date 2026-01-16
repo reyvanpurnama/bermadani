@@ -46,7 +46,7 @@
                     <i class='bx bx-store text-xl'></i>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sedang Dijual</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Sedang Aktif</p>
                     <h3 class="text-2xl font-bold text-slate-900 dark:text-white">{{ $activeCount }}</h3>
                 </div>
             </div>
@@ -67,7 +67,88 @@
 
     {{-- Batch List --}}
     <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-        <div class="overflow-x-auto">
+        
+        {{-- Mobile Card View --}}
+        <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
+            @forelse($batches as $batch)
+            @php
+                $totalRequested = $batch->items->sum('initialQty');
+                $totalReceived = $batch->items->sum('receivedQty');
+                $totalDamaged = $batch->items->sum('damagedQty');
+                $hasDiscrepancy = $totalDamaged > 0;
+            @endphp
+            <div class="p-4">
+                <div class="flex items-start justify-between gap-3 mb-2">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h6 class="font-bold text-slate-900 dark:text-white text-[13px]">#{{ $batch->batchCode }}</h6>
+                            @if($batch->status === 'REQUESTED')
+                                <span class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse">
+                                    Perlu Dikirim
+                                </span>
+                            @elseif($batch->status === 'ACTIVE')
+                                <span class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
+                                    Aktif
+                                </span>
+                            @elseif($batch->status === 'PENDING_SETTLEMENT')
+                                <span class="bg-amber-50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
+                                    Siap Bayar
+                                </span>
+                            @elseif($batch->status === 'SETTLED')
+                                <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
+                                    Lunas
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-0.5">{{ $batch->created_at->format('d M Y H:i') }}</p>
+                    </div>
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400 text-[13px]">
+                        Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
+                    </span>
+                </div>
+                {{-- Product list with images --}}
+                <div class="flex flex-wrap gap-2 mb-2">
+                    @foreach($batch->items->take(3) as $item)
+                        <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg px-2 py-1">
+                            @if($item->product->image)
+                                <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}" class="w-8 h-8 rounded object-cover">
+                            @else
+                                <div class="w-8 h-8 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400">
+                                    <i class='bx bx-image text-sm'></i>
+                                </div>
+                            @endif
+                            <span class="text-[11px] text-slate-700 dark:text-slate-300 max-w-[100px] truncate">{{ $item->product->name ?? '-' }}</span>
+                        </div>
+                    @endforeach
+                    @if($batch->items->count() > 3)
+                        <span class="text-[10px] text-slate-400 self-center">+{{ $batch->items->count() - 3 }} lainnya</span>
+                    @endif
+                </div>
+                <div class="flex items-center gap-4 text-[11px]">
+                    <span class="text-slate-500">Diminta: <strong class="text-slate-900 dark:text-white">{{ $totalRequested }}</strong></span>
+                    @if($batch->status !== 'REQUESTED')
+                        <span class="text-slate-500">Diterima: 
+                            <strong class="{{ $hasDiscrepancy ? 'text-amber-600' : 'text-emerald-600' }}">{{ $totalReceived ?: $totalRequested }}</strong>
+                            @if($hasDiscrepancy)
+                                <span class="text-red-600 font-bold">(-{{ $totalDamaged }})</span>
+                            @endif
+                        </span>
+                    @endif
+                </div>
+            </div>
+            @empty
+            <div class="p-8 text-center text-slate-500 dark:text-slate-400">
+                <div class="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-2xl text-slate-300 dark:text-slate-600 mb-3 mx-auto">
+                    <i class='bx bx-archive-in'></i>
+                </div>
+                <p class="font-medium">Belum ada batch konsinyasi</p>
+                <p class="text-[11px] mt-1">Batch akan muncul ketika koperasi meminta stok produk Anda</p>
+            </div>
+            @endforelse
+        </div>
+
+        {{-- Desktop Table View --}}
+        <div class="hidden sm:block overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
                     <tr>
