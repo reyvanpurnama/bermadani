@@ -82,15 +82,6 @@
                                 <p class="text-[11px] text-slate-500">Analisis Omzet vs Beban</p>
                             </div>
                             <div class="flex items-center gap-4">
-                                <div class="flex gap-3 hidden sm:flex">
-                                    <div class="flex items-center gap-1.5"><span
-                                            class="w-2 h-2 rounded-full bg-indigo-500"></span><span
-                                            class="text-[10px] text-slate-500 font-medium">Omzet</span></div>
-                                    <div class="flex items-center gap-1.5"><span
-                                            class="w-2 h-2 rounded-full bg-slate-300"></span><span
-                                            class="text-[10px] text-slate-500 font-medium">Beban</span></div>
-                                </div>
-                                <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
                                 {{-- Date Range Picker --}}
                                 <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                                     <button @click="open = !open"
@@ -560,7 +551,7 @@
                                     class="text-[11px] font-bold text-slate-700 dark:text-white">{{ $this->grossMarginPercent }}%</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                                <div class="bg-indigo-500 h-1 rounded-full transition-all duration-500"
+                                <div class="bg-emerald-500 h-1 rounded-full transition-all duration-500"
                                     style="width: {{ min(100, $this->grossMarginPercent) }}%"></div>
                             </div>
                             <p class="text-[9px] text-slate-400 mt-0.5">Rp
