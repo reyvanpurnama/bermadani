@@ -16,6 +16,7 @@ class Dashboard extends Component
     public $dateFilter = 'this_month';
     public $startDate;
     public $endDate;
+    public $chartData = [];
 
     public function mount()
     {
@@ -23,6 +24,7 @@ class Dashboard extends Component
         $this->dateFilter = 'this_month';
         $this->startDate = now()->startOfMonth()->toDateString();
         $this->endDate = now()->endOfMonth()->toDateString();
+        $this->chartData = $this->generateChartData();
     }
 
     public function setFilter($filter)
@@ -43,6 +45,9 @@ class Dashboard extends Component
             'this_year' => $this->setDateRange(now()->startOfYear(), now()->endOfYear()),
             default => null,
         };
+        
+        // Update chart data when filter changes
+        $this->chartData = $this->generateChartData();
     }
 
     protected function setDateRange($start, $end)
@@ -378,6 +383,181 @@ class Dashboard extends Component
             ->orderByDesc('date')
             ->limit(10)
             ->get();
+    }
+
+    protected function generateChartData()
+    {
+        $data = [
+            'categories' => [],
+            'income' => [],
+            'expense' => [],
+            'granularity' => 'daily'
+        ];
+
+        // Determine date range and granularity based on dateFilter
+        switch ($this->dateFilter) {
+            case 'today':
+                $data['granularity'] = 'hourly';
+                $start = today()->startOfDay();
+                $end = today()->endOfDay();
+                
+                // Generate hourly data for today
+                for ($hour = 0; $hour < 24; $hour++) {
+                    $hourStart = today()->setHour($hour)->startOfHour();
+                    $hourEnd = today()->setHour($hour)->endOfHour();
+                    
+                    $data['categories'][] = $hourStart->toIso8601String();
+                    
+                    // Income: POS Sales + Manual Income
+                    $posSales = Transaction::where('type', 'SALE')
+                        ->where('status', 'COMPLETED')
+                        ->whereBetween('date', [$hourStart, $hourEnd])
+                        ->sum('totalAmount') ?? 0;
+                    
+                    $manualIncome = FinancialTransaction::income()
+                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['income'][] = (int) ($posSales + $manualIncome);
+                    
+                    // Expense
+                    $expense = FinancialTransaction::expense()
+                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['expense'][] = (int) $expense;
+                }
+                break;
+
+            case 'yesterday':
+                $data['granularity'] = 'hourly';
+                $yesterday = today()->subDay();
+                
+                for ($hour = 0; $hour < 24; $hour++) {
+                    $hourStart = $yesterday->copy()->setHour($hour)->startOfHour();
+                    $hourEnd = $yesterday->copy()->setHour($hour)->endOfHour();
+                    
+                    $data['categories'][] = $hourStart->toIso8601String();
+                    
+                    $posSales = Transaction::where('type', 'SALE')
+                        ->where('status', 'COMPLETED')
+                        ->whereBetween('date', [$hourStart, $hourEnd])
+                        ->sum('totalAmount') ?? 0;
+                    
+                    $manualIncome = FinancialTransaction::income()
+                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['income'][] = (int) ($posSales + $manualIncome);
+                    
+                    $expense = FinancialTransaction::expense()
+                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['expense'][] = (int) $expense;
+                }
+                break;
+
+            case 'this_week':
+                $data['granularity'] = 'daily';
+                $start = now()->startOfWeek();
+                $end = now()->endOfWeek();
+                
+                for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+                    $dayStart = $day->copy()->startOfDay();
+                    $dayEnd = $day->copy()->endOfDay();
+                    
+                    $data['categories'][] = $dayStart->toIso8601String();
+                    
+                    $posSales = Transaction::where('type', 'SALE')
+                        ->where('status', 'COMPLETED')
+                        ->whereBetween('date', [$dayStart, $dayEnd])
+                        ->sum('totalAmount') ?? 0;
+                    
+                    $manualIncome = FinancialTransaction::income()
+                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['income'][] = (int) ($posSales + $manualIncome);
+                    
+                    $expense = FinancialTransaction::expense()
+                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['expense'][] = (int) $expense;
+                }
+                break;
+
+            case 'this_month':
+            case 'last_month':
+            default:
+                $data['granularity'] = 'daily';
+                
+                if ($this->dateFilter === 'last_month') {
+                    $start = now()->subMonth()->startOfMonth();
+                    $end = now()->subMonth()->endOfMonth();
+                } else {
+                    $start = now()->startOfMonth();
+                    $end = now()->endOfMonth();
+                }
+                
+                for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+                    $dayStart = $day->copy()->startOfDay();
+                    $dayEnd = $day->copy()->endOfDay();
+                    
+                    $data['categories'][] = $dayStart->toIso8601String();
+                    
+                    $posSales = Transaction::where('type', 'SALE')
+                        ->where('status', 'COMPLETED')
+                        ->whereBetween('date', [$dayStart, $dayEnd])
+                        ->sum('totalAmount') ?? 0;
+                    
+                    $manualIncome = FinancialTransaction::income()
+                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['income'][] = (int) ($posSales + $manualIncome);
+                    
+                    $expense = FinancialTransaction::expense()
+                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['expense'][] = (int) $expense;
+                }
+                break;
+
+            case 'this_year':
+                $data['granularity'] = 'monthly';
+                $start = now()->startOfYear();
+                $end = now()->endOfYear();
+                
+                for ($month = $start->copy(); $month->lte($end); $month->addMonth()) {
+                    $monthStart = $month->copy()->startOfMonth();
+                    $monthEnd = $month->copy()->endOfMonth();
+                    
+                    $data['categories'][] = $monthStart->toIso8601String();
+                    
+                    $posSales = Transaction::where('type', 'SALE')
+                        ->where('status', 'COMPLETED')
+                        ->whereBetween('date', [$monthStart, $monthEnd])
+                        ->sum('totalAmount') ?? 0;
+                    
+                    $manualIncome = FinancialTransaction::income()
+                        ->whereBetween('transactionDate', [$monthStart, $monthEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['income'][] = (int) ($posSales + $manualIncome);
+                    
+                    $expense = FinancialTransaction::expense()
+                        ->whereBetween('transactionDate', [$monthStart, $monthEnd])
+                        ->sum('amount') ?? 0;
+                    
+                    $data['expense'][] = (int) $expense;
+                }
+                break;
+        }
+
+        return $data;
     }
 
     public function render()

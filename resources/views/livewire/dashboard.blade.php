@@ -199,12 +199,15 @@
 
                     <div class="flex-1 w-full min-h-[260px] relative group/chart" x-data="{
                             chart: null,
+                            hasData: false,
                             get isDark() { return document.documentElement.classList.contains('dark') },
                             init() {
                                 let colors = {
                                     text: this.isDark ? '#94a3b8' : '#64748b',
-                                    grid: this.isDark ? '#334155' : '#f1f5f9',
-                                    tooltip: this.isDark ? 'dark' : 'light'
+                                    grid: this.isDark ? '#1e293b' : '#e2e8f0',
+                                    tooltip: this.isDark ? 'dark' : 'light',
+                                    income: this.isDark ? '#10b981' : '#059669',
+                                    expense: this.isDark ? '#ef4444' : '#dc2626'
                                 };
 
                                 var options = {
@@ -212,45 +215,146 @@
                                     chart: {
                                         height: '100%',
                                         type: 'area',
-                                        toolbar: { 
-                                            show: false
-                                        },
-                                        fontFamily: 'Inter',
+                                        toolbar: { show: false },
+                                        fontFamily: 'Inter, system-ui, sans-serif',
                                         foreColor: colors.text,
                                         background: 'transparent',
-                                        animations: { enabled: true }
+                                        animations: { 
+                                            enabled: true,
+                                            easing: 'easeinout',
+                                            speed: 800,
+                                            animateGradually: {
+                                                enabled: true,
+                                                delay: 150
+                                            },
+                                            dynamicAnimation: {
+                                                enabled: true,
+                                                speed: 350
+                                            }
+                                        },
+                                        zoom: { enabled: false },
+                                        selection: { enabled: false }
                                     },
-                                    colors: ['#4F46E5', '#cbd5e1'],
+                                    colors: [colors.income, colors.expense],
                                     dataLabels: { enabled: false },
-                                    stroke: { curve: 'smooth', width: 2 },
-                                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                                    stroke: { 
+                                        curve: 'smooth', 
+                                        width: [3, 3],
+                                        lineCap: 'round'
+                                    },
+                                    fill: { 
+                                        type: 'gradient',
+                                        gradient: { 
+                                            type: 'vertical',
+                                            shadeIntensity: 1,
+                                            opacityFrom: [0.5, 0.3],
+                                            opacityTo: [0.05, 0.02],
+                                            stops: [0, 85, 100]
+                                        }
+                                    },
+                                    markers: {
+                                        size: 0,
+                                        hover: {
+                                            size: 5,
+                                            sizeOffset: 3
+                                        }
+                                    },
                                     xaxis: { 
                                         type: 'datetime', 
                                         categories: [], 
                                         axisBorder: { show: false }, 
                                         axisTicks: { show: false },
                                         labels: {
-                                            style: { fontSize: '10px' },
+                                            style: { 
+                                                fontSize: '11px',
+                                                fontWeight: 500,
+                                                colors: colors.text
+                                            },
                                             rotate: 0,
                                             hideOverlappingLabels: true,
-                                            datetimeFormatter: {
-                                                year: 'yyyy',
-                                                month: 'MMM \'yy',
-                                                day: 'dd MMM',
-                                                hour: 'HH:mm'
-                                            }
+                                            datetimeUTC: false
                                         },
                                         tooltip: { enabled: false }
                                     },
-                                    grid: { borderColor: colors.grid, strokeDashArray: 4 },
-                                    legend: { show: false },
-                                    tooltip: { theme: colors.tooltip },
+                                    yaxis: {
+                                        labels: {
+                                            style: { 
+                                                fontSize: '11px',
+                                                fontWeight: 500,
+                                                colors: colors.text
+                                            },
+                                            formatter: function(value) {
+                                                if (value >= 1000000) {
+                                                    return 'Rp ' + (value / 1000000).toFixed(1) + 'jt';
+                                                } else if (value >= 1000) {
+                                                    return 'Rp ' + (value / 1000).toFixed(0) + 'rb';
+                                                }
+                                                return 'Rp ' + value.toFixed(0);
+                                            }
+                                        },
+                                        min: 0
+                                    },
+                                    grid: { 
+                                        borderColor: colors.grid,
+                                        strokeDashArray: 3,
+                                        xaxis: { lines: { show: false } },
+                                        yaxis: { lines: { show: true } },
+                                        padding: {
+                                            top: 0,
+                                            right: 10,
+                                            bottom: 0,
+                                            left: 10
+                                        }
+                                    },
+                                    legend: { 
+                                        show: true,
+                                        position: 'top',
+                                        horizontalAlign: 'right',
+                                        fontSize: '12px',
+                                        fontWeight: 600,
+                                        markers: {
+                                            width: 10,
+                                            height: 10,
+                                            radius: 3
+                                        },
+                                        itemMargin: {
+                                            horizontal: 12,
+                                            vertical: 0
+                                        }
+                                    },
+                                    tooltip: { 
+                                        theme: colors.tooltip,
+                                        shared: true,
+                                        intersect: false,
+                                        x: {
+                                            format: 'dd MMM yyyy HH:mm'
+                                        },
+                                        y: {
+                                            formatter: function(value) {
+                                                if (!value) return 'Rp 0';
+                                                return 'Rp ' + value.toLocaleString('id-ID');
+                                            }
+                                        },
+                                        marker: {
+                                            show: true
+                                        },
+                                        style: {
+                                            fontSize: '12px',
+                                            fontFamily: 'Inter, system-ui, sans-serif'
+                                        }
+                                    },
                                     responsive: [
                                         {
                                             breakpoint: 768,
                                             options: {
+                                                legend: {
+                                                    position: 'bottom',
+                                                    horizontalAlign: 'center'
+                                                },
                                                 xaxis: {
-                                                    tickAmount: 6,
+                                                    labels: {
+                                                        style: { fontSize: '10px' }
+                                                    }
                                                 }
                                             }
                                         }
@@ -270,10 +374,28 @@
                                     mutations.forEach((mutation) => {
                                         if (mutation.attributeName === 'class') {
                                             const darkNow = document.documentElement.classList.contains('dark');
+                                            const incomeColor = darkNow ? '#10b981' : '#059669';
+                                            const expenseColor = darkNow ? '#ef4444' : '#dc2626';
+                                            
                                             this.chart.updateOptions({
                                                 chart: { foreColor: darkNow ? '#94a3b8' : '#64748b' },
-                                                grid: { borderColor: darkNow ? '#334155' : '#f1f5f9' },
-                                                tooltip: { theme: darkNow ? 'dark' : 'light' }
+                                                colors: [incomeColor, expenseColor],
+                                                grid: { borderColor: darkNow ? '#1e293b' : '#e2e8f0' },
+                                                tooltip: { theme: darkNow ? 'dark' : 'light' },
+                                                yaxis: {
+                                                    labels: {
+                                                        style: { 
+                                                            colors: darkNow ? '#94a3b8' : '#64748b'
+                                                        }
+                                                    }
+                                                },
+                                                xaxis: {
+                                                    labels: {
+                                                        style: { 
+                                                            colors: darkNow ? '#94a3b8' : '#64748b'
+                                                        }
+                                                    }
+                                                }
                                             });
                                         }
                                     });
@@ -281,7 +403,12 @@
                                 observer.observe(document.documentElement, { attributes: true });
                             },
                             update(data) {
-                                if(!data || !data.categories) return;
+                                if(!data || !data.categories || data.categories.length === 0) {
+                                    this.hasData = false;
+                                    return;
+                                }
+
+                                this.hasData = true;
 
                                 // Clean Update - Width is always 100%
                                 if (this.$refs.chartContainer) {
@@ -293,38 +420,76 @@
                                 this.chart.updateOptions({
                                     xaxis: { 
                                         categories: data.categories,
-                                        tickAmount: undefined, // Let ApexCharts decide
                                         labels: {
                                             formatter: function(val, timestamp) {
                                                 const d = new Date(timestamp || val);
                                                 if(isNaN(d.getTime())) return val;
                                                 
                                                 if (granularity === 'hourly') {
-                                                    return d.getHours().toString().padStart(2, '0') + ':00';
+                                                    const hour = d.getHours().toString().padStart(2, '0');
+                                                    return hour + ':00';
                                                 } else if (granularity === 'monthly') {
-                                                     const month = d.toLocaleString('default', { month: 'short' });
-                                                     const yearShort = d.getFullYear().toString().substr(-2);
-                                                     return `${month} '${yearShort}`;
+                                                     const month = d.toLocaleString('id-ID', { month: 'short' });
+                                                     const year = d.getFullYear();
+                                                     return `${month} ${year}`;
                                                 } else {
                                                      const day = d.getDate();
-                                                     const month = d.toLocaleString('default', { month: 'short' });
+                                                     const month = d.toLocaleString('id-ID', { month: 'short' });
                                                      return `${day} ${month}`;
                                                 }
+                                            },
+                                            style: { 
+                                                fontSize: '11px',
+                                                fontWeight: 500,
+                                                colors: this.isDark ? '#94a3b8' : '#64748b'
                                             }
                                         }
                                     },
                                     tooltip: {
                                         x: {
-                                            format: granularity === 'hourly' ? 'dd MMM HH:mm' : (granularity === 'monthly' ? 'MMM yyyy' : 'dd MMM yyyy')
+                                            formatter: function(value) {
+                                                const d = new Date(value);
+                                                if (granularity === 'hourly') {
+                                                    return d.toLocaleString('id-ID', { 
+                                                        day: 'numeric', 
+                                                        month: 'short', 
+                                                        hour: '2-digit', 
+                                                        minute: '2-digit' 
+                                                    });
+                                                } else if (granularity === 'monthly') {
+                                                    return d.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+                                                } else {
+                                                    return d.toLocaleString('id-ID', { 
+                                                        day: 'numeric', 
+                                                        month: 'long', 
+                                                        year: 'numeric' 
+                                                    });
+                                                }
+                                            }
                                         }
                                     },
                                     series: [
-                                        { name: 'Pemasukan', data: data.income },
-                                        { name: 'Pengeluaran', data: data.expense }
+                                        { name: '💰 Pemasukan', data: data.income || [] },
+                                        { name: '💸 Pengeluaran', data: data.expense || [] }
                                     ]
                                 });
                             }
                         }" wire:ignore>
+                        <!-- Empty State -->
+                        <div x-show="!hasData" 
+                             x-transition
+                             class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/20 backdrop-blur-sm rounded-xl z-10">
+                            <div class="text-center px-4">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                                    <i class='bx bx-line-chart text-3xl text-slate-400'></i>
+                                </div>
+                                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Data</h3>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
+                                    Grafik akan muncul setelah ada transaksi pada periode ini
+                                </p>
+                            </div>
+                        </div>
+
                         <div class="absolute inset-0 overflow-x-auto custom-scroll pb-2">
                             <div x-ref="chartContainer" class="h-full min-w-full transition-all duration-300">
                                 <div x-ref="revenueChart" class="w-full h-full"></div>
