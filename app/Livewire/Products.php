@@ -291,8 +291,7 @@ class Products extends Component
                 'initialQty' => $this->quickBatchQty,
                 'remainingQty' => $this->quickBatchQty,
                 'sellPrice' => $sellPrice,
-                'feePercent' => $feePercent,
-                'priceAfterFee' => $priceAfterFee,
+                'supplierPrice' => $product->buyPrice, // Harga dari supplier
             ]);
 
             // DON'T add stock yet - stock will be added when batch is received/confirmed

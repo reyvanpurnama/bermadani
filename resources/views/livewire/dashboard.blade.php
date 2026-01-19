@@ -19,12 +19,8 @@
                                 Performa penjualan stabil {{ strtolower($this->previousPeriodLabel) }}.
                             @endif
                         </p>
-                        <a href="{{ route('admin.pos') }}"
-                            class="bg-card/20 hover:bg-card/30 text-white text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-md font-semibold transition-colors border border-white/10 inline-block">
-                            Buka POS
-                        </a>
                         <a href="{{ route('admin.reports.balance-sheet') }}"
-                            class="bg-white/20 hover:bg-white/30 text-white text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-md font-semibold transition-colors border border-white/10 inline-block ml-2">
+                            class="bg-white/20 hover:bg-white/30 text-white text-[10px] uppercase tracking-wider px-3 py-1.5 rounded-md font-semibold transition-colors border border-white/10 inline-block">
                             Neraca Saldo
                         </a>
                     </div>
