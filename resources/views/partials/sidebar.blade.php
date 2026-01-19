@@ -143,7 +143,9 @@
                         })
                         ->whereDoesntHave('consignmentItems', function($q) {
                             $q->whereHas('batch', function($b) {
-                                $b->whereIn('status', ['REQUESTED', 'ACTIVE']);
+                                // Exclude produk konsinyasi yang punya batch (apapun statusnya)
+                                // Karena action-nya di halaman Batch Konsinyasi, bukan Katalog Produk
+                                $b->whereIn('status', ['REQUESTED', 'ACTIVE', 'PENDING_SETTLEMENT']);
                             });
                         })
                         ->whereDoesntHave('restockRequests', function($q) {
