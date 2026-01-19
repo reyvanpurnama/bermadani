@@ -103,7 +103,7 @@
                     <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-4">Harga & Status</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Harga Ajuan (Per Unit) <span class="text-rose-500">*</span></label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Harga Satuan <span class="text-rose-500">*</span></label>
                             <div class="relative"
                                 x-data="{
                                     displayValue: '',

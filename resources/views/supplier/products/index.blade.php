@@ -193,7 +193,7 @@
                     <tr>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Ajuan</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Satuan</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Stok
                         </th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status
