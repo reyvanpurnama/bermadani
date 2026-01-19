@@ -70,7 +70,7 @@
             (Tersedia)</button>
         <button wire:click="setStatus('PENDING_SETTLEMENT')"
             class="px-4 py-2 text-[13px] {{ $status === 'PENDING_SETTLEMENT' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Siap
-            Settlement</button>
+            Bayar</button>
         <button wire:click="setStatus('SETTLED')"
             class="px-4 py-2 text-[13px] {{ $status === 'SETTLED' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Selesai/Lunas</button>
     </div>
