@@ -137,16 +137,9 @@
         <!-- Riwayat Pembayaran Section -->
         @if($recentSettled->count() > 0)
             <div class="mb-6">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <i class='bx bx-check-circle text-emerald-500'></i> Pembayaran Terakhir
-                    </h3>
-                    <a href="{{ route('supplier.restock') }}" 
-                        class="text-[11px] text-primary hover:text-emerald-600 font-semibold flex items-center gap-1 transition-colors group">
-                        Lihat Semua 
-                        <i class='bx bx-chevron-right text-sm group-hover:translate-x-0.5 transition-transform'></i>
-                    </a>
-                </div>
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                    <i class='bx bx-check-circle text-emerald-500'></i> Pembayaran Terakhir
+                </h3>
                 <div class="space-y-2">
                     @foreach($recentSettled as $batch)
                         <a href="{{ route('supplier.restock') }}" 
