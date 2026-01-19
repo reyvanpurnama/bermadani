@@ -1,6 +1,10 @@
 <div class="space-y-6">
     {{-- Header --}}
-    <div class="flex items-center justify-between">
+    {{-- Header --}}
+    <div class="flex items-center gap-3">
+        <a href="{{ route('admin.transactions') }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+            <i class='bx bx-arrow-back text-xl'></i>
+        </a>
         <div>
             <h1 class="text-xl font-bold text-slate-800 dark:text-white">Catat Keuangan</h1>
             <p class="text-sm text-slate-500">Input pemasukan & pengeluaran operasional</p>

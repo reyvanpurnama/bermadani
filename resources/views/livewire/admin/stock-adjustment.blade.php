@@ -1,4 +1,14 @@
 <div class="space-y-6">
+    <div class="flex items-center gap-3 mb-2">
+        <a href="{{ route('admin.stock-mutation') }}"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+            <i class='bx bx-arrow-back text-xl'></i>
+        </a>
+        <div>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Stock Opname</h1>
+            <p class="text-[11px] text-slate-500 mt-0.5">Penyesuaian stok fisik dan sistem.</p>
+        </div>
+    </div>
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {{-- Form Input --}}

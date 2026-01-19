@@ -1,10 +1,16 @@
 <div class="p-6">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Laporan Posisi Keuangan (Neraca)</h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm">Konsolidasi Unit Koperasi & Retail per
-                {{ now()->format('d F Y') }}
-            </p>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.transactions') }}"
+                class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors no-print">
+                <i class='bx bx-arrow-back text-xl'></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Laporan Posisi Keuangan (Neraca)</h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Konsolidasi Unit Koperasi & Retail per
+                    {{ now()->format('d F Y') }}
+                </p>
+            </div>
         </div>
         <button onclick="window.print()"
             class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors">

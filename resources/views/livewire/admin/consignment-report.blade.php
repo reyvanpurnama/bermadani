@@ -1,4 +1,14 @@
 <div class="space-y-6">
+    <div class="flex items-center gap-3 mb-2">
+        <a href="{{ route('admin.suppliers') }}"
+            class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+            <i class='bx bx-arrow-back text-xl'></i>
+        </a>
+        <div>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Laporan Konsinyasi</h1>
+            <p class="text-[11px] text-slate-500 mt-0.5">Analisa performa penjualan supplier.</p>
+        </div>
+    </div>
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -17,7 +27,8 @@
         <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Omzet Konsinyasi</p>
             <h3 class="text-xl font-bold text-slate-900 dark:text-white">Rp
-                {{ number_format($stats['totalOmzet'], 0, ',', '.') }}</h3>
+                {{ number_format($stats['totalOmzet'], 0, ',', '.') }}
+            </h3>
         </div>
 
         <div class="bg-indigo-600 p-4 rounded-xl shadow-lg shadow-indigo-500/20 text-white relative overflow-hidden">
@@ -33,7 +44,8 @@
             class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border-l-4 border-l-amber-400 border-y border-r border-slate-100 dark:border-slate-700">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Hutang ke Mitra</p>
             <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400">Rp
-                {{ number_format($stats['pendingPayable'], 0, ',', '.') }}</h3>
+                {{ number_format($stats['pendingPayable'], 0, ',', '.') }}
+            </h3>
             <p class="text-[10px] text-slate-400 mt-1">Belum settlement</p>
         </div>
     </div>
