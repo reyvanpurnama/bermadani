@@ -54,9 +54,6 @@
                     class="sidebar-text text-xs {{ request()->routeIs('kasir.dashboard') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Dashboard</span>
             </a>
 
-            <p
-                class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                Apps</p>
             <a href="{{ route('kasir.pos') }}"
                 class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                 <i
@@ -66,9 +63,6 @@
                     System</span>
             </a>
 
-            <p
-                class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                Reports</p>
             <a href="{{ route('kasir.transactions') }}"
                 class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.transactions*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                 <i
@@ -92,70 +86,24 @@
             {{-- WORKSPACE: RETAIL --}}
             <div x-show="workspace === 'retail'" x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-x-[-10px]" x-transition:enter-end="opacity-100 translate-x-0"
-                class="mt-2">
+                class="mt-2 space-y-0.5">
 
-                {{-- OPERASIONAL --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Operasional
-                </p>
                 <a href="{{ route('admin.pos') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-desktop text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">POS System</span>
                 </a>
 
-                {{-- INVENTORI --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Inventori
-                </p>
-
                 @php
                     $pendingProductsCount = \App\Models\Product::where('approvalStatus', 'PENDING')->count();
-                    $approvedProductsCount = \App\Models\Product::where('approvalStatus', 'APPROVED')
-                        ->where(function ($q) {
-                            $q->where('stock', '<=', 0)->orWhere('status', '!=', 'ACTIVE');
-                        })
-                        ->whereDoesntHave('consignmentItems', function ($q) {
-                            $q->whereHas('batch', function ($b) {
-                                $b->whereIn('status', ['REQUESTED', 'ACTIVE', 'PENDING_SETTLEMENT']); });
-                        })
-                        ->whereDoesntHave('restockRequests', function ($q) {
-                            $q->whereIn('status', ['PENDING', 'COMPLETED']); })
-                        ->count();
+                    $actionableConsignmentBatches = \App\Models\ConsignmentBatch::whereIn('status', ['REQUESTED', 'PENDING_SETTLEMENT'])->count();
                 @endphp
 
                 <a href="{{ route('admin.products') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*', 'admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <div class="flex items-center">
                         <i class='bx bx-package text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Katalog Produk</span>
-                    </div>
-                    @if($approvedProductsCount > 0)
-                        <span
-                            class="sidebar-text bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $approvedProductsCount }}</span>
-                    @endif
-                </a>
-
-                <a href="{{ route('admin.stock-mutation') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-transfer-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Riwayat Stok</span>
-                </a>
-
-                <a href="{{ route('admin.stock-adjustment') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-adjustment') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-slider-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Stock Opname</span>
-                </a>
-
-                <a href="{{ route('admin.product-review') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <div class="flex items-center">
-                        <i class='bx bx-check-shield text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Approval
-                            Produk</span>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Produk</span>
                     </div>
                     @if($pendingProductsCount > 0)
                         <span
@@ -163,35 +111,17 @@
                     @endif
                 </a>
 
-                {{-- SUPLAI --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Suplai
-                </p>
-
-                @php
-                    $pendingSuppliersCount = \App\Models\Supplier::where('status', 'PENDING')->count();
-                    $actionableConsignmentBatches = \App\Models\ConsignmentBatch::whereIn('status', ['REQUESTED', 'PENDING_SETTLEMENT'])->count();
-                @endphp
-
-                <a href="{{ route('admin.suppliers') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <div class="flex items-center">
-                        <i class='bx bx-store-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Data Supplier</span>
-                    </div>
-                    @if($pendingSuppliersCount > 0)
-                        <span
-                            class="sidebar-text bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $pendingSuppliersCount }}</span>
-                    @endif
+                <a href="{{ route('admin.stock-mutation') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation', 'admin.stock-adjustment') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-transfer-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Inventori</span>
                 </a>
 
-                <a href="{{ route('admin.consignment-batches') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-batches') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <a href="{{ route('admin.suppliers') }}"
+                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*', 'admin.consignment-batches', 'admin.consignment-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <div class="flex items-center">
-                        <i class='bx bx-notepad text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Batch
-                            Konsinyasi</span>
+                        <i class='bx bx-store-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Suplai</span>
                     </div>
                     @if($actionableConsignmentBatches > 0)
                         <span
@@ -199,143 +129,52 @@
                     @endif
                 </a>
 
-                <a href="{{ route('admin.consignment-report') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.consignment-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-file text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Laporan Konsinyasi</span>
-                </a>
-
-                {{-- KEUANGAN --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keuangan
-                </p>
-
-                <a href="{{ route('admin.manual-transaction', ['unit' => 'BISNIS']) }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'BISNIS'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-transfer text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Catat Keuangan</span>
-                </a>
-
                 <a href="{{ route('admin.transactions') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*') && !request()->routeIs('admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*', 'admin.manual-transaction', 'admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-receipt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Riwayat Penjualan</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Keuangan</span>
                 </a>
-                <a href="{{ route('admin.reports.balance-sheet') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-spreadsheet text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Neraca Saldo</span>
-                </a>
+
             </div>
 
             {{-- WORKSPACE: CORE (KOPERASI) --}}
             <div x-show="workspace === 'core'" x-transition:enter="transition ease-out duration-200"
                 x-transition:enter-start="opacity-0 translate-x-[10px]" x-transition:enter-end="opacity-100 translate-x-0"
-                style="display: none;" class="mt-2">
-
-                {{-- KEANGGOTAAN --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keanggotaan
-                </p>
+                style="display: none;" class="mt-2 space-y-0.5">
 
                 <a href="{{ route('admin.members.index') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-user-circle text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Data Anggota</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Keanggotaan</span>
                 </a>
-
-                {{-- SIMPAN PINJAM --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Simpan Pinjam
-                </p>
 
                 <a href="{{ route('admin.savings') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.savings*') && !request()->routeIs('admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.savings*', 'admin.loans*', 'admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-wallet text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Simpanan</span>
-                </a>
-
-                <a href="{{ route('admin.loans') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-money text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pinjaman</span>
-                </a>
-
-                <a href="{{ route('admin.payments.create') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.payments*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-plus-circle text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Catat Setoran</span>
-                </a>
-
-                {{-- KEUANGAN --}}
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    Keuangan
-                </p>
-
-                <a href="{{ route('admin.manual-transaction', ['unit' => 'KOPERASI']) }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->fullUrlIs(route('admin.manual-transaction', ['unit' => 'KOPERASI'])) ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-transfer text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Catat Keuangan</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Simpan Pinjam</span>
                 </a>
 
                 <a href="{{ route('admin.reports.monthly-financial') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial', 'admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-file text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Laporan Bulanan</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Laporan Keuangan</span>
                 </a>
             </div>
 
             {{-- SYSTEM (ADMIN ONLY) --}}
             @if(auth()->user()->isSuperAdmin() || auth()->user()->isDeveloper() || auth()->user()->isAdmin())
-                <p
-                    class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap">
-                    System
-                </p>
+                <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                    <p
+                        class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 opacity-80 whitespace-nowrap">
+                        System
+                    </p>
 
-                <a href="{{ route('admin.users') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Kelola User</span>
-                </a>
-
-                <a href="{{ route('admin.settings') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.settings*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-cog text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pengaturan</span>
-                </a>
-
-                <a href="{{ route('admin.activity-logs') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.activity-logs') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-history text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Activity Log</span>
-                </a>
-
-                <a href="{{ route('admin.kasir-history') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.kasir-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-user-check text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Riwayat Kasir</span>
-                </a>
-
-                {{-- DEVELOPER: WORK LOG MENU --}}
-                @if(auth()->user()->isDeveloper())
-                    <a href="{{ route('developer.work-logs') }}"
-                        class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('developer.work-logs') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                        <i
-                            class='bx bx-time-five text-sm mr-2 {{ request()->routeIs('developer.work-logs') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
-                        <span
-                            class="sidebar-text text-xs {{ request()->routeIs('developer.work-logs') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Log
-                            Kerja</span>
+                    <a href="{{ route('admin.users') }}"
+                        class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <i class='bx bx-bg-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Settings & Logs</span>
                     </a>
-                    <a href="{{ route('admin.developer-payroll') }}"
-                        class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                        <i class='bx bx-money text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Payroll Dev</span>
-                    </a>
-                @endif
+                </div>
             @endif
         @endif
     </nav>

@@ -5,7 +5,12 @@
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola pendaftaran dan status supplier.</p>
         </div>
         <div class="flex gap-2">
-            <!-- Actions if needed -->
+            <a href="{{ route('admin.consignment-batches') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-notepad'></i> Batch Konsinyasi
+            </a>
+            <a href="{{ route('admin.consignment-report') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-file'></i> Laporan
+            </a>
         </div>
     </div>
 

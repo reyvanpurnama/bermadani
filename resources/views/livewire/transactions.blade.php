@@ -21,6 +21,14 @@
                 </h1>
                 <p class="text-sm text-slate-500 mt-1">Kelola dan pantau seluruh transaksi penjualan</p>
             </div>
+            <div class="flex gap-2">
+                <a href="{{ route('admin.manual-transaction', ['unit' => 'BISNIS']) }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                    <i class='bx bx-transfer'></i> Catat
+                </a>
+                <a href="{{ route('admin.reports.balance-sheet') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                    <i class='bx bx-spreadsheet'></i> Neraca
+                </a>
+            </div>
         </div>
     </div>
 

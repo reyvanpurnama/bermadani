@@ -19,6 +19,10 @@
                 class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-category'></i> Kategori
             </button>
+            <a href="{{ route('admin.product-review') }}"
+                class="bg-white dark:bg-darkCard border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-check-shield'></i> Approval
+            </a>
             <button wire:click="$refresh"
                 class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-refresh'></i> Refresh
@@ -248,12 +252,15 @@
                                         @endphp
                                         @if($hasPending)
                                             {{-- Ada batch REQUESTED - menunggu supplier kirim barang --}}
-                                            <span class="text-cyan-600 dark:text-cyan-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
+                                            <span
+                                                class="text-cyan-600 dark:text-cyan-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
                                                 <i class='bx bx-time-five'></i> Menunggu Supplier
                                             </span>
                                         @elseif($hasPendingSettlement)
                                             {{-- Ada batch PENDING_SETTLEMENT - TIDAK BOLEH order restock, harus settle dulu! --}}
-                                            <span class="text-amber-600 dark:text-amber-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 cursor-help" title="Selesaikan pembayaran batch yang ada terlebih dahulu">
+                                            <span
+                                                class="text-amber-600 dark:text-amber-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 cursor-help"
+                                                title="Selesaikan pembayaran batch yang ada terlebih dahulu">
                                                 <i class='bx bx-error-circle'></i> Pending Settlement
                                             </span>
                                         @elseif($product->stock == 0)
