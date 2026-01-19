@@ -142,8 +142,8 @@
                                     <i class='bx bx-store'></i> Stok: {{ $product->stock }}
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                                    <i class='bx bx-package'></i> Menunggu Stok
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                                    <i class='bx bx-info-circle'></i> Stok Habis
                                 </span>
                             @endif
                         @endif
@@ -227,8 +227,8 @@
                                     <i class='bx bx-store text-sm'></i> Aktif
                                 </span>
                             @else
-                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
-                                    <i class='bx bx-package text-sm'></i> Menunggu Stok
+                                <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                                    <i class='bx bx-info-circle text-sm'></i> Stok Habis
                                 </span>
                             @endif
                         @else

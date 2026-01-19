@@ -30,15 +30,15 @@
                         class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white dark:border-darkCard"></span>
                 @endif
             </div>
-            <span class="text-[10px] font-medium tracking-wide">Restock</span>
+            <span class="text-[10px] font-medium tracking-wide">Stok</span>
         </a>
 
-        {{-- 4. Laporan --}}
+        {{-- 4. Penjualan --}}
         <a href="{{ route('supplier.sales') }}"
             class="flex flex-col items-center justify-center gap-1 h-full w-full {{ request()->routeIs('supplier.sales') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
             <i
                 class='bx {{ request()->routeIs('supplier.sales') ? 'bxs-report' : 'bx-line-chart' }} text-[22px] mb-0.5'></i>
-            <span class="text-[10px] font-medium tracking-wide">Laporan</span>
+            <span class="text-[10px] font-medium tracking-wide">Penjualan</span>
         </a>
 
         {{-- 5. Profil --}}
