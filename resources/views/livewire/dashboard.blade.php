@@ -301,12 +301,13 @@
                                         show: true,
                                         position: 'top',
                                         horizontalAlign: 'right',
-                                        fontSize: '12px',
+                                        fontSize: '13px',
                                         fontWeight: 600,
                                         markers: {
-                                            width: 6,
-                                            height: 6,
-                                            radius: 3
+                                            width: 8,
+                                            height: 8,
+                                            strokeWidth: 0,
+                                            radius: 12
                                         },
                                         itemMargin: {
                                             horizontal: 12,
