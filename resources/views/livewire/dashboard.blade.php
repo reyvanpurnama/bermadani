@@ -469,8 +469,8 @@
                                         }
                                     },
                                     series: [
-                                        { name: '💰 Pemasukan', data: data.income || [] },
-                                        { name: '💸 Pengeluaran', data: data.expense || [] }
+                                        { name: 'Pemasukan', data: data.income || [] },
+                                        { name: 'Pengeluaran', data: data.expense || [] }
                                     ]
                                 });
                             }
