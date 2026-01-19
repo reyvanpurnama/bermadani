@@ -220,6 +220,9 @@
                                     @if($this->hasPendingBatch($product->id))
                                         <span
                                             class="bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">Diminta</span>
+                                    @elseif($this->hasActiveBatch($product->id))
+                                        <span
+                                            class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Habis</span>
                                     @else
                                         <span
                                             class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Belum

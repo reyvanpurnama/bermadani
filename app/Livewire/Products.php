@@ -316,6 +316,13 @@ class Products extends Component
         })->where('status', 'REQUESTED')->exists();
     }
 
+    public function hasActiveBatch($productId)
+    {
+        return ConsignmentBatch::whereHas('items', function($q) use ($productId) {
+            $q->where('productId', $productId);
+        })->whereIn('status', ['ACTIVE', 'PENDING_SETTLEMENT', 'SETTLED'])->exists();
+    }
+
     public function render()
     {
         // dd('Products component render called', $this->products->count());
