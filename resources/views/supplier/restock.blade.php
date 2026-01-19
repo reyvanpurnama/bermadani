@@ -48,8 +48,9 @@
                                         </span>
                                     @elseif($batch->status === 'SETTLED')
                                         <span
-                                            class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
-                                            Lunas
+                                            class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase"
+                                            title="Dibayar {{ $batch->settledAt ? $batch->settledAt->format('d M Y H:i') : '-' }}">
+                                            ✓ Lunas
                                         </span>
                                     @endif
                                 </div>
@@ -189,10 +190,15 @@
                                             <i class='bx bx-wallet'></i> Siap Bayar
                                         </span>
                                     @elseif($batch->status === 'SETTLED')
-                                        <span
-                                            class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
-                                            <i class='bx bx-check-circle'></i> Lunas
-                                        </span>
+                                        <div class="flex flex-col items-center gap-0.5">
+                                            <span
+                                                class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
+                                                <i class='bx bx-check-circle'></i> Lunas
+                                            </span>
+                                            @if($batch->settledAt)
+                                                <span class="text-[9px] text-slate-400 italic">{{ $batch->settledAt->format('d M Y H:i') }}</span>
+                                            @endif
+                                        </div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
