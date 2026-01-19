@@ -79,6 +79,13 @@ class ManualTransaction extends Component
         return ($cashOnHand + $expense) - $this->startCash;
     }
 
+    // Auto-clean format rupiah when amount is updated
+    public function updatedAmount($value)
+    {
+        // Remove dots (thousand separator) from format "1.000.000"
+        $this->amount = str_replace('.', '', $value);
+    }
+
     public function save()
     {
         if ($this->mode === 'recap') {
