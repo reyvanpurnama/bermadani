@@ -69,12 +69,14 @@
             </h3>
             <div class="grid grid-cols-2 gap-3">
                 <!-- Pendapatan (Highlighted) -->
-                <div
-                    class="col-span-2 bg-gradient-to-r from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-lg shadow-emerald-500/20 text-white relative overflow-hidden">
-                    <i class='bx bx-wallet absolute -bottom-4 -right-4 text-[80px] text-white/10 transform rotate-12'></i>
+                <a href="{{ route('supplier.sales') }}"
+                    class="col-span-2 bg-gradient-to-r from-emerald-500 to-teal-600 p-5 rounded-2xl shadow-lg shadow-emerald-500/20 text-white relative overflow-hidden transform transition-all hover:scale-[1.01] cursor-pointer group">
+                    <i class='bx bx-wallet absolute -bottom-4 -right-4 text-[80px] text-white/10 transform rotate-12 group-hover:rotate-6 transition-transform'></i>
                     <div class="relative z-10">
-                        <p class="text-[11px] font-medium text-emerald-100 uppercase tracking-wider mb-1">Pendapatan Bulan
-                            Ini</p>
+                        <p class="text-[11px] font-medium text-emerald-100 uppercase tracking-wider mb-1 flex items-center justify-between">
+                            Pendapatan Bulan Ini
+                            <i class='bx bx-chevron-right text-lg opacity-70'></i>
+                        </p>
                         <h3 class="text-2xl font-bold mb-2 tracking-tight">Rp
                             {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h3>
                         <span
@@ -82,11 +84,11 @@
                             <i class='bx bx-trending-up'></i> {{ $pendapatanGrowth ?? 0 }}% vs bulan lalu
                         </span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Saldo Tertahan -->
-                <div
-                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <a href="{{ route('supplier.restock') }}"
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm block hover:border-amber-300 transition-colors">
                     <div class="flex items-center gap-2 mb-2">
                         <div
                             class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-600 flex items-center justify-center">
@@ -96,11 +98,11 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-800 dark:text-white truncate">Rp
                         {{ number_format($saldoTertahan ?? 0, 0, ',', '.') }}</h3>
-                </div>
+                </a>
 
                 <!-- Unit Terjual -->
-                <div
-                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <a href="{{ route('supplier.sales') }}"
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm block hover:border-blue-300 transition-colors">
                     <div class="flex items-center gap-2 mb-2">
                         <div
                             class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center">
@@ -112,11 +114,11 @@
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">{{ $unitTerjual ?? 0 }}</h3>
                         <span class="text-xs text-slate-400">Pcs</span>
                     </div>
-                </div>
+                </a>
 
                 <!-- Produk Aktif -->
-                <div
-                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
+                <a href="{{ route('supplier.products.index') }}"
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm block hover:border-indigo-300 transition-colors">
                     <div class="flex items-center gap-2 mb-2">
                         <div
                             class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center">
@@ -128,21 +130,7 @@
                         <h3 class="text-lg font-bold text-slate-800 dark:text-white">{{ $produkAktif ?? 0 }}</h3>
                         <span class="text-xs text-slate-400">SKU</span>
                     </div>
-                </div>
-
-                <!-- Views Count (Placeholder/Future) -->
-                <!-- <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
-                     <div class="flex items-center gap-2 mb-2">
-                        <div class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 flex items-center justify-center">
-                            <i class='bx bx-show text-sm'></i>
-                        </div>
-                        <span class="text-[11px] font-medium text-slate-500">Dilihat</span>
-                    </div>
-                    <div class="flex items-baseline gap-1">
-                        <h3 class="text-lg font-bold text-slate-800 dark:text-white">-</h3>
-                        <span class="text-xs text-slate-400">x</span>
-                    </div>
-                </div> -->
+                </a>
             </div>
         </div>
 
@@ -153,8 +141,9 @@
                 <h3 class="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
                     <i class='bx bx-line-chart text-slate-400'></i> Trend Penjualan
                 </h3>
-                <span class="text-[10px] bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-500">7 Hari
-                    Terakhir</span>
+                <a href="{{ route('supplier.sales') }}" class="text-[10px] text-primary hover:underline flex items-center gap-1">
+                    Lihat Detail <i class='bx bx-chevron-right'></i>
+                </a>
             </div>
             <div class="h-[180px] w-full" id="salesChart"></div>
         </div>
