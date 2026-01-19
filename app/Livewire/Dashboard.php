@@ -201,6 +201,19 @@ class Dashboard extends Component
         return max(0, $this->grossProfit + $this->otherIncome - $this->consignmentCogs - $this->operatingExpenses);
     }
 
+    // Saldo Kasir = Uang riil di kasir setelah semua transaksi
+    public function getCashOnHandProperty()
+    {
+        // Total Income (POS Sales + Historical Sales + Other Income)
+        $totalIncome = $this->totalSales + $this->historicalSales + $this->otherIncome;
+        
+        // Total Outflow (COGS Konsinyasi + Operating Expenses)
+        $totalOutflow = $this->consignmentCogs + $this->operatingExpenses;
+        
+        // Cash on Hand = Total Income - Total Outflow
+        return max(0, $totalIncome - $totalOutflow);
+    }
+
     public function getProfitGrowthProperty()
     {
         // Get previous period data
