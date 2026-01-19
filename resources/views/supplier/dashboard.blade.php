@@ -137,16 +137,24 @@
         <!-- Riwayat Pembayaran Section -->
         @if($recentSettled->count() > 0)
             <div class="mb-6">
-                <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <i class='bx bx-check-circle text-emerald-500'></i> Pembayaran Terakhir
-                </h3>
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-check-circle text-emerald-500'></i> Pembayaran Terakhir
+                    </h3>
+                    <a href="{{ route('supplier.restock') }}" 
+                        class="text-[11px] text-primary hover:text-emerald-600 font-semibold flex items-center gap-1 transition-colors group">
+                        Lihat Semua 
+                        <i class='bx bx-chevron-right text-sm group-hover:translate-x-0.5 transition-transform'></i>
+                    </a>
+                </div>
                 <div class="space-y-2">
                     @foreach($recentSettled as $batch)
-                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm hover:shadow-md transition-shadow">
+                        <a href="{{ route('supplier.restock') }}" 
+                            class="block bg-white dark:bg-darkCard p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm hover:shadow-md hover:border-emerald-300 dark:hover:border-emerald-700 transition-all cursor-pointer group">
                             <div class="flex items-start justify-between gap-3 mb-2">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2 mb-1">
-                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">#{{ $batch->batchCode }}</span>
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-emerald-600 transition-colors">#{{ $batch->batchCode }}</span>
                                         <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold">
                                             ✓ LUNAS
                                         </span>
@@ -168,16 +176,22 @@
                                         </div>
                                     @endif
                                 </div>
-                                <div class="text-right">
-                                    <p class="text-[10px] text-slate-500 mb-0.5">Diterima</p>
-                                    <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                <div class="text-right flex flex-col items-end gap-1">
+                                    <p class="text-[10px] text-slate-500">Diterima</p>
+                                    <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
                                         Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
                                     </p>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
+                <a href="{{ route('supplier.restock') }}" 
+                    class="mt-3 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-700 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all group">
+                    <i class='bx bx-history text-base'></i>
+                    Lihat Riwayat Lengkap
+                    <i class='bx bx-chevron-right text-sm group-hover:translate-x-1 transition-transform'></i>
+                </a>
             </div>
         @endif
 
