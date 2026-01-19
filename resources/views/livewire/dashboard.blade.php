@@ -304,8 +304,8 @@
                                         fontSize: '12px',
                                         fontWeight: 600,
                                         markers: {
-                                            width: 10,
-                                            height: 10,
+                                            width: 6,
+                                            height: 6,
                                             radius: 3
                                         },
                                         itemMargin: {
