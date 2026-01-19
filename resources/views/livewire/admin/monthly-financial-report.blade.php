@@ -5,6 +5,10 @@
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Laporan Keuangan Bulanan</h1>
             <p class="text-xs text-slate-500 mt-1">Generate laporan potongan gaji & SIMWA untuk unit keuangan</p>
         </div>
+        <a href="{{ route('admin.reports.balance-sheet') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2">
+            <i class='bx bx-spreadsheet text-lg'></i>
+            Lihat Neraca Saldo
+        </a>
     </div>
 
     {{-- Filter Section --}}
