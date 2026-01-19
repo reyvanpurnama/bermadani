@@ -110,7 +110,7 @@
                 :class="{'justify-center': sidebarCollapsed}">
                 <i class='bx bx-box text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
                 <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300"
-                    :class="{'hidden': sidebarCollapsed}">Produk</span>
+                    :class="{'hidden': sidebarCollapsed}">Produk Saya</span>
             </a>
 
             <!-- Akun Section -->
@@ -124,7 +124,7 @@
                 :class="{'justify-center': sidebarCollapsed}">
                 <i class='bx bx-user-circle text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
                 <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300"
-                    :class="{'hidden': sidebarCollapsed}">Profil</span>
+                    :class="{'hidden': sidebarCollapsed}">Profil Saya</span>
             </a>
 
         </nav>
