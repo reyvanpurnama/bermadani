@@ -136,7 +136,9 @@ class Dashboard extends Component
     public function getOperatingExpensesProperty()
     {
         // Ambil total pengeluaran dari financial_transactions berdasarkan filter
-        $query = FinancialTransaction::expense();
+        // EXCLUDE: Pembayaran Supplier Konsinyasi (karena itu COGS, bukan operating expense)
+        $query = FinancialTransaction::expense()
+            ->where('category', '!=', 'Pembayaran Supplier Konsinyasi');
         
         $expenses = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
