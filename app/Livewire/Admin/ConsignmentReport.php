@@ -31,7 +31,7 @@ class ConsignmentReport extends Component
             'totalOmzet' => ConsignmentBatch::whereBetween('created_at', [$dateStart, $dateEnd])
                 ->sum('totalSold'),
             'totalFee' => ConsignmentBatch::whereBetween('created_at', [$dateStart, $dateEnd])
-                ->sum('feeAmount'),
+                ->sum(DB::raw('totalSold - payableAmount')),
             'pendingPayable' => ConsignmentBatch::where('status', 'PENDING_SETTLEMENT')
                 ->sum('payableAmount'),
         ];
@@ -49,7 +49,7 @@ class ConsignmentReport extends Component
                 DB::raw('SUM(consignment_items.soldQty) as totalSold'),
                 DB::raw('SUM(consignment_items.initialQty) as totalInitial'),
                 DB::raw('SUM(consignment_items.soldQty * consignment_items.sellPrice) as totalOmzet'),
-                DB::raw('SUM(consignment_items.soldQty * consignment_items.sellPrice * consignment_items.feePercent / 100) as totalFee')
+                DB::raw('SUM(consignment_items.soldQty * (consignment_items.sellPrice - consignment_items.supplierPrice)) as totalFee')
             )
             ->groupBy('suppliers.id', 'suppliers.businessName', 'suppliers.productCategory')
             ->orderByDesc('totalOmzet')

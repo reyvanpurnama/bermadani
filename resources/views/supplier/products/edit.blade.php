@@ -152,9 +152,6 @@
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400">
                                         <i class='bx bx-check-circle mr-1.5'></i> Disetujui
                                     </span>
-                                    @if($product->sellPrice)
-                                        <p class="text-xs text-slate-500 mt-2">Harga jual: <span class="font-bold">Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</span></p>
-                                    @endif
                                 @elseif($product->approvalStatus === 'REJECTED')
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400">
                                         <i class='bx bx-x-circle mr-1.5'></i> Ditolak

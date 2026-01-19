@@ -113,32 +113,10 @@
                     :class="{'hidden': sidebarCollapsed}">Produk Saya</span>
             </a>
 
-            <a href="{{ route('supplier.sales') }}"
-                class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('supplier.sales') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}"
-                :class="{'justify-center': sidebarCollapsed}">
-                <i class='bx bx-line-chart text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
-                <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300"
-                    :class="{'hidden': sidebarCollapsed}">Laporan Penjualan</span>
-            </a>
-
-            <a href="{{ route('supplier.restock') }}"
-                class="supplier-nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('supplier.restock') ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}"
-                :class="{'justify-center': sidebarCollapsed}">
-                <i class='bx bx-package text-sm opacity-70 group-hover:opacity-100 transition-opacity shrink-0'></i>
-                <span class="supplier-sidebar-text text-xs font-medium transition-opacity duration-300"
-                    :class="{'hidden': sidebarCollapsed}">Batch Konsinyasi</span>
-                @php
-                    $requestedBatchCount = \App\Models\ConsignmentBatch::where('supplierId', auth()->guard('supplier')->id())->where('status', 'REQUESTED')->count();
-                @endphp
-                @if($requestedBatchCount > 0)
-                    <span class="bg-blue-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse"
-                        :class="{'hidden': sidebarCollapsed}">{{ $requestedBatchCount }}</span>
-                @endif
-            </a>
-
             <!-- Akun Section -->
             <div class="supplier-sidebar-text mt-4 mb-2 px-2" :class="{'hidden': sidebarCollapsed}">
-                <span class="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Akun</span>
+                <span
+                    class="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">Akun</span>
             </div>
 
             <a href="{{ route('supplier.profile') }}"

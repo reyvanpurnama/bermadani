@@ -63,8 +63,8 @@
                                         📦
                                     </div>
                                     <div>
-                                        <span class="font-medium text-slate-800 dark:text-white block">{{ $movement->product->name }}</span>
-                                        <span class="text-[10px] text-slate-400">{{ $movement->product->sku }}</span>
+                                        <span class="font-medium text-slate-800 dark:text-white block">{{ $movement->product->name ?? 'Produk Tidak Ditemukan' }}</span>
+                                        <span class="text-[10px] text-slate-400">{{ $movement->product->sku ?? '-' }}</span>
                                     </div>
                                 </div>
                             </td>

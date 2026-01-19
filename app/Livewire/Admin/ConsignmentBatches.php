@@ -8,6 +8,7 @@ use App\Models\ConsignmentBatch;
 use App\Models\ConsignmentItem;
 use App\Models\Supplier;
 use App\Models\Product;
+use App\Models\FinancialTransaction;
 use App\Models\SupplierNotification;
 use Illuminate\Support\Facades\DB;
 
@@ -267,16 +268,32 @@ class ConsignmentBatches extends Component
         if (!$this->selectedBatch)
             return;
 
-        // Recalculate totals before settlement
-        $this->selectedBatch->recalculateTotals();
+        DB::transaction(function () {
+            // Recalculate totals before settlement
+            $this->selectedBatch->recalculateTotals();
 
-        $this->selectedBatch->update([
-            'status' => 'SETTLED',
-            'settledAt' => now(),
-        ]);
+            $payableAmount = $this->selectedBatch->payableAmount;
+            $supplier = $this->selectedBatch->supplier;
+
+            // 1. Update batch status to SETTLED
+            $this->selectedBatch->update([
+                'status' => 'SETTLED',
+                'settledAt' => now(),
+            ]);
+
+            // 2. Record financial transaction (expense for paying supplier)
+            FinancialTransaction::create([
+                'type' => 'EXPENSE',
+                'category' => 'Pembayaran Supplier Konsinyasi',
+                'amount' => $payableAmount,
+                'transactionDate' => today(),
+                'description' => "Pembayaran ke supplier {$supplier->businessName} untuk batch #{$this->selectedBatch->batchCode}. Total terjual: " . number_format($this->selectedBatch->totalSold, 0, ',', '.'),
+                'userId' => auth()->id(),
+            ]);
+        });
 
         $this->closeDetail();
-        $this->dispatch('notify', ['message' => 'Settlement berhasil diproses', 'type' => 'success']);
+        $this->dispatch('notify', ['message' => 'Pembayaran ke supplier berhasil diproses', 'type' => 'success']);
     }
 
     public function openReturModal()

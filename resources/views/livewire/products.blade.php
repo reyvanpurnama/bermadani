@@ -220,6 +220,9 @@
                                     @if($this->hasPendingBatch($product->id))
                                         <span
                                             class="bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">Diminta</span>
+                                    @elseif($this->hasActiveBatch($product->id))
+                                        <span
+                                            class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Habis</span>
                                     @else
                                         <span
                                             class="bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Belum
@@ -241,14 +244,20 @@
                                     @if($product->supplierId && $product->approvalStatus === 'APPROVED')
                                         @php
                                             $hasPending = $this->hasPendingBatch($product->id);
+                                            $hasPendingSettlement = $this->hasPendingSettlement($product->id);
                                         @endphp
                                         @if($hasPending)
-                                            {{-- Ada batch pending --}}
+                                            {{-- Ada batch REQUESTED - menunggu supplier kirim barang --}}
                                             <span class="text-cyan-600 dark:text-cyan-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1">
                                                 <i class='bx bx-time-five'></i> Menunggu Supplier
                                             </span>
+                                        @elseif($hasPendingSettlement)
+                                            {{-- Ada batch PENDING_SETTLEMENT - TIDAK BOLEH order restock, harus settle dulu! --}}
+                                            <span class="text-amber-600 dark:text-amber-400 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 cursor-help" title="Selesaikan pembayaran batch yang ada terlebih dahulu">
+                                                <i class='bx bx-error-circle'></i> Pending Settlement
+                                            </span>
                                         @elseif($product->stock == 0)
-                                            {{-- Urgent: Stok habis --}}
+                                            {{-- Stok habis DAN tidak ada pending settlement - boleh order restock --}}
                                             <button wire:click="openQuickBatchModal({{ $product->id }})"
                                                 class="bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-rose-500/30 hover:shadow-rose-500/50 transition-all flex items-center gap-1 animate-pulse">
                                                 <i class='bx bx-plus-circle'></i> Order Restock

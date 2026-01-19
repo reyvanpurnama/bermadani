@@ -70,7 +70,7 @@
             (Tersedia)</button>
         <button wire:click="setStatus('PENDING_SETTLEMENT')"
             class="px-4 py-2 text-[13px] {{ $status === 'PENDING_SETTLEMENT' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Siap
-            Settlement</button>
+            Bayar</button>
         <button wire:click="setStatus('SETTLED')"
             class="px-4 py-2 text-[13px] {{ $status === 'SETTLED' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Selesai/Lunas</button>
     </div>
@@ -476,7 +476,7 @@
                             @if($selectedBatch->status === 'PENDING_SETTLEMENT')
                                 <button wire:click="processSettlement"
                                     class="w-full mt-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-[12px] shadow-md shadow-indigo-500/20 transition-colors flex items-center justify-center gap-2">
-                                    <i class='bx bx-money-withdraw'></i> Proses Settlement
+                                    <i class='bx bx-money-withdraw'></i> Bayar ke Supplier
                                 </button>
                             @endif
 

@@ -86,6 +86,14 @@ class ConsignmentBatch extends Model
             'totalSold' => $totalSold,
             'payableAmount' => $payableAmount,
         ]);
+
+        // Auto-update status to PENDING_SETTLEMENT if all items are sold/returned
+        if ($this->status === 'ACTIVE') {
+            $hasRemaining = $this->items->sum('remainingQty') > 0;
+            if (!$hasRemaining) {
+                $this->update(['status' => 'PENDING_SETTLEMENT']);
+            }
+        }
     }
 
     /**

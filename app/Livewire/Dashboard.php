@@ -141,7 +141,9 @@ class Dashboard extends Component
     public function getOperatingExpensesProperty()
     {
         // Ambil total pengeluaran dari financial_transactions berdasarkan filter
-        $query = FinancialTransaction::expense();
+        // EXCLUDE: Pembayaran Supplier Konsinyasi (karena itu COGS, bukan operating expense)
+        $query = FinancialTransaction::expense()
+            ->where('category', '!=', 'Pembayaran Supplier Konsinyasi');
         
         $expenses = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -171,6 +173,23 @@ class Dashboard extends Component
         return $income ?? 0;
     }
 
+    // COGS Konsinyasi (pembayaran ke supplier untuk barang konsinyasi yang sudah dibayar)
+    public function getConsignmentCogsProperty()
+    {
+        $query = FinancialTransaction::expense()
+            ->where('category', 'Pembayaran Supplier Konsinyasi');
+        
+        $cogs = match($this->filter) {
+            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
+            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
+            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
+            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            default => $query->whereDate('transactionDate', today())->sum('amount'),
+        };
+
+        return $cogs ?? 0;
+    }
+
     public function getOperatingMarginPercentProperty()
     {
         $sales = $this->totalSales;
@@ -182,8 +201,22 @@ class Dashboard extends Component
 
     public function getNetProfitProperty()
     {
-        // Laba Bersih = Margin Kotor + Pemasukan Lain-lain - Pengeluaran Operasional
-        return max(0, $this->grossProfit + $this->otherIncome - $this->operatingExpenses);
+        // Laba Bersih = Margin Kotor + Pemasukan Lain-lain - COGS Konsinyasi - Pengeluaran Operasional
+        // COGS Konsinyasi = pembayaran ke supplier untuk barang konsinyasi
+        return max(0, $this->grossProfit + $this->otherIncome - $this->consignmentCogs - $this->operatingExpenses);
+    }
+
+    // Saldo Kasir = Uang riil di kasir setelah semua transaksi
+    public function getCashOnHandProperty()
+    {
+        // Total Income (POS Sales + Historical Sales + Other Income)
+        $totalIncome = $this->totalSales + $this->historicalSales + $this->otherIncome;
+        
+        // Total Outflow (COGS Konsinyasi + Operating Expenses)
+        $totalOutflow = $this->consignmentCogs + $this->operatingExpenses;
+        
+        // Cash on Hand = Total Income - Total Outflow
+        return max(0, $totalIncome - $totalOutflow);
     }
 
     public function getProfitGrowthProperty()
