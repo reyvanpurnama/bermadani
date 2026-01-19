@@ -134,6 +134,53 @@
             </div>
         </div>
 
+        <!-- Riwayat Pembayaran Section -->
+        @if($recentSettled->count() > 0)
+            <div class="mb-6">
+                <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                    <i class='bx bx-check-circle text-emerald-500'></i> Pembayaran Terakhir
+                </h3>
+                <div class="space-y-2">
+                    @foreach($recentSettled as $batch)
+                        <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div class="flex-1">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">#{{ $batch->batchCode }}</span>
+                                        <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold">
+                                            ✓ LUNAS
+                                        </span>
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 flex items-center gap-1.5">
+                                        <i class='bx bx-calendar'></i>
+                                        Dibayar: <span class="font-semibold text-emerald-600">{{ $batch->settledAt?->format('d M Y H:i') ?? '-' }}</span>
+                                    </p>
+                                    @if($batch->items->count() > 0)
+                                        <div class="flex flex-wrap gap-1.5 mt-2">
+                                            @foreach($batch->items->take(2) as $item)
+                                                <span class="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded">
+                                                    {{ $item->product->name ?? '-' }}
+                                                </span>
+                                            @endforeach
+                                            @if($batch->items->count() > 2)
+                                                <span class="text-[9px] text-slate-400">+{{ $batch->items->count() - 2 }} lainnya</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-slate-500 mb-0.5">Diterima</p>
+                                    <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                                        Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+
         <!-- Chart Section (Simplified) -->
         <div
             class="bg-white dark:bg-darkCard p-5 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm mb-24 lg:mb-6">

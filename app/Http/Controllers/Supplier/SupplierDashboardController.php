@@ -78,6 +78,14 @@ class SupplierDashboardController extends Controller
             ->where('status', 'PENDING_SETTLEMENT')
             ->count();
 
+        // Recent settled batches (3 terakhir yang sudah dibayar)
+        $recentSettled = ConsignmentBatch::where('supplierId', $supplier->id)
+            ->where('status', 'SETTLED')
+            ->with(['items.product'])
+            ->latest('settledAt')
+            ->take(3)
+            ->get();
+
         return view('supplier.dashboard', compact(
             'totalPendapatan',
             'pendapatanGrowth',
@@ -86,7 +94,8 @@ class SupplierDashboardController extends Controller
             'lowStock',
             'saldoTertahan',
             'requestedBatchesCount',
-            'pendingSettlementCount'
+            'pendingSettlementCount',
+            'recentSettled'
         ));
     }
 }
