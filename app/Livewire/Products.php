@@ -92,7 +92,14 @@ class Products extends Component
                 } elseif ($this->stockFilter === 'rejected') {
                     $q->where('approvalStatus', 'REJECTED');
                 } elseif ($this->stockFilter === 'consignment_waiting') {
-                    $q->where('stock', 0)->whereNotNull('supplierId')->where('approvalStatus', 'APPROVED');
+                    // Only show consignment products that have REQUESTED batches
+                    $q->where('approvalStatus', 'APPROVED')
+                      ->whereNotNull('supplierId')
+                      ->whereHas('consignmentItems', function($query) {
+                          $query->whereHas('batch', function($batchQuery) {
+                              $batchQuery->where('status', 'REQUESTED');
+                          });
+                      });
                 }
             });
 
@@ -110,7 +117,13 @@ class Products extends Component
             'total' => Product::where('approvalStatus', 'APPROVED')->count(),
             'low_stock' => Product::where('approvalStatus', 'APPROVED')->whereRaw('stock <= threshold')->where('stock', '>', 0)->count(),
             'out_of_stock' => Product::where('approvalStatus', 'APPROVED')->where('stock', 0)->whereNull('supplierId')->count(),
-            'consignment_waiting' => Product::where('approvalStatus', 'APPROVED')->where('stock', 0)->whereNotNull('supplierId')->count(),
+            'consignment_waiting' => Product::where('approvalStatus', 'APPROVED')
+                ->whereNotNull('supplierId')
+                ->whereHas('consignmentItems', function($query) {
+                    $query->whereHas('batch', function($batchQuery) {
+                        $batchQuery->where('status', 'REQUESTED');
+                    });
+                })->count(),
             'total_value' => Product::where('approvalStatus', 'APPROVED')->sum(\DB::raw('stock * sellPrice'))
         ];
     }

@@ -9,7 +9,6 @@ use App\Models\ConsignmentItem;
 use App\Models\Supplier;
 use App\Models\Product;
 use App\Models\FinancialTransaction;
-use Illuminate\Support\Facades\DB;
 use App\Models\SupplierNotification;
 use Illuminate\Support\Facades\DB;
 
