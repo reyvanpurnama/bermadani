@@ -4,9 +4,14 @@
 
 @section('content')
     <div class="space-y-6">
-        {{-- Header --}}
+        {{-- Header with Back Button --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
+                <a href="{{ route('supplier.dashboard') }}" 
+                    class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 mb-2 transition-colors group">
+                    <i class='bx bx-arrow-back text-base group-hover:-translate-x-1 transition-transform'></i>
+                    Kembali ke Dashboard
+                </a>
                 <h1 class="text-xl font-bold text-slate-900 dark:text-white">Riwayat Stok & Pengiriman</h1>
                 <p class="text-[11px] text-slate-500 mt-0.5">Daftar batch konsinyasi dan histori pengiriman barang Anda</p>
             </div>
