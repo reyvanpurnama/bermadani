@@ -20,7 +20,10 @@
                 <i class='bx bx-category'></i> Kategori
             </button>
             <a href="{{ route('admin.product-review') }}"
-                class="bg-white dark:bg-darkCard border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                class="bg-white dark:bg-darkCard border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2 relative">
+                @if($pendingApprovalCount > 0)
+                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">{{ $pendingApprovalCount }}</span>
+                @endif
                 <i class='bx bx-check-shield'></i> Approval
             </a>
             <button wire:click="$refresh"

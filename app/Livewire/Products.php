@@ -333,11 +333,15 @@ class Products extends Component
     {
         // dd('Products component render called', $this->products->count());
         
+        // Count pending products for approval badge
+        $pendingApprovalCount = Product::where('approvalStatus', 'PENDING')->count();
+        
         return view('livewire.products', [
             'products' => $this->products,
             'categories' => $this->categories,
             'stats' => $this->stats,
-            'categoryList' => $this->categoryList
+            'categoryList' => $this->categoryList,
+            'pendingApprovalCount' => $pendingApprovalCount
         ]);
     }
 }
