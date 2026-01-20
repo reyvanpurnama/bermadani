@@ -20,7 +20,7 @@ class Products extends Component
     public $categoryFilter = '';
     public $stockFilter = '';
     public $perPage = 10;
-    
+
     // Category Modal Properties
     public $showCategoryModal = false;
     public $categoryId;
@@ -63,7 +63,7 @@ class Products extends Component
     public function deleteProduct($productId)
     {
         $product = Product::find($productId);
-        
+
         if ($product) {
             $product->delete();
             session()->flash('message', 'Produk berhasil dihapus');
@@ -75,7 +75,7 @@ class Products extends Component
         $query = Product::with('category')
             ->when($this->search, function ($q) {
                 $q->where('name', 'like', '%' . $this->search . '%')
-                  ->orWhere('sku', 'like', '%' . $this->search . '%');
+                    ->orWhere('sku', 'like', '%' . $this->search . '%');
             })
             ->when($this->categoryFilter, function ($q) {
                 $q->where('categoryId', $this->categoryFilter);
@@ -94,12 +94,12 @@ class Products extends Component
                 } elseif ($this->stockFilter === 'consignment_waiting') {
                     // Only show consignment products that have REQUESTED batches
                     $q->where('approvalStatus', 'APPROVED')
-                      ->whereNotNull('supplierId')
-                      ->whereHas('consignmentItems', function($query) {
-                          $query->whereHas('batch', function($batchQuery) {
-                              $batchQuery->where('status', 'REQUESTED');
-                          });
-                      });
+                        ->whereNotNull('supplierId')
+                        ->whereHas('consignmentItems', function ($query) {
+                        $query->whereHas('batch', function ($batchQuery) {
+                            $batchQuery->where('status', 'REQUESTED');
+                        });
+                    });
                 }
             });
 
@@ -119,8 +119,8 @@ class Products extends Component
             'out_of_stock' => Product::where('approvalStatus', 'APPROVED')->where('stock', 0)->whereNull('supplierId')->count(),
             'consignment_waiting' => Product::where('approvalStatus', 'APPROVED')
                 ->whereNotNull('supplierId')
-                ->whereHas('consignmentItems', function($query) {
-                    $query->whereHas('batch', function($batchQuery) {
+                ->whereHas('consignmentItems', function ($query) {
+                    $query->whereHas('batch', function ($batchQuery) {
                         $batchQuery->where('status', 'REQUESTED');
                     });
                 })->count(),
@@ -129,7 +129,7 @@ class Products extends Component
     }
 
     // ===== Category Modal Methods =====
-    
+
     public function openCategoryModal()
     {
         $this->showCategoryModal = true;
@@ -163,7 +163,7 @@ class Products extends Component
     public function editCategory($id)
     {
         $category = Category::findOrFail($id);
-        
+
         $this->categoryId = $category->id;
         $this->categoryName = $category->name;
         $this->categorySlug = $category->slug;
@@ -192,7 +192,7 @@ class Products extends Component
                 'description' => $this->categoryDescription,
                 'isActive' => $this->categoryIsActive,
             ]);
-            
+
             session()->flash('categoryMessage', 'Kategori berhasil diperbarui');
         } else {
             Category::create([
@@ -203,7 +203,7 @@ class Products extends Component
                 'description' => $this->categoryDescription,
                 'isActive' => $this->categoryIsActive,
             ]);
-            
+
             session()->flash('categoryMessage', 'Kategori berhasil ditambahkan');
         }
 
@@ -213,13 +213,13 @@ class Products extends Component
     public function deleteCategory($id)
     {
         $category = Category::findOrFail($id);
-        
+
         // Check if has products
         if ($category->products()->count() > 0) {
             session()->flash('categoryError', 'Kategori tidak bisa dihapus karena masih memiliki produk');
             return;
         }
-        
+
         $category->delete();
         session()->flash('categoryMessage', 'Kategori berhasil dihapus');
     }
@@ -228,7 +228,7 @@ class Products extends Component
     {
         $category = Category::findOrFail($id);
         $category->update(['isActive' => !$category->isActive]);
-        
+
         session()->flash('categoryMessage', 'Status kategori berhasil diubah');
     }
 
@@ -243,7 +243,7 @@ class Products extends Component
     }
 
     // ===== Quick Batch Modal Methods =====
-    
+
     public function openQuickBatchModal($productId)
     {
         $this->quickBatchProduct = Product::with('supplier')->find($productId);
@@ -281,7 +281,7 @@ class Products extends Component
                 'supplierId' => $product->supplierId,
                 'status' => 'REQUESTED', // Waiting for supplier to deliver
                 'receivedAt' => null, // Not received yet
-                'note' => 'Permintaan stok dari inventaris',
+                'note' => 'Permintaan restock barang via halaman Produk',
                 'totalValue' => $sellPrice * $this->quickBatchQty,
             ]);
 
@@ -310,21 +310,21 @@ class Products extends Component
 
     public function hasPendingBatch($productId)
     {
-        return ConsignmentBatch::whereHas('items', function($q) use ($productId) {
+        return ConsignmentBatch::whereHas('items', function ($q) use ($productId) {
             $q->where('productId', $productId);
         })->where('status', 'REQUESTED')->exists();
     }
 
     public function hasActiveBatch($productId)
     {
-        return ConsignmentBatch::whereHas('items', function($q) use ($productId) {
+        return ConsignmentBatch::whereHas('items', function ($q) use ($productId) {
             $q->where('productId', $productId);
         })->whereIn('status', ['ACTIVE', 'PENDING_SETTLEMENT', 'SETTLED'])->exists();
     }
 
     public function hasPendingSettlement($productId)
     {
-        return ConsignmentBatch::whereHas('items', function($q) use ($productId) {
+        return ConsignmentBatch::whereHas('items', function ($q) use ($productId) {
             $q->where('productId', $productId);
         })->where('status', 'PENDING_SETTLEMENT')->exists();
     }
@@ -332,10 +332,10 @@ class Products extends Component
     public function render()
     {
         // dd('Products component render called', $this->products->count());
-        
+
         // Count pending products for approval badge
         $pendingApprovalCount = Product::where('approvalStatus', 'PENDING')->count();
-        
+
         return view('livewire.products', [
             'products' => $this->products,
             'categories' => $this->categories,
