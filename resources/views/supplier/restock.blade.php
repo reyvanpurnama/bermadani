@@ -88,7 +88,7 @@
                             @endif
                         </div>
                         <div class="flex items-center gap-4 text-[11px]">
-                            <span class="text-slate-500">Dipesan: <strong
+                            <span class="text-slate-500">Diminta: <strong
                                     class="text-slate-900 dark:text-white">{{ $totalRequested }}</strong></span>
                             @if($batch->status !== 'REQUESTED')
                                 @php
@@ -132,7 +132,7 @@
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Batch</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Dipesan</th>
+                                Diminta</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                 Terjual</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
@@ -281,7 +281,7 @@
                         <h4 class="font-bold text-blue-800 dark:text-blue-300 text-[14px]">Ada {{ $requestedCount }} permintaan
                             stok menunggu!</h4>
                         <p class="text-[12px] text-blue-700 dark:text-blue-400 mt-1">
-                            Silakan kirim barang ke Koperasi UMB sesuai jumlah yang dipesan. Setelah barang diterima, status
+                            Silakan kirim barang ke Koperasi UMB sesuai jumlah yang diminta. Setelah barang diterima, status
                             akan berubah menjadi "Aktif".
                         </p>
                     </div>
