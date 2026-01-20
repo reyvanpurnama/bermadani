@@ -405,48 +405,77 @@
                                         class="bg-slate-50 dark:bg-slate-800/50 text-[10px] uppercase font-bold text-slate-500 tracking-widest">
                                         <tr>
                                             <th class="px-4 py-2">Produk</th>
-                                            <th class="px-4 py-2 text-right">Harga</th>
-                                            <th class="px-4 py-2 text-center">Qty Awal</th>
-                                            <th class="px-4 py-2 text-center">Selisih</th>
-                                            <th class="px-4 py-2 text-center">Terjual</th>
-                                            <th class="px-4 py-2 text-center">Retur</th>
-                                            <th class="px-4 py-2 text-center">Sisa</th>
+                                            @if($selectedBatch->status === 'REQUESTED')
+                                                <th class="px-4 py-2 text-center">Dikirim</th>
+                                                <th class="px-4 py-2 text-center w-24">Diterima</th>
+                                                <th class="px-4 py-2">Catatan Item</th>
+                                            @else
+                                                <th class="px-4 py-2 text-right">Harga</th>
+                                                <th class="px-4 py-2 text-center">Qty Awal</th>
+                                                <th class="px-4 py-2 text-center">Selisih</th>
+                                                <th class="px-4 py-2 text-center">Terjual</th>
+                                                <th class="px-4 py-2 text-center">Retur</th>
+                                                <th class="px-4 py-2 text-center">Sisa</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[12px]">
-                                        @foreach($selectedBatch->items as $item)
-                                            <tr>
-                                                <td class="px-4 py-2">
-                                                    <div class="font-semibold text-slate-800 dark:text-white">
-                                                        {{ $item->product->name ?? '-' }}
-                                                    </div>
-                                                </td>
-                                                <td class="px-4 py-2 text-right font-medium">Rp
-                                                    {{ number_format($item->sellPrice, 0, ',', '.') }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">{{ $item->initialQty }}</td>
-                                                <td class="px-4 py-2 text-center">
-                                                    @if($item->damagedQty > 0)
-                                                        <span class="text-rose-500 font-bold">{{ $item->damagedQty }}</span>
-                                                    @else
-                                                        <span class="text-slate-400">-</span>
-                                                    @endif
-                                                </td>
-                                                <td class="px-4 py-2 text-center text-emerald-600 font-bold">
-                                                    {{ $item->soldQty }}
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    @if($item->returnedQty > 0)
-                                                        <span class="text-rose-600 dark:text-rose-400 font-bold">{{ $item->returnedQty }}</span>
-                                                    @else
-                                                        <span class="text-slate-400">-</span>
-                                                    @endif
-                                                </td>
-                                                <td class="px-4 py-2 text-center text-amber-500 font-bold">
-                                                    {{ $item->remainingQty }}
-                                                </td>
-                                            </tr>
-                                        @endforeach
+                                        @if($selectedBatch->status === 'REQUESTED')
+                                            @foreach($receiveItems as $index => $receiveItem)
+                                                <tr>
+                                                    <td class="px-4 py-2">
+                                                        <div class="font-semibold text-slate-800 dark:text-white">
+                                                            {{ $receiveItem['productName'] }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center text-slate-500">
+                                                        {{ $receiveItem['requestedQty'] }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        <input type="number" wire:model.live="receiveItems.{{ $index }}.receivedQty" min="0"
+                                                            class="w-20 px-2 py-1 text-center font-bold border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                                    </td>
+                                                    <td class="px-4 py-2">
+                                                        <input type="text" wire:model="receiveItems.{{ $index }}.note" placeholder="Tulis catatan..."
+                                                            class="w-full px-2 py-1 text-xs border border-slate-200 dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-800 focus:border-blue-500">
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            @foreach($selectedBatch->items as $item)
+                                                <tr>
+                                                    <td class="px-4 py-2">
+                                                        <div class="font-semibold text-slate-800 dark:text-white">
+                                                            {{ $item->product->name ?? '-' }}
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-4 py-2 text-right font-medium">Rp
+                                                        {{ number_format($item->sellPrice, 0, ',', '.') }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">{{ $item->initialQty }}</td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        @if($item->damagedQty > 0)
+                                                            <span class="text-rose-500 font-bold">{{ $item->damagedQty }}</span>
+                                                        @else
+                                                            <span class="text-slate-400">-</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center text-emerald-600 font-bold">
+                                                        {{ $item->soldQty }}
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center">
+                                                        @if($item->returnedQty > 0)
+                                                            <span class="text-rose-600 dark:text-rose-400 font-bold">{{ $item->returnedQty }}</span>
+                                                        @else
+                                                            <span class="text-slate-400">-</span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="px-4 py-2 text-center text-amber-500 font-bold">
+                                                        {{ $item->remainingQty }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
                                 </table>
                             </div>
@@ -517,10 +546,14 @@
                                         Stok belum ditambahkan. Konfirmasi penerimaan setelah barang diterima dari supplier.
                                     </p>
                                 </div>
-                                <button wire:click="openReceiveForm"
+                                <button wire:click="confirmReceive"
                                     class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold text-[12px] shadow-md shadow-blue-500/20 transition-colors flex items-center justify-center gap-2">
-                                    <i class='bx bx-check-circle'></i> Konfirmasi Penerimaan
+                                    <i class='bx bx-check-double'></i> Simpan & Konfirmasi Stok
                                 </button>
+                                <div class="mt-2">
+                                     <textarea wire:model="receiveNote" rows="2" placeholder="Catatan penerimaan..."
+                                        class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-[11px] resize-none"></textarea>
+                                </div>
                             </div>
                         @endif
 
@@ -544,96 +577,7 @@
         </div>
     @endif
 
-    {{-- Receive Confirmation Modal --}}
-    @if($showReceiveForm && $selectedBatch)
-        <div class="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-            <div
-                class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden animate-fade-in-up my-8">
-                <div
-                    class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
-                    <div>
-                        <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
-                            <i class='bx bx-package text-blue-600'></i> Konfirmasi Penerimaan Barang
-                        </h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Batch #{{ $selectedBatch->batchCode }} -
-                            {{ $selectedBatch->supplier->businessName ?? '-' }}</p>
-                    </div>
-                    <button wire:click="closeReceiveForm" class="text-slate-400 hover:text-slate-600 transition-colors">
-                        <i class='bx bx-x text-2xl'></i>
-                    </button>
-                </div>
 
-                <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
-                    <div
-                        class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-3">
-                        <p class="text-[12px] text-blue-700 dark:text-blue-400">
-                            <i class='bx bx-info-circle mr-1'></i>
-                            Sesuaikan jumlah barang yang diterima jika berbeda dari yang diminta. Berikan catatan untuk
-                            barang yang rusak atau tidak layak dijual.
-                        </p>
-                    </div>
-
-                    <div class="space-y-3">
-                        @foreach($receiveItems as $index => $item)
-                                            @php
-                                                $received = (int) ($item['receivedQty'] ?? 0);
-                                                $requested = (int) ($item['requestedQty'] ?? 0);
-                                                $isDifferent = $received != $requested;
-                                                $diff = $received - $requested;
-                                            @endphp
-                            <div
-                                class="bg-white dark:bg-slate-800/50 p-4 rounded-xl border {{ $isDifferent ? 'border-amber-300 dark:border-amber-500/50' : 'border-slate-200 dark:border-slate-700' }} shadow-sm">
-                                                <div class="flex justify-between items-start mb-3">
-                                                    <div>
-                                                        <h4 class="font-semibold text-slate-800 dark:text-white text-[13px]">
-                                                            {{ $item['productName'] }}</h4>
-                                                        <p class="text-[10px] text-slate-500">Diminta: {{ $item['requestedQty'] }} pcs</p>
-                                                    </div>
-                                                    @if($isDifferent)
-                                                        <span
-                                                            class="text-[10px] font-bold px-2 py-0.5 rounded {{ $diff > 0 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' }}">
-                                                            {{ $diff > 0 ? '+' : '' }}{{ $diff }} pcs
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                    <div>
-                                                        <label class="text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1 block">Qty
-                                                            Diterima:</label>
-                                                        <input wire:model.live="receiveItems.{{ $index }}.receivedQty" type="number" min="0"
-                                                            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border {{ $isDifferent ? 'border-amber-400 dark:border-amber-500' : 'border-slate-200 dark:border-slate-600' }} rounded-lg text-sm text-center font-bold">
-                                                    </div>
-                                                    <div>
-                                                        <label
-                                                            class="text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1 block">Catatan:</label>
-                                                        <input wire:model="receiveItems.{{ $index }}.note" type="text" placeholder="Opsional"
-                                                            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm">
-                                                    </div>
-                                                </div>
-                                            </div>
-                        @endforeach
-                    </div>
-
-                    <div>
-                        <label class="text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1 block">Catatan Umum
-                            (Opsional):</label>
-                        <textarea wire:model="receiveNote" rows="3" placeholder="Tambahkan catatan untuk batch ini..."
-                            class="w-full px-3 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg text-sm resize-none"></textarea>
-                    </div>
-                </div>
-
-                <div
-                    class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 flex justify-end gap-3 border-t border-slate-200 dark:border-slate-700">
-                    <button wire:click="closeReceiveForm"
-                        class="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 font-medium transition-colors">Batal</button>
-                    <button wire:click="confirmReceive"
-                        class="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition-colors flex items-center gap-2">
-                        <i class='bx bx-check-double'></i> Konfirmasi & Tambah Stok
-                    </button>
-                </div>
-            </div>
-        </div>
-    @endif
 
     {{-- Retur Modal --}}
     @if($showReturModal && $selectedBatch)

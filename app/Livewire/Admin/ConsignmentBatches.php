@@ -136,6 +136,22 @@ class ConsignmentBatches extends Component
     public function openDetail($batchId)
     {
         $this->selectedBatch = ConsignmentBatch::with(['supplier', 'items.product'])->find($batchId);
+
+        // Auto-prepare receive items if in REQUESTED status (Unified Modal UX)
+        if ($this->selectedBatch && $this->selectedBatch->status === 'REQUESTED') {
+            $this->receiveItems = [];
+            foreach ($this->selectedBatch->items as $item) {
+                $this->receiveItems[] = [
+                    'itemId' => $item->id,
+                    'productName' => $item->product->name,
+                    'requestedQty' => $item->initialQty,
+                    'receivedQty' => $item->initialQty,
+                    'note' => '',
+                ];
+            }
+            $this->receiveNote = '';
+        }
+
         $this->showDetailModal = true;
     }
 
@@ -143,6 +159,7 @@ class ConsignmentBatches extends Component
     {
         $this->showDetailModal = false;
         $this->selectedBatch = null;
+        $this->receiveItems = []; // clean up
     }
 
     public function openReceiveForm()
@@ -260,7 +277,8 @@ class ConsignmentBatches extends Component
             ]);
         });
 
-        $this->closeReceiveForm();
+
+
         $this->closeDetail();
         $this->dispatch('notify', ['message' => 'Barang berhasil diterima dan stok telah ditambahkan', 'type' => 'success']);
     }
