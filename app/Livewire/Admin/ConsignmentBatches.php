@@ -408,6 +408,7 @@ class ConsignmentBatches extends Component
         $pendingSettlementBatches = ConsignmentBatch::where('status', 'PENDING_SETTLEMENT')->get();
 
         $stats = [
+            'requested' => ConsignmentBatch::where('status', 'REQUESTED')->count(),
             'activeBatches' => $activeBatches->count(),
             'totalAssetValue' => $activeBatches->sum('totalValue'),
             'totalSold' => $activeBatches->sum('totalSold') + $pendingSettlementBatches->sum('totalSold'),
