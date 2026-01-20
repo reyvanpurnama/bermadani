@@ -108,7 +108,7 @@
                                     <strong class="text-blue-600">{{ $totalRemaining }}</strong>
                                 </span>
                                 @if($hasDiscrepancy)
-                                    <span class="text-red-600 font-bold">(-{{ $totalDamaged }} rusak)</span>
+                                    <span class="text-red-600 font-bold">(-{{ $totalDamaged }} selisih)</span>
                                 @endif
                             @endif
                         </div>
@@ -174,7 +174,7 @@
                                     <span class="font-bold text-slate-900 dark:text-white">{{ $totalRequested }}</span>
                                     @if($hasDiscrepancy)
                                         <div class="text-[9px] text-red-600 dark:text-red-400 mt-0.5" title="Rusak/hilang/tidak layak jual">
-                                            -{{ $totalDamaged }} rusak
+                                            -{{ $totalDamaged }} selisih
                                         </div>
                                     @endif
                                 </td>
