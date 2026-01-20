@@ -151,6 +151,8 @@ class ConsignmentBatches extends Component
             return;
         }
 
+        $this->showDetailModal = false;
+
         // Prepare receive items with default values
         $this->receiveItems = [];
         foreach ($this->selectedBatch->items as $item) {
@@ -386,7 +388,7 @@ class ConsignmentBatches extends Component
         // Stats
         $activeBatches = ConsignmentBatch::where('status', 'ACTIVE')->get();
         $pendingSettlementBatches = ConsignmentBatch::where('status', 'PENDING_SETTLEMENT')->get();
-        
+
         $stats = [
             'activeBatches' => $activeBatches->count(),
             'totalAssetValue' => $activeBatches->sum('totalValue'),

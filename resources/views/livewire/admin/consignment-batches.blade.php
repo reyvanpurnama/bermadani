@@ -550,7 +550,7 @@
             <div
                 class="bg-white dark:bg-darkCard rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden animate-fade-in-up my-8">
                 <div
-                    class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-blue-50 dark:bg-blue-500/10">
+                    class="flex justify-between items-center px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
                     <div>
                         <h3 class="font-bold text-lg text-slate-800 dark:text-white flex items-center gap-2">
                             <i class='bx bx-package text-blue-600'></i> Konfirmasi Penerimaan Barang
@@ -581,8 +581,8 @@
                                                 $isDifferent = $received != $requested;
                                                 $diff = $received - $requested;
                                             @endphp
-                             <div
-                                                class="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border {{ $isDifferent ? 'border-amber-300 dark:border-amber-500/50' : 'border-slate-200 dark:border-slate-700' }}">
+                            <div
+                                class="bg-white dark:bg-slate-800/50 p-4 rounded-xl border {{ $isDifferent ? 'border-amber-300 dark:border-amber-500/50' : 'border-slate-200 dark:border-slate-700' }} shadow-sm">
                                                 <div class="flex justify-between items-start mb-3">
                                                     <div>
                                                         <h4 class="font-semibold text-slate-800 dark:text-white text-[13px]">
