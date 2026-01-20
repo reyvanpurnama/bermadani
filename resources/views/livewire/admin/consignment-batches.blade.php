@@ -409,6 +409,7 @@
                                             <th class="px-4 py-2 text-center">Qty Awal</th>
                                             <th class="px-4 py-2 text-center">Selisih</th>
                                             <th class="px-4 py-2 text-center">Terjual</th>
+                                            <th class="px-4 py-2 text-center">Retur</th>
                                             <th class="px-4 py-2 text-center">Sisa</th>
                                         </tr>
                                     </thead>
@@ -433,6 +434,13 @@
                                                 </td>
                                                 <td class="px-4 py-2 text-center text-emerald-600 font-bold">
                                                     {{ $item->soldQty }}
+                                                </td>
+                                                <td class="px-4 py-2 text-center">
+                                                    @if($item->returnedQty > 0)
+                                                        <span class="text-rose-600 dark:text-rose-400 font-bold">{{ $item->returnedQty }}</span>
+                                                    @else
+                                                        <span class="text-slate-400">-</span>
+                                                    @endif
                                                 </td>
                                                 <td class="px-4 py-2 text-center text-amber-500 font-bold">
                                                     {{ $item->remainingQty }}
