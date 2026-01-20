@@ -76,7 +76,10 @@
             class="px-4 py-2 text-[13px] relative {{ $status === 'REQUESTED' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">
             Menunggu Barang
             @if($stats['requested'] > 0)
-                <span class="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                <span class="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
+                </span>
             @endif
         </button>
         <button wire:click="setStatus('ACTIVE')"
