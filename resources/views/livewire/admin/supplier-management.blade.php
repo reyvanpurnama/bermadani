@@ -5,8 +5,14 @@
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola pendaftaran dan status supplier.</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.consignment-batches') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+            @php
+                $actionableBatches = \App\Models\ConsignmentBatch::whereIn('status', ['REQUESTED', 'PENDING_SETTLEMENT'])->count();
+            @endphp
+            <a href="{{ route('admin.consignment-batches') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2 relative">
                 <i class='bx bx-notepad'></i> Batch Konsinyasi
+                @if($actionableBatches > 0)
+                    <span class="absolute -top-1 -right-1 w-3 h-3 bg-rose-500 rounded-full animate-pulse"></span>
+                @endif
             </a>
             <a href="{{ route('admin.consignment-report') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-file'></i> Laporan
