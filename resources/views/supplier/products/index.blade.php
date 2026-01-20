@@ -194,15 +194,23 @@
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Satuan</th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Stok
-                        </th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status
-                        </th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Stok Toko</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Performa</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @forelse($products as $product)
+                        @php
+                            // Calculate consignment stats for this product
+                            $consignmentItems = \App\Models\ConsignmentItem::where('productId', $product->id)
+                                ->with('batch')
+                                ->get();
+                            $totalSold = $consignmentItems->sum('soldQty');
+                            $totalReturned = $consignmentItems->sum('returnedQty');
+                            $activeBatches = $consignmentItems->where('batch.status', 'ACTIVE');
+                        @endphp
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
@@ -243,6 +251,27 @@
                                     @endif
                                 @else
                                     <span class="text-slate-400 text-xs">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                @if($totalSold > 0 || $totalReturned > 0)
+                                    <div class="flex items-center justify-center gap-2 text-xs">
+                                        @if($totalSold > 0)
+                                            <span class="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                                                <i class='bx bx-check-circle'></i> {{ $totalSold }}
+                                            </span>
+                                        @endif
+                                        @if($totalReturned > 0)
+                                            @if($totalSold > 0)
+                                                <span class="text-slate-400">•</span>
+                                            @endif
+                                            <span class="text-rose-600 dark:text-rose-400 font-semibold flex items-center gap-1">
+                                                <i class='bx bx-undo'></i> {{ $totalReturned }}
+                                            </span>
+                                        @endif
+                                    </div>
+                                @else
+                                    <div class="text-center text-slate-400 text-xs">-</div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-center">
@@ -296,7 +325,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
+                            <td colspan="7" class="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                                 <div class="flex flex-col items-center justify-center">
                                     <i class='bx bx-box text-4xl mb-2 text-slate-300'></i>
                                     <p>Belum ada produk.</p>
