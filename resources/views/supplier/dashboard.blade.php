@@ -157,7 +157,22 @@
                                         Dibayar: <span class="font-semibold text-emerald-600">{{ $batch->settledAt?->format('d M Y H:i') ?? '-' }}</span>
                                     </p>
                                     @if($batch->items->count() > 0)
-                                        <div class="flex flex-wrap gap-1.5 mt-2">
+                                        @php
+                                            $totalSold = $batch->items->sum('soldQty');
+                                            $totalReturned = $batch->items->sum('returnedQty');
+                                        @endphp
+                                        <div class="flex items-center gap-2 mt-2 text-[10px]">
+                                            <span class="text-emerald-600 dark:text-emerald-400 font-semibold">
+                                                <i class='bx bx-check-circle'></i> {{ $totalSold }} terjual
+                                            </span>
+                                            @if($totalReturned > 0)
+                                                <span class="text-slate-400">•</span>
+                                                <span class="text-rose-600 dark:text-rose-400 font-semibold">
+                                                    <i class='bx bx-undo'></i> {{ $totalReturned }} diretur
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="flex flex-wrap gap-1.5 mt-1.5">
                                             @foreach($batch->items->take(2) as $item)
                                                 <span class="text-[9px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-1.5 py-0.5 rounded">
                                                     {{ $item->product->name ?? '-' }}
