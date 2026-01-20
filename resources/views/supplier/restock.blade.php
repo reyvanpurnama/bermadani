@@ -142,7 +142,7 @@
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                 Status</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
-                                Estimasi</th>
+                                Pendapatan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">

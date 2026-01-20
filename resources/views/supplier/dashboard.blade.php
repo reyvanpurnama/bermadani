@@ -185,7 +185,7 @@
                                     @endif
                                 </div>
                                 <div class="text-right flex flex-col items-end gap-1">
-                                    <p class="text-[10px] text-slate-500">Diterima</p>
+                                    <p class="text-[10px] text-slate-500">Pendapatan</p>
                                     <p class="text-sm font-bold text-emerald-600 dark:text-emerald-400 group-hover:scale-105 transition-transform">
                                         Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
                                     </p>
