@@ -19,7 +19,7 @@
             <h1 class="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span class="font-mono text-slate-500 font-normal">{{ $transaction->invoiceNumber }}</span>
                 @if($transaction->status === 'COMPLETED')
-                    <span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 text-xs px-2 py-0.5 rounded-full uppercase tracking-wide">Lunas</span>
+                    <span class="bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 text-xs px-2 py-0.5 rounded-full uppercase tracking-wide">Success</span>
                 @elseif($transaction->status === 'CANCELLED')
                     <span class="bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400 text-xs px-2 py-0.5 rounded-full uppercase tracking-wide">Void</span>
                 @else

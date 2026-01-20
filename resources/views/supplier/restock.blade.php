@@ -91,13 +91,25 @@
                             <span class="text-slate-500">Diminta: <strong
                                     class="text-slate-900 dark:text-white">{{ $totalRequested }}</strong></span>
                             @if($batch->status !== 'REQUESTED')
-                                <span class="text-slate-500">Diterima:
-                                    <strong
-                                        class="{{ $hasDiscrepancy ? 'text-amber-600' : 'text-emerald-600' }}">{{ $totalReceived ?: $totalRequested }}</strong>
-                                    @if($hasDiscrepancy)
-                                        <span class="text-red-600 font-bold">(-{{ $totalDamaged }})</span>
-                                    @endif
+                                @php
+                                    $totalSold = $batch->items->sum('soldQty');
+                                    $totalReturned = $batch->items->sum('returnedQty');
+                                    $totalRemaining = $batch->items->sum('remainingQty');
+                                @endphp
+                                <span class="text-slate-500">Terjual:
+                                    <strong class="text-emerald-600">{{ $totalSold }}</strong>
                                 </span>
+                                @if($totalReturned > 0)
+                                    <span class="text-slate-500">Retur:
+                                        <strong class="text-rose-600">{{ $totalReturned }}</strong>
+                                    </span>
+                                @endif
+                                <span class="text-slate-500">Sisa:
+                                    <strong class="text-blue-600">{{ $totalRemaining }}</strong>
+                                </span>
+                                @if($hasDiscrepancy)
+                                    <span class="text-red-600 font-bold">(-{{ $totalDamaged }} rusak)</span>
+                                @endif
                             @endif
                         </div>
                     </div>
@@ -113,7 +125,6 @@
                 @endforelse
             </div>
 
-            {{-- Desktop Table View --}}
             <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
@@ -123,7 +134,11 @@
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                 Diminta</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Diterima</th>
+                                Terjual</th>
+                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                Retur</th>
+                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                                Sisa</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
                                 Status</th>
                             <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
@@ -151,31 +166,48 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <span
-                                        class="font-bold text-slate-900 dark:text-white">{{ $batch->items->sum('initialQty') }}</span>
-                                    <span class="text-[10px] text-slate-500">pcs</span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
                                     @php
                                         $totalRequested = $batch->items->sum('initialQty');
-                                        $totalReceived = $batch->items->sum('receivedQty');
                                         $totalDamaged = $batch->items->sum('damagedQty');
                                         $hasDiscrepancy = $totalDamaged > 0;
                                     @endphp
-                                    @if($batch->status === 'REQUESTED')
-                                        <span class="text-[11px] text-slate-400 italic">Belum diterima</span>
-                                    @else
-                                        <div class="flex items-center justify-center gap-1.5">
-                                            <span
-                                                class="font-bold text-[13px] {{ $hasDiscrepancy ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400' }}">{{ $totalReceived ?: $totalRequested }}</span>
-                                            @if($hasDiscrepancy)
-                                                <span
-                                                    class="text-[10px] bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 px-1.5 py-0.5 rounded font-bold"
-                                                    title="{{ $totalDamaged }} pcs rusak/hilang/tidak layak jual">
-                                                    -{{ $totalDamaged }}
-                                                </span>
-                                            @endif
+                                    <span class="font-bold text-slate-900 dark:text-white">{{ $totalRequested }}</span>
+                                    @if($hasDiscrepancy)
+                                        <div class="text-[9px] text-red-600 dark:text-red-400 mt-0.5" title="Rusak/hilang/tidak layak jual">
+                                            -{{ $totalDamaged }} rusak
                                         </div>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    @php
+                                        $totalSold = $batch->items->sum('soldQty');
+                                    @endphp
+                                    @if($batch->status === 'REQUESTED')
+                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                    @else
+                                        <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $totalSold }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    @php
+                                        $totalReturned = $batch->items->sum('returnedQty');
+                                    @endphp
+                                    @if($batch->status === 'REQUESTED')
+                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                    @elseif($totalReturned > 0)
+                                        <span class="font-bold text-rose-600 dark:text-rose-400">{{ $totalReturned }}</span>
+                                    @else
+                                        <span class="text-slate-400">0</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    @php
+                                        $totalRemaining = $batch->items->sum('remainingQty');
+                                    @endphp
+                                    @if($batch->status === 'REQUESTED')
+                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                    @else
+                                        <span class="font-bold text-blue-600 dark:text-blue-400">{{ $totalRemaining }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
@@ -214,7 +246,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                                <td colspan="8" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                     <div class="flex flex-col items-center justify-center">
                                         <div
                                             class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-3xl text-slate-300 dark:text-slate-600 mb-4">

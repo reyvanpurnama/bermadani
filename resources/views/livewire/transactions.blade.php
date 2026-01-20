@@ -16,7 +16,7 @@
     <div class="mb-6">
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                <h1 class="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
                     <i class='bx bx-receipt text-primary'></i> Riwayat Transaksi
                 </h1>
                 <p class="text-sm text-slate-500 mt-1">Kelola dan pantau seluruh transaksi penjualan</p>
@@ -34,45 +34,45 @@
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Total Transaksi</p>
-                    <h3 class="text-3xl font-bold text-slate-800 dark:text-white">{{ number_format($stats['total_transactions']) }} <span class="text-base font-normal text-slate-400">Struk</span></h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Transaksi</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white">{{ number_format($stats['total_transactions']) }} <span class="text-xs font-normal text-slate-400">Struk</span></h3>
                 </div>
-                <div class="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center">
-                    <i class='bx bx-receipt text-3xl text-primary'></i>
+                <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl flex items-center justify-center">
+                    <i class='bx bx-receipt text-2xl text-primary'></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Omzet Hari Ini</p>
-                    <h3 class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($stats['today_revenue'], 0, ',', '.') }}</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Omzet Hari Ini</p>
+                    <h3 class="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($stats['today_revenue'], 0, ',', '.') }}</h3>
                 </div>
-                <div class="w-14 h-14 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center">
-                    <i class='bx bx-trending-up text-3xl text-emerald-600'></i>
+                <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                    <i class='bx bx-trending-up text-2xl text-emerald-600'></i>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm">
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Rata-rata Basket</p>
-                    <h3 class="text-3xl font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['average_basket'], 0, ',', '.') }}</h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Rata-rata Belanja</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['average_basket'], 0, ',', '.') }}</h3>
                 </div>
-                <div class="w-14 h-14 bg-amber-50 dark:bg-amber-500/10 rounded-full flex items-center justify-center">
-                    <i class='bx bx-shopping-bag text-3xl text-amber-600'></i>
+                <div class="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-xl flex items-center justify-center">
+                    <i class='bx bx-shopping-bag text-2xl text-amber-600'></i>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Content Card -->
-    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
         
         <!-- Search and Actions Bar -->
         <div class="p-4 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-3 items-center justify-between">

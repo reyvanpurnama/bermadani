@@ -14,6 +14,7 @@ class ConsignmentItem extends Model
         'productId',
         'initialQty',
         'damagedQty',
+        'returnedQty',
         'soldQty',
         'remainingQty',
         'sellPrice',
@@ -60,10 +61,11 @@ class ConsignmentItem extends Model
 
     /**
      * Record a return (retur) for this consignment item
-     * Decreases remainingQty and recalculates batch totals
+     * Increases returnedQty, decreases remainingQty, and recalculates batch totals
      */
     public function recordReturn(int $quantity): void
     {
+        $this->increment('returnedQty', $quantity);
         $this->decrement('remainingQty', $quantity);
         
         // Recalculate batch totals

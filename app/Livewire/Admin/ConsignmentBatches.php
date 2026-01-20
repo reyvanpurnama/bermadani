@@ -339,8 +339,8 @@ class ConsignmentBatches extends Component
                 if ($returQty <= 0)
                     continue;
 
-                // Update consignment item
-                $item->decrement('remainingQty', $returQty);
+                // Update consignment item - use recordReturn method for proper tracking
+                $item->recordReturn($returQty);
 
                 // Reduce product stock
                 $item->product->decrement('stock', $returQty);
