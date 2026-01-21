@@ -28,6 +28,12 @@ class PosCustom extends Component
 
     public $lastInvoice = null;
 
+    public $showNewMemberModal = false;
+    public $newMemberName = '';
+    public $newMemberPhone = '';
+    public $newMemberGender = 'MALE'; // Default
+    public $newMemberUnit = '';
+
     public function mount()
     {
         // Block kasir yang belum check-in
@@ -40,11 +46,78 @@ class PosCustom extends Component
         }
 
         // Load all active members for client-side search
+        $this->loadMembers();
+    }
+
+    public function loadMembers()
+    {
         $this->members = Member::select('id', 'name', 'nomorAnggota', 'unitKerja', 'tier', 'points')
             ->where('status', 'ACTIVE')
             ->orderBy('name')
             ->get()
             ->toArray();
+    }
+
+    public function createNewMember()
+    {
+        $this->reset(['newMemberName', 'newMemberPhone', 'newMemberGender', 'newMemberUnit']);
+        $this->showNewMemberModal = true;
+    }
+
+    public function storeNewMember()
+    {
+        $this->validate([
+            'newMemberName' => 'required|string|min:3',
+            'newMemberPhone' => 'required|numeric|digits_between:10,13',
+            'newMemberGender' => 'required|in:MALE,FEMALE',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // 1. Create User Account
+            // Use phone number as temporary email prefix if no email provided logic (simplified here)
+            // Or just generate a dummy email consistent with the system
+            $dummyEmail = $this->newMemberPhone . '@member.store';
+
+            // Check if user exists (by email/phone logic - simplified)
+            if (\App\Models\User::where('email', $dummyEmail)->exists()) {
+                throw new \Exception('Nomor HP sudah terdaftar di sistem.');
+            }
+
+            $user = \App\Models\User::create([
+                'name' => $this->newMemberName,
+                'email' => $dummyEmail,
+                'password' => bcrypt($this->newMemberPhone), // Default password is phone number
+                'role' => 'MEMBER',
+            ]);
+
+            // 2. Create Member Record
+            $member = Member::create([
+                'userId' => $user->id,
+                'nomorAnggota' => Member::generateNomorAnggota(),
+                'name' => $this->newMemberName,
+                'email' => $dummyEmail,
+                'phone' => $this->newMemberPhone,
+                'gender' => $this->newMemberGender,
+                'unitKerja' => $this->newMemberUnit ?: 'UMUM', // Default to UMUM if empty
+                'status' => 'ACTIVE',
+                'joinDate' => now(),
+                'isMemberKoperasi' => false, // Toko retail member usually not full koperasi member initially
+            ]);
+
+            DB::commit();
+
+            // 3. Auto Select Member
+            $this->loadMembers(); // Reload list
+            $this->selectMember($member->id);
+            $this->showNewMemberModal = false;
+
+            $this->dispatch('notify', ['type' => 'success', 'message' => 'Member berhasil dibuat & dipilih!']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal membuat member: ' . $e->getMessage()]);
+        }
     }
 
     public function addToCart($productId)

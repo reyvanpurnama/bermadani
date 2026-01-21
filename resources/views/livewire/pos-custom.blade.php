@@ -160,6 +160,13 @@
                         <div class="absolute inset-y-0 left-2.5 flex items-center pointer-events-none text-slate-400">
                             <i class='bx bx-search text-sm'></i>
                         </div>
+
+                        {{-- Quick Add Button (Always visible inside input for easy access) --}}
+                        <button wire:click="createNewMember"
+                            class="absolute inset-y-0 right-0 px-3 text-slate-400 hover:text-primary transition-colors"
+                            title="Buat Member Baru">
+                            <i class='bx bx-user-plus text-lg'></i>
+                        </button>
                     </div>
 
                     {{-- Dropdown Results --}}
@@ -170,10 +177,17 @@
                         x-transition:leave-start="opacity-100 translate-y-0"
                         x-transition:leave-end="opacity-0 translate-y-1"
                         class="absolute z-50 w-full mt-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl shadow-xl max-h-48 overflow-y-auto custom-scroll">
+                        <div
+                            class="p-2 border-b border-slate-100 dark:border-slate-600 sticky top-0 bg-white dark:bg-slate-700 z-10">
+                            <button wire:click="createNewMember"
+                                class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-lg text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex items-center justify-center gap-2">
+                                <i class='bx bx-plus-circle text-lg'></i> Buat Member Baru
+                            </button>
+                        </div>
                         <template x-if="filtered.length === 0">
-                            <div class="px-4 py-6 text-center text-slate-400 text-[11px]">
+                            <div class="px-4 py-4 text-center text-slate-400 text-[11px]">
                                 <i class='bx bx-user-x text-2xl mb-1 block opacity-50'></i>
-                                <p>Member tidak ditemukan</p>
+                                <p class="mb-2">Member tidak ditemukan</p>
                             </div>
                         </template>
                         <template x-for="member in filtered" :key="member.id">
@@ -195,6 +209,71 @@
                     </div>
                 </div>
             @endif
+        </div>
+
+        {{-- Quick Member Registration Modal --}}
+        <div x-show="$wire.showNewMemberModal" x-cloak
+            class="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-sm w-full p-6 relative">
+                <button wire:click="$set('showNewMemberModal', false)"
+                    class="absolute top-4 right-4 text-slate-400 hover:text-rose-500">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white mb-1 flex items-center gap-2">
+                    <i class='bx bx-user-plus text-primary'></i> Member Baru
+                </h3>
+                <p class="text-[11px] text-slate-500 mb-4">Registrasi cepat untuk pelanggan toko.</p>
+
+                <div class="space-y-3">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap
+                            <span class="text-rose-500">*</span></label>
+                        <input type="text" wire:model="newMemberName" placeholder="Nama pelanggan"
+                            class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+                        @error('newMemberName') <span class="text-[10px] text-rose-500">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">No. HP / WA
+                            <span class="text-rose-500">*</span></label>
+                        <input type="number" wire:model="newMemberPhone" placeholder="08..."
+                            class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+                        <p class="text-[10px] text-slate-400 mt-0.5">Digunakan sebagai password login member.</p>
+                        @error('newMemberPhone') <span class="text-[10px] text-rose-500">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Gender
+                                <span class="text-rose-500">*</span></label>
+                            <select wire:model="newMemberGender"
+                                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+                                <option value="MALE">Laki-laki</option>
+                                <option value="FEMALE">Perempuan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">Unit</label>
+                            <select wire:model="newMemberUnit"
+                                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+                                <option value="">UMUM</option>
+                                <option value="DOSEN">Dosen</option>
+                                <option value="KARYAWAN">Karyawan</option>
+                                <option value="MAHASISWA">Mahasiswa</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button wire:click="storeNewMember" wire:loading.attr="disabled"
+                        class="w-full mt-2 bg-primary hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <span wire:loading.remove wire:target="storeNewMember">Simpan & Pilih</span>
+                        <span wire:loading wire:target="storeNewMember"><i class='bx bx-loader-alt bx-spin'></i>
+                            Menyimpan...</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         {{-- Cart Items --}}
@@ -281,7 +360,9 @@
         class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" x-transition>
         <div @click.away="showPayment = false"
             class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-md w-full p-6">
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4">💳 Pembayaran</h3>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class='bx bx-credit-card text-primary'></i> Pembayaran
+            </h3>
 
             <div class="space-y-4">
                 {{-- Total --}}
@@ -298,16 +379,16 @@
                         Pembayaran</label>
                     <div class="grid grid-cols-2 gap-2">
                         <button wire:click="$set('paymentMethod', 'CASH')"
-                            class="py-3 rounded-lg border-2 transition-colors text-sm {{ $paymentMethod === 'CASH' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
-                            💵 Cash
+                            class="py-3 rounded-lg border-2 transition-colors text-sm flex items-center justify-center gap-2 {{ $paymentMethod === 'CASH' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
+                            <i class='bx bx-money text-lg'></i> Cash
                         </button>
                         <button wire:click="$set('paymentMethod', 'TRANSFER')"
-                            class="py-3 rounded-lg border-2 transition-colors text-sm {{ $paymentMethod === 'TRANSFER' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
-                            🏦 Transfer
+                            class="py-3 rounded-lg border-2 transition-colors text-sm flex items-center justify-center gap-2 {{ $paymentMethod === 'TRANSFER' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
+                            <i class='bx bxs-bank text-lg'></i> Transfer
                         </button>
                         <button wire:click="$set('paymentMethod', 'CREDIT')"
-                            class="py-3 rounded-lg border-2 transition-colors text-sm {{ $paymentMethod === 'CREDIT' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
-                            💳 Kredit
+                            class="py-3 rounded-lg border-2 transition-colors text-sm flex items-center justify-center gap-2 {{ $paymentMethod === 'CREDIT' ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20 text-primary' : 'border-slate-300 dark:border-slate-600' }}">
+                            <i class='bx bx-credit-card-alt text-lg'></i> Kredit
                         </button>
                         @if($selectedMember)
                             @php
@@ -315,8 +396,10 @@
                                 $hasEnoughBalance = $memberBalance >= $this->cartTotal;
                             @endphp
                             <button wire:click="$set('paymentMethod', 'SUKARELA')" @if(!$hasEnoughBalance) disabled @endif
-                                class="py-3 rounded-lg border-2 transition-colors text-sm relative {{ $paymentMethod === 'SUKARELA' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : ($hasEnoughBalance ? 'border-slate-300 dark:border-slate-600' : 'border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed') }}">
-                                🏦 Simpanan
+                                class="py-3 rounded-lg border-2 transition-colors text-sm relative flex flex-col items-center justify-center {{ $paymentMethod === 'SUKARELA' ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : ($hasEnoughBalance ? 'border-slate-300 dark:border-slate-600' : 'border-slate-200 dark:border-slate-700 opacity-50 cursor-not-allowed') }}">
+                                <div class="flex items-center gap-2">
+                                    <i class='bx bxs-wallet text-lg'></i> Simpanan
+                                </div>
                                 <span
                                     class="block text-[10px] {{ $hasEnoughBalance ? 'text-emerald-600' : 'text-rose-500' }}">
                                     Rp {{ number_format($memberBalance, 0, ',', '.') }}
@@ -357,13 +440,16 @@
                 {{-- Actions --}}
                 <div class="flex gap-3 pt-4">
                     <button wire:click="closePaymentModal"
-                        class="flex-1 py-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700">
+                        class="flex-1 py-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-slate-600 dark:text-slate-300">
                         Batal
                     </button>
                     <button wire:click="processPayment" wire:loading.attr="disabled" @if($paymentMethod === 'CASH' && $cashReceived < $this->cartTotal) disabled @endif
-                        class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-400 text-white font-bold rounded-xl transition-colors">
-                        <span wire:loading.remove wire:target="processPayment">✅ Proses</span>
-                        <span wire:loading wire:target="processPayment">⏳ Memproses...</span>
+                        class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-400 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2">
+                        <span wire:loading.remove wire:target="processPayment"><i
+                                class='bx bx-check-circle text-lg'></i>
+                            Proses</span>
+                        <span wire:loading wire:target="processPayment"><i class='bx bx-loader-alt bx-spin text-lg'></i>
+                            Memproses...</span>
                     </button>
                 </div>
             </div>
