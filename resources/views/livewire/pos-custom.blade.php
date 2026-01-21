@@ -52,9 +52,8 @@
                         <div
                             class="h-28 w-full bg-slate-50 dark:bg-slate-700 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                             @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" 
-                                     alt="{{ $product->name }}" 
-                                     class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}"
+                                    class="w-full h-full object-cover">
                             @else
                                 <span class="text-4xl">{{ $product->category?->icon ?? '📦' }}</span>
                             @endif
@@ -133,7 +132,7 @@
             }">
             {{-- Selected Member Display --}}
             @if($selectedMember)
-                <div
+                <div wire:key="selected-member-display"
                     class="w-full flex items-center gap-3 bg-white dark:bg-slate-700 border border-emerald-200 dark:border-emerald-600 rounded-lg px-3 py-2">
                     <div
                         class="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-800 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-xs font-bold shrink-0">
@@ -144,7 +143,7 @@
                             {{ $selectedMember['name'] }}
                         </p>
                         <p class="text-[10px] text-slate-500 truncate">{{ $selectedMember['nomorAnggota'] }} •
-                            {{ $selectedMember['unitKerja'] ?? '-' }}
+                            {{ $selectedMember['unitKerja'] ?: '-' }}
                         </p>
                     </div>
                     <button wire:click="clearMember" class="text-rose-500 hover:text-rose-700 shrink-0">
@@ -152,7 +151,7 @@
                     </button>
                 </div>
             @else
-                <div class="w-full relative">
+                <div wire:key="member-search-input" class="w-full relative">
                     {{-- Search Input --}}
                     <div class="relative">
                         <input type="text" x-model="search" @focus="open = true" @click.away="open = false"
