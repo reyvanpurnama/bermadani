@@ -237,9 +237,16 @@
                     <div>
                         <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">No. HP / WA
                             <span class="text-rose-500">*</span></label>
-                        <input type="number" wire:model="newMemberPhone" placeholder="08..."
-                            class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
-                        <p class="text-[10px] text-slate-400 mt-0.5">Digunakan sebagai password login member.</p>
+                        <div class="relative flex">
+                            <span
+                                class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-slate-200 dark:border-slate-600 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm font-bold font-mono">
+                                +62
+                            </span>
+                            <input type="tel" wire:model="newMemberPhone" placeholder="812..." inputmode="numeric"
+                                pattern="[0-9]*"
+                                class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-r-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none font-mono">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-0.5 ml-1">Masukkan tanpa angka 0 di depan.</p>
                         @error('newMemberPhone') <span class="text-[10px] text-rose-500">{{ $message }}</span> @enderror
                     </div>
 
