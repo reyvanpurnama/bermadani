@@ -149,7 +149,7 @@
                             <td class="px-5 py-3.5 text-center">
                                 @if($batch->status === 'REQUESTED')
                                     <span
-                                        class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">Menunggu</span>
+                                        class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide animate-pulse">DIPESAN</span>
                                 @elseif($batch->status === 'ACTIVE')
                                     <span
                                         class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">Aktif</span>
@@ -169,7 +169,7 @@
                                 @if($batch->status === 'REQUESTED')
                                     <button wire:click="openDetail({{ $batch->id }})"
                                         class="bg-primary hover:bg-indigo-700 text-white px-2.5 py-1 rounded text-[10px] font-bold transition-colors flex items-center gap-1">
-                                        <i class='bx bx-check'></i> Terima
+                                        <i class='bx bx-check'></i> Terima Barang
                                     </button>
                                 @else
                                     <button wire:click="openDetail({{ $batch->id }})"
@@ -352,8 +352,7 @@
                         </h3>
                         @if($selectedBatch->status === 'REQUESTED')
                             <span
-                                class="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide animate-pulse">Menunggu
-                                Barang</span>
+                                class="bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide animate-pulse">DIPESAN</span>
                         @elseif($selectedBatch->status === 'ACTIVE')
                             <span
                                 class="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wide">Aktif</span>

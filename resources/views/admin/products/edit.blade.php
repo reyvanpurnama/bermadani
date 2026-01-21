@@ -83,87 +83,87 @@
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
                 <div class="space-y-6" x-data="{
-                                            buyDisplay: '{{ old('buyPrice', $product->buyPrice) ? number_format(old('buyPrice', $product->buyPrice), 0, ',', '.') : '' }}',
-                                            buyRaw: '{{ old('buyPrice', $product->buyPrice) }}',
-                                            sellDisplay: '{{ old('sellPrice', $product->sellPrice) ? number_format(old('sellPrice', $product->sellPrice), 0, ',', '.') : '' }}',
-                                            sellRaw: '{{ old('sellPrice', $product->sellPrice) }}',
-                                            markupPercent: '',
-                                            profitPercent: '',
+                                                            buyDisplay: '{{ old('buyPrice', $product->buyPrice) ? number_format(old('buyPrice', $product->buyPrice), 0, ',', '.') : '' }}',
+                                                            buyRaw: '{{ old('buyPrice', $product->buyPrice) }}',
+                                                            sellDisplay: '{{ old('sellPrice', $product->sellPrice) ? number_format(old('sellPrice', $product->sellPrice), 0, ',', '.') : '' }}',
+                                                            sellRaw: '{{ old('sellPrice', $product->sellPrice) }}',
+                                                            markupPercent: '',
+                                                            profitPercent: '',
 
-                                            init() {
-                                                if (this.buyRaw && this.sellRaw) {
-                                                    this.calculatePercentages();
-                                                }
-                                            },
+                                                            init() {
+                                                                if (this.buyRaw && this.sellRaw) {
+                                                                    this.calculatePercentages();
+                                                                }
+                                                            },
 
-                                            formatBuy(e) {
-                                                let val = e.target.value.replace(/\D/g, '');
-                                                this.buyRaw = val;
-                                                this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                                if (this.sellRaw) {
-                                                    this.calculatePercentages();
-                                                }
-                                            },
+                                                            formatBuy(e) {
+                                                                let val = e.target.value.replace(/\D/g, '');
+                                                                this.buyRaw = val;
+                                                                this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                                                if (this.sellRaw) {
+                                                                    this.calculatePercentages();
+                                                                }
+                                                            },
 
-                                            formatSell(e) {
-                                                let val = e.target.value.replace(/\D/g, '');
-                                                this.sellRaw = val;
-                                                this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                                this.calculatePercentages();
-                                            },
+                                                            formatSell(e) {
+                                                                let val = e.target.value.replace(/\D/g, '');
+                                                                this.sellRaw = val;
+                                                                this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                                                this.calculatePercentages();
+                                                            },
 
-                                            updateFromMarkup() {
-                                                if (!this.buyRaw || !this.markupPercent) return;
-                                                let buy = parseInt(this.buyRaw);
-                                                let markup = parseFloat(this.markupPercent);
-                                                let sell = Math.round(buy * (1 + markup / 100));
+                                                            updateFromMarkup() {
+                                                                if (!this.buyRaw || !this.markupPercent) return;
+                                                                let buy = parseInt(this.buyRaw);
+                                                                let markup = parseFloat(this.markupPercent);
+                                                                let sell = Math.round(buy * (1 + markup / 100));
 
-                                                this.sellRaw = sell.toString();
-                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+                                                                this.sellRaw = sell.toString();
+                                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
 
-                                                if (sell !== 0) {
-                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
-                                                }
-                                            },
+                                                                if (sell !== 0) {
+                                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                                                                }
+                                                            },
 
-                                            updateFromProfit() {
-                                                if (!this.buyRaw || !this.profitPercent) return;
-                                                if (parseFloat(this.profitPercent) >= 100) return;
+                                                            updateFromProfit() {
+                                                                if (!this.buyRaw || !this.profitPercent) return;
+                                                                if (parseFloat(this.profitPercent) >= 100) return;
 
-                                                let buy = parseInt(this.buyRaw);
-                                                let profit = parseFloat(this.profitPercent);
-                                                let sell = Math.round(buy / (1 - profit / 100));
+                                                                let buy = parseInt(this.buyRaw);
+                                                                let profit = parseFloat(this.profitPercent);
+                                                                let sell = Math.round(buy / (1 - profit / 100));
 
-                                                this.sellRaw = sell.toString();
-                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+                                                                this.sellRaw = sell.toString();
+                                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
 
-                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
-                                            },
+                                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                                                            },
 
-                                            calculatePercentages() {
-                                                if (!this.buyRaw || !this.sellRaw || parseInt(this.buyRaw) === 0) {
-                                                    this.markupPercent = '';
-                                                    this.profitPercent = '';
-                                                    return;
-                                                }
-                                                let buy = parseInt(this.buyRaw);
-                                                let sell = parseInt(this.sellRaw);
+                                                            calculatePercentages() {
+                                                                if (!this.buyRaw || !this.sellRaw || parseInt(this.buyRaw) === 0) {
+                                                                    this.markupPercent = '';
+                                                                    this.profitPercent = '';
+                                                                    return;
+                                                                }
+                                                                let buy = parseInt(this.buyRaw);
+                                                                let sell = parseInt(this.sellRaw);
 
-                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
-                                                if (sell !== 0) {
-                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
-                                                }
-                                            },
+                                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                                                                if (sell !== 0) {
+                                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                                                                }
+                                                            },
 
-                                            get profitValue() {
-                                                if (!this.sellRaw || !this.buyRaw) return 0;
-                                                return parseInt(this.sellRaw) - parseInt(this.buyRaw);
-                                            },
+                                                            get profitValue() {
+                                                                if (!this.sellRaw || !this.buyRaw) return 0;
+                                                                return parseInt(this.sellRaw) - parseInt(this.buyRaw);
+                                                            },
 
-                                            get isLoss() {
-                                                return this.profitValue < 0;
-                                            }
-                                        }">
+                                                            get isLoss() {
+                                                                return this.profitValue < 0;
+                                                            }
+                                                        }">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                         {{-- Left Column: Modal --}}
@@ -225,36 +225,35 @@
 
                     <div
                         class="bg-indigo-50/50 dark:bg-slate-800/50 rounded-xl p-4 border border-indigo-100 dark:border-slate-700 flex flex-col md:flex-row items-center gap-4 md:gap-8 justify-center">
-                        {{-- Markup Input --}}
-                        <div class="w-full md:w-auto flex-1 max-w-[200px]">
-                            <label class="block text-[10px] font-bold text-indigo-400 uppercase mb-1 text-center">Markup
-                                %</label>
+                        {{-- Markup % --}}
+                        <div class="relative">
                             <div class="relative">
-                                <input type="number" x-model="markupPercent" @input="updateFromMarkup()" step="0.1"
-                                    class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-3 py-2 text-center outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all shadow-sm"
-                                    placeholder="0">
+                                <input type="number" x-model="markupPercent" @input="updateFromMarkup()" placeholder="0"
+                                    step="0.01"
+                                    class="w-full bg-indigo-50/50 dark:bg-indigo-900/20 border-2 border-indigo-100 dark:border-indigo-500/30 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-indigo-700 dark:text-indigo-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all text-center">
                                 <span
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</span>
                             </div>
-                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Harga Beli)</p>
+                            <p class="text-[9px] text-indigo-500 dark:text-indigo-400 font-bold uppercase text-center mt-1">
+                                Margin Markup</p>
                         </div>
 
                         <div class="text-slate-300 dark:text-slate-600 hidden md:block">
                             <i class='bx bx-transfer-alt text-xl'></i>
                         </div>
 
-                        {{-- Profit Input --}}
-                        <div class="w-full md:w-auto flex-1 max-w-[200px]">
-                            <label class="block text-[10px] font-bold text-emerald-500 uppercase mb-1 text-center">Margin
-                                %</label>
+                        {{-- Margin % (Gross Margin) --}}
+                        <div class="relative">
                             <div class="relative">
-                                <input type="number" x-model="profitPercent" @input="updateFromProfit()" step="0.1"
-                                    class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-3 py-2 text-center outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all shadow-sm"
-                                    placeholder="0">
+                                <input type="number" x-model="profitPercent" @input="updateFromProfit()" placeholder="0"
+                                    step="0.01"
+                                    class="w-full bg-emerald-50/50 dark:bg-emerald-900/20 border-2 border-emerald-100 dark:border-emerald-500/30 rounded-lg pl-3 pr-8 py-2 text-sm font-bold text-emerald-700 dark:text-emerald-400 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all text-center">
                                 <span
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</span>
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-emerald-400 font-bold">%</span>
                             </div>
-                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Harga Jual)</p>
+                            <p
+                                class="text-[9px] text-emerald-500 dark:text-emerald-400 font-bold uppercase text-center mt-1">
+                                Margin Laba</p>
                         </div>
                     </div>
 
@@ -269,14 +268,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Saat Ini --}}
                     <div x-data="{
-                                            display: '{{ old('stock', $product->stock) ? number_format(old('stock', $product->stock), 0, ',', '.') : '' }}',
-                                            raw: '{{ old('stock', $product->stock) }}',
-                                            format(e) {
-                                                let val = e.target.value.replace(/\D/g, '');
-                                                this.raw = val;
-                                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                            }
-                                        }">
+                                                            display: '{{ old('stock', $product->stock) ? number_format(old('stock', $product->stock), 0, ',', '.') : '' }}',
+                                                            raw: '{{ old('stock', $product->stock) }}',
+                                                            format(e) {
+                                                                let val = e.target.value.replace(/\D/g, '');
+                                                                this.raw = val;
+                                                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                                            }
+                                                        }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Saat Ini
                             <span class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required

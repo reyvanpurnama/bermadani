@@ -368,7 +368,7 @@
                                             placeholder="0">
                                         <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 font-bold">%</span>
                                     </div>
-                                    <p class="text-[9px] text-slate-400 text-center mt-1">Markup (Dari Harga Beli)</p>
+                                    <p class="text-[9px] text-slate-400 text-center mt-1 font-medium text-indigo-500 uppercase tracking-tight">Margin Markup</p>
                                 </div>
                                 {{-- Margin --}}
                                 <div>
@@ -378,7 +378,7 @@
                                             placeholder="0">
                                         <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 font-bold">%</span>
                                     </div>
-                                    <p class="text-[9px] text-slate-400 text-center mt-1">Margin (Dari Harga Jual)</p>
+                                    <p class="text-[9px] text-slate-400 text-center mt-1 font-medium text-emerald-500 uppercase tracking-tight">Margin Laba</p>
                                 </div>
                             </div>
                         </div>

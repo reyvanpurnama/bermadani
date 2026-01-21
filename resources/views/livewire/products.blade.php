@@ -232,7 +232,7 @@
                                                     </span>
                                                     <span
                                                         class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium border border-transparent {{ $product->grossMargin < 0 ? 'text-rose-600 bg-rose-50 dark:bg-rose-900/20' : 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800/30' }}">
-                                                        Margin: {{ number_format($product->grossMargin, 0) }}%
+                                                        Laba: {{ number_format($product->grossMargin, 0) }}%
                                                     </span>
                                                 </div>
                                             @else
@@ -316,13 +316,13 @@
                                             {{-- Stok habis DAN tidak ada pending settlement - boleh order restock --}}
                                             <button wire:click="openQuickBatchModal({{ $product->id }})"
                                                 class="bg-rose-500 hover:bg-rose-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-rose-500/30 hover:shadow-rose-500/50 transition-all flex items-center gap-1 animate-pulse">
-                                                <i class='bx bx-plus-circle'></i> Order Restock
+                                                <i class='bx bx-plus-circle'></i> Buat PO
                                             </button>
                                         @elseif($product->stock <= $product->threshold)
                                             {{-- Warning: Stok menipis --}}
                                             <button wire:click="openQuickBatchModal({{ $product->id }})"
                                                 class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide shadow-sm shadow-amber-500/30 hover:shadow-amber-500/50 transition-all flex items-center gap-1">
-                                                <i class='bx bx-plus-circle'></i> Restock
+                                                <i class='bx bx-plus-circle'></i> Buat PO
                                             </button>
                                         @else
                                             {{-- Normal: Stok cukup --}}
