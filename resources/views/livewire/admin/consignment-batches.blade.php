@@ -14,11 +14,11 @@
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div
-            class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-            <div
-                class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl">
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {{-- 1. Batch Aktif --}}
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl">
                 <i class='bx bx-box'></i>
             </div>
             <div>
@@ -26,36 +26,10 @@
                 <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ $stats['activeBatches'] }} Batch</h4>
             </div>
         </div>
-        <div
-            class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-            <div
-                class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 text-xl">
-                <i class='bx bx-money'></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Nilai Aset</p>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                    {{ number_format($stats['totalAssetValue'], 0, ',', '.') }}
-                </h4>
-            </div>
-        </div>
-        <div
-            class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-            <div
-                class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-primary text-xl">
-                <i class='bx bx-trending-up'></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Omzet</p>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                    {{ number_format($stats['totalSold'], 0, ',', '.') }}
-                </h4>
-            </div>
-        </div>
-        <div
-            class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border-l-4 border-l-amber-400 border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-            <div
-                class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">
+
+        {{-- 2. Perlu Dibayar --}}
+        <div class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border-l-4 border-l-amber-400 border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">
                 <i class='bx bx-time-five'></i>
             </div>
             <div>
@@ -63,6 +37,30 @@
                 <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
                     {{ number_format($stats['pendingPayment'], 0, ',', '.') }}
                 </h4>
+            </div>
+        </div>
+
+        {{-- 3 & 4. Rangkuman Keuangan (Merged Card) --}}
+        <div class="md:col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-800 dark:to-black rounded-xl shadow-sm border border-slate-700 p-4 text-white relative overflow-hidden group">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i class='bx bx-wallet text-6xl'></i>
+            </div>
+            
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <i class='bx bx-chart text-indigo-400'></i> Rangkuman Keuangan
+                </p>
+                <div class="grid grid-cols-2 gap-4 divide-x divide-slate-700">
+                    <div>
+                        <p class="text-[9px] text-slate-400 mb-0.5">Nilai Aset (Titipan)</p>
+                        <h3 class="text-lg font-bold text-emerald-400">Rp {{ number_format($stats['totalAssetValue'], 0, ',', '.') }}</h3>
+                    </div>
+                    <div class="pl-4">
+                        <p class="text-[9px] text-slate-400 mb-0.5">Total Omzet</p>
+                        <h3 class="text-lg font-bold text-indigo-400">Rp {{ number_format($stats['totalSold'], 0, ',', '.') }}</h3>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

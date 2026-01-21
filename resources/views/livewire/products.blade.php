@@ -39,59 +39,91 @@
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+    {{-- Stats Cards Layout --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-6">
+        {{-- 1. Total Produk --}}
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Produk</p>
-                    <h3 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">{{ $stats['total'] }}</h3>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mt-1">{{ $stats['total'] }}</h3>
                 </div>
                 <div
-                    class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-primary">
-                    <i class='bx bx-package text-2xl'></i>
+                    class="w-10 h-10 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-primary">
+                    <i class='bx bx-package text-xl'></i>
                 </div>
             </div>
         </div>
 
+        {{-- 2. Stok Menipis --}}
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stok Menipis</p>
-                    <h3 class="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{{ $stats['low_stock'] }}
-                    </h3>
+                    <h3 class="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">{{ $stats['low_stock'] }}</h3>
                 </div>
                 <div
-                    class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500">
-                    <i class='bx bx-error text-2xl'></i>
+                    class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-500">
+                    <i class='bx bx-error text-xl'></i>
                 </div>
             </div>
         </div>
 
+        {{-- 3. Stok Habis --}}
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Stok Habis</p>
-                    <h3 class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">{{ $stats['out_of_stock'] }}
+                    <h3 class="text-xl font-bold text-rose-600 dark:text-rose-400 mt-1">{{ $stats['out_of_stock'] }}
                     </h3>
                 </div>
                 <div
-                    class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500">
-                    <i class='bx bx-x-circle text-2xl'></i>
+                    class="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-500">
+                    <i class='bx bx-x-circle text-xl'></i>
                 </div>
             </div>
         </div>
 
+        {{-- 4. Titip Jual Baru --}}
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Titip Jual Baru</p>
-                    <h3 class="text-2xl font-bold text-purple-600 dark:text-purple-400 mt-1">
+                    <h3 class="text-xl font-bold text-purple-600 dark:text-purple-400 mt-1">
                         {{ $stats['consignment_waiting'] ?? 0 }}
                     </h3>
                 </div>
                 <div
-                    class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
-                    <i class='bx bx-store text-2xl'></i>
+                    class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-500">
+                    <i class='bx bx-store text-xl'></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- 5 & 6. Profitability Stats (Merged Card) --}}
+        <div
+            class="md:col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-800 dark:to-black rounded-xl shadow-sm border border-slate-700 p-4 text-white relative overflow-hidden group">
+            <!-- Background Decoration -->
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <i class='bx bx-line-chart text-6xl'></i>
+            </div>
+
+            <div class="relative z-10">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <i class='bx bx-trending-up text-emerald-400'></i> Profitabilitas
+                </p>
+                <div class="grid grid-cols-2 gap-4 divide-x divide-slate-700">
+                    <div>
+                        <p class="text-[9px] text-slate-400 mb-0.5">Rata-rata Markup</p>
+                        <h3 class="text-xl font-bold text-cyan-400">{{ number_format($stats['avg_markup'] ?? 0, 1) }}%
+                        </h3>
+                    </div>
+                    <div class="pl-4">
+                        <p class="text-[9px] text-slate-400 mb-0.5">Margin Laba</p>
+                        <h3 class="text-xl font-bold text-emerald-400">
+                            {{ number_format($stats['avg_margin'] ?? 0, 1) }}%
+                        </h3>
+                    </div>
                 </div>
             </div>
         </div>

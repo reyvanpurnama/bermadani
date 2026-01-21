@@ -50,7 +50,9 @@
     {{-- Members List Tab --}}
     @if($activeTab === 'members')
         {{-- Stats Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        {{-- Stats Cards Group --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {{-- 1. Total Anggota --}}
             <div
                 class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <div
@@ -63,6 +65,7 @@
                 </div>
             </div>
 
+            {{-- 2. Anggota Aktif --}}
             <div
                 class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
                 <div
@@ -75,72 +78,57 @@
                 </div>
             </div>
 
+            {{-- 3 & 4. Loyalty & Asset Overview (Merged Card) --}}
             <div
-                class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-lg bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 text-xl">
-                    <i class='bx bx-gift'></i>
+                class="md:col-span-2 bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-800 dark:to-black rounded-xl shadow-sm border border-slate-700 p-4 text-white relative overflow-hidden group">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class='bx bx-diamond text-6xl'></i>
                 </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Rata-rata Poin</p>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
-                        {{ number_format($stats['avgPoints'] ?? 0) }} Pts</h4>
+
+                <div class="relative z-10">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class='bx bx-wallet text-amber-400'></i> Aset & Poin Loyalty
+                    </p>
+                    <div class="grid grid-cols-2 gap-4 divide-x divide-slate-700">
+                        <div>
+                            <p class="text-[9px] text-slate-400 mb-0.5">Total Dana Simpanan</p>
+                            <h3 class="text-lg font-bold text-white">Rp
+                                {{ number_format($stats['totalSimpanan'] ?? 0, 0, ',', '.') }}
+                            </h3>
+                        </div>
+                        <div class="pl-4">
+                            <p class="text-[9px] text-slate-400 mb-0.5">Rata-rata Poin</p>
+                            <h3 class="text-lg font-bold text-amber-400">{{ number_format($stats['avgPoints'] ?? 0) }} Pts
+                            </h3>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- Financial Stats --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        {{-- Detailed Simpanan Breakdown (Optional / Secondary) --}}
+        <div class="grid grid-cols-3 gap-4 mb-6">
             <div
-                class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">
-                    <i class='bx bx-wallet'></i>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Dana</p>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                        {{ number_format($stats['totalSimpanan'] ?? 0, 0, ',', '.') }}</h4>
-                </div>
+                class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Pokok</p>
+                <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
+                    {{ number_format($stats['simpananPokok'] ?? 0, 0, ',', '.') }}
+                </h4>
             </div>
-
             <div
-                class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-700/50 flex items-center justify-center text-slate-500 text-xl">
-                    <i class='bx bxs-lock-alt'></i>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Pokok</p>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp
-                        {{ number_format($stats['simpananPokok'] ?? 0, 0, ',', '.') }}</h4>
-                </div>
+                class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Wajib</p>
+                <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
+                    {{ number_format($stats['simpananWajib'] ?? 0, 0, ',', '.') }}
+                </h4>
             </div>
-
             <div
-                class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-700/50 flex items-center justify-center text-slate-500 text-xl">
-                    <i class='bx bxs-calendar'></i>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Wajib</p>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp
-                        {{ number_format($stats['simpananWajib'] ?? 0, 0, ',', '.') }}</h4>
-                </div>
-            </div>
-
-            <div
-                class="bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
-                <div
-                    class="w-10 h-10 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 text-xl">
-                    <i class='bx bxs-wallet-alt'></i>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Simpanan Sukarela</p>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp
-                        {{ number_format($stats['simpananSukarela'] ?? 0, 0, ',', '.') }}</h4>
-                </div>
+                class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Sukarela</p>
+                <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
+                    {{ number_format($stats['simpananSukarela'] ?? 0, 0, ',', '.') }}
+                </h4>
             </div>
         </div>
 
@@ -242,7 +230,8 @@
                                         </div>
                                         <div>
                                             <h6 class="font-bold text-slate-900 dark:text-white leading-none">
-                                                {{ $member->name }}</h6>
+                                                {{ $member->name }}
+                                            </h6>
                                             <p class="text-[10px] text-slate-400 mt-1 font-mono">{{ $member->nomorAnggota }}</p>
                                         </div>
                                     </div>
@@ -255,18 +244,18 @@
                                 <td class="px-5 py-3.5 align-top">
                                     <div class="flex flex-col gap-1">
                                         <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border
-                                                @if($member->status === 'ACTIVE') bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800
-                                                @elseif($member->status === 'INACTIVE') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
-                                                @else bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800
-                                                @endif">
+                                                                @if($member->status === 'ACTIVE') bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800
+                                                                @elseif($member->status === 'INACTIVE') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
+                                                                @else bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800
+                                                                @endif">
                                             {{ $member->status === 'ACTIVE' ? 'Aktif' : ($member->status === 'INACTIVE' ? 'Non-Aktif' : 'Dibekukan') }}
                                         </span>
                                         <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border
-                                                @if($member->tier === 'PLATINUM') bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800
-                                                @elseif($member->tier === 'GOLD') bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800
-                                                @elseif($member->tier === 'SILVER') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
-                                                @else bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800
-                                                @endif">
+                                                                @if($member->tier === 'PLATINUM') bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800
+                                                                @elseif($member->tier === 'GOLD') bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800
+                                                                @elseif($member->tier === 'SILVER') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
+                                                                @else bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800
+                                                                @endif">
                                             <i class='bx bxs-medal'></i> {{ $member->tier }}
                                         </span>
                                     </div>
@@ -290,7 +279,8 @@
                                         </div>
                                         <div
                                             class="border-t border-slate-100 dark:border-slate-700 pt-1.5 mt-0.5 flex justify-between items-center">
-                                            <span class="text-[11px] font-bold text-slate-800 dark:text-white">Total Aset</span>
+                                            <span class="text-[11px] font-bold text-slate-800 dark:text-white">Total
+                                                Simpanan</span>
                                             <span class="text-[12px] font-bold text-primary dark:text-blue-400">Rp
                                                 {{ number_format($member->totalSimpanan, 0, ',', '.') }}</span>
                                         </div>
@@ -377,7 +367,8 @@
                                     <i class='bx bx-cloud-upload text-4xl text-slate-400'></i>
                                     @if($importFile)
                                         <p class="text-sm font-semibold text-slate-700 dark:text-white">
-                                            {{ $importFile->getClientOriginalName() }}</p>
+                                            {{ $importFile->getClientOriginalName() }}
+                                        </p>
                                         <p class="text-xs text-slate-500">{{ number_format($importFile->getSize() / 1024, 2) }}
                                             KB</p>
                                     @else

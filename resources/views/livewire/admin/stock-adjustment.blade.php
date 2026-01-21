@@ -179,16 +179,27 @@
         <div class="lg:col-span-1 space-y-6">
 
             {{-- Monthly Stats --}}
+            {{-- Monthly Stats --}}
             <div
-                class="bg-white dark:bg-darkCard p-5 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-                <h3 class="text-[13px] font-bold text-slate-800 dark:text-white mb-4">Adjustment Bulan Ini</h3>
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-[11px] text-slate-500">Total Item Hilang/Rusak</span>
-                    <span class="font-bold text-rose-500">{{ $monthlyStats->total_out ?? 0 }} Pcs</span>
+                class="bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-800 dark:to-black p-5 rounded-xl shadow-sm border border-slate-700 text-white relative overflow-hidden group">
+                <!-- Background Decoration -->
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                    <i class='bx bx-analyse text-6xl'></i>
                 </div>
-                <div class="flex justify-between items-center">
-                    <span class="text-[11px] text-slate-500">Total Item Ditambahkan</span>
-                    <span class="font-bold text-emerald-500">+{{ $monthlyStats->total_in ?? 0 }} Pcs</span>
+
+                <h3 class="text-[13px] font-bold text-white mb-4 relative z-10 flex items-center gap-2">
+                    <i class='bx bx-calendar-check text-indigo-400'></i> Adjustment Bulan Ini
+                </h3>
+
+                <div class="space-y-3 relative z-10">
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-700">
+                        <span class="text-[11px] text-slate-400">Total Item Hilang/Rusak</span>
+                        <span class="font-bold text-rose-400">{{ $monthlyStats->total_out ?? 0 }} Pcs</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] text-slate-400">Total Item Ditambahkan</span>
+                        <span class="font-bold text-emerald-400">+{{ $monthlyStats->total_in ?? 0 }} Pcs</span>
+                    </div>
                 </div>
             </div>
 

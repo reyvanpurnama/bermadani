@@ -124,7 +124,13 @@ class Products extends Component
                         $batchQuery->where('status', 'REQUESTED');
                     });
                 })->count(),
-            'total_value' => Product::where('approvalStatus', 'APPROVED')->sum(\DB::raw('stock * sellPrice'))
+            'total_value' => Product::where('approvalStatus', 'APPROVED')->sum(\DB::raw('stock * sellPrice')),
+            'avg_markup' => Product::where('approvalStatus', 'APPROVED')
+                ->where('buyPrice', '>', 0)
+                ->avg(\DB::raw('((sellPrice - buyPrice) / buyPrice) * 100')),
+            'avg_margin' => Product::where('approvalStatus', 'APPROVED')
+                ->where('sellPrice', '>', 0)
+                ->avg(\DB::raw('((sellPrice - buyPrice) / sellPrice) * 100')),
         ];
     }
 
