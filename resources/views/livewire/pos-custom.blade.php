@@ -180,7 +180,7 @@
                         <div
                             class="p-2 border-b border-slate-100 dark:border-slate-600 sticky top-0 bg-white dark:bg-slate-700 z-10">
                             <button wire:click="createNewMember"
-                                class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-lg text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-colors flex items-center justify-center gap-2">
+                                class="w-full py-2 bg-indigo-50 dark:bg-indigo-900/40 border border-transparent dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-300 rounded-lg text-xs font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors flex items-center justify-center gap-2">
                                 <i class='bx bx-plus-circle text-lg'></i> Buat Member Baru
                             </button>
                         </div>
