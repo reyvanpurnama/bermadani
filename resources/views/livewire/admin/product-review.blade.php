@@ -208,114 +208,248 @@
                 </div>
 
                 {{-- Right: Price Analysis & Actions --}}
-                <div class="lg:col-span-1 space-y-4">
-                    
-                    {{-- Price Section --}}
-                    <div class="bg-white dark:bg-slate-800/50 p-3 sm:p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                        <h3 class="text-[12px] sm:text-[13px] font-bold text-slate-800 dark:text-white mb-3">Analisa Harga</h3>
+                {{-- Right: Analysis & Decision --}}
+                <div class="lg:col-span-1 space-y-5" 
+                    x-data="{
+                        buyRaw: '{{ floatval($selectedProduct->buyPrice ?? 0) }}',
+                        sellDisplay: '{{ $sellPrice ? number_format($sellPrice, 0, ',', '.') : '' }}',
+                        sellRaw: '{{ $sellPrice ?? '' }}',
+                        markupPercent: '',
+                        profitPercent: '',
+                        showRejectReason: false,
+
+                        init() {
+                            if (this.buyRaw && this.sellRaw) {
+                                this.calculatePercentages();
+                            }
+                        },
+
+                        formatRupiah(value) {
+                            let number = String(value).replace(/[^0-9]/g, '');
+                            if (number === '') return '';
+                            return new Intl.NumberFormat('id-ID').format(number);
+                        },
+
+                        formatSell(e) {
+                            let val = e.target.value.replace(/\D/g, '');
+                            this.sellRaw = val;
+                            this.sellDisplay = val ? this.formatRupiah(val) : '';
+                            this.calculatePercentages();
+                        },
                         
-                        <div class="space-y-3">
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Harga Jual</label>
-                                <div class="relative" 
-                                    x-data="{
-                                        displayValue: '',
-                                        formatRupiah(value) {
-                                            let number = String(value).replace(/[^0-9]/g, '');
-                                            if (number === '') return '';
-                                            return number.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                        },
-                                        init() {
-                                            let initial = '{{ $sellPrice ?? '' }}';
-                                            if (initial && initial !== '' && initial !== '0') {
-                                                this.displayValue = this.formatRupiah(initial);
-                                            }
-                                        }
-                                    }">
-                                    <span class="absolute inset-y-0 left-3 flex items-center text-[13px] text-slate-400">Rp</span>
+                        syncToServer() {
+                            @this.set('sellPrice', this.sellRaw);
+                        },
+
+                        updateFromMarkup() {
+                            if (!this.buyRaw || !this.markupPercent) return;
+                            let buy = parseFloat(this.buyRaw);
+                            let markup = parseFloat(this.markupPercent);
+                            let sell = Math.round(buy * (1 + markup / 100));
+
+                            this.sellRaw = sell.toString();
+                            this.sellDisplay = this.formatRupiah(sell);
+                            this.calculatePercentages();
+                            this.syncToServer();
+                            
+                            if (sell !== 0) {
+                                this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                            }
+                        },
+
+                        updateFromProfit() {
+                            if (!this.buyRaw || !this.profitPercent) return;
+                            if (parseFloat(this.profitPercent) >= 100) return;
+
+                            let buy = parseFloat(this.buyRaw);
+                            let profit = parseFloat(this.profitPercent);
+                            let sell = Math.round(buy / (1 - profit / 100));
+
+                            this.sellRaw = sell.toString();
+                            this.sellDisplay = this.formatRupiah(sell);
+                            this.calculatePercentages();
+                            this.syncToServer();
+
+                            this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                        },
+
+                        calculatePercentages() {
+                            if (!this.buyRaw || !this.sellRaw || parseFloat(this.buyRaw) === 0) {
+                                this.markupPercent = '';
+                                this.profitPercent = '';
+                                return;
+                            }
+                            let buy = parseFloat(this.buyRaw);
+                            let sell = parseFloat(this.sellRaw);
+
+                            this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                            if (sell !== 0) {
+                                this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                            }
+                        },
+
+                        get calculatedProfit() {
+                            if (!this.sellRaw || !this.buyRaw) return 0;
+                            return parseFloat(this.sellRaw) - parseFloat(this.buyRaw);
+                        },
+
+                        get isLoss() {
+                            return this.calculatedProfit < 0;
+                        },
+
+                        get marginHealth() {
+                            if (!this.profitPercent) return 'neutral';
+                            let margin = parseFloat(this.profitPercent);
+                            if (margin < 0) return 'loss';
+                            if (margin < 10) return 'warning';
+                            return 'healthy';
+                        },
+
+                        get healthColor() {
+                            switch(this.marginHealth) {
+                                case 'loss': return 'bg-rose-500';
+                                case 'warning': return 'bg-amber-500';
+                                case 'healthy': return 'bg-emerald-500';
+                                default: return 'bg-slate-300';
+                            }
+                        },
+
+                        toggleReject() {
+                            this.showRejectReason = !this.showRejectReason;
+                        }
+                    }">
+                    
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-white border-b border-slate-100 dark:border-slate-700 pb-2">
+                        Analisis & Keputusan
+                    </h3>
+
+                    @if($status === 'PENDING')
+                        {{-- 1. Context: Supplier Data (Immutable) --}}
+                        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
+                            <h4 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Harga Beli (Supplier)</h4>
+                            <p class="text-2xl font-bold text-slate-700 dark:text-slate-200 font-mono">
+                                Rp {{ number_format($selectedProduct->buyPrice ?? 0, 0, ',', '.') }}
+                                <span class="text-base text-slate-400 font-normal">/ unit</span>
+                            </p>
+                        </div>
+
+                        {{-- 2. Decision: Pricing Strategy --}}
+                        <div class="space-y-4">
+                            {{-- Input Harga Jual --}}
+                            <div wire:ignore>
+                                <label class="block text-[11px] font-bold text-indigo-600 dark:text-indigo-400 uppercase mb-1">Tetapkan Harga Jual</label>
+                                <div class="relative group">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 group-focus-within:text-indigo-500 transition-colors">Rp</span>
                                     <input type="text" 
-                                        x-model="displayValue"
+                                        x-model="sellDisplay" 
+                                        @input="formatSell($event)"
+                                        @blur="syncToServer()"
                                         placeholder="0"
-                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-9 pr-3 py-2 text-[14px] font-bold text-slate-800 dark:text-white outline-none focus:border-primary"
-                                        {{ $status !== 'PENDING' ? 'disabled' : '' }}
-                                        x-on:input="
-                                            let rawValue = String($el.value);
-                                            let cleanValue = rawValue.replace(/[^0-9]/g, '');
-                                            
-                                            if (cleanValue === '') {
-                                                displayValue = '';
-                                                @this.set('sellPrice', '');
-                                                return;
-                                            }
-                                            
-                                            displayValue = formatRupiah(cleanValue);
-                                            @this.set('sellPrice', cleanValue);
-                                        ">
+                                        class="w-full bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-indigo-500/30 rounded-xl pl-10 pr-4 py-3 text-lg font-bold text-slate-800 dark:text-white outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-sm"
+                                        :class="isLoss ? 'border-rose-300 text-rose-600 focus:border-rose-500 focus:ring-rose-500/20' : ''">
+                                </div>
+
+                                {{-- Simple Profit/Loss Text --}}
+                                <div class="flex justify-between items-center mt-2 px-1">
+                                    <span class="text-[11px] font-medium text-slate-500">Estimasi Laba per Unit:</span>
+                                    <span class="text-sm font-bold" :class="isLoss ? 'text-rose-500' : 'text-emerald-600'">
+                                        <span x-show="isLoss">-</span>Rp <span x-text="new Intl.NumberFormat('id-ID').format(Math.abs(calculatedProfit))"></span>
+                                    </span>
                                 </div>
                             </div>
 
-                            <div class="flex justify-between items-center text-[12px]">
-                                <span class="text-slate-500">Harga Beli</span>
-                                <span class="font-bold text-slate-700 dark:text-slate-300">Rp {{ number_format($selectedProduct->buyPrice ?? 0, 0, ',', '.') }}</span>
-                            </div>
-
-                            @php
-                                $sellPriceNum = is_numeric($sellPrice) ? (float) $sellPrice : 0;
-                                $buyPriceNum = (float) ($selectedProduct->buyPrice ?? 0);
-                                $margin = ($sellPriceNum > 0 && $buyPriceNum > 0) 
-                                    ? (($sellPriceNum - $buyPriceNum) / $buyPriceNum) * 100 
-                                    : 0;
-                                $marginAmount = $sellPriceNum - $buyPriceNum;
-                            @endphp
-                            <div class="flex justify-between items-center text-[12px]">
-                                <span class="text-slate-500">Margin</span>
-                                <span class="font-bold {{ $margin > 15 ? 'text-emerald-600' : ($margin > 5 ? 'text-amber-600' : 'text-rose-600') }}">
-                                    @if($sellPriceNum > 0)
-                                        {{ number_format($margin, 1) }}% (Rp {{ number_format($marginAmount, 0, ',', '.') }})
-                                    @else
-                                        <span class="text-slate-400">-</span>
-                                    @endif
-                                </span>
+                            {{-- Calculator Tools --}}
+                            <div class="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/30 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
+                                {{-- Markup --}}
+                                <div>
+                                    <div class="relative">
+                                        <input type="number" x-model="markupPercent" @input="updateFromMarkup()" step="0.1"
+                                            class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-700 dark:text-slate-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
+                                            placeholder="0">
+                                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 font-bold">%</span>
+                                    </div>
+                                    <p class="text-[9px] text-slate-400 text-center mt-1">Markup (Dari Harga Beli)</p>
+                                </div>
+                                {{-- Margin --}}
+                                <div>
+                                    <div class="relative">
+                                        <input type="number" x-model="profitPercent" @input="updateFromProfit()" step="0.1"
+                                            class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-2 py-1.5 text-xs text-center font-bold text-slate-700 dark:text-slate-300 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none"
+                                            placeholder="0">
+                                        <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-slate-400 font-bold">%</span>
+                                    </div>
+                                    <p class="text-[9px] text-slate-400 text-center mt-1">Margin (Dari Harga Jual)</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Action Buttons (Only for Pending) --}}
-                    @if($status === 'PENDING')
-                    <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-lg p-3 mb-3">
-                        <p class="text-[11px] text-blue-700 dark:text-blue-400">
-                            <i class='bx bx-info-circle mr-1'></i>
-                            Produk yang disetujui akan tampil di katalog. Stok ditambahkan nanti saat barang datang dari supplier.
-                        </p>
-                    </div>
-                    <div class="space-y-3">
-                        <button wire:click="approve" 
-                            @if(!$sellPrice || $sellPriceNum <= 0) disabled @endif
-                            class="w-full py-2.5 sm:py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold text-[12px] sm:text-[13px] shadow-lg shadow-emerald-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-emerald-600">
-                            <i class='bx bx-check-circle text-base sm:text-lg'></i> Setujui Produk
-                        </button>
-                        
-                        <button wire:click="reject" 
-                            class="w-full py-2.5 sm:py-3 bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-900/50 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-900/20 rounded-lg font-bold text-[12px] sm:text-[13px] transition-all flex items-center justify-center gap-2">
-                            <i class='bx bx-x-circle text-base sm:text-lg'></i> Tolak Pengajuan
-                        </button>
+                        {{-- 3. Actions --}}
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <button wire:click="reject" 
+                                    x-show="showRejectReason"
+                                    class="col-span-2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-bold text-[13px] shadow-lg shadow-rose-500/20 transition-all flex items-center justify-center gap-2">
+                                    <i class='bx bx-paper-plane'></i> Kirim Penolakan
+                                </button>
 
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 mb-1.5">Catatan untuk Supplier (Wajib jika Ditolak)</label>
-                            <textarea wire:model="adminNote" rows="2" 
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-2 text-[12px] outline-none focus:border-primary placeholder-slate-400" 
-                                placeholder="Tulis alasan penolakan atau saran perbaikan produk..."></textarea>
-                            @error('adminNote') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
+                                <button @click="toggleReject()" 
+                                    x-show="!showRejectReason"
+                                    class="py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:bg-rose-50 dark:hover:bg-rose-900/10 hover:text-rose-600 hover:border-rose-200 rounded-lg font-bold text-[13px] transition-all">
+                                    Tolak
+                                </button>
+                                
+                                <button wire:click="approve" 
+                                    x-show="!showRejectReason"
+                                    x-bind:disabled="!sellRaw || parseInt(sellRaw) <= 0"
+                                    class="py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-[13px] shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class='bx bx-check'></i> Setujui
+                                </button>
+                            </div>
+
+                            {{-- Rejection Note (Toggled) --}}
+                            <div x-show="showRejectReason" x-transition class="space-y-2">
+                                <textarea wire:model="adminNote" rows="2" 
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg p-3 text-[13px] outline-none focus:border-rose-400 placeholder-slate-400 resize-none" 
+                                    placeholder="Tulis alasan penolakan untuk supplier..."></textarea>
+                                @error('adminNote') <span class="text-xs text-rose-500 block">{{ $message }}</span> @enderror
+                                
+                                <button @click="toggleReject()" class="text-[11px] text-slate-400 hover:text-slate-600 underline w-full text-center">Batal, kembali ke approval</button>
+                            </div>
                         </div>
-                    </div>
+
                     @else
-                        {{-- Show rejection reason if rejected --}}
-                        @if($status === 'REJECTED' && $selectedProduct->rejectionReason)
-                        <div class="bg-rose-50 dark:bg-rose-900/20 p-3 rounded-lg border border-rose-100 dark:border-rose-800/30">
-                            <p class="text-[11px] font-bold text-rose-600 mb-1">Alasan Penolakan:</p>
-                            <p class="text-[12px] text-rose-700 dark:text-rose-300">{{ $selectedProduct->rejectionReason }}</p>
+                        {{-- Read-Only View for Approved/Rejected --}}
+                        <div class="bg-indigo-50/50 dark:bg-indigo-900/10 p-5 rounded-xl border border-indigo-100 dark:border-indigo-800/30 text-center">
+                            @if($status === 'APPROVED')
+                                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+                                    <i class='bx bx-check'></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">Produk Disetujui</h4>
+                                <p class="text-[12px] text-slate-500 mt-1">Produk ini sudah aktif di katalog.</p>
+                                <div class="mt-4 pt-4 border-t border-indigo-100 dark:border-indigo-800/30 grid grid-cols-2 gap-4 text-left">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 uppercase">Harga Beli</p>
+                                        <p class="font-bold text-slate-700 dark:text-white">Rp {{ number_format($selectedProduct->buyPrice ?? 0, 0, ',', '.') }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 uppercase">Harga Jual</p>
+                                        <p class="font-bold text-indigo-600 dark:text-indigo-400">Rp {{ number_format($sellPrice ?? 0, 0, ',', '.') }}</p>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-3">
+                                    <i class='bx bx-x'></i>
+                                </div>
+                                <h4 class="font-bold text-slate-800 dark:text-white">Produk Ditolak</h4>
+                                <p class="text-[12px] text-slate-500 mt-1">Pengajuan ini telah ditolak.</p>
+                                @if($selectedProduct->rejectionReason)
+                                    <div class="mt-4 bg-white dark:bg-slate-800 p-3 rounded-lg border border-rose-100 dark:border-rose-900/30 text-left">
+                                        <p class="text-[11px] text-rose-500 font-bold mb-1">Alasan:</p>
+                                        <p class="text-[12px] text-slate-600 dark:text-slate-300 italic">"{{ $selectedProduct->rejectionReason }}"</p>
+                                    </div>
+                                @endif
+                            @endif
                         </div>
-                        @endif
                     @endif
                 </div>
 

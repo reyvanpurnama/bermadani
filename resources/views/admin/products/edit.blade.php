@@ -83,87 +83,87 @@
                 <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Harga & Stok</h3>
 
                 <div class="space-y-6" x-data="{
-                                        buyDisplay: '{{ old('buyPrice', $product->buyPrice) ? number_format(old('buyPrice', $product->buyPrice), 0, ',', '.') : '' }}',
-                                        buyRaw: '{{ old('buyPrice', $product->buyPrice) }}',
-                                        sellDisplay: '{{ old('sellPrice', $product->sellPrice) ? number_format(old('sellPrice', $product->sellPrice), 0, ',', '.') : '' }}',
-                                        sellRaw: '{{ old('sellPrice', $product->sellPrice) }}',
-                                        markupPercent: '',
-                                        profitPercent: '',
+                                            buyDisplay: '{{ old('buyPrice', $product->buyPrice) ? number_format(old('buyPrice', $product->buyPrice), 0, ',', '.') : '' }}',
+                                            buyRaw: '{{ old('buyPrice', $product->buyPrice) }}',
+                                            sellDisplay: '{{ old('sellPrice', $product->sellPrice) ? number_format(old('sellPrice', $product->sellPrice), 0, ',', '.') : '' }}',
+                                            sellRaw: '{{ old('sellPrice', $product->sellPrice) }}',
+                                            markupPercent: '',
+                                            profitPercent: '',
 
-                                        init() {
-                                            if (this.buyRaw && this.sellRaw) {
+                                            init() {
+                                                if (this.buyRaw && this.sellRaw) {
+                                                    this.calculatePercentages();
+                                                }
+                                            },
+
+                                            formatBuy(e) {
+                                                let val = e.target.value.replace(/\D/g, '');
+                                                this.buyRaw = val;
+                                                this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                                if (this.sellRaw) {
+                                                    this.calculatePercentages();
+                                                }
+                                            },
+
+                                            formatSell(e) {
+                                                let val = e.target.value.replace(/\D/g, '');
+                                                this.sellRaw = val;
+                                                this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
                                                 this.calculatePercentages();
+                                            },
+
+                                            updateFromMarkup() {
+                                                if (!this.buyRaw || !this.markupPercent) return;
+                                                let buy = parseInt(this.buyRaw);
+                                                let markup = parseFloat(this.markupPercent);
+                                                let sell = Math.round(buy * (1 + markup / 100));
+
+                                                this.sellRaw = sell.toString();
+                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+
+                                                if (sell !== 0) {
+                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                                                }
+                                            },
+
+                                            updateFromProfit() {
+                                                if (!this.buyRaw || !this.profitPercent) return;
+                                                if (parseFloat(this.profitPercent) >= 100) return;
+
+                                                let buy = parseInt(this.buyRaw);
+                                                let profit = parseFloat(this.profitPercent);
+                                                let sell = Math.round(buy / (1 - profit / 100));
+
+                                                this.sellRaw = sell.toString();
+                                                this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
+
+                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                                            },
+
+                                            calculatePercentages() {
+                                                if (!this.buyRaw || !this.sellRaw || parseInt(this.buyRaw) === 0) {
+                                                    this.markupPercent = '';
+                                                    this.profitPercent = '';
+                                                    return;
+                                                }
+                                                let buy = parseInt(this.buyRaw);
+                                                let sell = parseInt(this.sellRaw);
+
+                                                this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
+                                                if (sell !== 0) {
+                                                    this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
+                                                }
+                                            },
+
+                                            get profitValue() {
+                                                if (!this.sellRaw || !this.buyRaw) return 0;
+                                                return parseInt(this.sellRaw) - parseInt(this.buyRaw);
+                                            },
+
+                                            get isLoss() {
+                                                return this.profitValue < 0;
                                             }
-                                        },
-
-                                        formatBuy(e) {
-                                            let val = e.target.value.replace(/\D/g, '');
-                                            this.buyRaw = val;
-                                            this.buyDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                            if (this.sellRaw) {
-                                                this.calculatePercentages();
-                                            }
-                                        },
-
-                                        formatSell(e) {
-                                            let val = e.target.value.replace(/\D/g, '');
-                                            this.sellRaw = val;
-                                            this.sellDisplay = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                            this.calculatePercentages();
-                                        },
-
-                                        updateFromMarkup() {
-                                            if (!this.buyRaw || !this.markupPercent) return;
-                                            let buy = parseInt(this.buyRaw);
-                                            let markup = parseFloat(this.markupPercent);
-                                            let sell = Math.round(buy * (1 + markup / 100));
-
-                                            this.sellRaw = sell.toString();
-                                            this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
-
-                                            if (sell !== 0) {
-                                                this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
-                                            }
-                                        },
-
-                                        updateFromProfit() {
-                                            if (!this.buyRaw || !this.profitPercent) return;
-                                            if (parseFloat(this.profitPercent) >= 100) return;
-
-                                            let buy = parseInt(this.buyRaw);
-                                            let profit = parseFloat(this.profitPercent);
-                                            let sell = Math.round(buy / (1 - profit / 100));
-
-                                            this.sellRaw = sell.toString();
-                                            this.sellDisplay = new Intl.NumberFormat('id-ID').format(sell);
-
-                                            this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
-                                        },
-
-                                        calculatePercentages() {
-                                            if (!this.buyRaw || !this.sellRaw || parseInt(this.buyRaw) === 0) {
-                                                this.markupPercent = '';
-                                                this.profitPercent = '';
-                                                return;
-                                            }
-                                            let buy = parseInt(this.buyRaw);
-                                            let sell = parseInt(this.sellRaw);
-
-                                            this.markupPercent = ((sell - buy) / buy * 100).toFixed(2);
-                                            if (sell !== 0) {
-                                                this.profitPercent = ((sell - buy) / sell * 100).toFixed(2);
-                                            }
-                                        },
-
-                                        get profitValue() {
-                                            if (!this.sellRaw || !this.buyRaw) return 0;
-                                            return parseInt(this.sellRaw) - parseInt(this.buyRaw);
-                                        },
-
-                                        get isLoss() {
-                                            return this.profitValue < 0;
-                                        }
-                                    }">
+                                        }">
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
                         {{-- Left Column: Modal --}}
@@ -236,7 +236,7 @@
                                 <span
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</span>
                             </div>
-                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Modal)</p>
+                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Harga Beli)</p>
                         </div>
 
                         <div class="text-slate-300 dark:text-slate-600 hidden md:block">
@@ -254,7 +254,7 @@
                                 <span
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-bold">%</span>
                             </div>
-                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Jual)</p>
+                            <p class="text-[9px] text-slate-400 text-center mt-1">(Dari Harga Jual)</p>
                         </div>
                     </div>
 
@@ -269,14 +269,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {{-- Stok Saat Ini --}}
                     <div x-data="{
-                                        display: '{{ old('stock', $product->stock) ? number_format(old('stock', $product->stock), 0, ',', '.') : '' }}',
-                                        raw: '{{ old('stock', $product->stock) }}',
-                                        format(e) {
-                                            let val = e.target.value.replace(/\D/g, '');
-                                            this.raw = val;
-                                            this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
-                                        }
-                                    }">
+                                            display: '{{ old('stock', $product->stock) ? number_format(old('stock', $product->stock), 0, ',', '.') : '' }}',
+                                            raw: '{{ old('stock', $product->stock) }}',
+                                            format(e) {
+                                                let val = e.target.value.replace(/\D/g, '');
+                                                this.raw = val;
+                                                this.display = val ? new Intl.NumberFormat('id-ID').format(val) : '';
+                                            }
+                                        }">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Stok Saat Ini
                             <span class="text-rose-500">*</span></label>
                         <input type="text" x-model="display" @input="format($event)" required

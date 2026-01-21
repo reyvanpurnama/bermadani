@@ -22,7 +22,8 @@
             <a href="{{ route('admin.product-review') }}"
                 class="bg-white dark:bg-darkCard border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2 relative">
                 @if($pendingApprovalCount > 0)
-                    <span class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">{{ $pendingApprovalCount }}</span>
+                    <span
+                        class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">{{ $pendingApprovalCount }}</span>
                 @endif
                 <i class='bx bx-check-shield'></i> Approval
             </a>
@@ -155,7 +156,13 @@
                         </th>
                         <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Kategori
                         </th>
-                        <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Harga</th>
+                        @if(!auth()->user()->isKasir())
+                            <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[200px]">
+                                Harga & Analisis</th>
+                        @else
+                            <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Harga Jual
+                            </th>
+                        @endif
                         <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[150px]">
                             Level Stok</th>
                         <th
@@ -197,8 +204,47 @@
                             <td class="px-5 py-3.5 text-slate-600 dark:text-slate-400">
                                 {{ $product->category?->name ?? '-' }}
                             </td>
-                            <td class="px-5 py-3.5 font-bold text-slate-800 dark:text-white">Rp
-                                {{ number_format($product->sellPrice, 0, ',', '.') }}
+                            <td class="px-5 py-3.5">
+                                @if(!auth()->user()->isKasir())
+                                    <div class="flex flex-col">
+                                        {{-- Harga Jual (Primary) --}}
+                                        <span class="font-bold text-[13px] text-slate-800 dark:text-white mb-0.5">
+                                            @if($product->sellPrice > 0)
+                                                Rp {{ number_format($product->sellPrice, 0, ',', '.') }}
+                                            @else
+                                                -
+                                            @endif
+                                        </span>
+
+                                        @if($product->approvalStatus === 'APPROVED')
+                                            @if($product->buyPrice > 0)
+                                                {{-- Modal (Secondary) --}}
+                                                <span class="text-[10px] text-slate-400 mb-1.5 flex items-center gap-1">
+                                                    Modal: <span class="font-mono text-slate-500 dark:text-slate-400">Rp
+                                                        {{ number_format($product->buyPrice, 0, ',', '.') }}</span>
+                                                </span>
+
+                                                {{-- Analysis Badges (Compact but Explicit) --}}
+                                                <div class="flex flex-wrap gap-1.5">
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-900/20 text-[9px] font-medium text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-800/30">
+                                                        Markup: {{ number_format($product->markup, 0) }}%
+                                                    </span>
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-medium border border-transparent {{ $product->grossMargin < 0 ? 'text-rose-600 bg-rose-50 dark:bg-rose-900/20' : 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-100 dark:border-emerald-800/30' }}">
+                                                        Margin: {{ number_format($product->grossMargin, 0) }}%
+                                                    </span>
+                                                </div>
+                                            @else
+                                                <span class="text-[10px] text-slate-400 mt-0.5 italic">Belum ada modal</span>
+                                            @endif
+                                        @endif
+                                    </div>
+                                @else
+                                    <span class="font-bold text-slate-800 dark:text-white">
+                                        Rp {{ number_format($product->sellPrice, 0, ',', '.') }}
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-5 py-3.5">
                                 <div class="flex justify-between text-[10px] mb-1">

@@ -111,12 +111,28 @@ class Product extends Model
         return $this->sellPrice - $this->buyPrice;
     }
 
-    public function getMarginPercentageAttribute()
+    // Explicit accessor for Markup % ((Sell - Buy) / Buy)
+    public function getMarkupAttribute()
     {
         if (!$this->buyPrice || $this->buyPrice == 0) {
             return 0;
         }
         return (($this->sellPrice - $this->buyPrice) / $this->buyPrice) * 100;
+    }
+
+    // Explicit accessor for Gross Margin % ((Sell - Buy) / Sell)
+    public function getGrossMarginAttribute()
+    {
+        if (!$this->sellPrice || $this->sellPrice == 0) {
+            return 0;
+        }
+        return (($this->sellPrice - $this->buyPrice) / $this->sellPrice) * 100;
+    }
+
+    // Legacy/Existing accessor (Refers to Markup)
+    public function getMarginPercentageAttribute()
+    {
+        return $this->markup;
     }
 
     public function scopeLowStock($query)
