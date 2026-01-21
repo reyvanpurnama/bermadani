@@ -73,13 +73,10 @@
             class="px-4 py-2 text-[13px] {{ $status === '' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">Semua
             Batch</button>
         <button wire:click="setStatus('REQUESTED')"
-            class="px-4 py-2 text-[13px] relative {{ $status === 'REQUESTED' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">
+            class="px-4 py-2 text-[13px] flex items-center gap-2 {{ $status === 'REQUESTED' ? 'font-semibold text-primary border-b-2 border-primary' : 'font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors' }}">
             Menunggu Barang
             @if($stats['requested'] > 0)
-                <span class="absolute -top-0.5 -right-0.5 flex h-3 w-3">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                </span>
+                <span class="bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $stats['requested'] }}</span>
             @endif
         </button>
         <button wire:click="setStatus('ACTIVE')"
