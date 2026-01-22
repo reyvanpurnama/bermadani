@@ -31,18 +31,36 @@ Route::middleware('guest')->group(function () {
         $password = $input['password'];
         $email = $loginInput;
 
-        // If input doesn't contain @, try to resolve it as member number
+        // If input doesn't contain @, try to resolve it as member number OR phone number
         if (!str_contains($loginInput, '@')) {
-            // Try to find member by nomorAnggota
+            // First, try to find member by nomorAnggota
             $member = \App\Models\Member::where('nomorAnggota', $loginInput)->first();
 
             if ($member && $member->user) {
                 $email = $member->user->email;
             } else {
-                // Not found as member number - show error
-                return back()->withErrors([
-                    'email' => 'Nomor anggota tidak ditemukan.',
-                ])->onlyInput('email');
+                // Not found as member number - try as phone number
+                // Normalize phone to 08... format
+                $phone = preg_replace('/\D/', '', $loginInput);
+                if (str_starts_with($phone, '62')) {
+                    $phone = '0' . substr($phone, 2);
+                }
+                if (str_starts_with($phone, '8')) {
+                    $phone = '0' . $phone;
+                }
+
+                // Try to find user by phone-based email
+                $phoneEmail = $phone . '@bermadani.id';
+                $user = \App\Models\User::where('email', $phoneEmail)->first();
+
+                if ($user) {
+                    $email = $phoneEmail;
+                } else {
+                    // Not found as member number OR phone number - show error
+                    return back()->withErrors([
+                        'email' => 'ID Pengguna tidak ditemukan.',
+                    ])->onlyInput('email');
+                }
             }
         }
 

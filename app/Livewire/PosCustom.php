@@ -51,7 +51,7 @@ class PosCustom extends Component
 
     public function loadMembers()
     {
-        $this->members = Member::select('id', 'name', 'nomorAnggota', 'unitKerja', 'tier', 'points')
+        $this->members = Member::select('id', 'name', 'nomorAnggota', 'phone', 'unitKerja', 'tier', 'points')
             ->where('status', 'ACTIVE')
             ->orderBy('name')
             ->get()
@@ -74,10 +74,21 @@ class PosCustom extends Component
 
         DB::beginTransaction();
         try {
+            // Normalize phone number to 08... format
+            $phone = $this->newMemberPhone;
+            // Remove any non-digit characters just in case
+            $phone = preg_replace('/\D/', '', $phone);
+            // If starts with 62 (country code), replace with 0
+            if (str_starts_with($phone, '62')) {
+                $phone = '0' . substr($phone, 2);
+            }
+            // If starts with 8 (without leading 0), prepend 0
+            if (str_starts_with($phone, '8')) {
+                $phone = '0' . $phone;
+            }
+
             // 1. Create User Account
-            // Use phone number as temporary email prefix if no email provided logic (simplified here)
-            // Or just generate a dummy email consistent with the system
-            $dummyEmail = $this->newMemberPhone . '@member.store';
+            $dummyEmail = $phone . '@bermadani.id';
 
             // Check if user exists (by email/phone logic - simplified)
             if (\App\Models\User::where('email', $dummyEmail)->exists()) {
@@ -87,7 +98,7 @@ class PosCustom extends Component
             $user = \App\Models\User::create([
                 'name' => $this->newMemberName,
                 'email' => $dummyEmail,
-                'password' => bcrypt($this->newMemberPhone), // Default password is phone number
+                'password' => bcrypt('password'), // Consolidated default password
                 'role' => 'MEMBER',
             ]);
 
@@ -97,7 +108,7 @@ class PosCustom extends Component
                 'nomorAnggota' => Member::generateNomorAnggota(),
                 'name' => $this->newMemberName,
                 'email' => $dummyEmail,
-                'phone' => $this->newMemberPhone,
+                'phone' => $phone, // Use normalized phone
                 'gender' => $this->newMemberGender,
                 'unitKerja' => $this->newMemberUnit ?: 'UMUM', // Default to UMUM if empty
                 'status' => 'ACTIVE',

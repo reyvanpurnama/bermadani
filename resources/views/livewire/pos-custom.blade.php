@@ -201,7 +201,7 @@
                                     <p class="text-[11px] font-medium text-slate-800 dark:text-white truncate"
                                         x-text="member.name"></p>
                                     <p class="text-[10px] text-slate-500 truncate"
-                                        x-text="member.nomorAnggota + (member.unitKerja ? ' • ' + member.unitKerja : '')">
+                                        x-text="(member.phone ? member.phone : member.nomorAnggota) + (member.unitKerja ? ' • ' + member.unitKerja : '')">
                                     </p>
                                 </div>
                             </button>
