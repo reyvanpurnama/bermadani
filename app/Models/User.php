@@ -129,7 +129,7 @@ class User extends Authenticatable
 
     public function canManageProducts(): bool
     {
-        return in_array($this->role, ['SUPER_ADMIN', 'ADMIN']);
+        return in_array($this->role, ['SUPER_ADMIN', 'ADMIN', 'DEVELOPER']);
     }
 
     public function canManageSuppliers(): bool
