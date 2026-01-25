@@ -102,7 +102,7 @@ class PosCustom extends Component
                 'role' => 'MEMBER',
             ]);
 
-            // 2. Create Member Record
+            // 2. Create Member Record (Member Koperasi - for transaction history)
             $member = Member::create([
                 'userId' => $user->id,
                 'nomorAnggota' => Member::generateNomorAnggota(),
@@ -116,9 +116,20 @@ class PosCustom extends Component
                 'isMemberKoperasi' => false, // Toko retail member usually not full koperasi member initially
             ]);
 
+            // 3. Create Member Minimarket (for loyalty program)
+            \App\Models\MemberMinimarket::create([
+                'userId' => $user->id,
+                'memberNumber' => 'MM-' . date('y') . '-' . str_pad(\App\Models\MemberMinimarket::whereYear('created_at', date('Y'))->count() + 1, 5, '0', STR_PAD_LEFT),
+                'cardNumber' => 'BC' . date('y') . str_pad(mt_rand(1, 9999999), 7, '0', STR_PAD_LEFT),
+                'points' => 0,
+                'totalSpent' => 0,
+                'status' => 'ACTIVE',
+                'registeredBy' => auth()->id(),
+            ]);
+
             DB::commit();
 
-            // 3. Auto Select Member
+            // 4. Auto Select Member
             $this->loadMembers(); // Reload list
             $this->selectMember($member->id);
             $this->showNewMemberModal = false;

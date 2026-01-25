@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\Member;
+use App\Models\MemberKoperasi;
+use App\Models\MemberMinimarket;
 use App\Models\SimpananTransaction;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -14,10 +16,10 @@ class MemberService
      * Create new member
      *
      * @param array $data
-     * @return Member
+     * @return array ['memberKoperasi' => Member, 'memberMinimarket' => MemberMinimarket]
      * @throws \Exception
      */
-    public function createMember(array $data): Member
+    public function createMember(array $data): array
     {
         return DB::transaction(function () use ($data) {
             // Generate unique nomor anggota
@@ -30,10 +32,9 @@ class MemberService
             if (isset($data['createNewUser']) && $data['createNewUser']) {
                 $user = User::create([
                     'name' => $data['name'],
-                    'email' => $memberEmail,
-                    'username' => $data['username'] ?? $nomorAnggota,
+                    'email' => $data['email'] ?? $memberEmail,
                     'password' => Hash::make($data['password'] ?? 'password'),
-                    'role' => 'member',
+                    'role' => 'MEMBER',
                     'isActive' => true,
                 ]);
                 $userId = $user->id;
@@ -41,8 +42,8 @@ class MemberService
                 $userId = $data['userId'] ?? null;
             }
 
-            // Create member
-            $member = Member::create([
+            // Create Member Koperasi (auto-creates Member Minimarket via booted event)
+            $memberKoperasi = MemberKoperasi::create([
                 'userId' => $userId,
                 'nomorAnggota' => $nomorAnggota,
                 'name' => $data['name'],
@@ -65,7 +66,7 @@ class MemberService
             // Add initial simpanan if provided
             if (isset($data['simpananPokok']) && $data['simpananPokok'] > 0) {
                 $this->addSimpanan(
-                    $member->id,
+                    $memberKoperasi->id,
                     'POKOK',
                     $data['simpananPokok'],
                     'Simpanan pokok awal',
@@ -76,7 +77,7 @@ class MemberService
 
             if (isset($data['simpananWajib']) && $data['simpananWajib'] > 0) {
                 $this->addSimpanan(
-                    $member->id,
+                    $memberKoperasi->id,
                     'WAJIB',
                     $data['simpananWajib'],
                     'Simpanan wajib awal',
@@ -87,7 +88,7 @@ class MemberService
 
             if (isset($data['simpananSukarela']) && $data['simpananSukarela'] > 0) {
                 $this->addSimpanan(
-                    $member->id,
+                    $memberKoperasi->id,
                     'SUKARELA',
                     $data['simpananSukarela'],
                     'Simpanan sukarela awal',
@@ -96,7 +97,13 @@ class MemberService
                 );
             }
 
-            return $member->fresh();
+            // Get the auto-created Member Minimarket
+            $memberMinimarket = MemberMinimarket::where('userId', $userId)->first();
+
+            return [
+                'memberKoperasi' => $memberKoperasi->fresh(),
+                'memberMinimarket' => $memberMinimarket,
+            ];
         });
     }
 

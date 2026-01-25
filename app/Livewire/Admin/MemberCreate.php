@@ -20,14 +20,13 @@ class MemberCreate extends Component
     public $accountType = 'existing';
     public $existingUserId;
     public $email;
-    public $username;
     public $password = '12345678';
 
     // Step 2: Personal Info
     public $name;
     public $nim;
     public $phone;
-    public $gender = 'M';
+    public $gender = 'MALE';
     public $unitKerja;
     public $address;
 
@@ -39,21 +38,27 @@ class MemberCreate extends Component
 
     protected $queryString = ['currentStep'];
 
+    public function mount()
+    {
+        $this->currentStep = 1;
+    }
+
     protected function rules()
     {
         $rules = [];
 
-        if ($this->currentStep === 1) {
+        // Step 1: Account validation
+        if ($this->currentStep === 1 || $this->currentStep === 4) {
             if ($this->accountType === 'existing') {
                 $rules['existingUserId'] = 'required|exists:users,id';
             } else {
                 $rules['email'] = 'required|email|unique:users,email';
-                $rules['username'] = 'required|string|min:3|unique:users,username';
                 $rules['password'] = 'required|string|min:6';
             }
         }
 
-        if ($this->currentStep === 2) {
+        // Step 2: Personal info validation
+        if ($this->currentStep === 2 || $this->currentStep === 4) {
             $rules['name'] = 'required|string|max:255';
             $rules['phone'] = 'required|string|max:20';
             $rules['gender'] = 'required|in:MALE,FEMALE';
@@ -61,7 +66,8 @@ class MemberCreate extends Component
             $rules['address'] = 'nullable|string';
         }
 
-        if ($this->currentStep === 3) {
+        // Step 3: Simpanan validation
+        if ($this->currentStep === 3 || $this->currentStep === 4) {
             $rules['simpananPokok'] = 'required|numeric|min:0';
             $rules['simpananWajib'] = 'required|numeric|min:0';
             $rules['simpananSukarela'] = 'nullable|numeric|min:0';
@@ -71,24 +77,26 @@ class MemberCreate extends Component
         return $rules;
     }
 
-    public function mount()
-    {
-        $this->currentStep = 1;
-    }
-
     public function updatedAccountType()
     {
-        $this->reset(['existingUserId', 'email', 'username']);
+        $this->reset(['existingUserId', 'email']);
     }
 
     public function nextStep()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        if ($this->currentStep < 4) {
-            $this->currentStep++;
-        } else {
-            $this->submit();
+            if ($this->currentStep < 4) {
+                $this->currentStep++;
+            } else {
+                $this->submit();
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Re-throw untuk tampilkan error di UI
+            throw $e;
+        } catch (\Exception $e) {
+            session()->flash('error', 'Error: ' . $e->getMessage());
         }
     }
 
@@ -101,7 +109,6 @@ class MemberCreate extends Component
 
     public function goToStep($step)
     {
-        // Only allow going to visited steps or next step
         if ($step >= 1 && $step <= 4) {
             $this->currentStep = $step;
         }
@@ -131,11 +138,11 @@ class MemberCreate extends Component
 
     public function submit()
     {
-        $this->validate();
-
-        DB::beginTransaction();
-
         try {
+            $this->validate();
+            
+            DB::beginTransaction();
+
             $memberService = app(MemberService::class);
 
             // Prepare data
@@ -153,27 +160,40 @@ class MemberCreate extends Component
             // Handle user
             if ($this->accountType === 'existing') {
                 $data['userId'] = $this->existingUserId;
+                $data['createNewUser'] = false;
             } else {
                 $data['email'] = $this->email;
-                $data['username'] = $this->username;
                 $data['password'] = $this->password;
+                $data['createNewUser'] = true;
             }
 
             // Handle bukti transfer upload
             if ($this->buktiTransfer) {
                 $path = $this->buktiTransfer->store('bukti-simpanan', 'public');
-                $data['buktiPath'] = $path;
+                $data['buktiPokokPath'] = $path;
+                $data['buktiWajibPath'] = $path;
+                $data['buktiSukarelaPath'] = $path;
             }
 
             // Create member
-            $member = $memberService->createMember($data);
+            $result = $memberService->createMember($data);
 
             DB::commit();
 
-            session()->flash('message', 'Member berhasil didaftarkan dengan nomor anggota: ' . $member->nomorAnggota);
+            $message = 'Member berhasil didaftarkan dengan nomor anggota: ' . $result['memberKoperasi']->nomorAnggota;
+            
+            if (isset($result['memberMinimarket']) && $result['memberMinimarket']) {
+                $message .= ' dan Member Minimarket: ' . $result['memberMinimarket']->memberNumber;
+            }
+            
+            session()->flash('message', $message);
+            
+            return $this->redirect(route('admin.members.show', $result['memberKoperasi']->id));
 
-            return redirect()->route('admin.members.show', $member->id);
-
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
+            throw $e;
+            
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());

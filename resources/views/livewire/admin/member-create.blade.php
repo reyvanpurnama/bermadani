@@ -6,6 +6,18 @@
         </div>
     @endif
 
+    <!-- All Validation Errors -->
+    @if ($errors->any())
+        <div class="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg">
+            <p class="text-sm font-bold text-amber-700 dark:text-amber-400 mb-2">Validation Errors:</p>
+            <ul class="list-disc list-inside text-xs text-amber-600 dark:text-amber-400">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <!-- Progress Steps -->
     <div class="mb-8">
         <div class="flex items-center justify-between relative">
@@ -55,8 +67,7 @@
                         <div class="p-4 rounded-xl border-2 transition-all text-center
                             peer-checked:border-primary peer-checked:bg-indigo-50/50 dark:peer-checked:bg-indigo-900/10
                             border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                            <i class='bx bx-search-alt text-2xl mb-2' 
-                                :class="accountType === 'existing' ? 'text-primary' : 'text-slate-400'"></i>
+                            <i class='bx bx-search-alt text-2xl mb-2 {{ $accountType === "existing" ? "text-primary" : "text-slate-400" }}'></i>
                             <h5 class="text-sm font-bold text-slate-800 dark:text-white">Pilih User Ada</h5>
                             <p class="text-[10px] text-slate-500">Cari dari database user</p>
                         </div>
@@ -66,8 +77,7 @@
                         <div class="p-4 rounded-xl border-2 transition-all text-center
                             peer-checked:border-primary peer-checked:bg-indigo-50/50 dark:peer-checked:bg-indigo-900/10
                             border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                            <i class='bx bx-user-plus text-2xl mb-2'
-                                :class="accountType === 'new' ? 'text-primary' : 'text-slate-400'"></i>
+                            <i class='bx bx-user-plus text-2xl mb-2 {{ $accountType === "new" ? "text-primary" : "text-slate-400" }}'></i>
                             <h5 class="text-sm font-bold text-slate-800 dark:text-white">Buat User Baru</h5>
                             <p class="text-[10px] text-slate-500">Register email & password</p>
                         </div>
@@ -95,20 +105,12 @@
                                 placeholder="email@kampus.ac.id">
                             @error('email') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Username</label>
-                                <input type="text" wire:model="username"
-                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
-                                    placeholder="username">
-                                @error('username') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
-                                <input type="password" wire:model="password"
-                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white">
-                                @error('password') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                            </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
+                            <input type="password" wire:model="password"
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
+                                placeholder="Minimal 6 karakter">
+                            @error('password') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                         </div>
                     </div>
                 @endif

@@ -63,6 +63,22 @@ class User extends Authenticatable
         return $this->hasOne(Member::class, 'userId');
     }
 
+    /**
+     * Relasi ke Member Koperasi (alias untuk member())
+     */
+    public function memberKoperasi()
+    {
+        return $this->hasOne(Member::class, 'userId');
+    }
+
+    /**
+     * Relasi ke Member Minimarket
+     */
+    public function memberMinimarket()
+    {
+        return $this->hasOne(MemberMinimarket::class, 'userId');
+    }
+
     public function cashierShifts()
     {
         return $this->hasMany(CashierShift::class, 'user_id');
@@ -71,6 +87,22 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class, 'userId');
+    }
+
+    /**
+     * Helper: Check if user is Member Koperasi
+     */
+    public function isMemberKoperasi(): bool
+    {
+        return $this->memberKoperasi()->exists();
+    }
+
+    /**
+     * Helper: Check if user is Member Minimarket
+     */
+    public function isMemberMinimarket(): bool
+    {
+        return $this->memberMinimarket()->exists();
     }
 
     /**
