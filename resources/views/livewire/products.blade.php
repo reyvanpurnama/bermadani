@@ -196,7 +196,7 @@
                             </th>
                         @endif
                         <th class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest w-[150px]">
-                            Level Stok</th>
+                            Sisa Stok</th>
                         <th
                             class="px-5 py-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-center">
                             Status</th>
