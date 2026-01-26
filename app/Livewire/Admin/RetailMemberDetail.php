@@ -112,6 +112,6 @@ class RetailMemberDetail extends Component
     {
         return view('livewire.admin.retail-member-detail', [
             'unitKerjaList' => $this->unitKerjaList,
-        ]);
+        ])->layout('layouts.admin');
     }
 }

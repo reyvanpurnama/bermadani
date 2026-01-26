@@ -46,6 +46,6 @@ class RetailMemberManagement extends Component
     {
         return view('livewire.admin.retail-member-management', [
             'members' => $this->members,
-        ]);
+        ])->layout('layouts.admin');
     }
 }
