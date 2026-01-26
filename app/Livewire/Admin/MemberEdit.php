@@ -19,7 +19,7 @@ class MemberEdit extends Component
     public $unitKerja;
     public $address;
     public $status;
-    
+
     // Payment preferences
     public $simwa_payment_method;
     public $sukarela_payment_method;
@@ -29,7 +29,7 @@ class MemberEdit extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'nullable|string|max:20', // Changed to nullable
             'gender' => 'required|in:MALE,FEMALE',
             'unitKerja' => 'nullable|string|max:255',
             'address' => 'nullable|string',
@@ -60,7 +60,7 @@ class MemberEdit extends Component
         $this->unitKerja = $this->member->unitKerja;
         $this->address = $this->member->address;
         $this->status = $this->member->status;
-        
+
         // Payment preferences
         $this->simwa_payment_method = $this->member->simwa_payment_method ?? 'SALARY_DEDUCTION';
         $this->sukarela_payment_method = $this->member->sukarela_payment_method ?? 'MANUAL';
@@ -84,13 +84,16 @@ class MemberEdit extends Component
         DB::beginTransaction();
 
         try {
+            // Refresh member model to ensure we have latest
+            $this->member->refresh();
+
             // Update user name
             $this->member->user->update([
                 'name' => $this->name,
             ]);
 
-            // Update member info
-            $this->member->update([
+            // Update member info including payment preferences
+            $updateData = [
                 'phone' => $this->phone,
                 'gender' => $this->gender,
                 'unitKerja' => $this->unitKerja,
@@ -98,23 +101,43 @@ class MemberEdit extends Component
                 'status' => $this->status,
                 'simwa_payment_method' => $this->simwa_payment_method,
                 'sukarela_payment_method' => $this->sukarela_payment_method,
-                'monthly_sukarela_amount' => $this->sukarela_payment_method === 'SALARY_DEDUCTION' 
-                    ? $this->monthly_sukarela_amount 
+                'monthly_sukarela_amount' => $this->sukarela_payment_method === 'SALARY_DEDUCTION'
+                    ? $this->monthly_sukarela_amount
                     : 0,
                 'salary_deduction_consent_date' => ($this->simwa_payment_method === 'SALARY_DEDUCTION' || $this->sukarela_payment_method === 'SALARY_DEDUCTION')
                     ? now()->toDateString()
                     : null,
+            ];
+
+            // Debug log
+            \Log::info('MemberEdit Update', [
+                'member_id' => $this->member->id,
+                'simwa_method' => $this->simwa_payment_method,
+                'sukarela_method' => $this->sukarela_payment_method,
             ]);
+
+            $this->member->update($updateData);
 
             DB::commit();
 
-            session()->flash('success', 'Data member berhasil diperbarui.');
+            // Dispatch toast notification instead of redirect
+            $this->dispatch('notify', [
+                'message' => 'Data member berhasil diperbarui!',
+                'type' => 'success'
+            ]);
 
-            return redirect()->route('admin.members.show', $this->member->id);
+            // Refresh member data to show updated values
+            $this->loadMember();
+            $this->fillForm();
 
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            \Log::error('MemberEdit Error: ' . $e->getMessage());
+
+            $this->dispatch('notify', [
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
         }
     }
 

@@ -1,13 +1,15 @@
 <div>
     <!-- Flash Message -->
     @if (session()->has('message'))
-        <div class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
+        <div
+            class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
             <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{{ session('message') }}</p>
         </div>
     @endif
 
     <!-- Member Profile Card -->
-    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden mb-6">
+    <div
+        class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden mb-6">
         <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full pointer-events-none"></div>
 
         <div class="relative shrink-0">
@@ -17,11 +19,14 @@
             </div>
             <div class="absolute bottom-0 right-0 bg-white dark:bg-darkCard p-1 rounded-full">
                 @if($member->status === 'ACTIVE')
-                    <span class="w-4 h-4 bg-emerald-500 border-2 border-white dark:border-darkCard rounded-full block" title="Aktif"></span>
+                    <span class="w-4 h-4 bg-emerald-500 border-2 border-white dark:border-darkCard rounded-full block"
+                        title="Aktif"></span>
                 @elseif($member->status === 'SUSPENDED')
-                    <span class="w-4 h-4 bg-rose-500 border-2 border-white dark:border-darkCard rounded-full block" title="Diblokir"></span>
+                    <span class="w-4 h-4 bg-rose-500 border-2 border-white dark:border-darkCard rounded-full block"
+                        title="Diblokir"></span>
                 @else
-                    <span class="w-4 h-4 bg-slate-400 border-2 border-white dark:border-darkCard rounded-full block" title="Nonaktif"></span>
+                    <span class="w-4 h-4 bg-slate-400 border-2 border-white dark:border-darkCard rounded-full block"
+                        title="Nonaktif"></span>
                 @endif
             </div>
         </div>
@@ -32,22 +37,33 @@
                 <div class="flex items-center justify-center gap-2">
                     <!-- Tier Badge -->
                     @if($member->tier === 'PLATINUM')
-                        <span class="bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-100 dark:border-purple-800">Platinum Member</span>
+                        <span
+                            class="bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-300 text-[10px] font-bold px-2 py-0.5 rounded border border-purple-100 dark:border-purple-800">Platinum
+                            Member</span>
                     @elseif($member->tier === 'GOLD')
-                        <span class="bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-100 dark:border-amber-800">Gold Member</span>
+                        <span
+                            class="bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-100 dark:border-amber-800">Gold
+                            Member</span>
                     @elseif($member->tier === 'SILVER')
-                        <span class="bg-blue-50 text-primary dark:bg-blue-900/20 dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800">Silver Member</span>
+                        <span
+                            class="bg-blue-50 text-primary dark:bg-blue-900/20 dark:text-blue-300 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-100 dark:border-blue-800">Silver
+                            Member</span>
                     @else
-                        <span class="bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-300 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-100 dark:border-orange-800">Bronze Member</span>
+                        <span
+                            class="bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-300 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-100 dark:border-orange-800">Bronze
+                            Member</span>
                     @endif
 
                     <!-- Status Badge -->
                     @if($member->status === 'ACTIVE')
-                        <span class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-100 dark:border-emerald-800">Aktif</span>
+                        <span
+                            class="bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-100 dark:border-emerald-800">Aktif</span>
                     @elseif($member->status === 'SUSPENDED')
-                        <span class="bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 text-[10px] font-bold px-2 py-0.5 rounded border border-rose-100 dark:border-rose-800">Diblokir</span>
+                        <span
+                            class="bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 text-[10px] font-bold px-2 py-0.5 rounded border border-rose-100 dark:border-rose-800">Diblokir</span>
                     @else
-                        <span class="bg-slate-50 text-slate-600 dark:bg-slate-900/20 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-100 dark:border-slate-800">Nonaktif</span>
+                        <span
+                            class="bg-slate-50 text-slate-600 dark:bg-slate-900/20 dark:text-slate-400 text-[10px] font-bold px-2 py-0.5 rounded border border-slate-100 dark:border-slate-800">Nonaktif</span>
                     @endif
                 </div>
             </div>
@@ -81,17 +97,20 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <!-- Personal Information -->
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
-            <h3 class="text-[13px] font-bold text-slate-800 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
+            <h3
+                class="text-[13px] font-bold text-slate-800 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-700 pb-2">
                 Informasi Pribadi
             </h3>
             <div class="space-y-3 text-[13px]">
                 <div class="flex justify-between">
                     <span class="text-slate-500">Unit Kerja/Prodi</span>
-                    <span class="font-medium text-slate-800 dark:text-white">{{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : ($member->unitKerja ?? '-') }}</span>
+                    <span
+                        class="font-medium text-slate-800 dark:text-white">{{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : ($member->unitKerja ?? '-') }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-500">Email</span>
-                    <span class="font-medium text-slate-800 dark:text-white truncate max-w-[150px]">{{ $member->user->email }}</span>
+                    <span
+                        class="font-medium text-slate-800 dark:text-white truncate max-w-[150px]">{{ $member->user->email }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-slate-500">No. Telepon</span>
@@ -105,33 +124,39 @@
                 </div>
                 <div class="flex flex-col gap-1 mt-2">
                     <span class="text-slate-500">Alamat Domisili</span>
-                    <span class="font-medium text-slate-800 dark:text-white leading-snug">{{ $member->address ?? '-' }}</span>
+                    <span
+                        class="font-medium text-slate-800 dark:text-white leading-snug">{{ $member->address ?? '-' }}</span>
                 </div>
             </div>
         </div>
 
         <!-- Portfolio Simpanan -->
-        <div class="lg:col-span-2 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
+        <div
+            class="lg:col-span-2 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">Portfolio Simpanan</h3>
                 <div class="text-[11px] text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
-                    Total Aset: <span class="font-bold text-primary text-[13px]">Rp {{ number_format($member->totalSimpanan, 0, ',', '.') }}</span>
+                    Total Aset: <span class="font-bold text-primary text-[13px]">Rp
+                        {{ number_format($member->totalSimpanan, 0, ',', '.') }}</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <!-- Simpanan Pokok -->
-                <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col justify-between">
+                <div
+                    class="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Pokok</span>
                             <i class='bx bxs-lock-alt text-slate-400'></i>
                         </div>
-                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</h4>
+                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                            {{ number_format($member->simpananPokok, 0, ',', '.') }}</h4>
                         <p class="text-[10px] text-slate-400 mt-1">Non-withdrawable</p>
                     </div>
                     @if($member->simpananPokok > 0)
-                        <button class="w-full mt-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-400 text-[11px] font-bold rounded cursor-not-allowed">
+                        <button
+                            class="w-full mt-3 py-1.5 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-400 text-[11px] font-bold rounded cursor-not-allowed">
                             Lunas
                         </button>
                     @else
@@ -143,13 +168,15 @@
                 </div>
 
                 <!-- Simpanan Wajib -->
-                <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col justify-between">
+                <div
+                    class="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Wajib</span>
                             <i class='bx bxs-calendar text-slate-400'></i>
                         </div>
-                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananWajib, 0, ',', '.') }}</h4>
+                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                            {{ number_format($member->simpananWajib, 0, ',', '.') }}</h4>
                         <p class="text-[10px] text-slate-400 mt-1">Bulanan (Mandatory)</p>
                     </div>
                     <a href="{{ route('admin.members.simpanan', $member->id) }}"
@@ -159,15 +186,21 @@
                 </div>
 
                 <!-- Simpanan Sukarela -->
-                <div class="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800/50 flex flex-col justify-between relative overflow-hidden">
-                    <div class="absolute right-0 top-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-800/30 rounded-bl-full -mr-2 -mt-2"></div>
+                <div
+                    class="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg border border-emerald-200 dark:border-emerald-800/50 flex flex-col justify-between relative overflow-hidden">
+                    <div
+                        class="absolute right-0 top-0 w-12 h-12 bg-emerald-100 dark:bg-emerald-800/30 rounded-bl-full -mr-2 -mt-2">
+                    </div>
                     <div class="relative z-10">
                         <div class="flex justify-between items-center mb-1">
-                            <span class="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-wider">Sukarela</span>
+                            <span
+                                class="text-[10px] text-emerald-700 dark:text-emerald-400 uppercase font-bold tracking-wider">Sukarela</span>
                             <i class='bx bxs-wallet text-emerald-500'></i>
                         </div>
-                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananSukarela, 0, ',', '.') }}</h4>
-                        <p class="text-[10px] text-emerald-600/70 dark:text-emerald-400/70 mt-1">Liquid / Bisa Ditarik</p>
+                        <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                            {{ number_format($member->simpananSukarela, 0, ',', '.') }}</h4>
+                        <p class="text-[10px] text-emerald-600/70 dark:text-emerald-400/70 mt-1">Liquid / Bisa Ditarik
+                        </p>
                     </div>
                     <div class="flex gap-2 mt-3 relative z-10">
                         <a href="{{ route('admin.members.simpanan', $member->id) }}"
@@ -187,21 +220,26 @@
     <!-- Loyalty and Tabs Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Loyalty Tier Card -->
-        <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-center">
+        <div
+            class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-center">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <p class="text-[10px] text-slate-400 uppercase tracking-widest">Loyalty Tier</p>
-                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">{{ ucfirst(strtolower($member->tier)) }}</h3>
+                    <h3 class="text-xl font-bold text-slate-800 dark:text-white">
+                        {{ ucfirst(strtolower($member->tier)) }}</h3>
                 </div>
-                <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-2xl text-slate-500">
+                <div
+                    class="w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-2xl text-slate-500">
                     <i class='bx bxs-medal'></i>
                 </div>
             </div>
 
             <div class="mb-2">
                 <div class="flex justify-between text-[11px] font-medium mb-1">
-                    <span class="text-slate-600 dark:text-slate-300">{{ number_format($member->points, 0, ',', '.') }} Pts</span>
-                    <span class="text-slate-400">Target: {{ number_format($member->pointsToNextTier + $member->points, 0, ',', '.') }}</span>
+                    <span class="text-slate-600 dark:text-slate-300">{{ number_format($member->points, 0, ',', '.') }}
+                        Pts</span>
+                    <span class="text-slate-400">Target:
+                        {{ number_format($member->pointsToNextTier + $member->points, 0, ',', '.') }}</span>
                 </div>
                 <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2">
                     <div class="
@@ -218,14 +256,16 @@
             <div class="flex justify-between items-center mt-4 pt-4 border-t border-slate-100 dark:border-slate-700">
                 <div>
                     <p class="text-[10px] text-slate-400">Total Belanja (YTD)</p>
-                    <p class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->totalSpent, 0, ',', '.') }}</p>
+                    <p class="text-sm font-bold text-slate-800 dark:text-white">Rp
+                        {{ number_format($member->totalSpent, 0, ',', '.') }}</p>
                 </div>
                 <button class="text-primary text-[11px] font-bold hover:underline">Lihat Reward</button>
             </div>
         </div>
 
         <!-- Tabs Section -->
-        <div class="lg:col-span-2 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden min-h-[300px] flex flex-col">
+        <div
+            class="lg:col-span-2 bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden min-h-[300px] flex flex-col">
             <!-- Tab Buttons -->
             <div class="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20">
                 <button wire:click="switchTab('trx')"
@@ -250,7 +290,7 @@
                         <thead class="bg-slate-50 dark:bg-slate-800 sticky top-0">
                             <tr>
                                 <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide">ID & Waktu</th>
-                                <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide">Merchant</th>
+                                <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide">Kasir</th>
                                 <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide text-right">Total</th>
                             </tr>
                         </thead>
@@ -259,9 +299,10 @@
                                 <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                     <td class="px-5 py-3">
                                         #{{ $transaction->invoiceNumber }}<br>
-                                        <span class="text-[10px] text-slate-400">{{ $transaction->created_at->format('d M, H:i') }}</span>
+                                        <span
+                                            class="text-[10px] text-slate-400">{{ $transaction->created_at->format('d M, H:i') }}</span>
                                     </td>
-                                    <td class="px-5 py-3">{{ $transaction->merchant->businessName ?? '-' }}</td>
+                                    <td class="px-5 py-3">{{ $transaction->user->name ?? '-' }}</td>
                                     <td class="px-5 py-3 text-right font-bold text-slate-800 dark:text-white">
                                         Rp {{ number_format($transaction->totalAmount, 0, ',', '.') }}
                                     </td>
@@ -290,7 +331,8 @@
                             <tr>
                                 <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide">Tanggal</th>
                                 <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide">Tipe</th>
-                                <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide text-right">Nominal</th>
+                                <th class="px-5 py-2 font-bold text-slate-500 uppercase tracking-wide text-right">Nominal
+                                </th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -299,16 +341,18 @@
                                     <td class="px-5 py-3">{{ $simpanan->created_at->format('d M Y') }}</td>
                                     <td class="px-5 py-3">
                                         <span class="
-                                            @if($simpanan->type === 'POKOK') bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300
-                                            @elseif($simpanan->type === 'WAJIB') bg-blue-50 text-primary dark:bg-blue-900/20 dark:text-blue-300
-                                            @else bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300
-                                            @endif
-                                            px-2 py-0.5 rounded font-bold text-[10px]
-                                        ">{{ $simpanan->typeLabel }}</span>
+                                                    @if($simpanan->type === 'POKOK') bg-slate-50 text-slate-600 dark:bg-slate-800 dark:text-slate-300
+                                                    @elseif($simpanan->type === 'WAJIB') bg-blue-50 text-primary dark:bg-blue-900/20 dark:text-blue-300
+                                                    @else bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300
+                                                    @endif
+                                                    px-2 py-0.5 rounded font-bold text-[10px]
+                                                ">{{ $simpanan->typeLabel }}</span>
                                         {{ $simpanan->transactionTypeLabel }}
                                     </td>
-                                    <td class="px-5 py-3 text-right font-bold {{ $simpanan->transactionType === 'SETOR' ? 'text-emerald-600' : 'text-rose-500' }}">
-                                        {{ $simpanan->transactionType === 'SETOR' ? '+' : '-' }} Rp {{ number_format($simpanan->amount, 0, ',', '.') }}
+                                    <td
+                                        class="px-5 py-3 text-right font-bold {{ $simpanan->transactionType === 'SETOR' ? 'text-emerald-600' : 'text-rose-500' }}">
+                                        {{ $simpanan->transactionType === 'SETOR' ? '+' : '-' }} Rp
+                                        {{ number_format($simpanan->amount, 0, ',', '.') }}
                                     </td>
                                 </tr>
                             @empty
@@ -332,7 +376,8 @@
                 @if($activeTab === 'log')
                     <div class="p-5 space-y-4">
                         <div class="flex gap-3">
-                            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">
+                            <div
+                                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">
                                 <i class='bx bx-user-check'></i>
                             </div>
                             <div>
@@ -342,7 +387,8 @@
                         </div>
                         @if($member->lastPurchase)
                             <div class="flex gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 text-xs">
                                     <i class='bx bx-shopping-bag'></i>
                                 </div>
                                 <div>

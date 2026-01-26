@@ -59,7 +59,7 @@ class MemberDetail extends Component
     public function getTransactionsProperty()
     {
         return Transaction::where('memberId', $this->memberId)
-            ->with(['merchant'])
+            ->with(['user', 'member']) // Valid relationships
             ->orderBy('created_at', 'desc')
             ->paginate(10);
     }
