@@ -124,17 +124,16 @@ class MemberCreate extends Component
             }
 
             // Prepare data - Auto Email/Pass handled by Service
+            // Fix: unitKerja cannot be null in DB, use '-' as default
             $data = [
                 'name' => $this->name,
                 'phone' => $phoneToUse,
                 'gender' => $this->gender,
-                'unitKerja' => $this->unitKerja,
-                'address' => $this->address,
+                'unitKerja' => $this->unitKerja ?: '-', // Default to strip if empty
+                'address' => $this->address ?: '-',     // Default to strip if empty
                 'simpananPokok' => $this->simpananPokok,
                 'simpananWajib' => $this->simpananWajib,
                 'simpananSukarela' => $this->simpananSukarela,
-                // 'email' => removed, let service auto-gen ex: [ID]@bermadani.id
-                // 'password' => removed, let service default to 'password'
                 'createNewUser' => true,
             ];
 
