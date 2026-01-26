@@ -55,65 +55,29 @@
             <div class="p-8">
                 <div class="text-center mb-8">
                     <div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-xl flex items-center justify-center text-2xl mx-auto mb-3">
-                        <i class='bx bx-user-pin'></i>
+                        <i class='bx bx-user-plus'></i>
                     </div>
-                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Hubungkan Akun Pengguna</h2>
-                    <p class="text-xs text-slate-500">Pilih user yang sudah ada atau buat akun baru.</p>
+                    <h2 class="text-lg font-bold text-slate-900 dark:text-white">Buat Akun Anggota Baru</h2>
+                    <p class="text-xs text-slate-500">Masukkan email dan password untuk akun baru.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <label class="cursor-pointer">
-                        <input type="radio" wire:model.live="accountType" value="existing" class="peer sr-only">
-                        <div class="p-4 rounded-xl border-2 transition-all text-center
-                            peer-checked:border-primary peer-checked:bg-indigo-50/50 dark:peer-checked:bg-indigo-900/10
-                            border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                            <i class='bx bx-search-alt text-2xl mb-2 {{ $accountType === "existing" ? "text-primary" : "text-slate-400" }}'></i>
-                            <h5 class="text-sm font-bold text-slate-800 dark:text-white">Pilih User Ada</h5>
-                            <p class="text-[10px] text-slate-500">Cari dari database user</p>
-                        </div>
-                    </label>
-                    <label class="cursor-pointer">
-                        <input type="radio" wire:model.live="accountType" value="new" class="peer sr-only">
-                        <div class="p-4 rounded-xl border-2 transition-all text-center
-                            peer-checked:border-primary peer-checked:bg-indigo-50/50 dark:peer-checked:bg-indigo-900/10
-                            border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800">
-                            <i class='bx bx-user-plus text-2xl mb-2 {{ $accountType === "new" ? "text-primary" : "text-slate-400" }}'></i>
-                            <h5 class="text-sm font-bold text-slate-800 dark:text-white">Buat User Baru</h5>
-                            <p class="text-[10px] text-slate-500">Register email & password</p>
-                        </div>
-                    </label>
-                </div>
-
-                @if($accountType === 'existing')
+                <div class="space-y-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Cari User</label>
-                        <select wire:model="existingUserId"
-                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary dark:text-white">
-                            <option value="">Pilih User...</option>
-                            @foreach($existingUsers as $user)
-                                <option value="{{ $user->id }}">{{ $user->email }} - {{ $user->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('existingUserId') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Email</label>
+                        <input type="email" wire:model="email"
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
+                            placeholder="email@kampus.ac.id">
+                        @error('email') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
-                @else
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Email</label>
-                            <input type="email" wire:model="email"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
-                                placeholder="email@kampus.ac.id">
-                            @error('email') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
-                            <input type="password" wire:model="password"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
-                                placeholder="Minimal 6 karakter">
-                            @error('password') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                        </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Password</label>
+                        <input type="password" wire:model="password"
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:border-primary dark:text-white"
+                            placeholder="Minimal 6 karakter">
+                        @error('password') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                        <p class="text-[10px] text-slate-400 mt-1">Default password: 12345678</p>
                     </div>
-                @endif
+                </div>
             </div>
         @endif
 

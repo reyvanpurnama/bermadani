@@ -16,9 +16,8 @@ class MemberCreate extends Component
     // Wizard state
     public $currentStep = 1;
 
-    // Step 1: Account
-    public $accountType = 'existing';
-    public $existingUserId;
+    // Step 1: Account (always new user)
+    public $accountType = 'new';
     public $email;
     public $password = '12345678';
 
@@ -47,14 +46,10 @@ class MemberCreate extends Component
     {
         $rules = [];
 
-        // Step 1: Account validation
+        // Step 1: Account validation (always new user)
         if ($this->currentStep === 1 || $this->currentStep === 4) {
-            if ($this->accountType === 'existing') {
-                $rules['existingUserId'] = 'required|exists:users,id';
-            } else {
-                $rules['email'] = 'required|email|unique:users,email';
-                $rules['password'] = 'required|string|min:6';
-            }
+            $rules['email'] = 'required|email|unique:users,email';
+            $rules['password'] = 'required|string|min:6';
         }
 
         // Step 2: Personal info validation
@@ -75,11 +70,6 @@ class MemberCreate extends Component
         }
 
         return $rules;
-    }
-
-    public function updatedAccountType()
-    {
-        $this->reset(['existingUserId', 'email']);
     }
 
     public function nextStep()
@@ -119,13 +109,6 @@ class MemberCreate extends Component
         return ($this->simpananPokok ?? 0) + ($this->simpananWajib ?? 0) + ($this->simpananSukarela ?? 0);
     }
 
-    public function getExistingUsersProperty()
-    {
-        return User::whereDoesntHave('member')
-            ->orderBy('name')
-            ->get();
-    }
-
     public function getUnitKerjaListProperty()
     {
         return DB::table('members')
@@ -155,17 +138,10 @@ class MemberCreate extends Component
                 'simpananPokok' => $this->simpananPokok,
                 'simpananWajib' => $this->simpananWajib,
                 'simpananSukarela' => $this->simpananSukarela,
+                'email' => $this->email,
+                'password' => $this->password,
+                'createNewUser' => true,
             ];
-
-            // Handle user
-            if ($this->accountType === 'existing') {
-                $data['userId'] = $this->existingUserId;
-                $data['createNewUser'] = false;
-            } else {
-                $data['email'] = $this->email;
-                $data['password'] = $this->password;
-                $data['createNewUser'] = true;
-            }
 
             // Handle bukti transfer upload
             if ($this->buktiTransfer) {
@@ -203,7 +179,6 @@ class MemberCreate extends Component
     public function render()
     {
         return view('livewire.admin.member-create', [
-            'existingUsers' => $this->existingUsers,
             'unitKerjaList' => $this->unitKerjaList,
             'totalSimpanan' => $this->totalSimpanan,
         ]);
