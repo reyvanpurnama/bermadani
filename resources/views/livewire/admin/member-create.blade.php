@@ -18,32 +18,56 @@
         </div>
     @endif
 
-    <!-- Progress Steps (3 Steps) -->
-    <div class="mb-8">
-        <div class="flex items-center justify-between relative">
-            <div
-                class="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-slate-200 dark:bg-slate-700 -z-10 rounded-full">
-            </div>
-            <div class="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-primary -z-10 rounded-full transition-all duration-500"
-                style="width: {{ (($currentStep - 1) / 2) * 100 }}%"></div>
+    <!-- Progress Steps (Premium Modern) -->
+    <div class="mb-12 mt-6 relative px-4 sm:px-10">
+        <!-- Track Background -->
+        <div
+            class="absolute left-10 right-10 top-5 -translate-y-1/2 h-1 bg-slate-100 dark:bg-slate-800 rounded-full -z-10">
+        </div>
 
-            @foreach([1 => 'Biodata', 2 => 'Simpanan', 3 => 'Konfirmasi'] as $step => $label)
-                <div class="flex flex-col items-center gap-2 cursor-pointer" wire:click="goToStep({{ $step }})">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ring-4 ring-white dark:ring-darkBg transition-all
-                            @if($step < $currentStep) bg-emerald-500 text-white
-                            @elseif($step === $currentStep) bg-primary text-white
-                            @else bg-slate-200 dark:bg-slate-700 text-slate-500
+        <!-- Track Fill -->
+        <div class="absolute left-10 top-5 -translate-y-1/2 h-1 bg-gradient-to-r from-indigo-500 to-emerald-500 rounded-full -z-10 transition-all duration-700 ease-out"
+            style="width: calc({{ (($currentStep - 1) / 2) * 100 }}% - {{ ($currentStep == 1) ? '0px' : '2.5rem' }})">
+        </div>
+        <!-- Logic width disederhanakan: calc((step-1)/2 * 100%) -->
+        <!-- Correction: width needs to be relative to the 'left-10 right-10' container which is effectively 100% of visible track -->
+
+        <div class="flex justify-between w-full">
+            @foreach([1 => 'Biodata Diri', 2 => 'Setoran Awal', 3 => 'Konfirmasi'] as $step => $label)
+                <div class="flex flex-col items-center group cursor-pointer relative" wire:click="goToStep({{ $step }})">
+
+                    <!-- Bubble Indikator -->
+                    <div class="relative z-10 w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ring-4 ring-white dark:ring-darkBg
+                            @if($step < $currentStep) 
+                                bg-emerald-500 text-white shadow-lg shadow-emerald-500/30 scale-100
+                            @elseif($step === $currentStep) 
+                                bg-indigo-600 text-white shadow-xl shadow-indigo-500/40 scale-110 
+                            @else 
+                                bg-white dark:bg-slate-800 text-slate-400 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-300
                             @endif">
+
                         @if($step < $currentStep)
-                            <i class='bx bx-check text-lg'></i>
+                            <i class='bx bx-check text-xl animate-in zoom-in font-bold'></i>
                         @else
                             {{ $step }}
                         @endif
+
+                        <!-- Pulse Effect for Active Info -->
+                        @if($step === $currentStep)
+                            <span class="absolute w-full h-full rounded-full bg-indigo-500/30 animate-ping -z-10"></span>
+                        @endif
                     </div>
-                    <span class="text-[10px] font-bold uppercase tracking-wider bg-white dark:bg-darkBg px-1
-                            @if($step === $currentStep) text-primary @else text-slate-400 @endif">
-                        {{ $label }}
-                    </span>
+
+                    <!-- Label -->
+                    <div
+                        class="absolute top-12 text-center w-32 transition-all duration-300
+                            @if($step === $currentStep) opacity-100 translate-y-0 @else opacity-60 group-hover:opacity-100 translate-y-1 @endif">
+                        <span
+                            class="block text-[10px] font-bold uppercase tracking-wider mb-0.5
+                                @if($step <= $currentStep) text-indigo-900 dark:text-indigo-300 @else text-slate-400 @endif">
+                            {{ $label }}
+                        </span>
+                    </div>
                 </div>
             @endforeach
         </div>
