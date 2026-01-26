@@ -39,7 +39,7 @@ class MonthlyFinancialReport extends Component
             'year' => $this->selectedYear,
             'monthName' => Carbon::createFromFormat('m', $this->selectedMonth)->locale('id')->translatedFormat('F'),
             'generatedAt' => now()->locale('id')->translatedFormat('d F Y H:i')
-        ]);
+        ])->setPaper('a4', 'landscape'); // Set Landscape
 
         $fileName = "Laporan_Keuangan_Bulanan_{$this->selectedYear}_{$this->selectedMonth}.pdf";
 
