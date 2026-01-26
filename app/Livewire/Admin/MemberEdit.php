@@ -195,6 +195,10 @@ class MemberEdit extends Component
             'loanForm.startDate' => 'nullable|date',
         ]);
 
+        // Calculate Dates
+        $startDate = $this->loanForm['startDate'] ? \Carbon\Carbon::parse($this->loanForm['startDate']) : now();
+        $endDate = $startDate->copy()->addMonths((int) $this->loanForm['tenor']);
+
         if ($this->editingLoanId) {
             $loan = \App\Models\Loan::find($this->editingLoanId);
             $loan->update([
@@ -204,7 +208,8 @@ class MemberEdit extends Component
                 'paid_installments' => $this->loanForm['paid_installments'],
                 'status' => $this->loanForm['status'],
                 'loanSource' => $this->loanForm['loanSource'],
-                'startDate' => $this->loanForm['startDate'],
+                'startDate' => $startDate,
+                'endDate' => $endDate,
             ]);
         } else {
             // New Loan
@@ -216,7 +221,8 @@ class MemberEdit extends Component
                 'remainingAmount' => max(0, $this->loanForm['amount'] - ($this->loanForm['monthlyPayment'] * $this->loanForm['paid_installments'])), // Rough estimate
                 'status' => $this->loanForm['status'],
                 'loanSource' => $this->loanForm['loanSource'],
-                'startDate' => $this->loanForm['startDate'] ?? now(),
+                'startDate' => $startDate,
+                'endDate' => $endDate,
                 'interestRate' => 0,
                 'approvedAt' => now(),
                 'approvedBy' => auth()->user()->name,

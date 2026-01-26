@@ -112,35 +112,40 @@ class LoanImport extends Component
                     ->where('amount', $amount)
                     ->first();
 
+                // Calculate Dates
+                $accStartDate = $startDate ? Carbon::parse($startDate) : now();
+                $accEndDate = $accStartDate->copy()->addMonths($tenor);
+
                 if ($loan) {
                     // Update Existing
                     $loan->update([
                         'paid_installments' => $paidInstallments,
                         'monthlyPayment' => $monthlyPayment,
                         'tenor' => $tenor,
-                        'startDate' => $startDate ?? $loan->startDate,
+                        'startDate' => $accStartDate,
+                        'endDate' => $accEndDate,
                         'account_number' => $accountNumber,
                         'simwa_amount' => $simwaAmount,
-                        'status' => 'ACTIVE', // Ensure active
+                        'status' => 'ACTIVE',
                     ]);
                 } else {
                     // Create New
                     Loan::create([
                         'member_id' => $member->id,
                         'amount' => $amount,
-                        'interestRate' => 0, // BMT Logic Unknown, set 0
+                        'interestRate' => 0,
                         'tenor' => $tenor,
                         'monthlyPayment' => $monthlyPayment,
-                        'remainingAmount' => $amount - ($paidInstallments * ($amount / $tenor)), // Estimate
+                        'remainingAmount' => max(0, $amount - ($paidInstallments * ($amount / ($tenor > 0 ? $tenor : 1)))),
                         'status' => 'ACTIVE',
                         'loanSource' => 'BMT_ITQAN',
                         'purpose' => 'Pinjaman BMT Itqan (Import)',
-                        'startDate' => $startDate ?? now(),
-                        'endDate' => $startDate ? Carbon::parse($startDate)->addMonths($tenor) : now()->addMonths($tenor),
+                        'startDate' => $accStartDate,
+                        'endDate' => $accEndDate,
                         'paid_installments' => $paidInstallments,
                         'account_number' => $accountNumber,
                         'simwa_amount' => $simwaAmount,
-                        'approvedAt' => now(), // Auto approve imported
+                        'approvedAt' => now(),
                         'approvedBy' => 'System Import',
                     ]);
                 }

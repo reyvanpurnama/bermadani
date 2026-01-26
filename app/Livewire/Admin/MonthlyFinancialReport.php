@@ -176,7 +176,10 @@ class MonthlyFinancialReport extends Component
 
             $reportItems[] = [
                 'nama' => $member->name,
-                'unit_kerja' => ($member->unitKerja && $member->unitKerja !== 'unknown') ? $member->unitKerja : '-',
+                'unit_kerja' => (
+                    $member->unitKerja &&
+                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
+                ) ? $member->unitKerja : '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => $angsuranBermadani,
@@ -197,11 +200,10 @@ class MonthlyFinancialReport extends Component
             ];
 
             $totalAngsuranBermadani += $angsuranBermadani;
-            $totalAngsuranBmtItqan1 += $angsuranBmtItqan1;
-            $totalAngsuranBmtItqan2 += $angsuranBmtItqan2;
-            // Total simwa BMT digabung ke Total Angsuran BMT atau terpisah?
-            // Untuk Grand Total sudah masuk.
-            // Untuk summary, bisa kita gabung display-nya nanti.
+            // Include Simwa BMT in the total accumulation for BMT Itqan columns
+            $totalAngsuranBmtItqan1 += ($angsuranBmtItqan1 + $simwaBmtItqan1);
+            $totalAngsuranBmtItqan2 += ($angsuranBmtItqan2 + $simwaBmtItqan2);
+
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
@@ -209,7 +211,7 @@ class MonthlyFinancialReport extends Component
 
         // 2. Ambil semua member koperasi AKTIF yang SIMWA-nya potong gaji (tanpa pinjaman)
         $membersWithSalaryDeduction = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
-            ->where('isMemberKoperasi', true)
+            // ->where('isMemberKoperasi', true) // REMOVED: Include all active members regardless of flexible boolean
             ->whereNotIn('id', $processedMemberIds ?: [0])
             ->where(function ($query) {
                 // Member yang SIMWA atau Sukarela-nya potong gaji
@@ -241,7 +243,10 @@ class MonthlyFinancialReport extends Component
 
             $reportItems[] = [
                 'nama' => $member->name,
-                'unit_kerja' => ($member->unitKerja && $member->unitKerja !== 'unknown') ? $member->unitKerja : '-',
+                'unit_kerja' => (
+                    $member->unitKerja &&
+                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
+                ) ? $member->unitKerja : '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => 0,
