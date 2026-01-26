@@ -133,7 +133,7 @@ class MonthlyFinancialReport extends Component
                 $pureInstallment = max(0, $monthlyPayment - $simwaBmtAmount); // Angsuran murni tanpa simwa
 
                 $tenor = $loan->tenor ?? 0;
-                $paidInstallments = $loan->paidInstallments ?? 0;
+                $paidInstallments = $loan->paid_installments ?? 0; // Fix: use snake_case column name
                 $angsuranKe = $paidInstallments + 1;
 
                 // Pisahkan berdasarkan loanSource
