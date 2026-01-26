@@ -29,7 +29,7 @@ class MemberEdit extends Component
     {
         return [
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'phone' => 'nullable|string|max:20', // Changed to nullable
             'gender' => 'required|in:MALE,FEMALE',
             'unitKerja' => 'nullable|string|max:255',
             'address' => 'nullable|string',
