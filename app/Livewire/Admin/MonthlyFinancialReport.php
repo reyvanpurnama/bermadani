@@ -211,7 +211,7 @@ class MonthlyFinancialReport extends Component
 
         // 2. Ambil semua member koperasi AKTIF yang SIMWA-nya potong gaji (tanpa pinjaman)
         $membersWithSalaryDeduction = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
-            ->where('isMemberKoperasi', true)
+            // ->where('isMemberKoperasi', true) // REMOVED: Include all active members regardless of flexible boolean
             ->whereNotIn('id', $processedMemberIds ?: [0])
             ->where(function ($query) {
                 // Member yang SIMWA atau Sukarela-nya potong gaji
