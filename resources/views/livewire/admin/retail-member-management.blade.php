@@ -55,7 +55,7 @@
         </div>
 
         {{-- Add Member Button --}}
-        <button wire:click="$set('showCreateModal', true)" class="flex items-center justify-center gap-2 bg-slate-900 text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-black transition-colors shadow-lg shadow-slate-900/20 active:scale-95 transform">
+        <button wire:click="$set('showCreateModal', true)" class="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-black dark:hover:bg-slate-200 transition-colors shadow-lg shadow-slate-900/20 dark:shadow-white/5 active:scale-95 transform">
             <i class='bx bx-plus text-base'></i> Tambah
         </button>
     </div>
@@ -197,7 +197,7 @@
                         <button type="button" wire:click="$set('showCreateModal', false)" class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                             Batal
                         </button>
-                        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-lg shadow-slate-900/20 transition-all transform active:scale-95">
+                        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-slate-900 dark:bg-white hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 text-xs font-bold shadow-lg shadow-slate-900/20 dark:shadow-white/5 transition-all transform active:scale-95">
                             Simpan Member
                         </button>
                     </div>
