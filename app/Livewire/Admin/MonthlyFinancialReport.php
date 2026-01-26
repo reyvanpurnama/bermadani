@@ -32,7 +32,7 @@ class MonthlyFinancialReport extends Component
     public function downloadPDF()
     {
         $data = $this->collectReportData();
-        
+
         $pdf = Pdf::loadView('admin.reports.monthly-financial-pdf', [
             'data' => $data,
             'month' => $this->selectedMonth,
@@ -52,10 +52,10 @@ class MonthlyFinancialReport extends Component
     {
         // Format billingMonth sebagai YYYY-MM
         $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
-        
+
         $startDate = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->startOfMonth();
         $endDate = $startDate->copy()->endOfMonth();
-        
+
         // Status yang dianggap valid untuk laporan
         $validStatuses = ['APPROVED', 'PENDING'];
 
@@ -67,25 +67,28 @@ class MonthlyFinancialReport extends Component
         $totalSukarela = 0;
         $processedMemberIds = [];
 
-        // 1. Ambil semua member dengan pinjaman aktif (angsuran selalu potong gaji)
-        $membersWithLoans = Member::whereHas('loans', function ($query) use ($endDate) {
-            $query->where('status', 'ACTIVE')
-                  ->where('startDate', '<=', $endDate);
-        })
-        ->with(['loans' => function ($query) use ($endDate) {
-            $query->where('status', 'ACTIVE')
-                  ->where('startDate', '<=', $endDate);
-        }])
-        ->get();
+        // 1. Ambil semua member AKTIF dengan pinjaman aktif (angsuran selalu potong gaji)
+        $membersWithLoans = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
+            ->whereHas('loans', function ($query) use ($endDate) {
+                $query->where('status', 'ACTIVE')
+                    ->where('startDate', '<=', $endDate);
+            })
+            ->with([
+                'loans' => function ($query) use ($endDate) {
+                    $query->where('status', 'ACTIVE')
+                        ->where('startDate', '<=', $endDate);
+                }
+            ])
+            ->get();
 
         // Process members with loans (angsuran) - group by member
         foreach ($membersWithLoans as $member) {
             $angsuranBermadani = 0;
             $angsuranBmtItqan = 0;
-            
+
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
-                
+
                 // Pisahkan berdasarkan loanSource
                 if ($loan->loanSource === 'BMT_ITQAN') {
                     $angsuranBmtItqan += $monthlyPayment;
@@ -94,7 +97,7 @@ class MonthlyFinancialReport extends Component
                     $angsuranBermadani += $monthlyPayment;
                 }
             }
-            
+
             // SIMWA: cek preferensi pembayaran member
             $simwaAmount = 0;
             if ($member->hasSalaryDeductionSimwa()) {
@@ -127,16 +130,17 @@ class MonthlyFinancialReport extends Component
             $processedMemberIds[] = $member->id;
         }
 
-        // 2. Ambil semua member koperasi yang SIMWA-nya potong gaji (tanpa pinjaman)
-        $membersWithSalaryDeduction = Member::where('isMemberKoperasi', true)
+        // 2. Ambil semua member koperasi AKTIF yang SIMWA-nya potong gaji (tanpa pinjaman)
+        $membersWithSalaryDeduction = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
+            ->where('isMemberKoperasi', true)
             ->whereNotIn('id', $processedMemberIds ?: [0])
             ->where(function ($query) {
                 // Member yang SIMWA atau Sukarela-nya potong gaji
                 $query->where('simwa_payment_method', 'SALARY_DEDUCTION')
-                      ->orWhere(function ($q) {
-                          $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')
-                            ->where('monthly_sukarela_amount', '>', 0);
-                      });
+                    ->orWhere(function ($q) {
+                    $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')
+                        ->where('monthly_sukarela_amount', '>', 0);
+                });
             })
             ->get();
 
