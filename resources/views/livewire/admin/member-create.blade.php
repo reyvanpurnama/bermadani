@@ -153,9 +153,15 @@
                                 <p class="text-[10px] text-slate-500">Wajib (Min. Rp 200.000)</p>
                             </div>
                         </div>
-                        <div class="w-40 relative">
+                        <div class="w-40 relative" x-data="{
+                                     value: @entangle('simpananPokok'),
+                                     display: '',
+                                     init() { this.display = this.format(this.value); $watch('value', v => this.display = this.format(v)); },
+                                     format(v) { return (v || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); },
+                                     update(e) { let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, ''); this.value = raw ? parseInt(raw) : 0; }
+                                 }">
                             <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">Rp</span>
-                            <input type="number" wire:model.live="simpananPokok" min="200000" step="1000"
+                            <input type="text" x-model="display" @input="update"
                                 class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-8 pr-3 py-2 text-[13px] font-bold text-right outline-none focus:border-indigo-500 dark:text-white">
                         </div>
                     </div>
@@ -174,9 +180,15 @@
                                 <p class="text-[10px] text-slate-500">Opsional (Bisa Rp 0, bayar nanti)</p>
                             </div>
                         </div>
-                        <div class="w-40 relative">
+                        <div class="w-40 relative" x-data="{
+                                     value: @entangle('simpananWajib'),
+                                     display: '',
+                                     init() { this.display = this.format(this.value); $watch('value', v => this.display = this.format(v)); },
+                                     format(v) { return (v || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); },
+                                     update(e) { let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, ''); this.value = raw ? parseInt(raw) : 0; }
+                                 }">
                             <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">Rp</span>
-                            <input type="number" wire:model.live="simpananWajib" min="0" step="1000"
+                            <input type="text" x-model="display" @input="update"
                                 class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-8 pr-3 py-2 text-[13px] font-bold text-right outline-none focus:border-blue-500 dark:text-white">
                         </div>
                     </div>
@@ -195,9 +207,15 @@
                                 <p class="text-[10px] text-slate-500">Tabungan Tambahan (Opsional)</p>
                             </div>
                         </div>
-                        <div class="w-40 relative">
+                        <div class="w-40 relative" x-data="{
+                                     value: @entangle('simpananSukarela'),
+                                     display: '',
+                                     init() { this.display = this.format(this.value); $watch('value', v => this.display = this.format(v)); },
+                                     format(v) { return (v || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); },
+                                     update(e) { let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, ''); this.value = raw ? parseInt(raw) : 0; }
+                                 }">
                             <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-bold">Rp</span>
-                            <input type="number" wire:model.live="simpananSukarela" min="0" step="1000"
+                            <input type="text" x-model="display" @input="update"
                                 class="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg pl-8 pr-3 py-2 text-[13px] font-bold text-right outline-none focus:border-emerald-500 dark:text-white">
                         </div>
                     </div>
