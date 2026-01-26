@@ -98,212 +98,264 @@
 
     {{-- Preview Section --}}
     @if($showPreview && $reportData)
-        <div
-            class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-            {{-- Summary Cards --}}
-            <div class="p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/30 dark:bg-slate-800/10">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-slate-800 dark:text-white">Ringkasan Laporan</h3>
-                    <span class="text-xs font-mono text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">
-                        Periode: {{ $selectedMonth }}/{{ $selectedYear }}
-                    </span>
+        <div class="space-y-6">
+            {{-- Summary Cards Grid --}}
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                {{-- Total Member --}}
+                <div
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between h-full">
+                    <div class="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Total Member</div>
+                    <div class="flex items-end justify-between">
+                        <span
+                            class="text-2xl font-bold text-slate-800 dark:text-white">{{ $reportData['summary']['total_members'] }}</span>
+                        <i class='bx bx-user text-2xl text-slate-200'></i>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-2 md:grid-cols-7 gap-3">
-                    {{-- Total Member --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <p class="text-[9px] text-slate-400 uppercase font-bold tracking-wider mb-1">Total Member</p>
-                        <p class="text-xl font-bold text-slate-800 dark:text-white">
-                            {{ $reportData['summary']['total_members'] }}</p>
+                {{-- Grand Total --}}
+                <div
+                    class="bg-primary text-white p-4 rounded-xl shadow-lg shadow-indigo-500/20 flex flex-col justify-between h-full col-span-2 md:col-span-2">
+                    <div class="text-indigo-100 text-xs font-bold uppercase tracking-wider mb-2">Grand Total Potongan</div>
+                    <div class="flex items-end justify-between">
+                        <span class="text-3xl font-bold tracking-tight">Rp
+                            {{ number_format($reportData['summary']['grand_total'], 0, ',', '.') }}</span>
+                        <i class='bx bx-wallet text-3xl text-indigo-300'></i>
                     </div>
+                </div>
 
-                    {{-- SIMWA --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-emerald-100 dark:border-emerald-900/30 shadow-sm">
-                        <p class="text-[9px] text-emerald-500 uppercase font-bold tracking-wider mb-1">Total SIMWA</p>
-                        <p class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                            {{ number_format($reportData['summary']['total_simwa'], 0, ',', '.') }}</p>
-                    </div>
+                {{-- Simwa Total --}}
+                <div
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/40 shadow-sm flex flex-col justify-between h-full">
+                    <div class="text-emerald-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider mb-2">
+                        Total Simwa</div>
+                    <div class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                        {{ number_format($reportData['summary']['total_simwa'], 0, ',', '.') }}</div>
+                </div>
 
-                    {{-- Sukarela --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-amber-100 dark:border-amber-900/30 shadow-sm">
-                        <p class="text-[9px] text-amber-500 uppercase font-bold tracking-wider mb-1">Total Sukarela</p>
-                        <p class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                            {{ number_format($reportData['summary']['total_sukarela'], 0, ',', '.') }}</p>
-                    </div>
+                {{-- Sukarela Total --}}
+                <div
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-amber-100 dark:border-amber-900/40 shadow-sm flex flex-col justify-between h-full">
+                    <div class="text-amber-600 dark:text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">Total
+                        Sukarela</div>
+                    <div class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                        {{ number_format($reportData['summary']['total_sukarela'], 0, ',', '.') }}</div>
+                </div>
 
-                    {{-- Angsuran Bermadani --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-blue-100 dark:border-blue-900/30 shadow-sm">
-                        <p class="text-[9px] text-blue-500 uppercase font-bold tracking-wider mb-1">Angs. Bermadani</p>
-                        <p class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                            {{ number_format($reportData['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</p>
-                    </div>
-
-                    {{-- Angsuran BMT ITQAN 1 --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-purple-100 dark:border-purple-900/30 shadow-sm">
-                        <p class="text-[9px] text-purple-500 uppercase font-bold tracking-wider mb-1">Angs. BMT ITQAN 1</p>
-                        <p class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                            {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}</p>
-                    </div>
-
-                    {{-- Angsuran BMT ITQAN 2 --}}
-                    <div
-                        class="bg-white dark:bg-slate-800 rounded-xl p-3 border border-pink-100 dark:border-pink-900/30 shadow-sm">
-                        <p class="text-[9px] text-pink-500 uppercase font-bold tracking-wider mb-1">Angs. BMT ITQAN 2</p>
-                        <p class="text-lg font-bold text-slate-800 dark:text-white">Rp
-                            {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</p>
-                    </div>
-
-                    {{-- Grand Total --}}
-                    <div class="bg-primary text-white rounded-xl p-3 shadow-lg shadow-indigo-500/20">
-                        <p class="text-[9px] text-indigo-100 uppercase font-bold tracking-wider mb-1">Grand Total</p>
-                        <p class="text-xl font-bold">Rp
-                            {{ number_format($reportData['summary']['grand_total'], 0, ',', '.') }}</p>
-                    </div>
+                {{-- Bermadani Total --}}
+                <div
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-blue-100 dark:border-blue-900/40 shadow-sm flex flex-col justify-between h-full">
+                    <div class="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider mb-2">Angsuran
+                        Bermadani</div>
+                    <div class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                        {{ number_format($reportData['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</div>
                 </div>
             </div>
 
-            {{-- Table --}}
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
-                    <thead
-                        class="bg-slate-50 dark:bg-slate-700/50 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 border-b border-slate-100 dark:border-slate-700">
-                        <tr>
-                            <th class="px-2 py-3 w-8">No</th>
-                            <th class="px-2 py-3">Nama</th>
-                            <th class="px-2 py-3 text-right">SIMWA</th>
-                            <th class="px-2 py-3 text-right">Sukarela</th>
-                            <th class="px-2 py-3 text-right">Bermadani</th>
-                            <th class="px-1 py-3 text-center">Ke</th>
-                            <th class="px-1 py-3 text-center">Tnr</th>
-                            <th class="px-2 py-3 text-right">BMT IT 1</th>
-                            <th class="px-2 py-3 text-right text-xs">Sim BMT</th>
-                            <th class="px-1 py-3 text-center">Ke</th>
-                            <th class="px-1 py-3 text-center">Tnr</th>
-                            <th class="px-2 py-3 text-right">BMT IT 2</th>
-                            <th class="px-2 py-3 text-right text-xs">Sim BMT</th>
-                            <th class="px-1 py-3 text-center">Ke</th>
-                            <th class="px-1 py-3 text-center">Tnr</th>
-                            <th class="px-2 py-3 text-right">Total</th>
-                            <th class="px-2 py-3 text-center">Ket</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                        @foreach($reportData['items'] as $index => $item)
-                            <tr class="group hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors text-xs">
-                                <td class="px-2 py-2 font-mono text-slate-500">{{ $index + 1 }}</td>
-                                <td class="px-2 py-2 font-semibold text-slate-800 dark:text-white">{{ $item['nama'] }}</td>
-                                <td class="px-2 py-2 text-right font-mono text-emerald-600 dark:text-emerald-400">
-                                    {{ number_format($item['simwa'], 0, ',', '.') }}</td>
-                                <td class="px-2 py-2 text-right font-mono">
-                                    @if($item['sukarela'] > 0)
-                                        <span
-                                            class="text-amber-600 dark:text-amber-400">{{ number_format($item['sukarela'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-2 py-2 text-right font-mono">
-                                    @if($item['angsuran_bermadani'] > 0)
-                                        <span
-                                            class="text-blue-600 dark:text-blue-400">{{ number_format($item['angsuran_bermadani'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bermadani'] > 0 ? $item['angsuran_ke_bermadani'] : '-' }}</td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bermadani'] > 0 ? $item['tenor_bermadani'] : '-' }}</td>
-                                <td class="px-2 py-2 text-right font-mono">
-                                    @if($item['angsuran_bmt_itqan_1'] > 0)
-                                        <span class="text-purple-600 dark:text-purple-400">{{ number_format($item['angsuran_bmt_itqan_1'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-2 py-2 text-right font-mono text-xs">
-                                    @if($item['simwa_bmt_itqan_1'] > 0)
-                                        <span class="text-purple-500 dark:text-purple-300">{{ number_format($item['simwa_bmt_itqan_1'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bmt_itqan_1'] > 0 ? $item['angsuran_ke_bmt_itqan_1'] : '-' }}</td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bmt_itqan_1'] > 0 ? $item['tenor_bmt_itqan_1'] : '-' }}</td>
-                                <td class="px-2 py-2 text-right font-mono">
-                                    @if($item['angsuran_bmt_itqan_2'] > 0)
-                                        <span class="text-pink-600 dark:text-pink-400">{{ number_format($item['angsuran_bmt_itqan_2'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-2 py-2 text-right font-mono text-xs">
-                                    @if($item['simwa_bmt_itqan_2'] > 0)
-                                        <span class="text-pink-500 dark:text-pink-300">{{ number_format($item['simwa_bmt_itqan_2'], 0, ',', '.') }}</span>
-                                    @else
-                                        <span class="text-slate-300">-</span>
-                                    @endif
-                                </td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bmt_itqan_2'] > 0 ? $item['angsuran_ke_bmt_itqan_2'] : '-' }}</td>
-                                <td class="px-1 py-2 text-center text-slate-500">
-                                    {{ $item['angsuran_bmt_itqan_2'] > 0 ? $item['tenor_bmt_itqan_2'] : '-' }}</td>
-                                <td class="px-2 py-2 text-right font-bold text-slate-800 dark:text-white">
-                                    {{ number_format($item['total'], 0, ',', '.') }}</td>
-                                <td class="px-2 py-2 text-center">
-                                    @if($item['has_loan'])
-                                                            @php
-                                                                $badges = [];
-                                                                if ($item['angsuran_bermadani'] > 0)
-                                                                    $badges[] = 'BM';
-                                                                if ($item['angsuran_bmt_itqan_1'] > 0)
-                                                                    $badges[] = 'IT1';
-                                                                if ($item['angsuran_bmt_itqan_2'] > 0)
-                                                                    $badges[] = 'IT2';
-                                                            @endphp
-                                         <span
-                                                                class="bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.5 rounded text-[9px] font-bold">
-                                                                {{ implode('+', $badges) }}
-                                                            </span>
-                                    @else
-                                        <span class="text-[9px] text-slate-400">SIM</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
+            {{-- Advanced Report Table --}}
+            <div
+                class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden flex flex-col">
+                <div
+                    class="p-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/10">
+                    <h3 class="font-bold text-slate-800 dark:text-white">Detail Potongan Per Anggota</h3>
+                    <div class="flex gap-2">
+                        <span
+                            class="text-xs font-mono text-slate-500 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 px-2 py-1 rounded">
+                            {{ count($reportData['items']) }} Rows
+                        </span>
+                    </div>
+                </div>
 
-                        {{-- Total Row --}}
-                        <tr
-                            class="bg-slate-50/80 dark:bg-slate-800/80 font-bold border-t-2 border-slate-200 dark:border-slate-600 text-xs">
-                            <td colspan="2"
-                                class="px-2 py-3 text-slate-900 dark:text-white text-right uppercase tracking-wider">TOTAL
-                            </td>
-                            <td class="px-2 py-3 text-right text-emerald-600 dark:text-emerald-400">
-                                {{ number_format($reportData['summary']['total_simwa'], 0, ',', '.') }}</td>
-                            <td class="px-2 py-3 text-right text-amber-600 dark:text-amber-400">
-                                {{ number_format($reportData['summary']['total_sukarela'], 0, ',', '.') }}</td>
-                            <td class="px-2 py-3 text-right text-blue-600 dark:text-blue-400">
-                                {{ number_format($reportData['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</td>
-                            <td colspan="2"></td>
-                            <td class="px-2 py-3 text-right text-purple-600 dark:text-purple-400">
-                                {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}</td>
-                            <td colspan="2"></td>
-                            <td class="px-2 py-3 text-right text-pink-600 dark:text-pink-400">
-                                {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</td>
-                            <td colspan="2"></td>
-                            <td class="px-2 py-3 text-right text-primary text-sm">
-                                {{ number_format($reportData['summary']['grand_total'], 0, ',', '.') }}</td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead
+                            class="bg-slate-50 dark:bg-slate-800 text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th
+                                    class="px-3 py-3 w-10 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-0 z-20">
+                                    No</th>
+                                <th
+                                    class="px-3 py-3 min-w-[200px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-10 z-20">
+                                    Nama Anggota</th>
+
+                                {{-- Simpanan Group --}}
+                                <th colspan="2"
+                                    class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-emerald-50/30 dark:bg-emerald-900/10 text-emerald-700">
+                                    Simpanan</th>
+
+                                {{-- Bermadani Group --}}
+                                <th colspan="3"
+                                    class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-blue-50/30 dark:bg-blue-900/10 text-blue-700">
+                                    Internal (Bermadani)</th>
+
+                                {{-- BMT 1 Group --}}
+                                <th colspan="4"
+                                    class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-purple-50/30 dark:bg-purple-900/10 text-purple-700">
+                                    BMT Itqan 1</th>
+
+                                {{-- BMT 2 Group --}}
+                                <th colspan="4"
+                                    class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-pink-50/30 dark:bg-pink-900/10 text-pink-700">
+                                    BMT Itqan 2</th>
+
+                                <th
+                                    class="px-3 py-3 text-right bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 min-w-[120px]">
+                                    Total Potongan</th>
+                            </tr>
+                            <tr>
+                                {{-- Empty for sticky columns --}}
+                                <th
+                                    class="border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-0 z-20">
+                                </th>
+                                <th
+                                    class="border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-10 z-20">
+                                </th>
+
+                                {{-- Sub Headers --}}
+                                <th
+                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    Wajib</th>
+                                <th
+                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    Sukarela</th>
+
+                                <th
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    Angsuran</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Ke</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Tnr</th>
+
+                                <th
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    Pokok</th>
+                                <th
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-[9px]">
+                                    Simwa</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Ke</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Tnr</th>
+
+                                <th
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    Pokok</th>
+                                <th
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-[9px]">
+                                    Simwa</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Ke</th>
+                                <th
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    Tnr</th>
+
+                                <th class="border-b border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
+                            @foreach($reportData['items'] as $index => $item)
+                                <tr
+                                    class="hover:bg-indigo-50/30 dark:hover:bg-slate-700/50 transition-colors {{ $index % 2 == 0 ? 'bg-white dark:bg-darkCard' : 'bg-slate-50/30 dark:bg-slate-800/20' }}">
+                                    <td
+                                        class="px-3 py-2 font-mono text-slate-500 border-r border-slate-100 dark:border-slate-700 sticky left-0 bg-inherit z-10">
+                                        {{ $index + 1 }}</td>
+                                    <td
+                                        class="px-3 py-2 font-semibold text-slate-800 dark:text-white border-r border-slate-100 dark:border-slate-700 sticky left-10 bg-inherit z-10 whitespace-nowrap">
+                                        {{ $item['nama'] }}
+                                        @if($item['has_loan'])
+                                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 ml-1"></span>
+                                        @endif
+                                    </td>
+
+                                    {{-- Simpanan --}}
+                                    <td class="px-2 py-2 text-right font-mono text-emerald-600 dark:text-emerald-400">
+                                        {{ number_format($item['simwa'], 0, ',', '.') }}</td>
+                                    <td
+                                        class="px-2 py-2 text-right font-mono border-r border-slate-100 dark:border-slate-700 {{ $item['sukarela'] > 0 ? 'text-amber-600 dark:text-amber-400 font-bold' : 'text-slate-300' }}">
+                                        {{ $item['sukarela'] > 0 ? number_format($item['sukarela'], 0, ',', '.') : '-' }}
+                                    </td>
+
+                                    {{-- Bermadani --}}
+                                    <td
+                                        class="px-2 py-2 text-right font-mono {{ $item['angsuran_bermadani'] > 0 ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-300' }}">
+                                        {{ $item['angsuran_bermadani'] > 0 ? number_format($item['angsuran_bermadani'], 0, ',', '.') : '-' }}
+                                    </td>
+                                    <td class="px-1 py-2 text-center text-slate-400 text-[10px]">
+                                        {{ $item['angsuran_bermadani'] > 0 ? $item['angsuran_ke_bermadani'] : '' }}</td>
+                                    <td
+                                        class="px-1 py-2 text-center text-slate-400 text-[10px] border-r border-slate-100 dark:border-slate-700">
+                                        {{ $item['angsuran_bermadani'] > 0 ? $item['tenor_bermadani'] : '' }}</td>
+
+                                    {{-- BMT 1 --}}
+                                    <td
+                                        class="px-2 py-2 text-right font-mono {{ $item['angsuran_bmt_itqan_1'] > 0 ? 'text-purple-600 dark:text-purple-400 font-bold' : 'text-slate-300' }}">
+                                        {{ $item['angsuran_bmt_itqan_1'] > 0 ? number_format($item['angsuran_bmt_itqan_1'], 0, ',', '.') : '-' }}
+                                    </td>
+                                    <td class="px-2 py-2 text-right font-mono text-[10px] text-purple-400/80">
+                                        {{ $item['simwa_bmt_itqan_1'] > 0 ? number_format($item['simwa_bmt_itqan_1'], 0, ',', '.') : '' }}
+                                    </td>
+                                    <td class="px-1 py-2 text-center text-slate-400 text-[10px]">
+                                        {{ $item['angsuran_bmt_itqan_1'] > 0 ? $item['angsuran_ke_bmt_itqan_1'] : '' }}</td>
+                                    <td
+                                        class="px-1 py-2 text-center text-slate-400 text-[10px] border-r border-slate-100 dark:border-slate-700">
+                                        {{ $item['angsuran_bmt_itqan_1'] > 0 ? $item['tenor_bmt_itqan_1'] : '' }}</td>
+
+                                    {{-- BMT 2 --}}
+                                    <td
+                                        class="px-2 py-2 text-right font-mono {{ $item['angsuran_bmt_itqan_2'] > 0 ? 'text-pink-600 dark:text-pink-400 font-bold' : 'text-slate-300' }}">
+                                        {{ $item['angsuran_bmt_itqan_2'] > 0 ? number_format($item['angsuran_bmt_itqan_2'], 0, ',', '.') : '-' }}
+                                    </td>
+                                    <td class="px-2 py-2 text-right font-mono text-[10px] text-pink-400/80">
+                                        {{ $item['simwa_bmt_itqan_2'] > 0 ? number_format($item['simwa_bmt_itqan_2'], 0, ',', '.') : '' }}
+                                    </td>
+                                    <td class="px-1 py-2 text-center text-slate-400 text-[10px]">
+                                        {{ $item['angsuran_bmt_itqan_2'] > 0 ? $item['angsuran_ke_bmt_itqan_2'] : '' }}</td>
+                                    <td
+                                        class="px-1 py-2 text-center text-slate-400 text-[10px] border-r border-slate-100 dark:border-slate-700">
+                                        {{ $item['angsuran_bmt_itqan_2'] > 0 ? $item['tenor_bmt_itqan_2'] : '' }}</td>
+
+                                    {{-- TOTAL --}}
+                                    <td
+                                        class="px-3 py-2 text-right font-bold text-slate-800 dark:text-white bg-slate-50/50 dark:bg-slate-800/30">
+                                        {{ number_format($item['total'], 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot
+                            class="bg-slate-100 dark:bg-slate-800 font-bold text-xs sticky bottom-0 z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.1)]">
+                            <tr>
+                                <td colspan="2" class="px-3 py-3 text-right uppercase text-slate-500">Total Keseluruhan</td>
+                                <td class="px-2 py-3 text-right text-emerald-600">
+                                    {{ number_format($reportData['summary']['total_simwa'], 0, ',', '.') }}</td>
+                                <td class="px-2 py-3 text-right text-amber-600">
+                                    {{ number_format($reportData['summary']['total_sukarela'], 0, ',', '.') }}</td>
+                                <td class="px-2 py-3 text-right text-blue-600">
+                                    {{ number_format($reportData['summary']['total_angsuran_bermadani'], 0, ',', '.') }}
+                                </td>
+                                <td colspan="2"></td>
+                                <td class="px-2 py-3 text-right text-purple-600">
+                                    {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}
+                                </td>
+                                <td colspan="2"></td>
+                                <td colspan="2"></td>
+                                <td class="px-2 py-3 text-right text-pink-600">
+                                    {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}
+                                </td>
+                                <td colspan="2"></td>
+                                <td colspan="2"></td>
+                                <td class="px-3 py-3 text-right text-primary text-sm">
+                                    {{ number_format($reportData['summary']['grand_total'], 0, ',', '.') }}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     @endif
