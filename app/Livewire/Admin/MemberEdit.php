@@ -120,14 +120,24 @@ class MemberEdit extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Data member berhasil diperbarui.');
+            // Dispatch toast notification instead of redirect
+            $this->dispatch('notify', [
+                'message' => 'Data member berhasil diperbarui!',
+                'type' => 'success'
+            ]);
 
-            return redirect()->route('admin.members.show', $this->member->id);
+            // Refresh member data to show updated values
+            $this->loadMember();
+            $this->fillForm();
 
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('MemberEdit Error: ' . $e->getMessage());
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+
+            $this->dispatch('notify', [
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage(),
+                'type' => 'error'
+            ]);
         }
     }
 
