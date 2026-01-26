@@ -48,6 +48,29 @@ class MonthlyFinancialReport extends Component
         }, $fileName);
     }
 
+    /**
+     * Download simplified PDF for Campus Finance Unit
+     * Only contains: No, Name, Unit Kerja, Total Amount
+     */
+    public function downloadSimplePDF()
+    {
+        $data = $this->collectReportData();
+
+        $pdf = Pdf::loadView('admin.reports.payroll-simple-pdf', [
+            'data' => $data,
+            'month' => $this->selectedMonth,
+            'year' => $this->selectedYear,
+            'monthName' => Carbon::createFromFormat('m', $this->selectedMonth)->locale('id')->translatedFormat('F'),
+            'generatedAt' => now()->locale('id')->translatedFormat('d F Y H:i')
+        ])->setPaper('a4', 'portrait');
+
+        $fileName = "Potongan_Gaji_Koperasi_{$this->selectedYear}_{$this->selectedMonth}.pdf";
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $fileName);
+    }
+
     private function collectReportData()
     {
         // Format billingMonth sebagai YYYY-MM
@@ -89,25 +112,25 @@ class MonthlyFinancialReport extends Component
             $angsuranBermadani = 0;
             $angsuranKeBermadani = 0;
             $tenorBermadani = 0;
-            
+
             // BMT ITQAN 1 loan data
             $angsuranBmtItqan1 = 0;
             $angsuranKeBmtItqan1 = 0;
             $tenorBmtItqan1 = 0;
-            
+
             // BMT ITQAN 2 loan data
             $angsuranBmtItqan2 = 0;
             $angsuranKeBmtItqan2 = 0;
             $tenorBmtItqan2 = 0;
-            
+
             $bmtItqanCount = 0;
-            
+
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
                 $tenor = $loan->tenor ?? 0;
                 $paidInstallments = $loan->paidInstallments ?? 0;
                 $angsuranKe = $paidInstallments + 1; // Angsuran ke = paid + 1 (current)
-                
+
                 // Pisahkan berdasarkan loanSource
                 if ($loan->loanSource === 'BMT_ITQAN') {
                     $bmtItqanCount++;
