@@ -198,14 +198,3 @@ class MonthlyFinancialReport extends Component
         return view('livewire.admin.monthly-financial-report')->layout('layouts.admin');
     }
 }
-                'grand_total' => $totalAngsuran + $totalSimwa + $totalSukarela,
-                'total_members' => count($reportItems)
-            ]
-        ];
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.monthly-financial-report')->layout('layouts.admin');
-    }
-}

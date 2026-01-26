@@ -143,6 +143,6 @@ class BalanceSheet extends Component
             'assets' => $this->assets,
             'liabilities' => $this->liabilities,
             'equity' => $this->equity
-        ])->layouT('layouts.admin');
+        ])->layout('layouts.admin');
     }
 }
