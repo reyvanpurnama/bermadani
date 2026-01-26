@@ -189,77 +189,66 @@
                 </div>
 
                 <!-- Payment Preferences Card -->
-                @if($member->isMemberKoperasi)
-                                <div
-                                    class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
-                                    <div class="flex justify-between items-center mb-6">
-                                        <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">
-                                            <i class='bx bx-wallet mr-2'></i>Preferensi Pembayaran Simpanan
-                                        </h3>
-                                        <span
-                                            class="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-full font-semibold">
-                                            Untuk Potong Gaji
-                                        </span>
+                <div class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">
+                            <i class='bx bx-wallet mr-2'></i>Preferensi Pembayaran Simpanan
+                        </h3>
+                        <span class="text-[10px] bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 px-2 py-1 rounded-full font-semibold">
+                            Untuk Potong Gaji
+                        </span>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- SIMWA Payment Method -->
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                Simpanan Wajib (SIMWA)
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode Pembayaran</label>
+                                    <select wire:model.live="simwa_payment_method"
+                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                        <option value="">Tidak Ada (Bukan Anggota)</option>
+                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                        <option value="MANUAL">Bayar Manual</option>
+                                    </select>
+                                    @error('simwa_payment_method') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah per Bulan (Tetap)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                        <input type="text" value="50.000" disabled readonly
+                                            class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none dark:text-white opacity-70 cursor-not-allowed">
                                     </div>
+                                    <p class="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
+                                        <i class='bx bxs-lock-alt'></i> Jumlah simpanan wajib sudah ditetapkan
+                                    </p>
+                                </div>
+                            </div>
+                            @if($simwa_payment_method === 'MANUAL')
+                                <p class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                    <i class='bx bx-info-circle'></i> Member akan bayar simpanan wajib secara manual
+                                </p>
+                            @endif
+                        </div>
 
-                                    <div class="space-y-6">
-                                        <!-- SIMWA Payment Method -->
-                                        <div
-                                            class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
-                                                Simpanan Wajib (SIMWA)
-                                            </label>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label
-                                                        class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode
-                                                        Pembayaran</label>
-                                                    <select wire:model.live="simwa_payment_method"
-                                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
-                                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
-                                                        <option value="MANUAL">Bayar Manual</option>
-                                                    </select>
-                                                    @error('simwa_payment_method') <span
-                                                    class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
-                                                </div>
-                                                <div>
-                                                    <label
-                                                        class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
-                                                        per Bulan (Tetap)</label>
-                                                    <div class="relative">
-                                                        <span
-                                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
-                                                        <input type="text" value="50.000" disabled readonly
-                                                            class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none dark:text-white opacity-70 cursor-not-allowed">
-                                                    </div>
-                                                    <p class="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
-                                                        <i class='bx bxs-lock-alt'></i> Jumlah simpanan wajib sudah ditetapkan
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            @if($simwa_payment_method === 'MANUAL')
-                                                <p class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                                                    <i class='bx bx-info-circle'></i> Member akan bayar simpanan wajib secara manual
-                                                </p>
-                                            @endif
-                                        </div>
-
-                                        <!-- Sukarela Payment Method -->
-                                        <div
-                                            class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
-                                                Simpanan Sukarela
-                                            </label>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                <div>
-                                                    <label
-                                                        class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode
-                                                        Pembayaran</label>
-                                                    <select wire:model.live="sukarela_payment_method"
-                                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
-                                                        <option value="MANUAL">Bayar Manual (Opsional)</option>
-                                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
-                                                    </select>
+                        <!-- Sukarela Payment Method -->
+                        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                Simpanan Sukarela
+                            </label>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode Pembayaran</label>
+                                    <select wire:model.live="sukarela_payment_method"
+                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                        <option value="">Tidak Ada</option>
+                                        <option value="MANUAL">Bayar Manual (Opsional)</option>
+                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                    </select>
                                                     @error('sukarela_payment_method') <span
                                                     class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                                                 </div>

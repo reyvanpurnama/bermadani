@@ -34,9 +34,9 @@ class MemberEdit extends Component
             'unitKerja' => 'nullable|string|max:255',
             'address' => 'nullable|string',
             'status' => 'required|in:ACTIVE,INACTIVE,SUSPENDED',
-            'simwa_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
-            'sukarela_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL',
-            'monthly_sukarela_amount' => 'required|numeric|min:0',
+            'simwa_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
+            'sukarela_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
+            'monthly_sukarela_amount' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -62,8 +62,8 @@ class MemberEdit extends Component
         $this->status = $this->member->status;
 
         // Payment preferences
-        $this->simwa_payment_method = $this->member->simwa_payment_method ?? 'SALARY_DEDUCTION';
-        $this->sukarela_payment_method = $this->member->sukarela_payment_method ?? 'MANUAL';
+        $this->simwa_payment_method = $this->member->simwa_payment_method; // Can be null
+        $this->sukarela_payment_method = $this->member->sukarela_payment_method; // Can be null
         $this->monthly_sukarela_amount = $this->member->monthly_sukarela_amount ?? 0;
     }
 
@@ -99,10 +99,10 @@ class MemberEdit extends Component
                 'unitKerja' => $this->unitKerja,
                 'address' => $this->address,
                 'status' => $this->status,
-                'simwa_payment_method' => $this->simwa_payment_method,
-                'sukarela_payment_method' => $this->sukarela_payment_method,
-                'monthly_sukarela_amount' => $this->sukarela_payment_method === 'SALARY_DEDUCTION'
-                    ? $this->monthly_sukarela_amount
+                'simwa_payment_method' => $this->simwa_payment_method ?: null, // Handle empty string
+                'sukarela_payment_method' => $this->sukarela_payment_method ?: null, // Handle empty string
+                'monthly_sukarela_amount' => ($this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                    ? ($this->monthly_sukarela_amount ?: 0)
                     : 0,
                 'salary_deduction_consent_date' => ($this->simwa_payment_method === 'SALARY_DEDUCTION' || $this->sukarela_payment_method === 'SALARY_DEDUCTION')
                     ? now()->toDateString()
