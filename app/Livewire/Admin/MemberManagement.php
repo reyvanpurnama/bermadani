@@ -25,15 +25,12 @@ class MemberManagement extends Component
     public $importFile;
     public $importSummary = null;
 
-    public $memberTypeFilter = 'KOPERASI'; // Default to KOPERASI members only
-
     protected $queryString = [
         'activeTab' => ['except' => 'members'],
         'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterTier' => ['except' => ''],
         'filterUnitKerja' => ['except' => ''],
-        'memberTypeFilter' => ['except' => 'KOPERASI'],
     ];
 
     protected $memberService;
@@ -43,105 +40,12 @@ class MemberManagement extends Component
         $this->memberService = $memberService;
     }
 
-    public function switchTab($tab)
-    {
-        $this->activeTab = $tab;
-    }
-
-    public function updatingSearch()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterStatus()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterTier()
-    {
-        $this->resetPage();
-    }
-
-    public function updatingFilterUnitKerja()
-    {
-        $this->resetPage();
-    }
-
-    public function clearFilters()
-    {
-        $this->reset(['search', 'filterStatus', 'filterTier', 'filterUnitKerja', 'filterJoinDate']);
-        $this->resetPage();
-    }
-
-    public function suspendMember($memberId)
-    {
-        try {
-            $this->memberService->suspendMember($memberId, 'Suspended by admin');
-            session()->flash('success', 'Anggota berhasil dibekukan.');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Gagal membekukan anggota: ' . $e->getMessage());
-        }
-    }
-
-    public function activateMember($memberId)
-    {
-        try {
-            $this->memberService->activateMember($memberId);
-            session()->flash('success', 'Anggota berhasil diaktifkan kembali.');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Gagal mengaktifkan anggota: ' . $e->getMessage());
-        }
-    }
-
-    public function openImportModal()
-    {
-        $this->showImportModal = true;
-        $this->importFile = null;
-        $this->importSummary = null;
-    }
-
-    public function closeImportModal()
-    {
-        $this->showImportModal = false;
-        $this->importFile = null;
-        $this->importSummary = null;
-    }
-
-    public function importMembers()
-    {
-        $this->validate([
-            'importFile' => 'required|mimes:xlsx,xls|max:10240', // max 10MB
-        ]);
-
-        try {
-            $filePath = $this->importFile->getRealPath();
-
-            $this->importSummary = $this->memberService->importFromExcel($filePath);
-
-            if ($this->importSummary['success'] > 0) {
-                session()->flash(
-                    'success',
-                    "Import berhasil! {$this->importSummary['success']} anggota ditambahkan, " .
-                    "{$this->importSummary['skipped']} dilewati, " .
-                    "{$this->importSummary['errors']} error."
-                );
-            } else {
-                session()->flash('error', 'Tidak ada anggota yang berhasil diimport.');
-            }
-
-            $this->reset(['importFile']);
-
-        } catch (\Exception $e) {
-            session()->flash('error', 'Gagal import: ' . $e->getMessage());
-        }
-    }
+    // ... (rest of methods until getMembersProperty)
 
     public function getMembersProperty()
     {
         return Member::query()
-            ->when($this->memberTypeFilter === 'KOPERASI', fn($q) => $q->where('isMemberKoperasi', true))
-            ->when($this->memberTypeFilter === 'RETAIL', fn($q) => $q->where('isMemberKoperasi', false))
+            ->where('isMemberKoperasi', true) // STRICT: Only Coop Members
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')

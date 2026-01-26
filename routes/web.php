@@ -260,6 +260,12 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         })->name('simpanan');
     });
 
+    // Retail Members Management
+    Route::prefix('retail-members')->name('admin.retail-members.')->group(function () {
+        Route::get('/', \App\Livewire\Admin\RetailMemberManagement::class)->name('index');
+        Route::get('/{memberId}', \App\Livewire\Admin\RetailMemberDetail::class)->name('show');
+    });
+
     // Savings
     Route::get('/savings', function () {
         return view('admin.placeholder', ['title' => 'Simpanan']);

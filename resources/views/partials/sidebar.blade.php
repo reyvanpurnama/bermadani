@@ -135,6 +135,12 @@
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Keuangan</span>
                 </a>
 
+                <a href="{{ route('admin.retail-members.index') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.retail-members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-user-pin text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Member Retail</span>
+                </a>
+
             </div>
 
             {{-- WORKSPACE: CORE (KOPERASI) --}}
@@ -144,8 +150,8 @@
 
                 <a href="{{ route('admin.members.index') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-user-circle text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Keanggotaan</span>
+                    <i class='bx bx-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Anggota Koperasi</span>
                 </a>
 
                 <a href="{{ route('admin.savings') }}"
