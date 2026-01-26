@@ -168,8 +168,8 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>KSPPS Berkah Madani UMB</h1>
-            <h2>Koperasi Simpan Pinjam dan Pembiayaan Syariah</h2>
+            <h1>Koperasi Konsumen Syariah Berkah Solusi Madani</h1>
+            <h2>KKSBSM Universitas Muhammadiyah Bandung</h2>
             <div class="period">
                 DAFTAR POTONGAN GAJI ANGGOTA KOPERASI<br>
                 Periode: {{ $monthName }} {{ $year }}
@@ -217,9 +217,8 @@
                 </div>
                 <div class="signature-box">
                     <div class="location-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
-                    <div class="title">Ketua KSPPS Berkah Madani</div>
-                    <div class="name">Favian Hawari</div>
-                    <div class="position">NIP. -</div>
+                    <div class="title" style="margin-bottom: 50px;">ttd</div>
+                    <div class="name">(Muhammad Alwi Almaliki)</div>
                 </div>
             </div>
 
@@ -227,7 +226,7 @@
             <div class="bank-info">
                 <strong>Informasi Transfer:</strong>
                 Bank KB Bukopin Syariah<br>
-                a.n. KSPPS BERKAH MADANI UMB<br>
+                a.n. Koperasi Konsumen Syariah Berkah Solusi Madani<br>
                 No. Rekening: 7704020507
             </div>
         </div>

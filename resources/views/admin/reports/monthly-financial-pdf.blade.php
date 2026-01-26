@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,42 +11,43 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Arial', sans-serif;
             font-size: 11px;
             line-height: 1.5;
             color: #1e293b;
+            padding: 10px 30px;
         }
-        
+
         .header {
             text-align: center;
             padding: 20px 0;
             border-bottom: 3px solid #0F52BA;
             margin-bottom: 20px;
         }
-        
+
         .header h1 {
             font-size: 18px;
             font-weight: bold;
             color: #0F52BA;
             margin-bottom: 5px;
         }
-        
+
         .header h2 {
             font-size: 14px;
             font-weight: normal;
             color: #475569;
             margin-bottom: 10px;
         }
-        
+
         .header .period {
             font-size: 16px;
             font-weight: bold;
             color: #1e293b;
             margin-top: 10px;
         }
-        
+
         .info-box {
             background: #f1f5f9;
             padding: 10px;
@@ -53,33 +55,33 @@
             margin-bottom: 20px;
             border-left: 4px solid #0F52BA;
         }
-        
+
         .info-box table {
             width: 100%;
         }
-        
+
         .info-box td {
             padding: 3px 0;
             font-size: 10px;
         }
-        
+
         .info-box td:first-child {
             width: 150px;
             font-weight: bold;
             color: #475569;
         }
-        
+
         table.report-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
-        
+
         table.report-table thead {
             background: #0F52BA;
             color: white;
         }
-        
+
         table.report-table th {
             padding: 10px 8px;
             text-align: left;
@@ -88,57 +90,57 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
+
         table.report-table th.center {
             text-align: center;
         }
-        
+
         table.report-table th.right {
             text-align: right;
         }
-        
+
         table.report-table tbody tr {
             border-bottom: 1px solid #e2e8f0;
         }
-        
+
         table.report-table tbody tr:nth-child(even) {
             background: #f8fafc;
         }
-        
+
         table.report-table tbody tr:hover {
             background: #f1f5f9;
         }
-        
+
         table.report-table td {
             padding: 8px;
             font-size: 10px;
         }
-        
+
         table.report-table td.center {
             text-align: center;
         }
-        
+
         table.report-table td.right {
             text-align: right;
         }
-        
+
         table.report-table tfoot {
             background: #1e293b;
             color: white;
             font-weight: bold;
         }
-        
+
         table.report-table tfoot td {
             padding: 12px 8px;
             font-size: 11px;
         }
-        
+
         .summary-boxes {
             display: table;
             width: 100%;
             margin-bottom: 20px;
         }
-        
+
         .summary-box {
             display: table-cell;
             width: 20%;
@@ -147,12 +149,12 @@
             border: 2px solid #e2e8f0;
             background: #f8fafc;
         }
-        
+
         .summary-box.primary {
             border-color: #0F52BA;
             background: #dbeafe;
         }
-        
+
         .summary-box .label {
             font-size: 9px;
             text-transform: uppercase;
@@ -160,42 +162,42 @@
             color: #64748b;
             margin-bottom: 5px;
         }
-        
+
         .summary-box .value {
             font-size: 14px;
             font-weight: bold;
             color: #1e293b;
         }
-        
+
         .summary-box.primary .value {
             color: #0F52BA;
         }
-        
+
         .footer {
             margin-top: 40px;
             padding-top: 20px;
             border-top: 2px solid #e2e8f0;
         }
-        
+
         .signature-section {
             display: table;
             width: 100%;
             margin-top: 30px;
         }
-        
+
         .signature-box {
             display: table-cell;
             width: 50%;
             text-align: center;
             padding: 10px;
         }
-        
+
         .signature-box .title {
             font-size: 10px;
             font-weight: bold;
             margin-bottom: 50px;
         }
-        
+
         .signature-box .name {
             font-size: 10px;
             font-weight: bold;
@@ -203,13 +205,13 @@
             display: inline-block;
             min-width: 200px;
         }
-        
+
         .signature-box .position {
             font-size: 9px;
             color: #64748b;
             margin-top: 3px;
         }
-        
+
         .badge {
             display: inline-block;
             padding: 3px 8px;
@@ -217,17 +219,17 @@
             font-size: 9px;
             font-weight: bold;
         }
-        
+
         .badge-blue {
             background: #dbeafe;
             color: #1e40af;
         }
-        
+
         .badge-gray {
             background: #f1f5f9;
             color: #64748b;
         }
-        
+
         .note {
             background: #fef3c7;
             border-left: 4px solid #f59e0b;
@@ -238,11 +240,13 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <h1>KOPERASI KARYAWAN UNIVERSITAS MUHAMMADIYAH BANDUNG</h1>
-        <h2>LAPORAN POTONGAN GAJI & SIMPANAN WAJIB</h2>
-        <div class="period">Periode: {{ $monthName }} {{ $year }}</div>
+        <h1>KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</h1>
+        <h2>KKSBSM UNIVERSITAS MUHAMMADIYAH BANDUNG</h2>
+        <div class="period" style="margin-top: 15px; font-size: 14px; text-decoration: underline;">LAPORAN POTONGAN GAJI & SIMPANAN WAJIB</div>
+        <div class="period" style="margin-top: 5px;">Periode: {{ $monthName }} {{ $year }}</div>
     </div>
 
     <div class="info-box">
@@ -390,9 +394,12 @@
                         @if($item['has_loan'])
                             @php
                                 $badges = [];
-                                if($item['angsuran_bermadani'] > 0) $badges[] = 'BM';
-                                if($item['angsuran_bmt_itqan_1'] > 0) $badges[] = 'IT1';
-                                if($item['angsuran_bmt_itqan_2'] > 0) $badges[] = 'IT2';
+                                if ($item['angsuran_bermadani'] > 0)
+                                    $badges[] = 'BM';
+                                if ($item['angsuran_bmt_itqan_1'] > 0)
+                                    $badges[] = 'IT1';
+                                if ($item['angsuran_bmt_itqan_2'] > 0)
+                                    $badges[] = 'IT2';
                             @endphp
                             <span class="badge badge-blue">{{ implode('+', $badges) }}</span>
                         @else
@@ -413,7 +420,9 @@
                 <td colspan="2"></td>
                 <td class="right">{{ number_format($data['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</td>
                 <td colspan="2"></td>
-                <td class="right" style="font-size: 12px;">{{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
+                <td class="right" style="font-size: 12px;">
+                    {{ number_format($data['summary']['grand_total'], 0, ',', '.') }}
+                </td>
                 <td></td>
             </tr>
         </tfoot>
@@ -432,14 +441,12 @@
 
     <div class="signature-section">
         <div class="signature-box">
-            <div class="title">Mengetahui,<br>Ketua Koperasi</div>
-            <div class="name">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div>
-            <div class="position">NIP: _______________</div>
+            &nbsp;
         </div>
         <div class="signature-box">
-            <div class="title">Menyetujui,<br>Bendahara Koperasi</div>
-            <div class="name">(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)</div>
-            <div class="position">NIP: _______________</div>
+            <div class="title">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
+            <div style="margin-top: 10px; margin-bottom: 50px;">ttd</div>
+            <div class="name">(Muhammad Alwi Almaliki)</div>
         </div>
     </div>
 
@@ -448,4 +455,5 @@
         <p>Dicetak pada: {{ $generatedAt }}</p>
     </div>
 </body>
+
 </html>
