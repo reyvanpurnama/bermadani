@@ -49,7 +49,23 @@
 
     {{-- Members List Tab --}}
     @if($activeTab === 'members')
-        {{-- Stats Cards --}}
+
+        {{-- Member Type Tabs --}}
+        <div class="flex space-x-1 rounded-xl bg-slate-100 dark:bg-slate-800 p-1 mb-6 w-fit">
+            <button wire:click="$set('memberTypeFilter', 'KOPERASI')"
+                class="px-4 py-2 text-xs font-bold rounded-lg transition-all {{ $memberTypeFilter === 'KOPERASI' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                Anggota Koperasi
+            </button>
+            <button wire:click="$set('memberTypeFilter', 'RETAIL')"
+                class="px-4 py-2 text-xs font-bold rounded-lg transition-all {{ $memberTypeFilter === 'RETAIL' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                Member Retail
+            </button>
+            <button wire:click="$set('memberTypeFilter', 'ALL')"
+                class="px-4 py-2 text-xs font-bold rounded-lg transition-all {{ $memberTypeFilter === 'ALL' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                Semua
+            </button>
+        </div>
+
         {{-- Stats Cards Group --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {{-- 1. Total Anggota --}}
@@ -244,18 +260,18 @@
                                 <td class="px-5 py-3.5 align-top">
                                     <div class="flex flex-col gap-1">
                                         <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border
-                                                                @if($member->status === 'ACTIVE') bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800
-                                                                @elseif($member->status === 'INACTIVE') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
-                                                                @else bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800
-                                                                @endif">
+                                                                        @if($member->status === 'ACTIVE') bg-emerald-50 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800
+                                                                        @elseif($member->status === 'INACTIVE') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
+                                                                        @else bg-rose-50 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400 border-rose-100 dark:border-rose-800
+                                                                        @endif">
                                             {{ $member->status === 'ACTIVE' ? 'Aktif' : ($member->status === 'INACTIVE' ? 'Non-Aktif' : 'Dibekukan') }}
                                         </span>
                                         <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border
-                                                                @if($member->tier === 'PLATINUM') bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800
-                                                                @elseif($member->tier === 'GOLD') bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800
-                                                                @elseif($member->tier === 'SILVER') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
-                                                                @else bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800
-                                                                @endif">
+                                                                        @if($member->tier === 'PLATINUM') bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800
+                                                                        @elseif($member->tier === 'GOLD') bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800
+                                                                        @elseif($member->tier === 'SILVER') bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600
+                                                                        @else bg-orange-100 dark:bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-200 dark:border-orange-800
+                                                                        @endif">
                                             <i class='bx bxs-medal'></i> {{ $member->tier }}
                                         </span>
                                     </div>

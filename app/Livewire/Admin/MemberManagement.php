@@ -13,24 +13,27 @@ class MemberManagement extends Component
     use WithPagination, WithFileUploads;
 
     public $activeTab = 'members'; // 'members' or 'auto-debit'
-    
+
     public $search = '';
     public $filterStatus = '';
     public $filterTier = '';
     public $filterUnitKerja = '';
     public $filterJoinDate = '';
-    
+
     // Import properties
     public $showImportModal = false;
     public $importFile;
     public $importSummary = null;
-    
+
+    public $memberTypeFilter = 'KOPERASI'; // Default to KOPERASI members only
+
     protected $queryString = [
         'activeTab' => ['except' => 'members'],
         'search' => ['except' => ''],
         'filterStatus' => ['except' => ''],
         'filterTier' => ['except' => ''],
         'filterUnitKerja' => ['except' => ''],
+        'memberTypeFilter' => ['except' => 'KOPERASI'],
     ];
 
     protected $memberService;
@@ -113,11 +116,12 @@ class MemberManagement extends Component
 
         try {
             $filePath = $this->importFile->getRealPath();
-            
+
             $this->importSummary = $this->memberService->importFromExcel($filePath);
-            
+
             if ($this->importSummary['success'] > 0) {
-                session()->flash('success', 
+                session()->flash(
+                    'success',
                     "Import berhasil! {$this->importSummary['success']} anggota ditambahkan, " .
                     "{$this->importSummary['skipped']} dilewati, " .
                     "{$this->importSummary['errors']} error."
@@ -125,9 +129,9 @@ class MemberManagement extends Component
             } else {
                 session()->flash('error', 'Tidak ada anggota yang berhasil diimport.');
             }
-            
+
             $this->reset(['importFile']);
-            
+
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal import: ' . $e->getMessage());
         }
@@ -136,13 +140,15 @@ class MemberManagement extends Component
     public function getMembersProperty()
     {
         return Member::query()
+            ->when($this->memberTypeFilter === 'KOPERASI', fn($q) => $q->where('isMemberKoperasi', true))
+            ->when($this->memberTypeFilter === 'RETAIL', fn($q) => $q->where('isMemberKoperasi', false))
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')
-                      ->orWhere('name', 'LIKE', '%' . $this->search . '%')
-                      ->orWhere('email', 'LIKE', '%' . $this->search . '%')
-                      ->orWhere('phone', 'LIKE', '%' . $this->search . '%')
-                      ->orWhere('unitKerja', 'LIKE', '%' . $this->search . '%');
+                        ->orWhere('name', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('email', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('phone', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('unitKerja', 'LIKE', '%' . $this->search . '%');
                 });
             })
             ->when($this->filterStatus, fn($query) => $query->where('status', $this->filterStatus))
