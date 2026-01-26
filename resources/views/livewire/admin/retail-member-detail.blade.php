@@ -297,11 +297,25 @@
                                             class="block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-3">
                                             Nominal Potongan
                                         </label>
-                                        <div class="relative inline-block w-full max-w-[200px]">
+                                        <div class="relative inline-block w-full max-w-[200px]" x-data="{
+                                                     original: @entangle('monthly_sukarela_amount'),
+                                                     display: '',
+                                                     init() {
+                                                         this.display = (this.original && this.original != 0) ? new Intl.NumberFormat('id-ID').format(this.original) : '';
+                                                         $watch('original', value => {
+                                                             this.display = (value && value != 0) ? new Intl.NumberFormat('id-ID').format(value) : '';
+                                                         });
+                                                     },
+                                                     update(e) {
+                                                         let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+                                                         this.original = raw ? parseInt(raw) : null;
+                                                         this.display = (raw && raw != 0) ? new Intl.NumberFormat('id-ID').format(raw) : '';
+                                                     }
+                                                 }">
                                             <span
                                                 class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 font-bold">Rp</span>
-                                            <input type="number" wire:model="monthly_sukarela_amount" placeholder="0"
-                                                class="w-full pl-10 pr-4 py-3 bg-white dark:bg-darkCard border-2 border-emerald-200 dark:border-emerald-500/30 rounded-xl text-center font-bold text-lg text-emerald-700 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all">
+                                            <input type="text" x-model="display" @input="update" placeholder="0"
+                                                class="w-full pl-10 pr-4 py-3 bg-white dark:bg-darkCard border-2 border-emerald-200 dark:border-emerald-500/30 rounded-xl text-center font-bold text-lg text-emerald-700 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder-emerald-300/50">
                                         </div>
                                         <p
                                             class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 mt-3 font-medium">
