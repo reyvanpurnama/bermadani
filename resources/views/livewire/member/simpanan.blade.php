@@ -9,7 +9,8 @@
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 {{ $member->isMemberKoperasi ? 'lg:grid-cols-4' : 'lg:grid-cols-2' }} gap-6 mb-8">
+        @if($member->isMemberKoperasi)
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center">
@@ -36,6 +37,8 @@
                 </div>
             </div>
         </div>
+        @endif
+
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -82,12 +85,14 @@
                 <button wire:click="$set('filterType', 'all')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'all' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
                     Semua
                 </button>
+                @if($member->isMemberKoperasi)
                 <button wire:click="$set('filterType', 'POKOK')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'POKOK' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
                     S. Pokok
                 </button>
                 <button wire:click="$set('filterType', 'WAJIB')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'WAJIB' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
                     S. Wajib
                 </button>
+                @endif
                 <button wire:click="$set('filterType', 'SUKARELA')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'SUKARELA' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
                     S. Sukarela
                 </button>
