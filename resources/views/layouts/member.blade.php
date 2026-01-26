@@ -89,9 +89,10 @@
             </a>
 
             <!-- History -->
-            <a href="#"
-                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.history') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
-                <i class='bx {{ request()->routeIs('member.history') ? 'bxs-receipt' : 'bx-receipt' }} text-2xl'></i>
+            <a href="{{ route('member.transactions') }}"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.transactions*') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                <i
+                    class='bx {{ request()->routeIs('member.transactions*') ? 'bxs-receipt' : 'bx-receipt' }} text-2xl'></i>
                 <span class="text-[10px] font-medium">Riwayat</span>
             </a>
 

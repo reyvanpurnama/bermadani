@@ -378,4 +378,6 @@ Route::middleware(['auth'])->prefix('member')->name('member.')->group(function (
     Route::get('/profile', [App\Http\Controllers\Member\ProfileController::class, 'index'])->name('profile');
     Route::put('/profile', [App\Http\Controllers\Member\ProfileController::class, 'update'])->name('profile.update');
     Route::put('/profile/password', [App\Http\Controllers\Member\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/transactions', [App\Http\Controllers\Member\TransactionController::class, 'index'])->name('transactions');
+    Route::get('/transactions/{id}', [App\Http\Controllers\Member\TransactionController::class, 'show'])->name('transactions.show');
 });
