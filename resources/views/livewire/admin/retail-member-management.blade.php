@@ -13,6 +13,20 @@
         </div>
     </div>
 
+    {{-- Notification --}}
+    @if (session()->has('message'))
+        <div class="p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+            <i class='bx bx-check-circle text-emerald-600 text-xl'></i>
+            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-bold">{{ session('message') }}</p>
+        </div>
+    @endif
+    @if (session()->has('error'))
+        <div class="p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl flex items-center gap-3 animate-in fade-in slide-in-from-top-2">
+            <i class='bx bx-x-circle text-rose-600 text-xl'></i>
+            <p class="text-sm text-rose-600 dark:text-rose-400 font-bold">{{ session('error') }}</p>
+        </div>
+    @endif
+
     {{-- Filters --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-white dark:bg-darkCard p-1.5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         <div class="relative group">
@@ -40,8 +54,8 @@
             </div>
         </div>
 
-        {{-- Add Member Button (Hidden Placeholder) --}}
-        <button class="hidden lg:flex items-center justify-center gap-2 bg-slate-900 text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-black transition-colors">
+        {{-- Add Member Button --}}
+        <button wire:click="$set('showCreateModal', true)" class="flex items-center justify-center gap-2 bg-slate-900 text-white rounded-xl px-4 py-2.5 text-xs font-bold hover:bg-black transition-colors shadow-lg shadow-slate-900/20 active:scale-95 transform">
             <i class='bx bx-plus text-base'></i> Tambah
         </button>
     </div>
@@ -85,7 +99,6 @@
                                     <div class="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
                                         <i class='bx bx-phone text-slate-400'></i> {{ $member->phone ?? '-' }}
                                     </div>
-                                    {{-- Status Text Minimalist --}}
                                     <span class="text-[10px] font-bold uppercase tracking-wider
                                         {{ $member->status === 'ACTIVE' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
                                         {{ $member->status }}
@@ -142,8 +155,55 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 cool-gray-50 dark:bg-slate-800/30">
+        <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30">
             {{ $members->links() }}
         </div>
     </div>
+
+    {{-- Create Modal --}}
+    @if($showCreateModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+        x-data x-on:keydown.escape.window="$wire.set('showCreateModal', false)">
+        
+        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+                <h3 class="font-bold text-slate-900 dark:text-white">Tambah Member Retail</h3>
+                <button wire:click="$set('showCreateModal', false)" class="text-slate-400 hover:text-rose-500 transition-colors">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+            </div>
+            
+            <div class="p-6">
+                <form wire:submit="createMember" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">Nama Lengkap</label>
+                        <input type="text" wire:model="newName" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 dark:text-white placeholder-slate-400" placeholder="Contoh: Budi Santoso">
+                        @error('newName') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">No. WhatsApp</label>
+                        <input type="text" wire:model="newPhone" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 dark:text-white placeholder-slate-400" placeholder="Contoh: 08123456789">
+                        <p class="text-[10px] text-slate-400 mt-1">*Nomor ini akan digunakan sebagai login ID.</p>
+                        @error('newPhone') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1.5">Unit Kerja (Opsional)</label>
+                        <input type="text" wire:model="newUnitKerja" class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-white/10 dark:text-white placeholder-slate-400" placeholder="Contoh: Staff Keuangan">
+                    </div>
+
+                    <div class="pt-4 flex gap-3">
+                        <button type="button" wire:click="$set('showCreateModal', false)" class="flex-1 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            Batal
+                        </button>
+                        <button type="submit" class="flex-1 py-2.5 rounded-xl bg-slate-900 hover:bg-black text-white text-xs font-bold shadow-lg shadow-slate-900/20 transition-all transform active:scale-95">
+                            Simpan Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
