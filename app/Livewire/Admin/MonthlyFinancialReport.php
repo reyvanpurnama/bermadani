@@ -61,7 +61,8 @@ class MonthlyFinancialReport extends Component
 
         // Format data untuk laporan
         $reportItems = [];
-        $totalAngsuran = 0;
+        $totalAngsuranBermadani = 0;
+        $totalAngsuranBmtItqan = 0;
         $totalSimwa = 0;
         $totalSukarela = 0;
         $processedMemberIds = [];
@@ -77,41 +78,53 @@ class MonthlyFinancialReport extends Component
         }])
         ->get();
 
-        // Process members with loans (angsuran)
+        // Process members with loans (angsuran) - group by member
         foreach ($membersWithLoans as $member) {
+            $angsuranBermadani = 0;
+            $angsuranBmtItqan = 0;
+            
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
                 
-                // SIMWA: cek preferensi pembayaran member
-                $simwaAmount = 0;
-                if ($member->hasSalaryDeductionSimwa()) {
-                    $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
+                // Pisahkan berdasarkan loanSource
+                if ($loan->loanSource === 'BMT_ITQAN') {
+                    $angsuranBmtItqan += $monthlyPayment;
+                } else {
+                    // Default BERMADANI
+                    $angsuranBermadani += $monthlyPayment;
                 }
-
-                // Sukarela: cek preferensi pembayaran member
-                $sukarelaAmount = 0;
-                if ($member->hasSalaryDeductionSukarela()) {
-                    $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
-                }
-
-                $reportItems[] = [
-                    'nama' => $member->name,
-                    'unit_kerja' => $member->unitKerja ?? '-',
-                    'angsuran' => $monthlyPayment,
-                    'simwa' => $simwaAmount,
-                    'sukarela' => $sukarelaAmount,
-                    'total' => $monthlyPayment + $simwaAmount + $sukarelaAmount,
-                    'tenor_remaining' => ($loan->tenor ?? 0) - ($loan->paidInstallments ?? 0),
-                    'has_loan' => true,
-                    'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
-                    'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
-                ];
-
-                $totalAngsuran += $monthlyPayment;
-                $totalSimwa += $simwaAmount;
-                $totalSukarela += $sukarelaAmount;
-                $processedMemberIds[] = $member->id;
             }
+            
+            // SIMWA: cek preferensi pembayaran member
+            $simwaAmount = 0;
+            if ($member->hasSalaryDeductionSimwa()) {
+                $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
+            }
+
+            // Sukarela: cek preferensi pembayaran member
+            $sukarelaAmount = 0;
+            if ($member->hasSalaryDeductionSukarela()) {
+                $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
+            }
+
+            $reportItems[] = [
+                'nama' => $member->name,
+                'unit_kerja' => $member->unitKerja ?? '-',
+                'angsuran_bermadani' => $angsuranBermadani,
+                'angsuran_bmt_itqan' => $angsuranBmtItqan,
+                'simwa' => $simwaAmount,
+                'sukarela' => $sukarelaAmount,
+                'total' => $angsuranBermadani + $angsuranBmtItqan + $simwaAmount + $sukarelaAmount,
+                'has_loan' => true,
+                'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
+                'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
+            ];
+
+            $totalAngsuranBermadani += $angsuranBermadani;
+            $totalAngsuranBmtItqan += $angsuranBmtItqan;
+            $totalSimwa += $simwaAmount;
+            $totalSukarela += $sukarelaAmount;
+            $processedMemberIds[] = $member->id;
         }
 
         // 2. Ambil semua member koperasi yang SIMWA-nya potong gaji (tanpa pinjaman)
@@ -148,11 +161,11 @@ class MonthlyFinancialReport extends Component
             $reportItems[] = [
                 'nama' => $member->name,
                 'unit_kerja' => $member->unitKerja ?? '-',
-                'angsuran' => 0,
+                'angsuran_bermadani' => 0,
+                'angsuran_bmt_itqan' => 0,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'total' => $simwaAmount + $sukarelaAmount,
-                'tenor_remaining' => 0,
                 'has_loan' => false,
                 'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
                 'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
@@ -170,9 +183,21 @@ class MonthlyFinancialReport extends Component
         return [
             'items' => $reportItems,
             'summary' => [
-                'total_angsuran' => $totalAngsuran,
+                'total_angsuran_bermadani' => $totalAngsuranBermadani,
+                'total_angsuran_bmt_itqan' => $totalAngsuranBmtItqan,
                 'total_simwa' => $totalSimwa,
                 'total_sukarela' => $totalSukarela,
+                'grand_total' => $totalAngsuranBermadani + $totalAngsuranBmtItqan + $totalSimwa + $totalSukarela,
+                'total_members' => count($reportItems)
+            ]
+        ];
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.monthly-financial-report')->layout('layouts.admin');
+    }
+}
                 'grand_total' => $totalAngsuran + $totalSimwa + $totalSukarela,
                 'total_members' => count($reportItems)
             ]

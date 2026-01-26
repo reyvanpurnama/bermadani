@@ -14,6 +14,7 @@ class Loan extends Model
         'monthlyPayment',
         'remainingAmount',
         'status',
+        'loanSource', // BERMADANI or BMT_ITQAN
         'purpose',
         'approvedAt',
         'approvedBy',

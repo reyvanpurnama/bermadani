@@ -264,16 +264,20 @@
 
     <div class="summary-boxes">
         <div class="summary-box">
-            <div class="label">Total Angsuran</div>
-            <div class="value">Rp {{ number_format($data['summary']['total_angsuran'], 0, ',', '.') }}</div>
-        </div>
-        <div class="summary-box">
             <div class="label">Total SIMWA</div>
             <div class="value">Rp {{ number_format($data['summary']['total_simwa'], 0, ',', '.') }}</div>
         </div>
         <div class="summary-box">
             <div class="label">Total Sukarela</div>
             <div class="value">Rp {{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</div>
+        </div>
+        <div class="summary-box">
+            <div class="label">Angsuran Bermadani</div>
+            <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</div>
+        </div>
+        <div class="summary-box">
+            <div class="label">Angsuran BMT ITQAN</div>
+            <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bmt_itqan'], 0, ',', '.') }}</div>
         </div>
         <div class="summary-box primary">
             <div class="label">GRAND TOTAL</div>
@@ -286,11 +290,12 @@
             <tr>
                 <th style="width: 30px;">No</th>
                 <th>Nama Anggota</th>
-                <th class="right" style="width: 100px;">Angsuran (Rp)</th>
-                <th class="right" style="width: 100px;">SIMWA (Rp)</th>
-                <th class="right" style="width: 100px;">Sukarela (Rp)</th>
-                <th class="right" style="width: 110px;">Total (Rp)</th>
-                <th class="center" style="width: 100px;">Keterangan</th>
+                <th class="right" style="width: 85px;">SIMWA (Rp)</th>
+                <th class="right" style="width: 85px;">Sukarela (Rp)</th>
+                <th class="right" style="width: 85px;">Angs. Bermadani (Rp)</th>
+                <th class="right" style="width: 85px;">Angs. BMT ITQAN (Rp)</th>
+                <th class="right" style="width: 90px;">Total (Rp)</th>
+                <th class="center" style="width: 80px;">Keterangan</th>
             </tr>
         </thead>
         <tbody>
@@ -298,13 +303,6 @@
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
                     <td><strong>{{ strtoupper($item['nama']) }}</strong></td>
-                    <td class="right">
-                        @if($item['angsuran'] > 0)
-                            {{ number_format($item['angsuran'], 0, ',', '.') }}
-                        @else
-                            -
-                        @endif
-                    </td>
                     <td class="right">{{ number_format($item['simwa'], 0, ',', '.') }}</td>
                     <td class="right">
                         @if($item['sukarela'] > 0)
@@ -313,10 +311,30 @@
                             -
                         @endif
                     </td>
+                    <td class="right">
+                        @if($item['angsuran_bermadani'] > 0)
+                            {{ number_format($item['angsuran_bermadani'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="right">
+                        @if($item['angsuran_bmt_itqan'] > 0)
+                            {{ number_format($item['angsuran_bmt_itqan'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="right"><strong>{{ number_format($item['total'], 0, ',', '.') }}</strong></td>
                     <td class="center">
                         @if($item['has_loan'])
-                            <span class="badge badge-blue">Angsuran-{{ $item['tenor_remaining'] }}</span>
+                            @if($item['angsuran_bmt_itqan'] > 0 && $item['angsuran_bermadani'] > 0)
+                                <span class="badge badge-blue">BM+BMT</span>
+                            @elseif($item['angsuran_bmt_itqan'] > 0)
+                                <span class="badge badge-blue">BMT ITQAN</span>
+                            @else
+                                <span class="badge badge-blue">Bermadani</span>
+                            @endif
                         @else
                             <span class="badge badge-gray">SIMWA</span>
                         @endif
@@ -327,9 +345,10 @@
         <tfoot>
             <tr>
                 <td colspan="2" style="text-align: left;">TOTAL KESELURUHAN</td>
-                <td class="right">{{ number_format($data['summary']['total_angsuran'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_simwa'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($data['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($data['summary']['total_angsuran_bmt_itqan'], 0, ',', '.') }}</td>
                 <td class="right" style="font-size: 13px;">{{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
                 <td></td>
             </tr>
@@ -339,10 +358,11 @@
     <div class="note">
         <strong>CATATAN:</strong><br>
         1. Potongan gaji dilakukan otomatis melalui sistem payroll UMB<br>
-        2. Angsuran: Cicilan pinjaman anggota koperasi<br>
-        3. SIMWA: Simpanan Wajib bulanan Rp 50.000/bulan<br>
-        4. Sukarela: Tambahan simpanan sukarela yang disetujui anggota<br>
-        5. Dana mohon ditransfer ke Rekening Koperasi: BCA 1234567890 a.n. Koperasi Karyawan UMB
+        2. SIMWA: Simpanan Wajib bulanan Rp 50.000/bulan<br>
+        3. Sukarela: Tambahan simpanan sukarela yang disetujui anggota<br>
+        4. Angsuran Bermadani: Cicilan pinjaman dari Koperasi Bermadani UMB<br>
+        5. Angsuran BMT ITQAN: Cicilan pinjaman channeling dari BMT ITQAN<br>
+        6. Dana mohon ditransfer ke Rekening Koperasi: BCA 1234567890 a.n. Koperasi Karyawan UMB
     </div>
 
     <div class="signature-section">
