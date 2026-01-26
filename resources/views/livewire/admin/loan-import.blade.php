@@ -1,13 +1,13 @@
 <div class="space-y-6">
-    <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+    <div class="flex flex-col gap-4">
         <div>
+            <a href="{{ route('admin.reports.monthly-financial') }}"
+                class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-3 transition-colors font-medium">
+                <i class='bx bx-arrow-back text-lg'></i> Kembali ke Laporan
+            </a>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Import Data Angsuran</h1>
             <p class="text-xs text-slate-500 mt-1">Import data tagihan & angsuran dari BMT Itqan (CSV)</p>
         </div>
-        <a href="{{ route('admin.dashboard') }}"
-            class="text-slate-500 hover:text-slate-700 text-sm flex items-center gap-1">
-            <i class='bx bx-arrow-back'></i> Kembali
-        </a>
     </div>
 
     <!-- Alert Success/Error -->
