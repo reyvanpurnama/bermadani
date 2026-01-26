@@ -49,12 +49,11 @@ Route::middleware('guest')->group(function () {
                     $phone = '0' . $phone;
                 }
 
-                // Try to find user by phone-based email
-                $phoneEmail = $phone . '@bermadani.id';
-                $user = \App\Models\User::where('email', $phoneEmail)->first();
+                // Try to find member by phone number
+                $memberByPhone = \App\Models\Member::where('phone', $phone)->first();
 
-                if ($user) {
-                    $email = $phoneEmail;
+                if ($memberByPhone && $memberByPhone->user) {
+                    $email = $memberByPhone->user->email;
                 } else {
                     // Not found as member number OR phone number - show error
                     return back()->withErrors([
@@ -371,4 +370,14 @@ Route::middleware(['auth'])->prefix('member')->name('member.')->group(function (
     Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
     Route::get('/transfer', \App\Livewire\Member\Transfer::class)->name('transfer');
     Route::get('/transfer/history', \App\Livewire\Member\TransferHistory::class)->name('transfer.history');
+});
+
+// Member Portal Routes
+Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
+    Route::get('/dashboard', [App\Http\Controllers\Member\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [App\Http\Controllers\Member\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [App\Http\Controllers\Member\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [App\Http\Controllers\Member\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/transactions', [App\Http\Controllers\Member\TransactionController::class, 'index'])->name('transactions');
+    Route::get('/transactions/{id}', [App\Http\Controllers\Member\TransactionController::class, 'show'])->name('transactions.show');
 });
