@@ -111,10 +111,10 @@
             </a>
 
             <!-- Profile -->
-            <a href="#"
-                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.profile') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+            <a href="{{ route('member.profile') }}"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.profile*') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
                 <i
-                    class='bx {{ request()->routeIs('member.profile') ? 'bxs-user-circle' : 'bx-user-circle' }} text-2xl'></i>
+                    class='bx {{ request()->routeIs('member.profile*') ? 'bxs-user-circle' : 'bx-user-circle' }} text-2xl'></i>
                 <span class="text-[10px] font-medium">Akun</span>
             </a>
 

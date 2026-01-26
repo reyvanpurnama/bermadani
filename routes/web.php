@@ -375,4 +375,7 @@ Route::middleware(['auth'])->prefix('member')->name('member.')->group(function (
 // Member Portal Routes
 Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\Member\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [App\Http\Controllers\Member\ProfileController::class, 'index'])->name('profile');
+    Route::put('/profile', [App\Http\Controllers\Member\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [App\Http\Controllers\Member\ProfileController::class, 'updatePassword'])->name('profile.password');
 });
