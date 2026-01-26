@@ -245,14 +245,15 @@
     <div class="header">
         <h1>KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</h1>
         <h2>KKSBSM UNIVERSITAS MUHAMMADIYAH BANDUNG</h2>
-        <div class="period" style="margin-top: 15px; font-size: 14px; text-decoration: underline;">LAPORAN POTONGAN GAJI & SIMPANAN WAJIB</div>
+        <div class="period" style="margin-top: 15px; font-size: 14px; text-decoration: underline;">LAPORAN POTONGAN GAJI
+            & SIMPANAN WAJIB</div>
         <div class="period" style="margin-top: 5px;">Periode: {{ $monthName }} {{ $year }}</div>
     </div>
 
     <div class="info-box">
         <table>
             <tr>
-                <td>Tanggal Generate</td>
+                <td>Dicetak Pada</td>
                 <td>: {{ $generatedAt }}</td>
             </tr>
             <tr>
@@ -445,13 +446,12 @@
         </div>
         <div class="signature-box">
             <div class="title">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
-            <div style="margin-top: 10px; margin-bottom: 50px;">ttd</div>
-            <div class="name">(Muhammad Alwi Almaliki)</div>
+            <div class="name" style="margin-top: 60px;">(Muhammad Alwi Almaliki)</div>
         </div>
     </div>
 
     <div class="footer" style="text-align: center; font-size: 9px; color: #94a3b8; margin-top: 30px;">
-        <p>Dokumen ini digenerate otomatis oleh Sistem Informasi Koperasi UMB</p>
+        <p>Dokumen ini digenerate otomatis oleh Sistem Bermadani UMBandung</p>
         <p>Dicetak pada: {{ $generatedAt }}</p>
     </div>
 </body>

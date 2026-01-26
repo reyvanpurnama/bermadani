@@ -150,22 +150,23 @@
             display: inline-block;
         }
 
-        /* Bank Info Box */
-        .bank-info {
-            margin-top: 20px;
+        .info-box {
+            background: #f8fafc;
             padding: 15px;
-            background-color: #f1f5f9;
-            border-left: 4px solid #0F52BA;
-            border-radius: 6px;
-            font-size: 10px;
-            color: #1e293b;
+            border-radius: 8px;
+            margin-bottom: 40px;
+            border-left: 5px solid #0F52BA;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        .bank-info strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #0F52BA;
-            font-size: 11px;
+        /* Disclaimer Note */
+        .note {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 9px;
+            color: #92400e;
         }
     </style>
 </head>
@@ -178,6 +179,23 @@
             DAFTAR POTONGAN GAJI ANGGOTA KOPERASI<br>
             Periode: {{ $monthName }} {{ $year }}
         </div>
+    </div>
+
+    <div class="info-box">
+        <table>
+            <tr>
+                <td>Dicetak Pada</td>
+                <td>: {{ $generatedAt }}</td>
+            </tr>
+            <tr>
+                <td>Total Anggota Tercatat</td>
+                <td>: {{ $data['summary']['total_members'] }} Orang</td>
+            </tr>
+            <tr>
+                <td>Unit Tujuan</td>
+                <td>: Unit Keuangan UMBandung</td>
+            </tr>
+        </table>
     </div>
 
     <!-- Main Table -->
@@ -210,31 +228,30 @@
         </tfoot>
     </table>
 
-    <!-- Footer -->
-    <div class="footer">
-        <p class="footer-note">
-            *Potongan gaji dilakukan sesuai persetujuan anggota koperasi yang bersangkutan.
-        </p>
+    <!-- Note / Bank Info Section -->
+    <div class="note">
+        <strong>INFORMASI TRANSFER PENTING:</strong><br><br>
+        Mohon melakukan transfer total potongan gaji (Grand Total) ke rekening operasional koperasi berikut:<br>
+        <strong>Bank KB Bukopin Syariah</strong><br>
+        <strong>No. Rek: 7704020507</strong><br>
+        <strong>a.n. Koperasi Konsumen Syariah Berkah Solusi Madani</strong><br><br>
+        <em>*Dokumen ini adalah dasar pemotongan gaji yang sah sesuai persetujuan anggota.</em>
+    </div>
 
-        <!-- Signature Section -->
-        <div class="signature-section">
-            <div class="signature-box">
-                &nbsp;
-            </div>
-            <div class="signature-box">
-                <div class="location-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
-                <div class="title" style="margin-bottom: 50px;">ttd</div>
-                <div class="name">(Muhammad Alwi Almaliki)</div>
-            </div>
+    <!-- Signature Section -->
+    <div class="signature-section">
+        <div class="signature-box">
+            &nbsp;
         </div>
+        <div class="signature-box">
+            <div class="location-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
+            <div class="name" style="margin-top: 80px;">(Muhammad Alwi Almaliki)</div>
+        </div>
+    </div>
 
-        <!-- Bank Info -->
-        <div class="bank-info">
-            <strong>Informasi Transfer:</strong>
-            Bank KB Bukopin Syariah<br>
-            a.n. Koperasi Konsumen Syariah Berkah Solusi Madani<br>
-            No. Rekening: 7704020507
-        </div>
+    <div class="footer" style="text-align: center; font-size: 9px; color: #94a3b8; margin-top: 30px;">
+        <p>Dokumen ini digenerate otomatis oleh Sistem Bermadani UMBandung</p>
+        <p>Dicetak pada: {{ $generatedAt }}</p>
     </div>
 </body>
 
