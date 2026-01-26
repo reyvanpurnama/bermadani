@@ -3,27 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Member Area') - Bermadani</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @livewireStyles
 
+    <!-- Config -->
     <script>
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA',
-                        secondary: '#F8FAFC',
-                        darkBg: '#0f172a',
-                        darkCard: '#1e293b'
+                        primary: '#6366f1', // Indigo
+                        darkBg: '#0f172a',  // Slate 900
+                        darkCard: '#1e293b', // Slate 800
                     }
                 }
             }
@@ -31,93 +34,94 @@
     </script>
 
     <style>
-        ::-webkit-scrollbar {
-            width: 6px;
+        /* Mobile optimization */
+        body {
+            -webkit-tap-highlight-color: transparent;
         }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
-
-        [x-cloak] {
-            display: none !important;
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
-
-    @stack('styles')
 </head>
 
-<body class="bg-secondary text-slate-800 antialiased dark:bg-darkBg dark:text-slate-200 transition-colors duration-300">
+<body
+    class="bg-slate-50 dark:bg-darkBg text-slate-800 dark:text-slate-100 min-h-screen font-sans selection:bg-primary/30">
 
-    {{-- Sidebar --}}
-    <div class="hidden lg:block">
-        @include('partials.member-sidebar')
+    <!-- Top Bar (Optional, mostly for Branding) -->
+    <div
+        class="fixed top-0 left-0 w-full z-40 bg-white/80 dark:bg-darkCard/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/5 flex justify-between items-center lg:hidden">
+        <div class="flex items-center gap-2">
+            <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-white font-bold">
+                B</div>
+            <span class="font-bold text-lg tracking-tight">Bermadani</span>
+        </div>
+        <div class="flex gap-3">
+            <!-- Notification Icon could go here -->
+            <button class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
+                <i class='bx bx-bell text-xl'></i>
+            </button>
+        </div>
     </div>
 
-    {{-- Main Content --}}
-    <div class="lg:ml-[240px] min-h-screen flex flex-col transition-all duration-300 pb-20 lg:pb-0">
+    <!-- Main Content -->
+    <div class="pt-16 pb-24 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative">
+        @yield('content')
+    </div>
 
-        {{-- Header --}}
-        <header
-            class="h-16 bg-white dark:bg-darkCard border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-20">
-            <div class="flex items-center gap-4">
-                {{-- Only show logo on mobile instead of menu btn --}}
-                <div class="lg:hidden flex items-center gap-2">
-                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
-                        <i class='bx bxs-cube-alt text-xl'></i>
-                    </div>
-                </div>
-                <h1 class="text-lg font-bold text-slate-800 dark:text-white">@yield('page-title', 'Dashboard')</h1>
-            </div>
-            <div class="flex items-center gap-3">
-                <button id="theme-toggle"
-                    class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-                    <i id="theme-icon" class='bx bx-moon text-xl'></i>
+    <!-- Bottom Navigation (Mobile Only/Primary Nav) -->
+    <div
+        class="fixed bottom-0 left-0 w-full z-50 bg-white/90 dark:bg-darkCard/90 backdrop-blur-lg border-t border-slate-200 dark:border-white/5 pb-safe">
+        <div class="flex justify-around items-center max-w-md mx-auto lg:max-w-4xl px-2 py-2">
+
+            <!-- Home -->
+            <a href="{{ route('member.dashboard') }}"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.dashboard') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                <i
+                    class='bx {{ request()->routeIs('member.dashboard') ? 'bxs-home-smile' : 'bx-home-smile' }} text-2xl'></i>
+                <span class="text-[10px] font-medium">Beranda</span>
+            </a>
+
+            <!-- History -->
+            <a href="#"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.history') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                <i class='bx {{ request()->routeIs('member.history') ? 'bxs-receipt' : 'bx-receipt' }} text-2xl'></i>
+                <span class="text-[10px] font-medium">Riwayat</span>
+            </a>
+
+            <!-- Scan (Center Floating) -->
+            <div class="relative -top-5">
+                <button
+                    class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-purple-600 shadow-lg shadow-primary/40 flex items-center justify-center text-white transform transition-transform active:scale-95 border-4 border-white dark:border-darkBg">
+                    <i class='bx bx-qr-scan text-2xl'></i>
                 </button>
             </div>
-        </header>
 
-        {{-- Page Content --}}
-        <main class="flex-1 p-6 lg:p-8 space-y-6 overflow-y-auto">
-            @yield('content')
-            {{ $slot ?? '' }}
-        </main>
+            <!-- Promotion / Shop -->
+            <a href="#"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.shop') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                <i class='bx {{ request()->routeIs('member.shop') ? 'bxs-store' : 'bx-store' }} text-2xl'></i>
+                <span class="text-[10px] font-medium">Belanja</span>
+            </a>
+
+            <!-- Profile -->
+            <a href="#"
+                class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.profile') ? 'text-primary' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
+                <i
+                    class='bx {{ request()->routeIs('member.profile') ? 'bxs-user-circle' : 'bx-user-circle' }} text-2xl'></i>
+                <span class="text-[10px] font-medium">Akun</span>
+            </a>
+
+        </div>
     </div>
 
-    {{-- Mobile Bottom Nav --}}
-    @include('partials.mobile-bottom-nav')
-
     @livewireScripts
-
-    <script>
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const html = document.documentElement;
-
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            html.classList.add('dark');
-            if (themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
-        }
-
-        themeToggle?.addEventListener('click', function () {
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            themeIcon.classList.replace(isDark ? 'bx-moon' : 'bx-sun', isDark ? 'bx-sun' : 'bx-moon');
-            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
-        });
-    </script>
-
-    @stack('scripts')
 </body>
 
 </html>
