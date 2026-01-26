@@ -272,12 +272,16 @@
             <div class="value">Rp {{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</div>
         </div>
         <div class="summary-box">
-            <div class="label">Angsuran Bermadani</div>
+            <div class="label">Angs. Bermadani</div>
             <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</div>
         </div>
         <div class="summary-box">
-            <div class="label">Angsuran BMT ITQAN</div>
-            <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bmt_itqan'], 0, ',', '.') }}</div>
+            <div class="label">Angs. BMT ITQAN 1</div>
+            <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}</div>
+        </div>
+        <div class="summary-box">
+            <div class="label">Angs. BMT ITQAN 2</div>
+            <div class="value">Rp {{ number_format($data['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</div>
         </div>
         <div class="summary-box primary">
             <div class="label">GRAND TOTAL</div>
@@ -288,14 +292,21 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th style="width: 30px;">No</th>
-                <th>Nama Anggota</th>
-                <th class="right" style="width: 85px;">SIMWA (Rp)</th>
-                <th class="right" style="width: 85px;">Sukarela (Rp)</th>
-                <th class="right" style="width: 85px;">Angs. Bermadani (Rp)</th>
-                <th class="right" style="width: 85px;">Angs. BMT ITQAN (Rp)</th>
-                <th class="right" style="width: 90px;">Total (Rp)</th>
-                <th class="center" style="width: 80px;">Keterangan</th>
+                <th style="width: 25px;">No</th>
+                <th style="width: 120px;">Nama Anggota</th>
+                <th class="right" style="width: 60px;">SIMWA (Rp)</th>
+                <th class="right" style="width: 60px;">Sukarela (Rp)</th>
+                <th class="right" style="width: 70px;">Angs. Bermadani (Rp)</th>
+                <th class="center" style="width: 35px;">Ke</th>
+                <th class="center" style="width: 35px;">Tenor</th>
+                <th class="right" style="width: 70px;">Angs. BMT ITQAN 1 (Rp)</th>
+                <th class="center" style="width: 35px;">Ke</th>
+                <th class="center" style="width: 35px;">Tenor</th>
+                <th class="right" style="width: 70px;">Angs. BMT ITQAN 2 (Rp)</th>
+                <th class="center" style="width: 35px;">Ke</th>
+                <th class="center" style="width: 35px;">Tenor</th>
+                <th class="right" style="width: 70px;">Total (Rp)</th>
+                <th class="center" style="width: 50px;">Ket</th>
             </tr>
         </thead>
         <tbody>
@@ -318,9 +329,58 @@
                             -
                         @endif
                     </td>
+                    <td class="center">
+                        @if($item['angsuran_bermadani'] > 0)
+                            {{ $item['angsuran_ke_bermadani'] }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($item['angsuran_bermadani'] > 0)
+                            {{ $item['tenor_bermadani'] }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td class="right">
-                        @if($item['angsuran_bmt_itqan'] > 0)
-                            {{ number_format($item['angsuran_bmt_itqan'], 0, ',', '.') }}
+                        @if($item['angsuran_bmt_itqan_1'] > 0)
+                            {{ number_format($item['angsuran_bmt_itqan_1'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($item['angsuran_bmt_itqan_1'] > 0)
+                            {{ $item['angsuran_ke_bmt_itqan_1'] }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($item['angsuran_bmt_itqan_1'] > 0)
+                            {{ $item['tenor_bmt_itqan_1'] }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="right">
+                        @if($item['angsuran_bmt_itqan_2'] > 0)
+                            {{ number_format($item['angsuran_bmt_itqan_2'], 0, ',', '.') }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($item['angsuran_bmt_itqan_2'] > 0)
+                            {{ $item['angsuran_ke_bmt_itqan_2'] }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td class="center">
+                        @if($item['angsuran_bmt_itqan_2'] > 0)
+                            {{ $item['tenor_bmt_itqan_2'] }}
                         @else
                             -
                         @endif
@@ -328,15 +388,15 @@
                     <td class="right"><strong>{{ number_format($item['total'], 0, ',', '.') }}</strong></td>
                     <td class="center">
                         @if($item['has_loan'])
-                            @if($item['angsuran_bmt_itqan'] > 0 && $item['angsuran_bermadani'] > 0)
-                                <span class="badge badge-blue">BM+BMT</span>
-                            @elseif($item['angsuran_bmt_itqan'] > 0)
-                                <span class="badge badge-blue">BMT ITQAN</span>
-                            @else
-                                <span class="badge badge-blue">Bermadani</span>
-                            @endif
+                            @php
+                                $badges = [];
+                                if($item['angsuran_bermadani'] > 0) $badges[] = 'BM';
+                                if($item['angsuran_bmt_itqan_1'] > 0) $badges[] = 'IT1';
+                                if($item['angsuran_bmt_itqan_2'] > 0) $badges[] = 'IT2';
+                            @endphp
+                            <span class="badge badge-blue">{{ implode('+', $badges) }}</span>
                         @else
-                            <span class="badge badge-gray">SIMWA</span>
+                            <span class="badge badge-gray">SIM</span>
                         @endif
                     </td>
                 </tr>
@@ -344,12 +404,16 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2" style="text-align: left;">TOTAL KESELURUHAN</td>
+                <td colspan="2" style="text-align: left;">TOTAL</td>
                 <td class="right">{{ number_format($data['summary']['total_simwa'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_angsuran_bermadani'], 0, ',', '.') }}</td>
-                <td class="right">{{ number_format($data['summary']['total_angsuran_bmt_itqan'], 0, ',', '.') }}</td>
-                <td class="right" style="font-size: 13px;">{{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
+                <td colspan="2"></td>
+                <td class="right">{{ number_format($data['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}</td>
+                <td colspan="2"></td>
+                <td class="right">{{ number_format($data['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</td>
+                <td colspan="2"></td>
+                <td class="right" style="font-size: 12px;">{{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
                 <td></td>
             </tr>
         </tfoot>
@@ -360,9 +424,10 @@
         1. Potongan gaji dilakukan otomatis melalui sistem payroll UMB<br>
         2. SIMWA: Simpanan Wajib bulanan Rp 50.000/bulan<br>
         3. Sukarela: Tambahan simpanan sukarela yang disetujui anggota<br>
-        4. Angsuran Bermadani: Cicilan pinjaman dari Koperasi Bermadani UMB<br>
-        5. Angsuran BMT ITQAN: Cicilan pinjaman channeling dari BMT ITQAN<br>
-        6. Dana mohon ditransfer ke Rekening Koperasi: BCA 1234567890 a.n. Koperasi Karyawan UMB
+        4. Angs. Bermadani: Cicilan pinjaman dari Koperasi Bermadani UMB<br>
+        5. Angs. BMT ITQAN 1 & 2: Cicilan pinjaman channeling dari BMT ITQAN (maksimal 2 pinjaman per anggota)<br>
+        6. Ke = Angsuran ke berapa, Tenor = Total bulan pinjaman<br>
+        7. Dana mohon ditransfer ke Rekening Koperasi: BCA 1234567890 a.n. Koperasi Karyawan UMB
     </div>
 
     <div class="signature-section">

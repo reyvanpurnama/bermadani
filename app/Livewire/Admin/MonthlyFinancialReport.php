@@ -62,7 +62,8 @@ class MonthlyFinancialReport extends Component
         // Format data untuk laporan
         $reportItems = [];
         $totalAngsuranBermadani = 0;
-        $totalAngsuranBmtItqan = 0;
+        $totalAngsuranBmtItqan1 = 0;
+        $totalAngsuranBmtItqan2 = 0;
         $totalSimwa = 0;
         $totalSukarela = 0;
         $processedMemberIds = [];
@@ -74,24 +75,55 @@ class MonthlyFinancialReport extends Component
         })
         ->with(['loans' => function ($query) use ($endDate) {
             $query->where('status', 'ACTIVE')
-                  ->where('startDate', '<=', $endDate);
+                  ->where('startDate', '<=', $endDate)
+                  ->orderBy('startDate', 'asc'); // Order by start date untuk BMT ITQAN 1 & 2
         }])
         ->get();
 
         // Process members with loans (angsuran) - group by member
         foreach ($membersWithLoans as $member) {
+            // Bermadani loan data
             $angsuranBermadani = 0;
-            $angsuranBmtItqan = 0;
+            $angsuranKeBermadani = 0;
+            $tenorBermadani = 0;
+            
+            // BMT ITQAN 1 loan data
+            $angsuranBmtItqan1 = 0;
+            $angsuranKeBmtItqan1 = 0;
+            $tenorBmtItqan1 = 0;
+            
+            // BMT ITQAN 2 loan data
+            $angsuranBmtItqan2 = 0;
+            $angsuranKeBmtItqan2 = 0;
+            $tenorBmtItqan2 = 0;
+            
+            $bmtItqanCount = 0;
             
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
+                $tenor = $loan->tenor ?? 0;
+                $paidInstallments = $loan->paidInstallments ?? 0;
+                $angsuranKe = $paidInstallments + 1; // Angsuran ke = paid + 1 (current)
                 
                 // Pisahkan berdasarkan loanSource
                 if ($loan->loanSource === 'BMT_ITQAN') {
-                    $angsuranBmtItqan += $monthlyPayment;
+                    $bmtItqanCount++;
+                    if ($bmtItqanCount == 1) {
+                        // BMT ITQAN 1 (pinjaman pertama)
+                        $angsuranBmtItqan1 = $monthlyPayment;
+                        $angsuranKeBmtItqan1 = $angsuranKe;
+                        $tenorBmtItqan1 = $tenor;
+                    } else {
+                        // BMT ITQAN 2 (pinjaman kedua)
+                        $angsuranBmtItqan2 = $monthlyPayment;
+                        $angsuranKeBmtItqan2 = $angsuranKe;
+                        $tenorBmtItqan2 = $tenor;
+                    }
                 } else {
-                    // Default BERMADANI
-                    $angsuranBermadani += $monthlyPayment;
+                    // BERMADANI
+                    $angsuranBermadani = $monthlyPayment;
+                    $angsuranKeBermadani = $angsuranKe;
+                    $tenorBermadani = $tenor;
                 }
             }
             
@@ -107,21 +139,31 @@ class MonthlyFinancialReport extends Component
                 $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
             }
 
+            $total = $angsuranBermadani + $angsuranBmtItqan1 + $angsuranBmtItqan2 + $simwaAmount + $sukarelaAmount;
+
             $reportItems[] = [
                 'nama' => $member->name,
                 'unit_kerja' => $member->unitKerja ?? '-',
-                'angsuran_bermadani' => $angsuranBermadani,
-                'angsuran_bmt_itqan' => $angsuranBmtItqan,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
-                'total' => $angsuranBermadani + $angsuranBmtItqan + $simwaAmount + $sukarelaAmount,
+                'angsuran_bermadani' => $angsuranBermadani,
+                'angsuran_ke_bermadani' => $angsuranKeBermadani,
+                'tenor_bermadani' => $tenorBermadani,
+                'angsuran_bmt_itqan_1' => $angsuranBmtItqan1,
+                'angsuran_ke_bmt_itqan_1' => $angsuranKeBmtItqan1,
+                'tenor_bmt_itqan_1' => $tenorBmtItqan1,
+                'angsuran_bmt_itqan_2' => $angsuranBmtItqan2,
+                'angsuran_ke_bmt_itqan_2' => $angsuranKeBmtItqan2,
+                'tenor_bmt_itqan_2' => $tenorBmtItqan2,
+                'total' => $total,
                 'has_loan' => true,
                 'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
                 'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
             ];
 
             $totalAngsuranBermadani += $angsuranBermadani;
-            $totalAngsuranBmtItqan += $angsuranBmtItqan;
+            $totalAngsuranBmtItqan1 += $angsuranBmtItqan1;
+            $totalAngsuranBmtItqan2 += $angsuranBmtItqan2;
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
@@ -161,10 +203,17 @@ class MonthlyFinancialReport extends Component
             $reportItems[] = [
                 'nama' => $member->name,
                 'unit_kerja' => $member->unitKerja ?? '-',
-                'angsuran_bermadani' => 0,
-                'angsuran_bmt_itqan' => 0,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
+                'angsuran_bermadani' => 0,
+                'angsuran_ke_bermadani' => 0,
+                'tenor_bermadani' => 0,
+                'angsuran_bmt_itqan_1' => 0,
+                'angsuran_ke_bmt_itqan_1' => 0,
+                'tenor_bmt_itqan_1' => 0,
+                'angsuran_bmt_itqan_2' => 0,
+                'angsuran_ke_bmt_itqan_2' => 0,
+                'tenor_bmt_itqan_2' => 0,
                 'total' => $simwaAmount + $sukarelaAmount,
                 'has_loan' => false,
                 'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
@@ -183,11 +232,12 @@ class MonthlyFinancialReport extends Component
         return [
             'items' => $reportItems,
             'summary' => [
-                'total_angsuran_bermadani' => $totalAngsuranBermadani,
-                'total_angsuran_bmt_itqan' => $totalAngsuranBmtItqan,
                 'total_simwa' => $totalSimwa,
                 'total_sukarela' => $totalSukarela,
-                'grand_total' => $totalAngsuranBermadani + $totalAngsuranBmtItqan + $totalSimwa + $totalSukarela,
+                'total_angsuran_bermadani' => $totalAngsuranBermadani,
+                'total_angsuran_bmt_itqan_1' => $totalAngsuranBmtItqan1,
+                'total_angsuran_bmt_itqan_2' => $totalAngsuranBmtItqan2,
+                'grand_total' => $totalAngsuranBermadani + $totalAngsuranBmtItqan1 + $totalAngsuranBmtItqan2 + $totalSimwa + $totalSukarela,
                 'total_members' => count($reportItems)
             ]
         ];
