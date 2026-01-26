@@ -40,7 +40,8 @@
                     </div>
                     <h2 class="text-lg font-bold text-slate-900 dark:text-white">{{ $member->user->name }}</h2>
                     <p class="text-xs text-slate-500 dark:text-slate-400">Bergabung:
-                        {{ $member->joinDate->format('d M Y') }}</p>
+                        {{ $member->joinDate->format('d M Y') }}
+                    </p>
                 </div>
 
                 <!-- Status Card -->
@@ -267,23 +268,23 @@
                                                         class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                                         per Bulan</label>
                                                     <div class="relative" x-data="{ 
-                                                        rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                        formatted: '',
-                                                        init() {
-                                                            this.formatted = this.formatNumber(this.rawValue);
-                                                        },
-                                                        formatNumber(num) {
-                                                            return new Intl.NumberFormat('id-ID').format(num);
-                                                        },
-                                                        parseNumber(str) {
-                                                            return parseInt(str.replace(/\./g, '')) || 0;
-                                                        },
-                                                        updateValue(e) {
-                                                            this.rawValue = this.parseNumber(e.target.value);
-                                                            this.formatted = this.formatNumber(this.rawValue);
-                                                            $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                        }
-                                                    }">
+                                                                        rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                                        formatted: '',
+                                                                        init() {
+                                                                            this.formatted = this.formatNumber(this.rawValue);
+                                                                        },
+                                                                        formatNumber(num) {
+                                                                            return new Intl.NumberFormat('id-ID').format(num);
+                                                                        },
+                                                                        parseNumber(str) {
+                                                                            return parseInt(str.replace(/\./g, '')) || 0;
+                                                                        },
+                                                                        updateValue(e) {
+                                                                            this.rawValue = this.parseNumber(e.target.value);
+                                                                            this.formatted = this.formatNumber(this.rawValue);
+                                                                            $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                                        }
+                                                                    }">
                                                         <span
                                                             class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                                         <input type="text" x-model="formatted" @input="updateValue($event)"
@@ -325,6 +326,156 @@
                                         </div>
                                     </div>
                                 </div>
+                @endif
+
+                <!-- Loan Management Section -->
+                <div
+                    class="bg-white dark:bg-darkCard p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-[13px] font-bold text-slate-800 dark:text-white">
+                            <i class='bx bx-money mr-2'></i>Data Pinjaman
+                        </h3>
+                        <button type="button" wire:click="openLoanModal"
+                            class="text-[11px] bg-primary/10 text-primary hover:bg-primary hover:text-white px-3 py-1.5 rounded-lg font-bold transition-all">
+                            <i class='bx bx-plus'></i> Tambah Pinjaman
+                        </button>
+                    </div>
+
+                    @if($member->loans->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-[12px]">
+                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase font-bold text-[10px]">
+                                    <tr>
+                                        <th class="px-4 py-2">Sumber</th>
+                                        <th class="px-4 py-2 text-right">Plafond</th>
+                                        <th class="px-4 py-2 text-right">Cicilan/Bulan</th>
+                                        <th class="px-4 py-2 text-center">Tenor</th>
+                                        <th class="px-4 py-2 text-center">Dibayar</th>
+                                        <th class="px-4 py-2 text-center">Status</th>
+                                        <th class="px-4 py-2 text-right">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                                    @foreach($member->loans as $loan)
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                            <td class="px-4 py-2 font-bold">{{ $loan->loanSource }}</td>
+                                            <td class="px-4 py-2 text-right font-mono">
+                                                {{ number_format($loan->amount, 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-right font-mono text-primary font-bold">
+                                                {{ number_format($loan->monthlyPayment, 0, ',', '.') }}</td>
+                                            <td class="px-4 py-2 text-center">{{ $loan->tenor }} Bln</td>
+                                            <td class="px-4 py-2 text-center">{{ $loan->paid_installments }}</td>
+                                            <td class="px-4 py-2 text-center">
+                                                <span
+                                                    class="px-2 py-1 rounded-full text-[10px] font-bold {{ $loan->status == 'ACTIVE' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500' }}">
+                                                    {{ $loan->status }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-2 text-right">
+                                                <button type="button" wire:click="openLoanModal({{ $loan->id }})"
+                                                    class="text-blue-500 hover:text-blue-700 mr-2">
+                                                    <i class='bx bx-edit'></i>
+                                                </button>
+                                                <button type="button" wire:click="deleteLoan({{ $loan->id }})"
+                                                    wire:confirm="Yakin hapus data pinjaman ini?"
+                                                    class="text-rose-500 hover:text-rose-700">
+                                                    <i class='bx bx-trash'></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <div class="text-center py-6 text-slate-400 text-xs">
+                            Belum ada data pinjaman.
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Loan Modal -->
+                @if($loanModalVisible)
+                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                        <div class="bg-white dark:bg-darkCard w-full max-w-md rounded-xl shadow-lg p-6 m-4"
+                            @click.away="$wire.set('loanModalVisible', false)">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-slate-800 dark:text-white">
+                                    {{ $editingLoanId ? 'Edit Pinjaman' : 'Tambah Pinjaman Baru' }}
+                                </h3>
+                                <button type="button" wire:click="$set('loanModalVisible', false)"
+                                    class="text-slate-400 hover:text-slate-600">
+                                    <i class='bx bx-x text-2xl'></i>
+                                </button>
+                            </div>
+
+                            <div class="space-y-4">
+                                <!-- Source -->
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Sumber Pinjaman</label>
+                                    <select wire:model="loanForm.loanSource"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                        <option value="BMT_ITQAN">BMT ITQAN (Eksternal)</option>
+                                        <option value="BERMADANI">BERMADANI (Internal)</option>
+                                    </select>
+                                </div>
+
+                                <!-- Amount -->
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Plafond (Rp)</label>
+                                    <input type="number" wire:model="loanForm.amount"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                </div>
+
+                                <!-- Installment -->
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 mb-1">Cicilan per Bulan (Total
+                                        Tagihan)</label>
+                                    <input type="number" wire:model="loanForm.monthlyPayment"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                    <p class="text-[10px] text-slate-400 mt-1">*Termasuk Simwa BMT jika ada</p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Tenor (Bulan)</label>
+                                        <input type="number" wire:model="loanForm.tenor"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Sudah Dibayar
+                                            (x)</label>
+                                        <input type="number" wire:model="loanForm.paid_installments"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Tanggal Cair</label>
+                                        <input type="date" wire:model="loanForm.startDate"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="block text-[11px] font-bold text-slate-500 mb-1">Status</label>
+                                        <select wire:model="loanForm.status"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm">
+                                            <option value="ACTIVE">ACTIVE</option>
+                                            <option value="COMPLETED">COMPLETED</option>
+                                            <option value="PENDING">PENDING</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 flex justify-end gap-3">
+                                <button type="button" wire:click="$set('loanModalVisible', false)"
+                                    class="px-4 py-2 text-slate-600 font-bold text-sm hover:bg-slate-100 rounded-lg">Batal</button>
+                                <button type="button" wire:click="saveLoan"
+                                    class="px-4 py-2 bg-primary text-white font-bold text-sm rounded-lg hover:bg-primary/90">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
                 @endif
 
                 <!-- Action Buttons -->

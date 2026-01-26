@@ -141,6 +141,110 @@ class MemberEdit extends Component
         }
     }
 
+    // Loan Management
+    public $loanModalVisible = false;
+    public $editingLoanId = null;
+    public $loanForm = [
+        'amount' => 0,
+        'monthlyPayment' => 0,
+        'tenor' => 0,
+        'paid_installments' => 0,
+        'status' => 'ACTIVE',
+        'loanSource' => 'BMT_ITQAN',
+        'startDate' => null,
+    ];
+
+    public function openLoanModal($loanId = null)
+    {
+        $this->editingLoanId = $loanId;
+        $this->loanModalVisible = true;
+
+        if ($loanId) {
+            $loan = \App\Models\Loan::find($loanId);
+            $this->loanForm = [
+                'amount' => $loan->amount,
+                'monthlyPayment' => $loan->monthlyPayment,
+                'tenor' => $loan->tenor,
+                'paid_installments' => $loan->paid_installments,
+                'status' => $loan->status,
+                'loanSource' => $loan->loanSource,
+                'startDate' => $loan->startDate ? $loan->startDate->format('Y-m-d') : null,
+            ];
+        } else {
+            $this->loanForm = [
+                'amount' => 0,
+                'monthlyPayment' => 0,
+                'tenor' => 12,
+                'paid_installments' => 0,
+                'status' => 'ACTIVE',
+                'loanSource' => 'BMT_ITQAN',
+                'startDate' => now()->format('Y-m-d'),
+            ];
+        }
+    }
+
+    public function saveLoan()
+    {
+        $this->validate([
+            'loanForm.amount' => 'required|numeric|min:0',
+            'loanForm.monthlyPayment' => 'required|numeric|min:0',
+            'loanForm.tenor' => 'required|integer|min:1',
+            'loanForm.paid_installments' => 'required|integer|min:0',
+            'loanForm.status' => 'required|in:ACTIVE,PENDING,COMPLETED,REJECTED,Overdue',
+            'loanForm.loanSource' => 'required|in:BERMADANI,BMT_ITQAN',
+            'loanForm.startDate' => 'nullable|date',
+        ]);
+
+        if ($this->editingLoanId) {
+            $loan = \App\Models\Loan::find($this->editingLoanId);
+            $loan->update([
+                'amount' => $this->loanForm['amount'],
+                'monthlyPayment' => $this->loanForm['monthlyPayment'],
+                'tenor' => $this->loanForm['tenor'],
+                'paid_installments' => $this->loanForm['paid_installments'],
+                'status' => $this->loanForm['status'],
+                'loanSource' => $this->loanForm['loanSource'],
+                'startDate' => $this->loanForm['startDate'],
+            ]);
+        } else {
+            // New Loan
+            $this->member->loans()->create([
+                'amount' => $this->loanForm['amount'],
+                'monthlyPayment' => $this->loanForm['monthlyPayment'],
+                'tenor' => $this->loanForm['tenor'],
+                'paid_installments' => $this->loanForm['paid_installments'],
+                'remainingAmount' => max(0, $this->loanForm['amount'] - ($this->loanForm['monthlyPayment'] * $this->loanForm['paid_installments'])), // Rough estimate
+                'status' => $this->loanForm['status'],
+                'loanSource' => $this->loanForm['loanSource'],
+                'startDate' => $this->loanForm['startDate'] ?? now(),
+                'interestRate' => 0,
+                'approvedAt' => now(),
+                'approvedBy' => auth()->user()->name,
+            ]);
+        }
+
+        $this->loanModalVisible = false;
+        $this->loadMember(); // Reload relations
+
+        $this->dispatch('notify', [
+            'message' => 'Data pinjaman berhasil disimpan!',
+            'type' => 'success'
+        ]);
+    }
+
+    public function deleteLoan($loanId)
+    {
+        $loan = \App\Models\Loan::find($loanId);
+        if ($loan) {
+            $loan->delete();
+            $this->loadMember();
+            $this->dispatch('notify', [
+                'message' => 'Data pinjaman dihapus!',
+                'type' => 'success'
+            ]);
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.member-edit', [

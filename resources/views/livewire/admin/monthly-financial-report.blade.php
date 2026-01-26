@@ -1,15 +1,23 @@
 <div class="space-y-6">
     {{-- Header --}}
+    {{-- Header --}}
     <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
         <div>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Laporan Keuangan Bulanan</h1>
             <p class="text-xs text-slate-500 mt-1">Generate laporan potongan gaji & SIMWA untuk unit keuangan</p>
         </div>
-        <a href="{{ route('admin.reports.balance-sheet') }}"
-            class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2">
-            <i class='bx bx-spreadsheet text-lg'></i>
-            Lihat Neraca Saldo
-        </a>
+        <div class="flex gap-3">
+            <a href="{{ route('admin.loans.import') }}"
+                class="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-700 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-import text-lg'></i>
+                Import Angsuran BMT Itqan
+            </a>
+            <a href="{{ route('admin.reports.balance-sheet') }}"
+                class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-spreadsheet text-lg'></i>
+                Lihat Neraca Saldo
+            </a>
+        </div>
     </div>
 
     {{-- Filter Section --}}

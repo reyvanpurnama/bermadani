@@ -21,6 +21,8 @@ class Loan extends Model
         'startDate',
         'endDate',
         'description',
+        'paid_installments',
+        'account_number',
     ];
 
     protected $casts = [
