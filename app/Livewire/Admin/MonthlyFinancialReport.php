@@ -197,11 +197,10 @@ class MonthlyFinancialReport extends Component
             ];
 
             $totalAngsuranBermadani += $angsuranBermadani;
-            $totalAngsuranBmtItqan1 += $angsuranBmtItqan1;
-            $totalAngsuranBmtItqan2 += $angsuranBmtItqan2;
-            // Total simwa BMT digabung ke Total Angsuran BMT atau terpisah?
-            // Untuk Grand Total sudah masuk.
-            // Untuk summary, bisa kita gabung display-nya nanti.
+            // Include Simwa BMT in the total accumulation for BMT Itqan columns
+            $totalAngsuranBmtItqan1 += ($angsuranBmtItqan1 + $simwaBmtItqan1);
+            $totalAngsuranBmtItqan2 += ($angsuranBmtItqan2 + $simwaBmtItqan2);
+
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
