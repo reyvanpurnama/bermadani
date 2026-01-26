@@ -248,9 +248,11 @@ class MonthlyFinancialReport extends Component
                 'angsuran_ke_bermadani' => 0,
                 'tenor_bermadani' => 0,
                 'angsuran_bmt_itqan_1' => 0,
+                'simwa_bmt_itqan_1' => 0, // Fix key
                 'angsuran_ke_bmt_itqan_1' => 0,
                 'tenor_bmt_itqan_1' => 0,
                 'angsuran_bmt_itqan_2' => 0,
+                'simwa_bmt_itqan_2' => 0, // Fix key
                 'angsuran_ke_bmt_itqan_2' => 0,
                 'tenor_bmt_itqan_2' => 0,
                 'total' => $simwaAmount + $sukarelaAmount,
