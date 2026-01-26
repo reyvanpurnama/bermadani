@@ -45,7 +45,7 @@ class MemberCreate extends Component
         // Step 1: Personal info validation
         if ($this->currentStep === 1 || $this->currentStep === 3) {
             $rules['name'] = 'required|string|max:255';
-            $rules['phone'] = 'required|string|max:20';
+            $rules['phone'] = 'nullable|string|max:20'; // CHANGED: Optional
             $rules['gender'] = 'required|in:MALE,FEMALE';
             $rules['unitKerja'] = 'nullable|string|max:255';
             $rules['address'] = 'nullable|string';
@@ -117,10 +117,16 @@ class MemberCreate extends Component
 
             $memberService = app(MemberService::class);
 
+            // Handle Dummy Phone if empty (Quick Add)
+            $phoneToUse = $this->phone;
+            if (empty($phoneToUse)) {
+                $phoneToUse = '000' . time() . rand(10, 99);
+            }
+
             // Prepare data - Auto Email/Pass handled by Service
             $data = [
                 'name' => $this->name,
-                'phone' => $this->phone,
+                'phone' => $phoneToUse,
                 'gender' => $this->gender,
                 'unitKerja' => $this->unitKerja,
                 'address' => $this->address,

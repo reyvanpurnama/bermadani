@@ -72,18 +72,19 @@
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">NIM /
-                            NIP</label>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">NIM / NIP
+                            (Opsional)</label>
                         <input type="text" wire:model="nim"
                             class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-3 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 dark:text-white placeholder-slate-400">
                         @error('nim') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
 
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">No.
-                            WhatsApp</label>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">No. WhatsApp
+                            (Opsional)</label>
                         <input type="text" wire:model="phone"
                             class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-3 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 dark:text-white placeholder-slate-400">
+                        <p class="text-[9px] text-slate-400 mt-1">*Jika kosong, akan dibuatkan nomor dummy.</p>
                         @error('phone') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
                     </div>
 
@@ -107,7 +108,7 @@
 
                     <div>
                         <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Unit Kerja /
-                            Prodi</label>
+                            Prodi (Opsional)</label>
                         <input type="text" wire:model="unitKerja" list="unitKerjaList"
                             class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-3 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 dark:text-white placeholder-slate-400"
                             placeholder="Contoh: Teknik Informatika">
@@ -120,8 +121,8 @@
                     </div>
 
                     <div class="md:col-span-2">
-                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Alamat
-                            Domisili</label>
+                        <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-1.5">Alamat Domisili
+                            (Opsional)</label>
                         <textarea wire:model="address" rows="2"
                             class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-lg px-4 py-3 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 dark:text-white placeholder-slate-400"></textarea>
                         @error('address') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
@@ -252,7 +253,8 @@
                             </div>
                             <div class="flex justify-between text-[13px]">
                                 <span class="text-slate-500">No. Telepon</span>
-                                <span class="font-bold text-slate-800 dark:text-white">{{ $phone }}</span>
+                                <span
+                                    class="font-bold text-slate-800 dark:text-white">{{ $phone ?? '(Dibuatkan Otomatis)' }}</span>
                             </div>
                             <div class="flex justify-between text-[13px]">
                                 <span class="text-slate-500">Unit Kerja</span>

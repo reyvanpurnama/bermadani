@@ -50,7 +50,7 @@ class RetailMemberManagement extends Component
 
     protected $rules = [
         'newName' => 'required|string|max:255',
-        'newPhone' => 'nullable|string|max:20|unique:members,phone', // CHANGED: Nullable
+        'newPhone' => 'required|string|max:20|unique:members,phone',
     ];
 
     public function createMember()
@@ -59,16 +59,9 @@ class RetailMemberManagement extends Component
 
         \Illuminate\Support\Facades\DB::beginTransaction();
         try {
-            // Handle Empty Phone: Generate Dummy if null
-            // Dummy format: 000 + timestamp + random (to ensure unique temporary ID)
-            $phoneToUse = $this->newPhone;
-            if (empty($phoneToUse)) {
-                $phoneToUse = '000' . time() . rand(10, 99);
-            }
-
             // 1. Create User (Dummy Email from Phone)
             // Format email: [Phone]@bermadani.id
-            $email = $phoneToUse . '@bermadani.id';
+            $email = $this->newPhone . '@bermadani.id';
 
             $user = \App\Models\User::create([
                 'name' => $this->newName,
@@ -88,7 +81,7 @@ class RetailMemberManagement extends Component
             Member::create([
                 'user_id' => $user->id,
                 'nomorAnggota' => $nomorAnggota,
-                'phone' => $phoneToUse, // Use the resolved phone (real or dummy)
+                'phone' => $this->newPhone,
                 'unitKerja' => $this->newUnitKerja,
                 'isMemberKoperasi' => false, // IMPORTANT
                 'status' => 'ACTIVE',
