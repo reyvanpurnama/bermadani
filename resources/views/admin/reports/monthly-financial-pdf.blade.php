@@ -228,13 +228,13 @@
                 <th class="sub" style="width: 20px;">Tnr</th>
 
                 {{-- Sub Header BMT 1 --}}
-                <th class="sub">Pokok</th>
+                <th class="sub">Angsuran</th>
                 <th class="sub">Simwa</th> <!-- INI KOLOM 30K -->
                 <th class="sub" style="width: 20px;">Ke</th>
                 <th class="sub" style="width: 20px;">Tnr</th>
 
                 {{-- Sub Header BMT 2 --}}
-                <th class="sub">Pokok</th>
+                <th class="sub">Angsuran</th>
                 <th class="sub">Simwa</th>
                 <th class="sub" style="width: 20px;">Ke</th>
                 <th class="sub" style="width: 20px;">Tnr</th>
@@ -278,7 +278,8 @@
                     <td class="center">{{ $item['angsuran_bmt_itqan_2'] > 0 ? $item['tenor_bmt_itqan_2'] : '' }}</td>
 
                     <td class="right" style="font-weight: bold; background: #f1f5f9;">
-                        {{ number_format($item['total'], 0, ',', '.') }}</td>
+                        {{ number_format($item['total'], 0, ',', '.') }}
+                    </td>
                 </tr>
             @endforeach
         </tbody>
@@ -302,7 +303,8 @@
                 <td colspan="2"></td>
 
                 <td class="right" style="font-size: 10px;">
-                    {{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
+                    {{ number_format($data['summary']['grand_total'], 0, ',', '.') }}
+                </td>
             </tr>
         </tfoot>
     </table>
