@@ -88,6 +88,7 @@ class LoanImport extends Component
                 // Parse Data
                 $amount = (float) ($data['PLAFOND_RP'] ?? 0);
                 $monthlyPayment = (float) ($data['TOTAL'] ?? 0); // Include Simwa BMT 30k
+                $simwaAmount = (float) ($data['SIMPANAN_WAJIB'] ?? 0); // New Column
                 $tenor = (int) ($data['TENOR'] ?? 0);
                 $angsuranKe = (int) ($data['ANGSURAN_KE'] ?? 1);
                 $paidInstallments = max(0, $angsuranKe - 1);
@@ -119,6 +120,7 @@ class LoanImport extends Component
                         'tenor' => $tenor,
                         'startDate' => $startDate ?? $loan->startDate,
                         'account_number' => $accountNumber,
+                        'simwa_amount' => $simwaAmount,
                         'status' => 'ACTIVE', // Ensure active
                     ]);
                 } else {
@@ -137,6 +139,7 @@ class LoanImport extends Component
                         'endDate' => $startDate ? Carbon::parse($startDate)->addMonths($tenor) : now()->addMonths($tenor),
                         'paid_installments' => $paidInstallments,
                         'account_number' => $accountNumber,
+                        'simwa_amount' => $simwaAmount,
                         'approvedAt' => now(), // Auto approve imported
                         'approvedBy' => 'System Import',
                     ]);

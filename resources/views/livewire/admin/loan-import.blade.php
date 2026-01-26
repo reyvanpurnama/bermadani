@@ -12,7 +12,7 @@
 
     <!-- Alert Success/Error -->
     @if (session()->has('message'))
-        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-lg flex items-center gap-3 border border-emerald-100">
+        <div class="bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 p-4 rounded-lg flex items-center gap-3 border border-emerald-100 dark:border-emerald-900">
             <i class='bx bx-check-circle text-xl'></i>
             <div>
                 <p class="font-bold">Berhasil!</p>
@@ -22,7 +22,7 @@
     @endif
 
     @if (session()->has('error'))
-        <div class="bg-red-50 text-red-600 p-4 rounded-lg flex items-center gap-3 border border-red-100">
+        <div class="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-4 rounded-lg flex items-center gap-3 border border-red-100 dark:border-red-900">
             <i class='bx bx-error-circle text-xl'></i>
             <div>
                 <p class="font-bold">Gagal Import!</p>
@@ -56,7 +56,7 @@
                 @endif
             </div>
 
-            <div class="mt-4 bg-blue-50 text-blue-700 p-3 rounded-lg text-xs" role="alert">
+            <div class="mt-4 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 p-3 rounded-lg text-xs" role="alert">
                 <p class="font-bold mb-1"><i class='bx bx-info-circle'></i> Format Kolom Wajib:</p>
                 <p>NAMA_DEBITUR, PLAFOND_RP, TOTAL, TENOR, ANGSURAN_KE, TANGGAL_CAIR, NO_REKENING</p>
             </div>

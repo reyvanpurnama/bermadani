@@ -181,9 +181,11 @@
                             <th class="px-1 py-3 text-center">Ke</th>
                             <th class="px-1 py-3 text-center">Tnr</th>
                             <th class="px-2 py-3 text-right">BMT IT 1</th>
+                            <th class="px-2 py-3 text-right text-xs">Sim BMT</th>
                             <th class="px-1 py-3 text-center">Ke</th>
                             <th class="px-1 py-3 text-center">Tnr</th>
                             <th class="px-2 py-3 text-right">BMT IT 2</th>
+                            <th class="px-2 py-3 text-right text-xs">Sim BMT</th>
                             <th class="px-1 py-3 text-center">Ke</th>
                             <th class="px-1 py-3 text-center">Tnr</th>
                             <th class="px-2 py-3 text-right">Total</th>
@@ -219,8 +221,14 @@
                                     {{ $item['angsuran_bermadani'] > 0 ? $item['tenor_bermadani'] : '-' }}</td>
                                 <td class="px-2 py-2 text-right font-mono">
                                     @if($item['angsuran_bmt_itqan_1'] > 0)
-                                        <span
-                                            class="text-purple-600 dark:text-purple-400">{{ number_format($item['angsuran_bmt_itqan_1'], 0, ',', '.') }}</span>
+                                        <span class="text-purple-600 dark:text-purple-400">{{ number_format($item['angsuran_bmt_itqan_1'], 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-slate-300">-</span>
+                                    @endif
+                                </td>
+                                <td class="px-2 py-2 text-right font-mono text-xs">
+                                    @if($item['simwa_bmt_itqan_1'] > 0)
+                                        <span class="text-purple-500 dark:text-purple-300">{{ number_format($item['simwa_bmt_itqan_1'], 0, ',', '.') }}</span>
                                     @else
                                         <span class="text-slate-300">-</span>
                                     @endif
@@ -231,8 +239,14 @@
                                     {{ $item['angsuran_bmt_itqan_1'] > 0 ? $item['tenor_bmt_itqan_1'] : '-' }}</td>
                                 <td class="px-2 py-2 text-right font-mono">
                                     @if($item['angsuran_bmt_itqan_2'] > 0)
-                                        <span
-                                            class="text-pink-600 dark:text-pink-400">{{ number_format($item['angsuran_bmt_itqan_2'], 0, ',', '.') }}</span>
+                                        <span class="text-pink-600 dark:text-pink-400">{{ number_format($item['angsuran_bmt_itqan_2'], 0, ',', '.') }}</span>
+                                    @else
+                                        <span class="text-slate-300">-</span>
+                                    @endif
+                                </td>
+                                <td class="px-2 py-2 text-right font-mono text-xs">
+                                    @if($item['simwa_bmt_itqan_2'] > 0)
+                                        <span class="text-pink-500 dark:text-pink-300">{{ number_format($item['simwa_bmt_itqan_2'], 0, ',', '.') }}</span>
                                     @else
                                         <span class="text-slate-300">-</span>
                                     @endif

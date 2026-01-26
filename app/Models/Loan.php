@@ -23,6 +23,7 @@ class Loan extends Model
         'description',
         'paid_installments',
         'account_number',
+        'simwa_amount',
     ];
 
     protected $casts = [

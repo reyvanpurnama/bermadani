@@ -115,11 +115,13 @@ class MonthlyFinancialReport extends Component
 
             // BMT ITQAN 1 loan data
             $angsuranBmtItqan1 = 0;
+            $simwaBmtItqan1 = 0; // Init
             $angsuranKeBmtItqan1 = 0;
             $tenorBmtItqan1 = 0;
 
             // BMT ITQAN 2 loan data
             $angsuranBmtItqan2 = 0;
+            $simwaBmtItqan2 = 0; // Init
             $angsuranKeBmtItqan2 = 0;
             $tenorBmtItqan2 = 0;
 
@@ -127,27 +129,32 @@ class MonthlyFinancialReport extends Component
 
             foreach ($member->loans as $loan) {
                 $monthlyPayment = $loan->monthlyPayment ?? 0;
+                $simwaBmtAmount = $loan->simwa_amount ?? 0;
+                $pureInstallment = max(0, $monthlyPayment - $simwaBmtAmount); // Angsuran murni tanpa simwa
+
                 $tenor = $loan->tenor ?? 0;
                 $paidInstallments = $loan->paidInstallments ?? 0;
-                $angsuranKe = $paidInstallments + 1; // Angsuran ke = paid + 1 (current)
+                $angsuranKe = $paidInstallments + 1;
 
                 // Pisahkan berdasarkan loanSource
                 if ($loan->loanSource === 'BMT_ITQAN') {
                     $bmtItqanCount++;
                     if ($bmtItqanCount == 1) {
-                        // BMT ITQAN 1 (pinjaman pertama)
-                        $angsuranBmtItqan1 = $monthlyPayment;
+                        // BMT ITQAN 1
+                        $angsuranBmtItqan1 = $pureInstallment;
+                        $simwaBmtItqan1 = $simwaBmtAmount; // Store Simwa Separately
                         $angsuranKeBmtItqan1 = $angsuranKe;
                         $tenorBmtItqan1 = $tenor;
                     } else {
-                        // BMT ITQAN 2 (pinjaman kedua)
-                        $angsuranBmtItqan2 = $monthlyPayment;
+                        // BMT ITQAN 2
+                        $angsuranBmtItqan2 = $pureInstallment;
+                        $simwaBmtItqan2 = $simwaBmtAmount;
                         $angsuranKeBmtItqan2 = $angsuranKe;
                         $tenorBmtItqan2 = $tenor;
                     }
                 } else {
                     // BERMADANI
-                    $angsuranBermadani = $monthlyPayment;
+                    $angsuranBermadani = $monthlyPayment; // Bermadani no separate simwa in loan, it's global 50k
                     $angsuranKeBermadani = $angsuranKe;
                     $tenorBermadani = $tenor;
                 }
@@ -165,7 +172,7 @@ class MonthlyFinancialReport extends Component
                 $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
             }
 
-            $total = $angsuranBermadani + $angsuranBmtItqan1 + $angsuranBmtItqan2 + $simwaAmount + $sukarelaAmount;
+            $total = $angsuranBermadani + $angsuranBmtItqan1 + $simwaBmtItqan1 + $angsuranBmtItqan2 + $simwaBmtItqan2 + $simwaAmount + $sukarelaAmount;
 
             $reportItems[] = [
                 'nama' => $member->name,
@@ -176,9 +183,11 @@ class MonthlyFinancialReport extends Component
                 'angsuran_ke_bermadani' => $angsuranKeBermadani,
                 'tenor_bermadani' => $tenorBermadani,
                 'angsuran_bmt_itqan_1' => $angsuranBmtItqan1,
+                'simwa_bmt_itqan_1' => $simwaBmtItqan1, // Add to array
                 'angsuran_ke_bmt_itqan_1' => $angsuranKeBmtItqan1,
                 'tenor_bmt_itqan_1' => $tenorBmtItqan1,
                 'angsuran_bmt_itqan_2' => $angsuranBmtItqan2,
+                'simwa_bmt_itqan_2' => $simwaBmtItqan2, // Add to array
                 'angsuran_ke_bmt_itqan_2' => $angsuranKeBmtItqan2,
                 'tenor_bmt_itqan_2' => $tenorBmtItqan2,
                 'total' => $total,
@@ -190,6 +199,9 @@ class MonthlyFinancialReport extends Component
             $totalAngsuranBermadani += $angsuranBermadani;
             $totalAngsuranBmtItqan1 += $angsuranBmtItqan1;
             $totalAngsuranBmtItqan2 += $angsuranBmtItqan2;
+            // Total simwa BMT digabung ke Total Angsuran BMT atau terpisah?
+            // Untuk Grand Total sudah masuk.
+            // Untuk summary, bisa kita gabung display-nya nanti.
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
