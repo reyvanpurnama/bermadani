@@ -271,8 +271,7 @@
                             </div>
                             <div class="flex justify-between text-[13px]">
                                 <span class="text-slate-500">No. Telepon</span>
-                                <span
-                                    class="font-bold text-slate-800 dark:text-white">{{ $phone ?? '(Dibuatkan Otomatis)' }}</span>
+                                <span class="font-bold text-slate-800 dark:text-white">{{ $phone ?: '-' }}</span>
                             </div>
                             <div class="flex justify-between text-[13px]">
                                 <span class="text-slate-500">Unit Kerja</span>
