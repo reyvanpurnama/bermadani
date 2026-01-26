@@ -160,9 +160,9 @@ class MonthlyFinancialReport extends Component
                 }
             }
 
-            // SIMWA: cek preferensi pembayaran member
+            // SIMWA: cek preferensi pembayaran member (HANYA KOPERASI)
             $simwaAmount = 0;
-            if ($member->hasSalaryDeductionSimwa()) {
+            if ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) {
                 $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
             }
 
@@ -224,9 +224,9 @@ class MonthlyFinancialReport extends Component
             ->get();
 
         foreach ($membersWithSalaryDeduction as $member) {
-            // SIMWA: cek preferensi pembayaran
+            // SIMWA: cek preferensi pembayaran (HANYA KOPERASI)
             $simwaAmount = 0;
-            if ($member->hasSalaryDeductionSimwa()) {
+            if ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) {
                 $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
             }
 
