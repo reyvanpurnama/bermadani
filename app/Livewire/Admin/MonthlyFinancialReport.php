@@ -176,7 +176,10 @@ class MonthlyFinancialReport extends Component
 
             $reportItems[] = [
                 'nama' => $member->name,
-                'unit_kerja' => ($member->unitKerja && $member->unitKerja !== 'unknown') ? $member->unitKerja : '-',
+                'unit_kerja' => (
+                    $member->unitKerja &&
+                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
+                ) ? $member->unitKerja : '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => $angsuranBermadani,
@@ -240,7 +243,10 @@ class MonthlyFinancialReport extends Component
 
             $reportItems[] = [
                 'nama' => $member->name,
-                'unit_kerja' => ($member->unitKerja && $member->unitKerja !== 'unknown') ? $member->unitKerja : '-',
+                'unit_kerja' => (
+                    $member->unitKerja &&
+                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
+                ) ? $member->unitKerja : '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => 0,

@@ -174,7 +174,7 @@
 <body>
     <div class="header">
         <h1>KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</h1>
-        <h2>KKSBSM UNIVERSITAS MUHAMMADIYAH BANDUNG</h2>
+        <h1>UNIVERSITAS MUHAMMADIYAH BANDUNG</h1>
         <div class="period">
             DAFTAR POTONGAN GAJI ANGGOTA KOPERASI<br>
             Periode: {{ $monthName }} {{ $year }}
