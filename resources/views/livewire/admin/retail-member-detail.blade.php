@@ -28,7 +28,7 @@
         <div class="lg:col-span-4 space-y-6">
             {{-- Profile Card --}}
             <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden relative group">
+                class="bg-white dark:bg-darkCard rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-700 overflow-hidden relative group">
                 {{-- Cover Pattern --}}
                 <div class="h-32 bg-gradient-to-r from-slate-900 to-slate-800 relative overflow-hidden">
                     <div class="absolute inset-0 opacity-20 bg-[url('https://grainy-gradients.vercel.app/noise.svg')]">
@@ -73,56 +73,58 @@
 
             {{-- Form Edit --}}
             <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div
-                    class="px-6 py-4 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 flex items-center justify-between">
-                    <h3 class="font-bold text-slate-800 dark:text-white text-sm">Informasi Personal</h3>
-                    <button wire:click="updateProfile"
-                        class="text-xs font-bold text-primary hover:underline">Simpan</button>
+                class="bg-white dark:bg-darkCard rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 overflow-hidden relative">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="font-bold text-lg text-slate-800 dark:text-white">Informasi Personal</h3>
                 </div>
-                <div class="p-6">
-                    <form wire:submit="updateProfile" class="space-y-5">
-                        <div class="group">
-                            <label
-                                class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2 group-focus-within:text-primary transition-colors">Nama
-                                Lengkap</label>
-                            <input type="text" wire:model="name"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white placeholder-slate-300">
-                            @error('name') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
+
+                <form wire:submit="updateProfile" class="space-y-5">
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Nama
+                            Lengkap</label>
+                        <input type="text" wire:model="name"
+                            class="w-full bg-slate-50 dark:bg-slate-800/80 border-none rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 text-slate-800 dark:text-white placeholder-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
+                        @error('name') <span class="text-xs text-rose-500 pl-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">No.
+                            WhatsApp</label>
+                        <input type="text" wire:model="phone"
+                            class="w-full bg-slate-50 dark:bg-slate-800/80 border-none rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 text-slate-800 dark:text-white placeholder-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
+                        @error('phone') <span class="text-xs text-rose-500 pl-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Unit
+                            Kerja</label>
+                        <input type="text" wire:model="unitKerja" list="unit-list"
+                            class="w-full bg-slate-50 dark:bg-slate-800/80 border-none rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 text-slate-800 dark:text-white placeholder-slate-400 transition-all hover:bg-slate-100 dark:hover:bg-slate-800">
+                        @error('unitKerja') <span class="text-xs text-rose-500 pl-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">Status
+                            Akun</label>
+                        <div class="relative">
+                            <select wire:model="status"
+                                class="w-full bg-slate-50 dark:bg-slate-800/80 border-none rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-primary/20 text-slate-800 dark:text-white appearance-none cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
+                                <option value="ACTIVE">Aktif</option>
+                                <option value="INACTIVE">Non-Aktif</option>
+                                <option value="SUSPENDED">Suspended</option>
+                            </select>
+                            <i
+                                class='bx bx-chevron-down absolute right-4 top-3.5 text-slate-400 pointer-events-none'></i>
                         </div>
-                        <div class="group">
-                            <label
-                                class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2 group-focus-within:text-primary transition-colors">No.
-                                WhatsApp</label>
-                            <input type="text" wire:model="phone"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white placeholder-slate-300">
-                            @error('phone') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="group">
-                            <label
-                                class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2 group-focus-within:text-primary transition-colors">Unit
-                                Kerja</label>
-                            <input type="text" wire:model="unitKerja" list="unit-list"
-                                class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white placeholder-slate-300">
-                            @error('unitKerja') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
-                        </div>
-                        <div class="group">
-                            <label
-                                class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-2 group-focus-within:text-primary transition-colors">Status
-                                Akun</label>
-                            <div class="relative">
-                                <select wire:model="status"
-                                    class="w-full bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-600 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white appearance-none cursor-pointer">
-                                    <option value="ACTIVE">Aktif</option>
-                                    <option value="INACTIVE">Non-Aktif</option>
-                                    <option value="SUSPENDED">Suspended</option>
-                                </select>
-                                <i
-                                    class='bx bx-chevron-down absolute right-4 top-3 text-slate-400 pointer-events-none'></i>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="w-full bg-slate-900 dark:bg-white hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 font-bold py-3.5 rounded-xl text-xs transition-all shadow-lg shadow-slate-900/10 dark:shadow-white/5 active:scale-95">
+                            Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -133,7 +135,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Saldo Bermadani --}}
                 <div
-                    class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-xl shadow-slate-300/50 dark:shadow-none relative overflow-hidden group">
+                    class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl shadow-slate-300/50 dark:shadow-none relative overflow-hidden group">
                     <div
                         class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 group-hover:opacity-30 transition-opacity">
                     </div>
@@ -151,12 +153,12 @@
                                 </h2>
                             </div>
                             <div
-                                class="w-10 h-10 rounded-full bg-white/10 backdrop-blur flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
-                                <i class='bx bx-wallet text-xl text-emerald-400'></i>
+                                class="w-12 h-12 rounded-2xl bg-white/10 backdrop-blur flex items-center justify-center border border-white/10 group-hover:bg-white/20 transition-all">
+                                <i class='bx bx-wallet text-2xl text-emerald-400'></i>
                             </div>
                         </div>
 
-                        <div class="mt-4 flex items-center justify-between">
+                        <div class="mt-8 flex items-center justify-between">
                             <p class="text-[11px] text-slate-400">Saldo aktif belanja & tabungan</p>
                             @if($sukarela_payment_method === 'SALARY_DEDUCTION')
                                 <div
@@ -170,7 +172,7 @@
 
                 {{-- Loyalty Points --}}
                 <div
-                    class="bg-white dark:bg-darkCard rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden group">
+                    class="bg-white dark:bg-darkCard rounded-3xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden group">
                     <div
                         class="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/5 rounded-full blur-3xl group-hover:bg-amber-500/10 transition-all duration-700">
                     </div>
@@ -186,17 +188,17 @@
                                 </div>
                             </div>
                             <div
-                                class="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center border border-amber-100 dark:border-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform">
-                                <i class='bx bxs-star text-xl'></i>
+                                class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center border border-amber-100 dark:border-amber-500/20 text-amber-500 group-hover:scale-110 transition-transform">
+                                <i class='bx bxs-star text-2xl'></i>
                             </div>
                         </div>
 
-                        <div class="mt-4">
-                            <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-1.5">
+                        <div class="mt-8">
+                            <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2">
                                 <span>Current: {{ $member->tier }}</span>
                                 <span>Next: Gold</span>
                             </div>
-                            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
+                            <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
                                 <div class="bg-gradient-to-r from-amber-400 to-orange-500 h-full rounded-full transition-all duration-1000"
                                     style="width: 45%"></div>
                             </div>
@@ -207,30 +209,30 @@
 
             {{-- Configuration Section --}}
             <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-700 flex items-center gap-3">
+                class="bg-white dark:bg-darkCard rounded-3xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-700 flex items-center gap-4">
                     <div
-                        class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                        <i class='bx bx-cog text-xl'></i>
+                        class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <i class='bx bx-cog text-2xl'></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-900 dark:text-white">Konfigurasi Top-up Otomatis</h3>
+                        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Konfigurasi Top-up Otomatis</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400">Atur metode pembayaran sukarela potong
                             gaji.</p>
                     </div>
                 </div>
 
-                <div class="p-6">
+                <div class="p-8">
                     <form wire:submit="updateProfile">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             {{-- Method Selection --}}
                             <div>
                                 <label
-                                    class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Pilih
+                                    class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4">Pilih
                                     Metode</label>
                                 <div class="space-y-3">
                                     <label
-                                        class="group relative flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                        class="group relative flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200
                                         {{ $sukarela_payment_method === 'SALARY_DEDUCTION'
     ? 'border-emerald-500 bg-emerald-50/50 dark:bg-emerald-500/10 shadow-sm'
     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 bg-white dark:bg-slate-800' }}">
@@ -259,7 +261,7 @@
                                     </label>
 
                                     <label
-                                        class="group relative flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200
+                                        class="group relative flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200
                                         {{ $sukarela_payment_method !== 'SALARY_DEDUCTION'
     ? 'border-slate-300 bg-slate-50/50 dark:bg-slate-700/50 shadow-sm'
     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 bg-white dark:bg-slate-800' }}">
@@ -292,12 +294,12 @@
                             <div class="flex flex-col justify-center">
                                 @if($sukarela_payment_method === 'SALARY_DEDUCTION')
                                     <div
-                                        class="bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl p-6 border border-emerald-100 dark:border-emerald-500/20 text-center animate-in fade-in zoom-in duration-300">
+                                        class="bg-emerald-50 dark:bg-emerald-500/10 rounded-3xl p-8 border border-emerald-100 dark:border-emerald-500/20 text-center animate-in fade-in zoom-in duration-300">
                                         <label
-                                            class="block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-3">
+                                            class="block text-[11px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest mb-4">
                                             Nominal Potongan
                                         </label>
-                                        <div class="relative inline-block w-full max-w-[200px]" x-data="{
+                                        <div class="relative inline-block w-full max-w-[240px]" x-data="{
                                                      original: @entangle('monthly_sukarela_amount'),
                                                      display: '',
                                                      init() {
@@ -313,29 +315,30 @@
                                                      }
                                                  }">
                                             <span
-                                                class="absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600 font-bold">Rp</span>
+                                                class="absolute left-5 top-1/2 -translate-y-1/2 text-emerald-600 font-bold text-xl">Rp</span>
                                             <input type="text" x-model="display" @input="update" placeholder="0"
-                                                class="w-full pl-10 pr-4 py-3 bg-white dark:bg-darkCard border-2 border-emerald-200 dark:border-emerald-500/30 rounded-xl text-center font-bold text-lg text-emerald-700 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder-emerald-300/50">
+                                                class="w-full pl-12 pr-6 py-4 bg-white dark:bg-darkCard border-2 border-emerald-200 dark:border-emerald-500/30 rounded-2xl text-center font-bold text-2xl text-emerald-700 dark:text-white shadow-sm focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder-emerald-300/50">
                                         </div>
                                         <p
-                                            class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 mt-3 font-medium">
-                                            <i class='bx bx-check-circle'></i> Disetujui pada {{ now()->format('d M Y') }}
+                                            class="text-[10px] text-emerald-600/80 dark:text-emerald-400/80 mt-4 font-medium flex justify-center items-center gap-1.5">
+                                            <i class='bx bx-check-circle text-base'></i> Disetujui pada
+                                            {{ now()->format('d M Y') }}
                                         </p>
                                     </div>
                                 @else
                                     <div
-                                        class="text-center text-slate-400 p-6 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl animate-in fade-in zoom-in">
-                                        <i class='bx bx-shopping-bag text-3xl mb-2 opacity-50'></i>
+                                        class="text-center text-slate-400 p-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-3xl animate-in fade-in zoom-in">
+                                        <i class='bx bx-shopping-bag text-4xl mb-3 opacity-50'></i>
                                         <p class="text-xs font-medium">Tidak ada potongan gaji.</p>
                                     </div>
                                 @endif
                             </div>
                         </div>
 
-                        <div class="mt-8 pt-6 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                        <div class="mt-10 pt-8 border-t border-slate-100 dark:border-slate-700 flex justify-end">
                             <button type="submit"
-                                class="px-6 py-2.5 bg-slate-900 hover:bg-black text-white rounded-xl text-xs font-bold shadow-lg shadow-slate-300/50 dark:shadow-none transition-all transform active:scale-95 flex items-center gap-2">
-                                <i class='bx bx-save text-base'></i> Simpan Konfigurasi
+                                class="px-8 py-3.5 bg-slate-900 dark:bg-white hover:bg-black dark:hover:bg-slate-200 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-lg shadow-slate-300/50 dark:shadow-white/5 transition-all transform active:scale-95 flex items-center gap-2">
+                                <i class='bx bx-save text-lg'></i> Simpan Konfigurasi
                             </button>
                         </div>
                     </form>
