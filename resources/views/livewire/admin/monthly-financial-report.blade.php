@@ -212,46 +212,46 @@
 
                                 {{-- Sub Headers --}}
                                 <th
-                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Wajib</th>
                                 <th
-                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Sukarela</th>
 
                                 <th
-                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Angsuran</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Ke</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Tnr</th>
 
                                 <th
-                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Pokok</th>
                                 <th
-                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-[9px]">
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-[9px]">
                                     Simwa</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Ke</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Tnr</th>
 
                                 <th
-                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50">
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Pokok</th>
                                 <th
-                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 text-[9px]">
+                                    class="px-2 py-2 text-right border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 text-[9px]">
                                     Simwa</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Ke</th>
                                 <th
-                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 w-8">
+                                    class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Tnr</th>
 
                                 <th class="border-b border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
