@@ -363,12 +363,24 @@ Route::middleware(['auth'])->get('/pos', function () {
     return redirect()->route('admin.pos');
 });
 
-// Member Portal Routes
-Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
+// Member Portal Routes (Cooperative Members Only)
+Route::middleware(['auth', 'member.type'])->prefix('member')->name('member.')->group(function () {
     Route::get('/', \App\Livewire\Member\Dashboard::class)->name('dashboard');
     Route::get('/profile', \App\Livewire\Member\Profile::class)->name('profile');
     Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
     Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
     Route::get('/transfer', \App\Livewire\Member\Transfer::class)->name('transfer');
     Route::get('/transfer/history', \App\Livewire\Member\TransferHistory::class)->name('transfer.history');
+});
+
+// Retail Membership Portal Routes (Retail Members Only)
+Route::middleware(['auth', 'member.type'])->prefix('membership')->name('membership.')->group(function () {
+    Route::get('/dashboard', \App\Livewire\Membership\Dashboard::class)->name('dashboard');
+    Route::get('/history', \App\Livewire\Membership\History::class)->name('history');
+    Route::get('/profile', \App\Livewire\Membership\Profile::class)->name('profile');
+    Route::get('/simpanan', \App\Livewire\Membership\Simpanan::class)->name('simpanan');
+    Route::get('/transfer', \App\Livewire\Membership\Transfer::class)->name('transfer');
+    Route::get('/', function () {
+        return redirect()->route('membership.dashboard');
+    });
 });
