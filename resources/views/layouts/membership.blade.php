@@ -16,6 +16,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @livewireStyles
+    @stack('styles')
 
     <!-- Config -->
     <script>
@@ -33,33 +34,15 @@
             }
         }
     </script>
-
-    <style>
-        /* Mobile optimization */
-        body {
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-    </style>
-    <!-- Dark Mode Toggle Script -->
+    
+    <!-- Dark Mode Init -->
     <script>
-        // Check local storage or system preference
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark')
         } else {
             document.documentElement.classList.remove('dark')
         }
     </script>
-
-    @stack('styles')
 </head>
 
 <body
@@ -76,25 +59,22 @@
                 localStorage.theme = 'light';
             }
         }
-    }">
+    }"
+>
 
-    <!-- Top Bar -->
+    <!-- Top Bar (Optional, mostly for Branding) -->
     <div
-        class="fixed top-0 left-0 w-full z-40 bg-white/80 dark:bg-darkCard/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/5 flex justify-between items-center">
+        class="fixed top-0 left-0 w-full z-40 bg-white/80 dark:bg-darkCard/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/5 flex justify-between items-center lg:hidden">
         <div class="flex items-center gap-2">
             <div
                 class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-white font-bold">
                 B</div>
             <span class="font-bold text-lg tracking-tight">Bermadani</span>
         </div>
-        <div class="flex gap-3 items-center">
-            <!-- Dark Mode Toggle -->
-            <button @click="toggleTheme()"
-                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors text-slate-600 dark:text-yellow-400">
+        <div class="flex gap-3">
+             <button @click="toggleTheme()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors text-slate-600 dark:text-yellow-400">
                 <i class='bx text-xl' :class="darkMode ? 'bx-sun' : 'bx-moon'"></i>
             </button>
-
-            <!-- Notification Icon -->
             <button class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
                 <i class='bx bx-bell text-xl'></i>
             </button>
@@ -102,15 +82,15 @@
     </div>
 
     <!-- Main Content -->
-    <div class="pt-20 pb-24 px-4 lg:pt-24 lg:px-8 w-full max-w-2xl mx-auto lg:max-w-5xl min-h-screen relative">
-        {{ $slot ?? '' }}
+    <div class="pt-16 pb-24 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative">
         @yield('content')
+        {{ $slot ?? '' }}
     </div>
 
     <!-- Bottom Navigation (Mobile Only/Primary Nav) -->
     <div
-        class="fixed bottom-0 left-0 w-full z-50 bg-white/90 dark:bg-darkCard/90 backdrop-blur-lg border-t border-slate-200 dark:border-white/5 pb-safe">
-        <div class="flex justify-around items-center w-full max-w-2xl mx-auto lg:max-w-5xl px-2 py-2">
+        class="fixed bottom-0 left-0 w-full z-50 bg-white/90 dark:bg-darkCard/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 pb-safe">
+        <div class="flex justify-around items-center max-w-md mx-auto lg:max-w-4xl px-2 py-2">
 
             <!-- Home -->
             <a href="{{ route('membership.dashboard') }}"
@@ -130,7 +110,8 @@
 
             <!-- Scan (Center Floating) -->
             <div class="relative -top-5">
-                <button x-data @click="$dispatch('toggle-card')"
+                <button
+                    x-data @click="$dispatch('toggle-card')"
                     class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-purple-600 shadow-lg shadow-primary/40 flex items-center justify-center text-white transform transition-transform active:scale-95 border-4 border-white dark:border-darkBg">
                     <i class='bx bx-qr-scan text-2xl'></i>
                 </button>
@@ -155,7 +136,6 @@
     </div>
 
     @livewireScripts
-    @stack('scripts')
 </body>
 
 </html>
