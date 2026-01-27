@@ -80,7 +80,7 @@ class MemberManagement extends Component
     public function suspendMember($memberId)
     {
         $member = Member::findOrFail($memberId);
-        $member->update(['status' => 'FROZEN']);
+        $member->update(['status' => 'SUSPENDED']);
         
         session()->flash('message', "Member {$member->name} berhasil dibekukan.");
     }
