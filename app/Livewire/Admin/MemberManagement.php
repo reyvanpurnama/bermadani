@@ -77,6 +77,22 @@ class MemberManagement extends Component
             ->pluck('unitKerja');
     }
 
+    public function suspendMember($memberId)
+    {
+        $member = Member::findOrFail($memberId);
+        $member->update(['status' => 'FROZEN']);
+        
+        session()->flash('message', "Member {$member->name} berhasil dibekukan.");
+    }
+
+    public function activateMember($memberId)
+    {
+        $member = Member::findOrFail($memberId);
+        $member->update(['status' => 'ACTIVE']);
+        
+        session()->flash('message', "Member {$member->name} berhasil diaktifkan kembali.");
+    }
+
     public function render()
     {
         return view('livewire.admin.member-management', [
