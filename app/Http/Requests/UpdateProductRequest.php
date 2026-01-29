@@ -29,6 +29,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['required', 'string', 'max:50', Rule::unique('products', 'sku')->ignore($productId)],
             'categoryId' => ['required', 'exists:categories,id'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'], // Max 2MB
             'supplierId' => ['nullable', 'exists:suppliers,id'],
             'description' => ['nullable', 'string', 'max:1000'],
             'sellPrice' => ['required', 'numeric', 'min:0', 'max:999999999.99'],

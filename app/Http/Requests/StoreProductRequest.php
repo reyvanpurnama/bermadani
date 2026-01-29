@@ -26,6 +26,7 @@ class StoreProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'sku' => ['nullable', 'string', 'max:50', 'unique:products,sku'], // Changed to nullable
             'categoryId' => ['required', 'exists:categories,id'], // Removed uuid rule
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'], // Max 2MB
             'supplierId' => ['nullable', 'exists:suppliers,id'], // Removed uuid rule just in case, though suppliers might be UUID. Let's check supplier too, but safest is to remove explicit uuid check if we trust exists. Actually let's assume supplier is UUID or ID based on its migration. But safe to remove 'uuid' rule and rely on string/exists.
             'description' => ['nullable', 'string', 'max:1000'],
             'sellPrice' => ['required', 'numeric', 'min:0', 'max:999999999.99'],
@@ -47,6 +48,7 @@ class StoreProductRequest extends FormRequest
             'name' => 'nama produk',
             'sku' => 'SKU',
             'categoryId' => 'kategori',
+            'image' => 'gambar produk',
             'supplierId' => 'supplier',
             'sellPrice' => 'harga jual',
             'buyPrice' => 'harga beli',

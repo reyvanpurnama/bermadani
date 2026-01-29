@@ -8,6 +8,7 @@ use App\Models\StockMovement;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -29,6 +30,12 @@ class ProductController extends Controller
         }
 
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
 
         // Admin-created products are auto-approved (owned by koperasi)
         $validated['approvalStatus'] = 'APPROVED';
@@ -60,6 +67,16 @@ class ProductController extends Controller
         $validated = $request->validated();
 
         $validated['buyPrice'] = $validated['buyPrice'] ?? 0;
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+            $imagePath = $request->file('image')->store('products', 'public');
+            $validated['image'] = $imagePath;
+        }
 
         // Track stock changes
         if ($product->stock != $validated['stock']) {

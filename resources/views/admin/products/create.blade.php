@@ -70,6 +70,66 @@
                         class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-primary transition-all resize-none"
                         placeholder="Deskripsi produk (opsional)">{{ old('description') }}</textarea>
                 </div>
+
+                {{-- Image Upload --}}
+                <div x-data="{ 
+                    imagePreview: null,
+                    handleFileSelect(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                this.imagePreview = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    },
+                    removeImage() {
+                        this.imagePreview = null;
+                        document.getElementById('imageInput').value = '';
+                    }
+                }">
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Gambar Produk</label>
+                    
+                    {{-- Preview Area --}}
+                    <div class="flex items-start gap-4">
+                        {{-- Image Preview --}}
+                        <div class="relative shrink-0">
+                            <div class="w-32 h-32 rounded-xl border-2 border-dashed border-slate-200 dark:border-slate-600 flex items-center justify-center bg-slate-50 dark:bg-slate-800 overflow-hidden"
+                                :class="{ 'border-solid border-primary': imagePreview }">
+                                <template x-if="!imagePreview">
+                                    <div class="text-center p-2">
+                                        <i class='bx bx-image text-3xl text-slate-300 dark:text-slate-600'></i>
+                                        <p class="text-[10px] text-slate-400 mt-1">Preview</p>
+                                    </div>
+                                </template>
+                                <template x-if="imagePreview">
+                                    <img :src="imagePreview" class="w-full h-full object-cover">
+                                </template>
+                            </div>
+                            {{-- Remove Button --}}
+                            <button type="button" x-show="imagePreview" @click="removeImage()"
+                                class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center shadow-lg hover:bg-rose-600 transition-colors">
+                                <i class='bx bx-x text-sm'></i>
+                            </button>
+                        </div>
+
+                        {{-- Upload Area --}}
+                        <div class="flex-1">
+                            <label for="imageInput"
+                                class="flex flex-col items-center justify-center w-full h-32 px-4 border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl cursor-pointer bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 hover:border-primary transition-all">
+                                <i class='bx bx-cloud-upload text-3xl text-slate-400 mb-2'></i>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Klik untuk upload gambar</p>
+                                <p class="text-[10px] text-slate-400 mt-1">JPG, PNG, WEBP (Maks. 2MB)</p>
+                            </label>
+                            <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/jpg,image/webp"
+                                class="hidden" @change="handleFileSelect($event)">
+                            @error('image')
+                                <p class="text-xs text-rose-500 mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {{-- Pricing --}}
