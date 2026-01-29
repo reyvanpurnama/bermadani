@@ -8,43 +8,92 @@
             transform-style: preserve-3d;
         }
 
+        @keyframes wiggle {
+
+            0%,
+            100% {
+                transform: rotateY(0deg);
+            }
+
+            20% {
+                transform: rotateY(15deg);
+            }
+
+            40% {
+                transform: rotateY(-10deg);
+            }
+
+            60% {
+                transform: rotateY(5deg);
+            }
+        }
+
+        .animate-wiggle {
+            animation: wiggle 1.5s ease-out;
+        }
+
         .backface-hidden {
             backface-visibility: hidden;
+        }
+
+        .rotate-y-180 {
+            transform: rotateY(180deg);
         }
 
         [x-cloak] {
             display: none !important;
         }
+
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+
+        .transform-style-3d {
+            transform-style: preserve-3d;
+
+            @keyframes wiggle {
+
+                0%,
+                100% {
+                    transform: rotateY(0deg);
+                }
+
+                20% {
+                    transform: rotateY(15deg);
+                }
+
+                40% {
+                    transform: rotateY(-10deg);
+                }
+
+                60% {
+                    transform: rotateY(5deg);
+                }
+            }
+
+            .animate-wiggle {
+                animation: wiggle 1.5s ease-out;
+            }
+        }
     </style>
 @endpush
 
 <div x-data="{ 
-    showBalance: @entangle('showBalance'),
-    flipped: false,
-    generateQR() {
-        if(typeof QRious !== 'undefined') {
-            new QRious({
-                element: document.getElementById('qr-code'),
-                value: '{{ $member->nomorAnggota ?? '' }}',
-                size: 200,
-                background: 'white',
-                foreground: 'black'
-            });
-        }
-    }
-}" x-init="$nextTick(() => generateQR())" @toggle-card.window="flipped = !flipped" class="space-y-8"> {{-- Increased
+    showBalance: @entangle('showBalance')
+}" class="space-y-8"> {{-- Increased
     vertical space --}}
 
     @section('page-title', 'Retail Dashboard')
 
-    {{-- Flippable Member Card --}}
-    <div class="perspective-1000 w-full h-[220px] cursor-pointer group relative z-10" @click="flipped = !flipped">
+    {{-- Member Card (Flippable) --}}
+    <div class="perspective-1000 w-full h-[220px] relative z-10 group cursor-pointer mb-8" x-data="{ flipped: false }"
+        @click="flipped = !flipped">
         <div class="relative w-full h-full transition-all duration-700 transform-style-3d shadow-2xl rounded-2xl"
-            :style="flipped ? 'transform: rotateY(180deg)' : 'transform: rotateY(0deg)'">
+            :class="flipped ? 'rotate-y-180' : ''" x-init="setTimeout(() => $el.classList.add('animate-wiggle'), 1000)">
 
-            {{-- Front Side (Dark Slate/Chip Style) --}}
-            <div
-                class="absolute inset-0 w-full h-full backface-hidden rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 text-white flex flex-col justify-between">
+            {{-- Front Side --}}
+            <div class="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 text-white flex flex-col justify-between p-6 transition-all duration-300"
+                :class="flipped ? 'z-0 opacity-0' : 'z-20 opacity-100 delay-200'">
 
                 {{-- Decorative Background --}}
                 <div
@@ -57,7 +106,10 @@
                     <div>
                         <div class="flex justify-between items-start mb-6">
                             <i class='bx bxs-chip text-4xl opacity-80 text-yellow-500'></i>
-                            <div class="flex items-center gap-1 opacity-80">
+                            <div class="flex items-center gap-3 opacity-80">
+                                <div
+                                    class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center animate-pulse">
+                                    <i class='bx bx-refresh text-lg text-white'></i></div>
                                 <i class='bx bx-wifi text-2xl rotate-90'></i>
                             </div>
                         </div>
@@ -89,45 +141,29 @@
                         </div>
                     </div>
                 </div>
-
-                {{-- Hint --}}
-                <div
-                    class="absolute bottom-3 right-1/2 transform translate-x-1/2 flex flex-col items-center gap-1 opacity-50 animate-pulse pointer-events-none">
-                    <span class="text-[9px] text-white uppercase tracking-widest">Tap untuk QR</span>
-                </div>
             </div>
 
-            {{-- Back Side (QR Code) --}}
-            <div style="transform: rotateY(180deg)"
-                class="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl flex items-center justify-center relative">
-
-                <div class="h-full flex flex-col items-center justify-center p-6 w-full">
-                    <div class="absolute top-4 right-4 text-slate-400">
-                        <i class='bx bx-qr-scan text-2xl'></i>
+            {{-- Back Side (Mirror & Opacity Effect) --}}
+            <div class="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 shadow-xl rotate-y-180 flex items-center justify-center relative transition-all duration-300"
+                :class="flipped ? 'z-20 opacity-100 delay-200' : 'z-0 opacity-0'">
+                {{-- QR Code Area --}}
+                <div class="text-center relative z-10"> {{-- Mirror content if desired, but
+                    usually back side content is readable. User asked for mirror effect? Let's just standard flip. --}}
+                    <div class="inline-flex items-center justify-center p-3 bg-white rounded-xl shadow-lg mb-2">
+                        <i class='bx bx-qr text-6xl text-slate-800'></i>
                     </div>
-
-                    <h3
-                        class="text-slate-800 dark:text-white font-bold mb-4 text-center text-sm uppercase tracking-widest">
-                        Scan di Kasir</h3>
-
-                    <div class="p-3 bg-white rounded-xl shadow-inner border border-slate-100 dark:border-slate-200">
-                        <canvas id="qr-code"></canvas>
-                    </div>
-
-                    <p class="mt-4 font-mono text-slate-500 dark:text-slate-400 text-sm tracking-widest font-bold">
-                        {{ $member->nomorAnggota ?? '' }}
-                    </p>
-                    <p class="absolute bottom-4 text-[10px] text-slate-400 uppercase tracking-widest">Tap untuk kembali
-                    </p>
+                    <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Scan Member ID</p>
                 </div>
+
+                <p class="absolute bottom-4 text-[10px] text-slate-500 uppercase tracking-widest">Tap to Flip Back</p>
             </div>
+
         </div>
-    </div>
 
-    {{-- Balance & Points Summary (AlloBank Style) --}}
+    </div>
     {{-- Balance & Points Summary (AlloBank Style) --}}
     <div
-        class="bg-gradient-to-br from-slate-800 to-[#0f172a] border border-slate-700/50 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden group mb-8">
+        class="mt-4 bg-gradient-to-br from-slate-800 to-[#0f172a] border border-slate-700/50 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden group mb-8">
         {{-- Blue Glow Effect --}}
         <div
             class="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-blue-600/30 transition-all duration-500">
@@ -140,7 +176,8 @@
             {{-- Left: Saldo (Dominant) --}}
             <div class="flex-1" x-data="{ localShow: true }">
                 <div class="flex items-center gap-2 mb-1">
-                    <span class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Saldo Bermadani</span>
+                    <span class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Saldo
+                        Bermadani</span>
                     <i class='bx bxs-check-circle text-blue-500 text-xs'></i>
                 </div>
                 <div class="flex items-center gap-3">
@@ -153,8 +190,8 @@
                         </span>
                     </h3>
 
-                    <button @click="localShow = !localShow"
-                        class="text-white/70 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+                    <button @click.stop="localShow = !localShow"
+                        class="text-white hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
                         <i class='bx text-xl' :class="localShow ? 'bx-hide' : 'bx-show'"></i>
                     </button>
                 </div>

@@ -110,7 +110,7 @@
 
             <!-- Scan (Center Floating) -->
             <div class="relative -top-5">
-                <button x-data @click="$dispatch('toggle-card')"
+                <button x-data
                     class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-purple-600 shadow-lg shadow-primary/40 flex items-center justify-center text-white transform transition-transform active:scale-95 border-4 border-white dark:border-darkBg">
                     <i class='bx bx-qr-scan text-2xl'></i>
                 </button>
