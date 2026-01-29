@@ -82,7 +82,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="pt-16 pb-24 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative">
+    <div class="pt-20 pb-28 px-5 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative space-y-6">
         @yield('content')
         {{ $slot ?? '' }}
     </div>
