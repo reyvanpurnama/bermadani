@@ -107,6 +107,9 @@
 
                 {{-- Action Quick Link --}}
                 <div class="flex gap-3">
+                    <button wire:click="$set('showTopupModal', true)" class="inline-flex items-center gap-2 px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-emerald-500/20 text-sm">
+                        <i class='bx bx-plus-circle'></i> Isi Saldo
+                    </button>
                      <a href="{{ route('membership.transfer') }}" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-colors backdrop-blur-sm border border-white/10 text-sm">
                         <i class='bx bx-paper-plane'></i> Kirim
                     </a>
@@ -400,6 +403,54 @@
                     <button onclick="window.print()"
                         class="w-full sm:flex-1 py-2.5 sm:py-3 bg-primary hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
                         <i class='bx bx-printer'></i> Cetak
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Top Up Modal --}}
+    @if($showTopupModal)
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-[fadeIn_0.2s_ease-out]" wire:click="$set('showTopupModal', false)">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-sm w-full" wire:click.stop>
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-6">
+                         <h3 class="text-lg font-bold text-slate-900 dark:text-white">Isi Saldo Bermadani</h3>
+                         <button wire:click="$set('showTopupModal', false)" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                            <i class='bx bx-x text-2xl'></i>
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700" x-data="{ copied: false }">
+                            <p class="text-xs text-slate-500 mb-1 uppercase tracking-wider font-bold">Virtual Account (BCA)</p>
+                            <div class="flex items-center justify-between">
+                                <p class="text-xl font-mono font-bold text-slate-800 dark:text-white">8800 1234 5678</p>
+                                <button @click="navigator.clipboard.writeText('880012345678'); copied = true; setTimeout(() => copied = false, 2000)" class="p-2 text-primary hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors relative">
+                                    <i class='bx' :class="copied ? 'bx-check' : 'bx-copy'"></i>
+                                    <span x-show="copied" x-transition class="absolute -top-8 -left-2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded shadow-lg whitespace-nowrap">Disalin!</span>
+                                </button>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2">Otomatis masuk dalam 1-5 menit</p>
+                        </div>
+
+                         <div class="bg-slate-50 dark:bg-slate-800 rounded-xl p-4 border border-slate-100 dark:border-slate-700">
+                             <p class="text-xs text-slate-500 mb-1 uppercase tracking-wider font-bold">Transfer Manual</p>
+                             <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="text-sm text-slate-600 dark:text-slate-300">Bank Mandiri</span>
+                                    <span class="text-sm font-bold text-slate-800 dark:text-white">123-00-9876543-2</span>
+                                </div>
+                                 <div class="flex justify-between">
+                                    <span class="text-sm text-slate-600 dark:text-slate-300">Atas Nama</span>
+                                    <span class="text-sm font-bold text-slate-800 dark:text-white">Koperasi UMB</span>
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+                    
+                    <button wire:click="$set('showTopupModal', false)" class="w-full mt-6 py-3 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
+                        Tutup
                     </button>
                 </div>
             </div>

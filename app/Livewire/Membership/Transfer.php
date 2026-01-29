@@ -34,6 +34,11 @@ class Transfer extends Component
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
 
+        // Double Guard: Redirect Cooperative Members to their own portal
+        if ($this->member && $this->member->isMemberKoperasi) {
+            return redirect()->route('member.transfer');
+        }
+
         if ($this->member) {
             $this->calculateTodayTransferred();
             $this->loadRecentRecipients();

@@ -18,12 +18,19 @@ class Simpanan extends Component
     public $filterType = '';
     public $showBalance = true;
     public $showReceiptModal = false;
+    public $showTopupModal = false;
     public $selectedTransfer;
 
     public function mount()
     {
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
+
+        // Double Guard: Redirect Cooperative Members to their own portal
+        if ($this->member && $this->member->isMemberKoperasi) {
+            return redirect()->route('member.simpanan');
+        }
+
         $this->markAsRead();
     }
 

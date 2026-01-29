@@ -22,6 +22,11 @@ class Dashboard extends Component
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
 
+        // Double Guard: Redirect Cooperative Members to their own portal
+        if ($this->member && $this->member->isMemberKoperasi) {
+            return redirect()->route('member.dashboard');
+        }
+
         if ($this->member) {
             $this->loadRecentTransactions();
             $this->loadRecentSimpanan();
