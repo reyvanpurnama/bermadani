@@ -71,7 +71,7 @@
                     <i class='bx bxs-wallet text-2xl'></i>
                 </div>
                 <div>
-                    <p class="text-[11px] text-blue-100 uppercase tracking-wider">Total Aset</p>
+                    <p class="text-[11px] text-blue-100 uppercase tracking-wider">Total Simpanan</p>
                     <h3 class="text-lg font-bold">
                         @if($showBalance) Rp {{ number_format($totalSimpanan, 0, ',', '.') }} @else Rp •••••• @endif
                     </h3>
