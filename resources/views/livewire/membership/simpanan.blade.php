@@ -1,16 +1,17 @@
-<div>
+<div x-data="{ showBalance: @entangle('showBalance') }">
     @section('page-title', 'Simpanan Saya')
 
     {{-- Summary Cards with Hide/Unhide --}}
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold text-slate-900 dark:text-white">Ringkasan Simpanan</h2>
-        <button wire:click="toggleBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="{{ $showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo' }}">
-            <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-xl'></i>
+        <button @click="showBalance = !showBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+            <i class='bx text-xl' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 {{ $member->isMemberKoperasi ? 'lg:grid-cols-4' : 'lg:grid-cols-2' }} gap-6 mb-8">
-        @if($member->isMemberKoperasi)
+    @if($member->isMemberKoperasi)
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {{-- Card Pokok --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center">
@@ -24,6 +25,8 @@
                 </div>
             </div>
         </div>
+
+        {{-- Card Wajib --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center">
@@ -37,8 +40,8 @@
                 </div>
             </div>
         </div>
-        @endif
 
+        {{-- Card Sukarela --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl flex items-center justify-center">
@@ -52,6 +55,8 @@
                 </div>
             </div>
         </div>
+
+        {{-- Card Total --}}
         @php
             $totalSimpanan = ($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0) + ($member->simpananSukarela ?? 0);
         @endphp
@@ -69,7 +74,45 @@
             </div>
         </div>
     </div>
+    @else
+    {{-- Retail Single Hero Card --}}
+    <div class="mb-8">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 p-6 sm:p-8 rounded-3xl shadow-xl text-white relative overflow-hidden group">
+            {{-- Decorative BG --}}
+            <div class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500"></div>
+            
+            <div class="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                            <i class='bx bxs-bank text-emerald-400'></i>
+                        </div>
+                        <span class="text-sm font-medium text-slate-300 uppercase tracking-wider">Saldo Bermadani</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">
+                        <span x-show="showBalance">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</span>
+                        <span x-show="!showBalance" x-cloak>Rp ••••••••</span>
+                        </h2>
+                    </div>
+                    @if($showBalance)
+                    <p class="text-xs sm:text-sm text-slate-400 mt-2">Simpanan fleksibel untuk transaksi mudah</p>
+                    @endif
+                </div>
 
+                {{-- Action Quick Link --}}
+                <div class="flex gap-3">
+                     <a href="{{ route('membership.transfer') }}" class="inline-flex items-center gap-2 px-5 py-3 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-colors backdrop-blur-sm border border-white/10 text-sm">
+                        <i class='bx bx-paper-plane'></i> Kirim
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    {{-- Quick Transfer Button --}}
+    @if($member->isMemberKoperasi)
     {{-- Quick Transfer Button --}}
     <div class="mb-6">
         <a href="{{ route('membership.transfer') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl transition-colors">
@@ -77,6 +120,7 @@
             <span>Transfer Simpanan Sukarela</span>
         </a>
     </div>
+    @endif
 
     {{-- Filter Tabs --}}
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
@@ -94,7 +138,7 @@
                 </button>
                 @endif
                 <button wire:click="$set('filterType', 'SUKARELA')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'SUKARELA' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
-                    S. Sukarela
+                    {{ $member->isMemberKoperasi ? 'S. Sukarela' : 'Saldo Bermadani' }}
                 </button>
             </nav>
         </div>
@@ -130,7 +174,7 @@
                                             {{ $item->type === 'WAJIB' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : '' }}
                                             {{ $item->type === 'SUKARELA' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : '' }}
                                         ">
-                                            {{ $item->type }}
+                                            {{ $item->type === 'SUKARELA' && !$member->isMemberKoperasi ? 'BERMADANI' : $item->type }}
                                         </span>
                                         <span class="text-sm 
                                             @if($item->transactionType === 'SETOR' || $item->transactionType === 'TRANSFER_IN') 
@@ -243,7 +287,11 @@
                         <div class="flex justify-between items-start gap-4 py-2 border-b border-slate-100 dark:border-slate-700">
                             <span class="text-xs sm:text-sm text-slate-500 flex-shrink-0">Jenis Simpanan</span>
                             <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white text-right">
-                                Simpanan {{ ucfirst(strtolower($selectedTransfer->type)) }}
+                                @if($selectedTransfer->type === 'SUKARELA' && !$member->isMemberKoperasi)
+                                    Saldo Bermadani
+                                @else
+                                    Simpanan {{ ucfirst(strtolower($selectedTransfer->type)) }}
+                                @endif
                             </span>
                         </div>
 
