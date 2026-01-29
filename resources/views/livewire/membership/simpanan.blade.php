@@ -1,9 +1,14 @@
-<div x-data="{ showBalance: @entangle('showBalance') }">
+<div x-data="{ showBalance: {{ $showBalance ? 'true' : 'false' }} }">
     @section('page-title', 'Simpanan Saya')
 
-    {{-- Summary Cards with Hide/Unhide --}}
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white">Ringkasan Simpanan</h2>
+    {{-- Header with Back Button --}}
+    <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('membership.dashboard') }}" class="p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <i class='bx bx-arrow-back text-2xl'></i>
+            </a>
+            <h1 class="text-xl font-bold text-slate-900 dark:text-white">Simpanan Saya</h1>
+        </div>
         <button @click="showBalance = !showBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
             <i class='bx text-xl' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
         </button>

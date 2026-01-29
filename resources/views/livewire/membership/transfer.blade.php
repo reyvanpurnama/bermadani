@@ -23,10 +23,16 @@
     </style>
 @endpush
 
-<div class="max-w-xl mx-auto pb-24 lg:pb-0">
+<div class="max-w-xl mx-auto pb-24 lg:pb-0" x-data="{ showBalance: {{ $showBalance ? 'true' : 'false' }} }">
     {{-- Header Title (Mobile App style) --}}
     <div class="mb-6 flex items-center justify-between">
-        <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Kirim Uang</h1>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('membership.dashboard') }}"
+                class="p-2 -ml-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+                <i class='bx bx-arrow-back text-2xl'></i>
+            </a>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Kirim Uang</h1>
+        </div>
         <div class="text-sm font-medium text-slate-500 dark:text-slate-400">
             @if($step === 1) Langkah 1/3
             @elseif($step === 2) Langkah 2/3
@@ -44,27 +50,32 @@
     @if($step === 1)
         {{-- Balance Card --}}
         <div
-            class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 mb-8 relative overflow-hidden transition-all hover:scale-[1.02]">
-            <div class="absolute top-0 right-0 p-4 opacity-10">
-                <i class='bx bx-paper-plane text-9xl'></i>
+            class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-lg shadow-slate-900/20 mb-8 relative overflow-hidden transition-all hover:scale-[1.02] group">
+            {{-- Decorative --}}
+            <div
+                class="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none group-hover:bg-emerald-500/20 transition-all duration-500">
             </div>
 
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-2">
-                    <span
-                        class="text-blue-100 text-sm font-medium">{{ $member->isMemberKoperasi ? 'Saldo Sukarela' : 'Saldo Bermadani' }}</span>
-                    <button wire:click="toggleBalance" class="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
-                        <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-lg'></i>
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
+                            <i class='bx bxs-bank text-emerald-400 text-xs'></i>
+                        </div>
+                        <span
+                            class="text-slate-300 text-sm font-medium">{{ $member->isMemberKoperasi ? 'Saldo Sukarela' : 'Saldo Bermadani' }}</span>
+                    </div>
+                    <button @click="showBalance = !showBalance"
+                        class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
+                        <i class='bx text-lg' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
                     </button>
                 </div>
                 <div class="text-3xl font-bold tracking-tight mb-4">
-                    @if($showBalance)
-                        Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}
-                    @else
-                        Rp ••••••••
-                    @endif
+                    <span x-show="showBalance">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</span>
+                    <span x-show="!showBalance" x-cloak>Rp ••••••••</span>
                 </div>
-                <div class="flex items-center gap-2 text-xs text-blue-100 bg-white/10 w-fit px-3 py-1.5 rounded-full">
+                <div
+                    class="flex items-center gap-2 text-xs text-slate-300 bg-white/5 w-fit px-3 py-1.5 rounded-full border border-white/5">
                     <i class='bx bx-info-circle'></i>
                     <span>Limit Harian: Rp {{ number_format(self::MAX_PER_DAY - $todayTransferred, 0, ',', '.') }}</span>
                 </div>
@@ -114,7 +125,8 @@
                         <div class="flex-1 min-w-0">
                             <h4 class="font-bold text-slate-900 dark:text-white truncate">{{ $recipientMember->name }}</h4>
                             <p class="text-xs text-slate-500 truncate">{{ $recipientMember->nomorAnggota }} •
-                                {{ $recipientMember->unitKerja }}</p>
+                                {{ $recipientMember->unitKerja }}
+                            </p>
                         </div>
                         <button wire:click="clearRecipient" class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
                             <i class='bx bx-x text-xl'></i>
@@ -194,7 +206,8 @@
             <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-center">
                 <p class="text-slate-500 dark:text-slate-400 text-sm mb-1">Total Nominal</p>
                 <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Rp
-                    {{ number_format($this->parseAmount($amount), 0, ',', '.') }}</h2>
+                    {{ number_format($this->parseAmount($amount), 0, ',', '.') }}
+                </h2>
             </div>
 
             <div class="p-6 space-y-6">
