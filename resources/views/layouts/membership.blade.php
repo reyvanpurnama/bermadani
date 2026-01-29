@@ -34,7 +34,7 @@
             }
         }
     </script>
-    
+
     <!-- Dark Mode Init -->
     <script>
         if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -59,8 +59,7 @@
                 localStorage.theme = 'light';
             }
         }
-    }"
->
+    }">
 
     <!-- Top Bar (Optional, mostly for Branding) -->
     <div
@@ -72,7 +71,8 @@
             <span class="font-bold text-lg tracking-tight">Bermadani</span>
         </div>
         <div class="flex gap-3">
-             <button @click="toggleTheme()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors text-slate-600 dark:text-yellow-400">
+            <button @click="toggleTheme()"
+                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors text-slate-600 dark:text-yellow-400">
                 <i class='bx text-xl' :class="darkMode ? 'bx-sun' : 'bx-moon'"></i>
             </button>
             <button class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
@@ -82,7 +82,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="pt-16 pb-24 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative">
+    <div class="pt-20 pb-28 px-5 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative space-y-6">
         @yield('content')
         {{ $slot ?? '' }}
     </div>
@@ -110,8 +110,7 @@
 
             <!-- Scan (Center Floating) -->
             <div class="relative -top-5">
-                <button
-                    x-data @click="$dispatch('toggle-card')"
+                <button x-data
                     class="w-14 h-14 rounded-full bg-gradient-to-tr from-primary to-purple-600 shadow-lg shadow-primary/40 flex items-center justify-center text-white transform transition-transform active:scale-95 border-4 border-white dark:border-darkBg">
                     <i class='bx bx-qr-scan text-2xl'></i>
                 </button>
