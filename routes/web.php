@@ -362,8 +362,8 @@ Route::middleware(['auth'])->get('/pos', function () {
     return redirect()->route('admin.pos');
 });
 
-// Member Portal Routes
-Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
+// Member Portal Routes (Cooperative Members Only)
+Route::middleware(['auth', 'member.type'])->prefix('member')->name('member.')->group(function () {
     Route::get('/', \App\Livewire\Member\Dashboard::class)->name('dashboard');
     Route::get('/profile', \App\Livewire\Member\Profile::class)->name('profile');
     Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
@@ -372,12 +372,14 @@ Route::middleware(['auth'])->prefix('member')->name('member.')->group(function (
     Route::get('/transfer/history', \App\Livewire\Member\TransferHistory::class)->name('transfer.history');
 });
 
-// Member Portal Routes
-Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
-    Route::get('/dashboard', [App\Http\Controllers\Member\DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [App\Http\Controllers\Member\ProfileController::class, 'index'])->name('profile');
-    Route::put('/profile', [App\Http\Controllers\Member\ProfileController::class, 'update'])->name('profile.update');
-    Route::put('/profile/password', [App\Http\Controllers\Member\ProfileController::class, 'updatePassword'])->name('profile.password');
-    Route::get('/transactions', [App\Http\Controllers\Member\TransactionController::class, 'index'])->name('transactions');
-    Route::get('/transactions/{id}', [App\Http\Controllers\Member\TransactionController::class, 'show'])->name('transactions.show');
+// Retail Membership Portal Routes (Retail Members Only)
+Route::middleware(['auth', 'member.type'])->prefix('membership')->name('membership.')->group(function () {
+    Route::get('/dashboard', \App\Livewire\Membership\Dashboard::class)->name('dashboard');
+    Route::get('/history', \App\Livewire\Membership\History::class)->name('history');
+    Route::get('/profile', \App\Livewire\Membership\Profile::class)->name('profile');
+    Route::get('/simpanan', \App\Livewire\Membership\Simpanan::class)->name('simpanan');
+    Route::get('/transfer', \App\Livewire\Membership\Transfer::class)->name('transfer');
+    Route::get('/', function () {
+        return redirect()->route('membership.dashboard');
+    });
 });
