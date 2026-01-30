@@ -69,25 +69,39 @@
                                 <i class='bx bxs-user-detail'></i>
                             </div>
                             <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Informasi Personal</h4>
-                                <p class="text-xs text-slate-400">Nama, Email, Telepon, Alamat</p>
+                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Informasi Personal &
+                                    Pekerjaan</h4>
+                                <p class="text-xs text-slate-400">Nama, Kontak, Alamat, Unit Kerja</p>
                             </div>
                         </div>
                         <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
                     </button>
+                </div>
+            </div>
 
-                    <div class="w-full flex items-center justify-between p-4">
+            {{-- Finance Group --}}
+            <div
+                class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                <div
+                    class="px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Keuangan</h3>
+                </div>
+                <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <button @click="openModal('simpanan')"
+                        class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
                         <div class="flex items-center gap-4">
                             <div
-                                class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400 flex items-center justify-center text-xl">
-                                <i class='bx bxs-briefcase-alt-2'></i>
+                                class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                <i class='bx bxs-wallet-alt'></i>
                             </div>
                             <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Unit Kerja</h4>
-                                <p class="text-xs text-slate-400">{{ $member->unitKerja ?? '-' }}</p>
+                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Konfigurasi Autodebet
+                                </h4>
+                                <p class="text-xs text-slate-400">Atur top-up otomatis Saldo Bermadani</p>
                             </div>
                         </div>
-                    </div>
+                        <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
+                    </button>
                 </div>
             </div>
 
@@ -135,7 +149,7 @@
 
     {{-- 1. Profile Edit Modal --}}
     <div x-show="activeModal === 'profile'" x-cloak
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style="display: none;">
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
         <div
             class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
@@ -143,8 +157,8 @@
 
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Edit Profil</h3>
 
-            <form wire:submit="updateProfile">
-                <div class="space-y-4">
+            <form wire:submit="updateProfile" class="flex flex-col h-full">
+                <div class="space-y-4 pb-24">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama
                             Lengkap</label>
@@ -172,9 +186,18 @@
                             class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary border-slate-200 dark:border-slate-700 text-sm"></textarea>
                         @error('address') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
                     </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Unit
+                            Kerja</label>
+                        <input type="text" wire:model="unitKerja" placeholder="Contoh: Fakultas Ilmu Komputer"
+                            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white rounded-xl focus:ring-2 focus:ring-primary border-slate-200 dark:border-slate-700 text-sm">
+                        @error('unitKerja') <span class="text-xs text-rose-500">{{ $message }}</span> @enderror
+                        <p class="text-[10px] text-slate-400 mt-1">Isi dengan nama fakultas atau unit kerja Anda</p>
+                    </div>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <div
+                    class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
                     <button type="button" @click="closeModal()"
                         class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                     <button type="submit"
@@ -184,9 +207,91 @@
         </div>
     </div>
 
-    {{-- 2. Password Modal --}}
+    {{-- 2. Simpanan Config Modal (Retail) --}}
+    <div x-show="activeModal === 'simpanan'" x-cloak
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
+        <div
+            class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
+            <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
+
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Konfigurasi Top-up Otomatis</h3>
+
+            <form wire:submit="updateSimpananSettings" class="flex flex-col h-full">
+                <div class="space-y-6 pb-24">
+                    <div
+                        class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                        <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                            Saldo Bermadani (Simpanan Sukarela)
+                        </label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode
+                                    Top-up</label>
+                                <select wire:model.live="sukarela_payment_method"
+                                    class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                    <option value="MANUAL">Top-up Manual</option>
+                                    <option value="SALARY_DEDUCTION">Potong Gaji Otomatis</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
+                                    per Bulan</label>
+                                <div class="relative" x-data="{
+                                    rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                    formatted: '',
+                                    init() {
+                                        this.formatted = this.formatNumber(this.rawValue);
+                                    },
+                                    formatNumber(num) {
+                                        return new Intl.NumberFormat('id-ID').format(num);
+                                    },
+                                    parseNumber(str) {
+                                        return parseInt(str.replace(/\./g, '')) || 0;
+                                    },
+                                    updateValue(e) {
+                                        this.rawValue = this.parseNumber(e.target.value);
+                                        this.formatted = this.formatNumber(this.rawValue);
+                                        $wire.set('monthly_sukarela_amount', this.rawValue);
+                                    }
+                                }">
+                                    <span
+                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                    <input type="text" x-model="formatted" @input="updateValue($event)"
+                                        @blur="updateValue($event)" @focus="$el.select()" placeholder="0"
+                                        class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white font-bold {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                        {{ $sukarela_payment_method === 'MANUAL' ? 'disabled' : '' }}>
+                                </div>
+                            </div>
+                        </div>
+                        <p
+                            class="mt-3 text-[11px] flex items-center gap-1.5 {{ $sukarela_payment_method === 'SALARY_DEDUCTION' ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500' }}">
+                            @if($sukarela_payment_method === 'SALARY_DEDUCTION')
+                                <i class='bx bx-check-circle'></i> Saldo akan terisi otomatis setiap gajian.
+                            @else
+                                <i class='bx bx-info-circle'></i> Top-up dilakukan secara manual (Kasir/Transfer).
+                            @endif
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
+                    <button type="button" @click="closeModal()"
+                        class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-primary text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-500/20">Simpan
+                        Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- 3. Password Modal --}}
     <div x-show="activeModal === 'password'" x-cloak
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style="display: none;">
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
         <div
             class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
@@ -194,8 +299,8 @@
 
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Ubah Password</h3>
 
-            <form wire:submit="updatePassword">
-                <div class="space-y-4">
+            <form wire:submit="updatePassword" class="flex flex-col h-full">
+                <div class="space-y-4 pb-24">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password
                             Lama</label>
@@ -218,7 +323,8 @@
                     </div>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <div
+                    class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
                     <button type="button" @click="closeModal()"
                         class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                     <button type="submit"

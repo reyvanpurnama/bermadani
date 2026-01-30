@@ -22,6 +22,10 @@ class Profile extends Component
     public $newPassword = '';
     public $newPassword_confirmation = '';
 
+    // Simpanan Configuration (Retail only uses Sukarela)
+    public $monthly_sukarela_amount;
+    public $sukarela_payment_method;
+
     public function mount()
     {
         $user = auth()->user();
@@ -33,15 +37,19 @@ class Profile extends Component
             $this->phone = $this->member->phone;
             $this->address = $this->member->address;
             $this->unitKerja = $this->member->unitKerja;
+
+            // Initialize Financial Settings
+            $this->monthly_sukarela_amount = $this->member->monthly_sukarela_amount;
+            $this->sukarela_payment_method = $this->member->sukarela_payment_method;
         }
     }
 
     public function updateProfile()
     {
         $this->validate([
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'unitKerja' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'unitKerja' => 'nullable|string|max:255',
         ]);
 
         $this->member->update([
@@ -51,6 +59,27 @@ class Profile extends Component
         ]);
 
         session()->flash('success', 'Profil berhasil diperbarui!');
+    }
+
+    public function updateSimpananSettings()
+    {
+        $this->validate([
+            'monthly_sukarela_amount' => 'nullable|numeric|min:0',
+            'sukarela_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
+        ]);
+
+        // Logic: specific to retail member simplicity
+        $this->member->update([
+            'sukarela_payment_method' => $this->sukarela_payment_method,
+            'monthly_sukarela_amount' => ($this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                ? ($this->monthly_sukarela_amount ?? 0)
+                : 0,
+            'salary_deduction_consent_date' => ($this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                ? now()
+                : $this->member->salary_deduction_consent_date,
+        ]);
+
+        session()->flash('success', 'Konfigurasi simpanan berhasil disimpan!');
     }
 
     public function updatePassword()
