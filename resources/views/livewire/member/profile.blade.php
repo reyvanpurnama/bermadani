@@ -232,21 +232,68 @@
 
                 <form wire:submit="updateSimpananSettings">
                     <div class="space-y-6">
-                        {{-- Simpanan Wajib --}}
-                        <div
-                            class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/20">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                                    <i class='bx bxs-calendar'></i>
+                        {{-- Payment Preferences Card --}}
+                        <div class="space-y-4">
+                            {{-- SIMWA Payment Method --}}
+                            <div
+                                class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                    Simpanan Wajib (SIMWA)
+                                </label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode
+                                            Pembayaran</label>
+                                        <select wire:model="simwa_payment_method"
+                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                            <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                            <option value="AUTO_DEBIT">Auto Debit (Saldo Sukarela)</option>
+                                            <option value="MANUAL">Transfer Manual</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
+                                            per Bulan (Tetap)</label>
+                                        <div class="relative">
+                                            <span
+                                                class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                            <input type="text"
+                                                value="{{ number_format($monthly_simpanan_wajib, 0, ',', '.') }}" disabled
+                                                readonly
+                                                class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none dark:text-white opacity-70 cursor-not-allowed font-bold">
+                                        </div>
+                                        <p class="mt-1 text-[10px] text-slate-400 flex items-center gap-1">
+                                            <i class='bx bxs-lock-alt'></i> Jumlah simpanan wajib sudah ditetapkan
+                                        </p>
+                                    </div>
                                 </div>
-                                <h4 class="font-bold text-slate-800 dark:text-blue-200 text-sm">Simpanan Wajib</h4>
                             </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
-                                        Bulanan</label>
-                                    <div class="relative" x-data="{
-                                            rawValue: {{ $monthly_simpanan_wajib ?? 0 }},
+
+                            {{-- Sukarela Payment Method --}}
+                            <div
+                                class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                                <label class="block text-[11px] font-bold text-slate-600 dark:text-slate-300 mb-3">
+                                    Simpanan Sukarela
+                                </label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Metode
+                                            Pembayaran</label>
+                                        <select wire:model.live="sukarela_payment_method"
+                                            class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
+                                            <option value="SALARY_DEDUCTION">Potong Gaji</option>
+                                            <option value="MANUAL">Transfer Manual</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
+                                            per Bulan</label>
+                                        <div class="relative" x-data="{
+                                            rawValue: {{ $monthly_sukarela_amount ?? 0 }},
                                             formatted: '',
                                             init() {
                                                 this.formatted = this.formatNumber(this.rawValue);
@@ -260,80 +307,39 @@
                                             updateValue(e) {
                                                 this.rawValue = this.parseNumber(e.target.value);
                                                 this.formatted = this.formatNumber(this.rawValue);
-                                                $wire.set('monthly_simpanan_wajib', this.rawValue);
+                                                $wire.set('monthly_sukarela_amount', this.rawValue);
                                             }
                                         }">
-                                        <span
-                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" x-model="formatted" @input="updateValue($event)"
-                                            @blur="updateValue($event)" @focus="$el.select()" placeholder="0"
-                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                            <span
+                                                class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
+                                            <input type="text" x-model="formatted" @input="updateValue($event)"
+                                                @blur="updateValue($event)" @focus="$el.select()" placeholder="0"
+                                                class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white font-bold">
+                                        </div>
                                     </div>
                                 </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Metode
-                                        Bayar</label>
-                                    <select wire:model="simwa_payment_method"
-                                        class="w-full py-2 px-3 bg-white dark:bg-slate-800 border-none rounded-lg text-sm text-slate-700 dark:text-slate-300">
-                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
-                                        <option value="AUTO_DEBIT">Auto Debit (Saldo Sukarela)</option>
-                                        <option value="MANUAL">Transfer Manual</option>
-                                    </select>
-                                </div>
                             </div>
-                        </div>
 
-                        {{-- Simpanan Sukarela --}}
-                        <div
-                            class="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800/20">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div
-                                    class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                    <i class='bx bxs-bank'></i>
+                            {{-- Summary --}}
+                            <div
+                                class="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[12px] font-semibold text-indigo-700 dark:text-indigo-300">Total
+                                        Potongan Gaji per Bulan</span>
+                                    <span class="text-[15px] font-bold text-indigo-800 dark:text-indigo-200">
+                                        Rp
+                                        {{ number_format(
+            ($simwa_payment_method === 'SALARY_DEDUCTION' ? $monthly_simpanan_wajib : 0) +
+            ($sukarela_payment_method === 'SALARY_DEDUCTION' ? ($monthly_sukarela_amount ?? 0) : 0),
+            0,
+            ',',
+            '.'
+        ) }}
+                                    </span>
                                 </div>
-                                <h4 class="font-bold text-slate-800 dark:text-emerald-200 text-sm">Simpanan Sukarela (Auto)
-                                </h4>
-                            </div>
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
-                                        Auto-Debet Bulanan</label>
-                                    <div class="relative" x-data="{
-                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                formatted: '',
-                                                init() {
-                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                },
-                                                formatNumber(num) {
-                                                    return new Intl.NumberFormat('id-ID').format(num);
-                                                },
-                                                parseNumber(str) {
-                                                    return parseInt(str.replace(/\./g, '')) || 0;
-                                                },
-                                                updateValue(e) {
-                                                    this.rawValue = this.parseNumber(e.target.value);
-                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                }
-                                            }">
-                                        <span
-                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" x-model="formatted" @input="updateValue($event)"
-                                            @blur="updateValue($event)" @focus="$el.select()" placeholder="0"
-                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
-                                    </div>
-                                    <p class="text-[10px] text-slate-400 mt-1">Kosongkan (0) jika tidak ingin menabung
-                                        otomatis.</p>
-                                </div>
-                                <div>
-                                    <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Sumber
-                                        Dana</label>
-                                    <select wire:model="sukarela_payment_method"
-                                        class="w-full py-2 px-3 bg-white dark:bg-slate-800 border-none rounded-lg text-sm text-slate-700 dark:text-slate-300">
-                                        <option value="SALARY_DEDUCTION">Potong Gaji</option>
-                                        <option value="MANUAL">Transfer Manual</option>
-                                    </select>
-                                </div>
+                                <p class="mt-1 text-[10px] text-indigo-600 dark:text-indigo-400">
+                                    Belum termasuk angsuran pinjaman (jika ada)
+                                </p>
                             </div>
                         </div>
                     </div>

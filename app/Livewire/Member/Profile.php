@@ -91,14 +91,12 @@ class Profile extends Component
     public function updateSimpananSettings()
     {
         $this->validate([
-            'monthly_simpanan_wajib' => 'required|numeric|min:10000',
             'simwa_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL,AUTO_DEBIT',
             'monthly_sukarela_amount' => 'required|numeric|min:0',
             'sukarela_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL,AUTO_DEBIT',
         ]);
 
         $this->member->update([
-            'monthly_simpanan_wajib' => $this->monthly_simpanan_wajib,
             'simwa_payment_method' => $this->simwa_payment_method,
             'monthly_sukarela_amount' => $this->monthly_sukarela_amount,
             'sukarela_payment_method' => $this->sukarela_payment_method,
