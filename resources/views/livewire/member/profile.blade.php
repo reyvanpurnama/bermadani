@@ -246,21 +246,32 @@
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Bulanan</label>
                                     <div class="relative" x-data="{
-                                            localValue: $wire.entangle('monthly_simpanan_wajib'),
-                                            get formatted() {
-                                                if(!this.localValue) return '';
-                                                return new Intl.NumberFormat('id-ID').format(this.localValue)
-                                            },
-                                            update(e) {
-                                                let raw = e.target.value.replace(/\./g, '');
-                                                raw = raw.replace(/[^0-9]/g, '');
-                                                this.localValue = raw ? parseInt(raw) : null;
-                                                e.target.value = this.formatted;
-                                            }
-                                        }">
+                                        amount: $wire.entangle('monthly_simpanan_wajib'),
+                                        display: '',
+                                        format(value) {
+                                            if (value === null || value === '') return '';
+                                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        },
+                                        unformat(value) {
+                                            return value.replace(/[^0-9]/g, '');
+                                        },
+                                        init() {
+                                            this.display = this.format(this.amount);
+                                            this.$watch('amount', (value) => {
+                                                if (this.unformat(this.display) != value) {
+                                                    this.display = this.format(value);
+                                                }
+                                            });
+                                        },
+                                        handleInput(e) {
+                                            let raw = this.unformat(e.target.value);
+                                            this.amount = raw ? parseInt(raw) : null;
+                                            this.display = this.format(raw);
+                                        }
+                                    }" x-init="init()">
                                         <span
                                             class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" placeholder="0" :value="formatted" @input="update"
+                                        <input type="text" placeholder="0" x-model="display" @input="handleInput"
                                             class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
                                     </div>
                                 </div>
@@ -292,24 +303,36 @@
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Auto-Debet Bulanan</label>
-                                    <div class="relative" x-data="{
-                                            localValue: $wire.entangle('monthly_sukarela_amount'),
-                                            get formatted() {
-                                                if(!this.localValue) return '';
-                                                return new Intl.NumberFormat('id-ID').format(this.localValue)
-                                            },
-                                            update(e) {
-                                                let raw = e.target.value.replace(/\./g, '');
-                                                raw = raw.replace(/[^0-9]/g, '');
-                                                this.localValue = raw ? parseInt(raw) : null;
-                                                e.target.value = this.formatted;
+                                <div class="relative" x-data="{
+                                    amount: $wire.entangle('monthly_sukarela_amount'),
+                                    display: '',
+                                    format(value) {
+                                        if (value === null || value === '') return '';
+                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                    },
+                                    unformat(value) {
+                                        return value.replace(/[^0-9]/g, '');
+                                    },
+                                    init() {
+                                        this.display = this.format(this.amount);
+                                        this.$watch('amount', (value) => {
+                                            if (this.unformat(this.display) != value) {
+                                                this.display = this.format(value);
                                             }
-                                        }">
-                                        <span
-                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" placeholder="0" :value="formatted" @input="update"
-                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
-                                    </div>
+                                        });
+                                    },
+                                    handleInput(e) {
+                                        let raw = this.unformat(e.target.value);
+                                        this.amount = raw ? parseInt(raw) : null;
+                                        this.display = this.format(raw);
+                                    }
+                                }" x-init="init()">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
+                                    <input type="text" placeholder="0" 
+                                        x-model="display"
+                                        @input="handleInput"
+                                        class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                </div>
                                     <p class="text-[10px] text-slate-400 mt-1">Kosongkan (0) jika tidak ingin menabung
                                         otomatis.</p>
                                 </div>
