@@ -17,8 +17,10 @@
                 <div
                     class="w-24 h-24 bg-gradient-to-br from-primary to-indigo-600 rounded-full mx-auto p-1 shadow-lg mb-3 relative group-hover:scale-105 transition-transform duration-300">
                     <div
-                        class="w-full h-full bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-indigo-600">
-                        {{ substr($member->name ?? 'M', 0, 1) }}
+                        class="w-full h-full bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-indigo-600">
+                            {{ substr($member->name ?? 'M', 0, 1) }}
+                        </span>
                     </div>
                     <div class="absolute bottom-0 right-0 w-8 h-8 bg-amber-400 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-sm"
                         title="Tier Member">

@@ -17,8 +17,10 @@
                 <div
                     class="w-24 h-24 bg-gradient-to-br from-primary to-blue-600 rounded-full mx-auto p-1 shadow-lg mb-3 relative group-hover:scale-105 transition-transform duration-300">
                     <div
-                        class="w-full h-full bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-primary to-blue-600">
-                        {{ substr($member->name ?? 'M', 0, 1) }}
+                        class="w-full h-full bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold">
+                        <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-blue-600">
+                            {{ substr($member->name ?? 'M', 0, 1) }}
+                        </span>
                     </div>
                     <div class="absolute bottom-0 right-0 w-8 h-8 bg-amber-400 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-sm"
                         title="Tier Member">
@@ -235,7 +237,8 @@
                             class="p-4 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-800/20">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-                                    <i class='bx bxs-calendar'></i></div>
+                                    <i class='bx bxs-calendar'></i>
+                                </div>
                                 <h4 class="font-bold text-slate-800 dark:text-blue-200 text-sm">Simpanan Wajib</h4>
                             </div>
                             <div class="space-y-3">
@@ -268,7 +271,8 @@
                             <div class="flex items-center gap-3 mb-4">
                                 <div
                                     class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                    <i class='bx bxs-bank'></i></div>
+                                    <i class='bx bxs-bank'></i>
+                                </div>
                                 <h4 class="font-bold text-slate-800 dark:text-emerald-200 text-sm">Simpanan Sukarela (Auto)
                                 </h4>
                             </div>
