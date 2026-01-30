@@ -75,25 +75,21 @@
         }
     }">
 
-    <!-- Top Bar - Koperasi Branding -->
+    <!-- Top Bar - Unified Branding -->
     <div
-        class="fixed top-0 left-0 w-full z-40 bg-emerald-600 dark:bg-emerald-800 px-4 py-3 flex justify-between items-center lg:hidden shadow-lg">
+        class="fixed top-0 left-0 w-full z-40 bg-white/80 dark:bg-darkCard/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/5 flex justify-between items-center lg:hidden">
         <div class="flex items-center gap-2">
             <div
-                class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center text-white font-bold">
-                <i class='bx bxs-bank text-lg'></i>
-            </div>
-            <div>
-                <span class="font-bold text-white text-sm tracking-tight block leading-tight">Koperasi UMB</span>
-                <span class="text-[10px] text-emerald-100 uppercase tracking-widest">Portal Anggota</span>
-            </div>
+                class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-white font-bold">
+                B</div>
+            <span class="font-bold text-lg tracking-tight">Bermadani</span>
         </div>
-        <div class="flex gap-2">
+        <div class="flex gap-3">
             <button @click="toggleTheme()"
-                class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center transition-colors text-white hover:bg-white/20">
+                class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center transition-colors text-slate-600 dark:text-yellow-400">
                 <i class='bx text-xl' :class="darkMode ? 'bx-sun' : 'bx-moon'"></i>
             </button>
-            <button class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20">
+            <button class="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
                 <i class='bx bx-bell text-xl'></i>
             </button>
         </div>
@@ -121,8 +117,7 @@
             <!-- Simpanan -->
             <a href="{{ route('member.simpanan') }}"
                 class="flex flex-col items-center gap-1 p-2 rounded-xl transition-all {{ request()->routeIs('member.simpanan*') ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300' }}">
-                <i
-                    class='bx {{ request()->routeIs('member.simpanan*') ? 'bxs-wallet' : 'bx-wallet' }} text-2xl'></i>
+                <i class='bx {{ request()->routeIs('member.simpanan*') ? 'bxs-wallet' : 'bx-wallet' }} text-2xl'></i>
                 <span class="text-[10px] font-medium">Simpanan</span>
             </a>
 

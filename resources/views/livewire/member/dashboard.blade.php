@@ -1,9 +1,30 @@
-<div>
+@push('styles')
+    <style>
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotateY(0deg); }
+            20% { transform: rotateY(15deg); }
+            40% { transform: rotateY(-10deg); }
+            60% { transform: rotateY(5deg); }
+        }
+        .animate-wiggle { animation: wiggle 1.5s ease-out; }
+        [x-cloak] { display: none !important; }
+    </style>
+@endpush
+
+<div x-data="{ showBalance: {{ $showBalance ? 'true' : 'false' }} }" class="space-y-8">
     @section('page-title', 'Dashboard Anggota')
 
     {{-- Toast Notification for Unread Transfers --}}
     @if($unreadCount > 0)
-        <div x-data="{ show: true }" x-show="show" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" class="mb-6">
+        <div x-data="{ show: true }" x-show="show" 
+             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 translate-y-4" 
+             class="mb-6">
             <div class="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-2xl p-5 shadow-xl shadow-emerald-500/30 border border-emerald-400 relative overflow-hidden">
                 <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                 <div class="flex items-start gap-4 relative z-10">
@@ -19,8 +40,7 @@
                             <p class="text-emerald-50 text-sm leading-relaxed">Anda menerima <span class="font-bold text-white">{{ $unreadCount }} transfer</span> hari ini. Total <span class="font-bold text-white">Rp {{ number_format($unreadTransfers->sum('amount'), 0, ',', '.') }}</span></p>
                         @endif
                         <a href="{{ route('member.simpanan') }}" class="inline-flex items-center gap-1 mt-3 px-4 py-2 bg-white text-emerald-600 rounded-lg text-sm font-bold hover:bg-emerald-50 transition-colors">
-                            Lihat Detail
-                            <i class='bx bx-right-arrow-alt'></i>
+                            Lihat Detail <i class='bx bx-right-arrow-alt'></i>
                         </a>
                     </div>
                     <button @click="show = false" class="text-white/80 hover:text-white transition-colors p-1">
@@ -31,298 +51,209 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {{-- Member Card --}}
-        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-2xl text-white relative overflow-hidden group h-full flex flex-col justify-between border border-slate-700/50 min-h-[220px]">
-            <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-10 group-hover:animate-shine"></div>
-            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
+    {{-- Member Card (Flippable) --}}
+    <div class="perspective-1000 w-full h-[220px] relative z-10 group cursor-pointer mb-8" x-data="{ flipped: false }" @click="flipped = !flipped">
+        <div class="relative w-full h-full transition-all duration-700 transform-style-3d shadow-2xl rounded-2xl"
+             :class="flipped ? 'rotate-y-180' : ''" x-init="setTimeout(() => $el.classList.add('animate-wiggle'), 1000)">
 
-            <div>
-                <div class="flex justify-between items-start mb-6">
-                    <i class='bx bxs-chip text-4xl opacity-80'></i>
-                    <div class="flex items-center gap-1 opacity-80">
-                        <i class='bx bx-wifi text-2xl rotate-90'></i>
-                    </div>
-                </div>
-                <p class="font-mono text-lg tracking-widest mb-1 shadow-black drop-shadow-md">
-                    {{ $member->nomorAnggota ?? '--------' }}
-                </p>
-            </div>
+            {{-- Front Side --}}
+            <div class="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700/50 text-white flex flex-col justify-between p-6 transition-all duration-300"
+                 :class="flipped ? 'z-0 opacity-0' : 'z-20 opacity-100 delay-200'">
+                
+                <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-10"></div>
+                <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
 
-            <div class="flex justify-between items-end mt-4">
-                <div>
-                    <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Member Name</p>
-                    <p class="font-bold uppercase tracking-wide text-sm sm:text-base">{{ $member->name ?? 'Member' }}</p>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>
-                    <span class="font-bold italic text-sm">BERMADANI</span>
-                </div>
-            </div>
-        </div>
-
-        {{-- Points & Tier Card --}}
-        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between h-full relative overflow-hidden min-h-[220px]">
-            <div class="absolute top-0 right-0 w-24 h-24 bg-slate-100 dark:bg-slate-700 rounded-bl-full -mr-4 -mt-4 z-0"></div>
-
-            <div class="relative z-10">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center text-2xl shadow-inner">
-                            <i class='bx bxs-medal'></i>
+                <div class="relative z-10 w-full h-full flex flex-col justify-between">
+                    {{-- Header --}}
+                    <div>
+                        <div class="flex justify-between items-start mb-6">
+                            <i class='bx bxs-chip text-4xl opacity-80 text-emerald-400'></i>
+                            <div class="flex items-center gap-3 opacity-80">
+                                <i class='bx bx-wifi text-2xl rotate-90'></i>
+                            </div>
                         </div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <p class="font-mono text-lg tracking-widest shadow-black drop-shadow-md">
+                                {{ $member->nomorAnggota ?? '--------' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- Footer --}}
+                    <div class="flex justify-between items-end mt-4">
                         <div>
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-white">{{ $member->tier ?? 'Bronze' }} Member</h4>
-                            <p class="text-[11px] text-slate-500">Tier Keanggotaan</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Nama Anggota</p>
+                            <p class="font-bold uppercase tracking-wide text-sm sm:text-base">{{ $member->name ?? 'Member' }}</p>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>
+                            <span class="font-bold italic text-sm">BERMADANI</span>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 uppercase tracking-wider mb-0.5">Poin Reward</p>
-                        <h3 class="text-2xl font-bold text-amber-500">{{ number_format($member->points ?? 0) }} <span class="text-xs text-slate-400">Pts</span></h3>
-                    </div>
                 </div>
+            </div>
 
-                <div>
-                    @php
-                        $tierThresholds = [
-                            'BRONZE' => ['current' => 0, 'next' => 1000, 'nextTier' => 'Silver'],
-                            'SILVER' => ['current' => 1000, 'next' => 3000, 'nextTier' => 'Gold'],
-                            'GOLD' => ['current' => 3000, 'next' => 6000, 'nextTier' => 'Platinum'],
-                            'PLATINUM' => ['current' => 6000, 'next' => 6000, 'nextTier' => 'Max'],
-                        ];
-                        $tier = $member->tier ?? 'BRONZE';
-                        $tierData = $tierThresholds[$tier] ?? $tierThresholds['BRONZE'];
-                        $points = $member->points ?? 0;
-                        $progress = $tierData['next'] > $tierData['current'] 
-                            ? (($points - $tierData['current']) / ($tierData['next'] - $tierData['current'])) * 100 
-                            : 100;
-                        $progress = min(100, max(0, $progress));
-                        $remaining = max(0, $tierData['next'] - $points);
-                    @endphp
-                    <div class="flex justify-between text-[11px] mb-2 font-medium">
-                        <span class="text-slate-600 dark:text-slate-300">{{ $tier }} ({{ number_format($tierData['current']) }})</span>
-                        <span class="text-slate-400">Target: {{ $tierData['nextTier'] }} ({{ number_format($tierData['next']) }})</span>
+            {{-- Back Side --}}
+            <div class="absolute inset-0 w-full h-full backface-hidden rounded-2xl overflow-hidden bg-slate-900 border border-slate-700 shadow-xl rotate-y-180 flex items-center justify-center relative transition-all duration-300"
+                 :class="flipped ? 'z-20 opacity-100 delay-200' : 'z-0 opacity-0'">
+                <div class="text-center relative z-10">
+                    <div class="inline-flex items-center justify-center p-3 bg-white rounded-xl shadow-lg mb-2">
+                        <i class='bx bx-qr text-6xl text-slate-800'></i>
                     </div>
-                    <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
-                        <div class="bg-gradient-to-r from-slate-400 to-amber-400 h-2.5 rounded-full relative" style="width: {{ $progress }}%">
-                            <div class="absolute top-0 left-0 w-full h-full bg-white opacity-20 animate-pulse"></div>
-                        </div>
-                    </div>
-                    @if($tier !== 'PLATINUM')
-                        <p class="text-[10px] text-slate-400 mt-2 text-right">
-                            Kumpulkan <b>{{ number_format($remaining) }}</b> poin lagi untuk naik level!
-                        </p>
-                    @else
-                        <p class="text-[10px] text-emerald-500 mt-2 text-right font-bold">
-                            🎉 Selamat! Anda sudah di tier tertinggi!
-                        </p>
-                    @endif
+                    <p class="text-[10px] text-slate-400 font-mono tracking-widest uppercase">Member ID QR Code</p>
                 </div>
+                <p class="absolute bottom-4 text-[10px] text-slate-500 uppercase tracking-widest">Tap to Flip Back</p>
             </div>
         </div>
     </div>
 
-    {{-- Simpanan Portfolio --}}
-    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 mb-8">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <i class='bx bxs-wallet text-emerald-600'></i> Portofolio Simpanan
-            </h3>
-            <button wire:click="toggleBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="{{ $showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo' }}">
-                <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-xl'></i>
-            </button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {{-- Simpanan Pokok --}}
-            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-col justify-between h-full">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">S. Pokok</span>
-                    <i class='bx bxs-lock-alt text-slate-300 text-lg'></i>
+    {{-- Main Balance Card (Retail Style) --}}
+    @php
+        $totalSimpanan = ($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0) + ($member->simpananSukarela ?? 0);
+    @endphp
+    <div class="mt-4 bg-gradient-to-br from-slate-800 to-[#0f172a] border border-slate-700/50 text-white p-6 rounded-2xl shadow-lg relative overflow-hidden group mb-8">
+        {{-- Blue Glow Effect --}}
+        <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-blue-600/30 transition-all duration-500"></div>
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none"></div>
+        
+        <div class="flex items-center justify-between relative z-10">
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-[11px] font-medium text-gray-400 uppercase tracking-wider">Total Simpanan</span>
+                    <i class='bx bxs-check-circle text-blue-500 text-xs'></i>
                 </div>
-                <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance)
-                            Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }}
-                        @else
-                            Rp ••••••
-                        @endif
-                    </h4>
-                    <p class="text-[10px] text-slate-400 mt-1">Sekali (Saat Daftar)</p>
-                </div>
-            </div>
-
-            {{-- Simpanan Wajib --}}
-            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 flex flex-col justify-between h-full">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">S. Wajib</span>
-                    <i class='bx bxs-calendar text-slate-300 text-lg'></i>
-                </div>
-                <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance)
-                            Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }}
-                        @else
-                            Rp ••••••
-                        @endif
-                    </h4>
-                    <p class="text-[10px] text-slate-400 mt-1">Akumulasi Bulanan</p>
-                </div>
-            </div>
-
-            {{-- Simpanan Sukarela --}}
-            <div class="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-800/30 flex flex-col justify-between h-full">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">S. Sukarela</span>
-                    <i class='bx bxs-bank text-emerald-300 text-lg'></i>
-                </div>
-                <div>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance)
-                            Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}
-                        @else
-                            Rp ••••••
-                        @endif
-                    </h4>
-                    <p class="text-[10px] text-slate-400 mt-1">Dapat Ditarik</p>
-                </div>
-            </div>
-
-            {{-- Total --}}
-            @php
-                $totalSimpanan = ($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0) + ($member->simpananSukarela ?? 0);
-            @endphp
-            <div class="p-4 bg-primary text-white rounded-xl shadow-lg shadow-blue-500/20 flex flex-col justify-between h-full relative overflow-hidden">
-                <div class="absolute right-0 top-0 w-16 h-16 bg-white opacity-10 rounded-bl-full -mr-2 -mt-2"></div>
-                <div class="relative z-10">
-                    <span class="text-[10px] font-bold text-blue-200 uppercase tracking-widest">Total Aset</span>
-                    <h3 class="text-2xl font-bold mt-1">
-                        @if($showBalance)
+                <div class="flex items-center gap-3">
+                    <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-white min-h-[40px] flex items-center">
+                        <span x-show="showBalance" class="transition-opacity duration-300">
                             Rp {{ number_format($totalSimpanan, 0, ',', '.') }}
-                        @else
-                            Rp ••••••••
-                        @endif
+                        </span>
+                        <span x-show="!showBalance" class="tracking-widest" style="display: none;">Rp •••••••</span>
                     </h3>
-                    <p class="text-[10px] text-blue-100 mt-2 opacity-80">Saldo aktif di Koperasi</p>
+                    <button @click="showBalance = !showBalance; $wire.toggleBalance()" class="text-white hover:text-white transition-colors p-1 rounded-full hover:bg-white/10">
+                        <i class='bx text-xl' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
+                    </button>
+                </div>
+                <div class="mt-2">
+                    <a href="{{ route('member.simpanan') }}" class="inline-flex text-[10px] bg-white/10 hover:bg-white/20 text-white px-4 py-1.5 rounded-full font-bold shadow-sm backdrop-blur-md transition-all items-center gap-1 border border-white/10">
+                        <i class='bx bx-list-ul'></i> Rincian Simpanan
+                    </a>
                 </div>
             </div>
-        </div>
 
-        {{-- Quick Actions (Gojek Style Grid) --}}
-        <h4 class="text-sm font-bold text-slate-800 dark:text-white mb-4 mt-2">Menu Cepat</h4>
-        <div class="grid grid-cols-4 gap-4 mb-2">
-            
-            {{-- Transfer --}}
-            <a href="{{ route('member.transfer') }}" class="flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-emerald-200 dark:group-hover:bg-emerald-900/50 transition-colors">
-                    <i class='bx bx-transfer'></i>
-                </div>
-                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Transfer</span>
-            </a>
+            <div class="w-px h-16 bg-white/10 mx-4 sm:mx-8"></div>
 
-            {{-- Simpanan --}}
-            <a href="{{ route('member.simpanan') }}" class="flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50 transition-colors">
-                    <i class='bx bx-wallet'></i>
+            <div class="min-w-[80px] sm:min-w-[120px] text-right sm:text-left">
+                <div class="flex items-center justify-end sm:justify-start gap-1.5 mb-1">
+                    <div class="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center text-[8px] text-black font-bold"><i class='bx bxs-coin-stack'></i></div>
+                    <span class="text-[11px] font-medium text-gray-400">Points</span>
                 </div>
-                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Simpanan</span>
-            </a>
-
-            {{-- Riwayat --}}
-            <a href="{{ route('member.transactions') }}" class="flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50 transition-colors">
-                    <i class='bx bx-history'></i>
+                <h3 class="text-xl sm:text-2xl font-bold text-amber-500">{{ number_format($member->points ?? 0) }}</h3>
+                <div class="mt-2 text-right sm:text-left">
+                    <span class="text-[9px] px-2 py-0.5 rounded bg-white/10 border border-white/5 text-slate-300">{{ $member->tier ?? 'Bronze' }}</span>
                 </div>
-                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Riwayat</span>
-            </a>
-
-            {{-- Lainnya (Placeholder) --}}
-            <button onclick="alert('Fitur segera hadir!')" class="flex flex-col items-center gap-2 group">
-                <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 flex items-center justify-center text-2xl shadow-sm group-hover:bg-slate-200 dark:group-hover:bg-slate-700 transition-colors">
-                    <i class='bx bx-grid-alt'></i>
-                </div>
-                <span class="text-[11px] text-slate-600 dark:text-slate-300 font-medium text-center">Lainnya</span>
-            </button>
-            
+            </div>
         </div>
     </div>
 
-    {{-- Recent Activities --}}
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {{-- Recent Transactions --}}
-        <div class="space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Riwayat Belanja</h3>
-                <a href="{{ route('member.transactions') }}" class="text-sm text-primary hover:underline">Lihat Semua</a>
-            </div>
+    {{-- Quick Actions --}}
+    <div>
+        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 px-1">Menu Utama</h3>
+        <div class="grid grid-cols-4 gap-3">
+            <a href="{{ route('member.simpanan') }}" class="group flex flex-col items-center gap-2">
+                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-emerald-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors"></div>
+                    <i class='bx bxs-wallet-alt'></i>
+                </div>
+                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Simpanan</span>
+            </a>
 
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                @if(count($recentTransactions) > 0)
-                    <div class="divide-y divide-slate-100 dark:divide-slate-700">
-                        @foreach($recentTransactions as $trx)
-                            <div class="p-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center">
-                                        <i class='bx bx-shopping-bag'></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800 dark:text-white">Belanja #{{ $trx->id }}</p>
-                                        <p class="text-[11px] text-slate-500">{{ $trx->created_at->format('d M • H:i') }}</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm font-bold text-slate-800 dark:text-white">-Rp {{ number_format($trx->totalAmount, 0, ',', '.') }}</p>
-                                    <p class="text-[10px] text-emerald-500 font-bold">{{ $trx->status }}</p>
-                                </div>
-                            </div>
-                        @endforeach
+            <a href="{{ route('member.transfer') }}" class="group flex flex-col items-center gap-2">
+                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-blue-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors"></div>
+                    <i class='bx bxs-paper-plane'></i>
+                </div>
+                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Transfer</span>
+            </a>
+
+            <a href="{{ route('member.transactions') }}" class="group flex flex-col items-center gap-2">
+                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-amber-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors"></div>
+                    <i class='bx bxs-time-five'></i>
+                </div>
+                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Riwayat</span>
+            </a>
+
+            <a href="{{ route('member.profile') }}" class="group flex flex-col items-center gap-2">
+                <div class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-purple-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-purple-500/5 group-hover:bg-purple-500/10 transition-colors"></div>
+                    <i class='bx bxs-user-circle'></i>
+                </div>
+                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Profil</span>
+            </a>
+        </div>
+    </div>
+
+    {{-- Activity Feed --}}
+    <div class="space-y-6">
+        
+        {{-- Simpanan Activities --}}
+        <div>
+            <div class="flex justify-between items-end mb-4 px-1">
+                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Aktivitas Simpanan</h3>
+                <a href="{{ route('member.simpanan') }}" class="text-xs text-emerald-600 hover:text-emerald-500 font-medium">Lihat Semua</a>
+            </div>
+            <div class="space-y-3">
+                @forelse($recentSimpanan as $simp)
+                    <div class="bg-white dark:bg-darkCard rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center gap-4 hover:shadow-sm transition-all">
+                        <div class="w-10 h-10 rounded-full {{ $simp->transactionType === 'SETOR' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' }} flex items-center justify-center text-lg shrink-0">
+                            <i class='bx {{ $simp->transactionType === 'SETOR' ? 'bx-down-arrow-alt' : 'bx-up-arrow-alt' }}'></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">Simpanan {{ ucfirst(strtolower($simp->type)) }}</h4>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ $simp->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }} • {{ $simp->created_at->format('d M') }}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-sm font-bold {{ $simp->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
+                                {{ $simp->transactionType === 'SETOR' ? '+' : '-' }}Rp {{ number_format($simp->amount, 0, ',', '.') }}
+                            </p>
+                        </div>
                     </div>
-                @else
-                    <div class="p-8 text-center text-slate-400">
-                        <i class='bx bx-shopping-bag text-4xl mb-2 opacity-50'></i>
-                        <p class="text-sm">Belum ada transaksi belanja</p>
+                @empty
+                    <div class="text-center py-6 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-2xl">
+                        <p class="text-xs text-slate-400">Belum ada aktivitas simpanan</p>
                     </div>
-                @endif
+                @endforelse
             </div>
         </div>
 
-        {{-- Recent Simpanan --}}
-        <div class="space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Aktivitas Simpanan</h3>
-                <a href="{{ route('member.simpanan') }}" class="text-sm text-primary hover:underline">Lihat Semua</a>
+        {{-- Shopping Activities --}}
+        <div>
+            <div class="flex justify-between items-end mb-4 px-1">
+                <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Riwayat Belanja</h3>
+                <a href="{{ route('member.transactions') }}" class="text-xs text-emerald-600 hover:text-emerald-500 font-medium">Lihat Semua</a>
             </div>
-
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                @if(count($recentSimpanan) > 0)
-                    <div class="divide-y divide-slate-100 dark:divide-slate-700">
-                        @foreach($recentSimpanan as $simp)
-                            <div class="p-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full {{ $simp->transactionType === 'SETOR' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' }} flex items-center justify-center">
-                                        <i class='bx {{ $simp->transactionType === 'SETOR' ? 'bx-down-arrow-alt' : 'bx-up-arrow-alt' }} text-xl'></i>
-                                    </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-slate-800 dark:text-white">Simpanan {{ ucfirst(strtolower($simp->type)) }}</p>
-                                        <p class="text-[11px] text-slate-500">{{ $simp->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }}</p>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <p class="text-sm font-bold {{ $simp->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
-                                        {{ $simp->transactionType === 'SETOR' ? '+' : '-' }}Rp {{ number_format($simp->amount, 0, ',', '.') }}
-                                    </p>
-                                    <p class="text-[10px] text-slate-400">{{ $simp->created_at->format('d M') }}</p>
-                                </div>
-                            </div>
-                        @endforeach
+            <div class="space-y-3">
+                @forelse($recentTransactions as $trx)
+                    <div class="bg-white dark:bg-darkCard rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center gap-4 hover:shadow-sm transition-all">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 flex items-center justify-center text-lg shrink-0">
+                            <i class='bx bx-shopping-bag'></i>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">Belanja Toko</h4>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ $trx->created_at->format('d M Y • H:i') }}</p>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <p class="text-sm font-bold text-slate-800 dark:text-white">-Rp {{ number_format($trx->totalAmount, 0, ',', '.') }}</p>
+                            <span class="text-[9px] font-bold text-emerald-500">{{ ucfirst($trx->status) }}</span>
+                        </div>
                     </div>
-                @else
-                    <div class="p-8 text-center text-slate-400">
-                        <i class='bx bx-wallet text-4xl mb-2 opacity-50'></i>
-                        <p class="text-sm">Belum ada aktivitas simpanan</p>
+                @empty
+                    <div class="text-center py-6 border-2 border-dashed border-slate-100 dark:border-slate-700 rounded-2xl">
+                        <p class="text-xs text-slate-400">Belum ada transaksi belanja</p>
                     </div>
-                @endif
+                @endforelse
             </div>
         </div>
+
     </div>
 </div>

@@ -57,22 +57,15 @@
             </div>
 
             <div class="relative z-10">
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
-                            <i class='bx bxs-bank text-emerald-400 text-xs'></i>
-                        </div>
-                        <span
-                            class="text-slate-300 text-sm font-medium">{{ $member->isMemberKoperasi ? 'Saldo Sukarela' : 'Saldo Bermadani' }}</span>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="w-6 h-6 rounded bg-emerald-500/20 flex items-center justify-center">
+                        <i class='bx bxs-bank text-emerald-400 text-xs'></i>
                     </div>
-                    <button @click="showBalance = !showBalance"
-                        class="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-400 hover:text-white">
-                        <i class='bx text-lg' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
-                    </button>
+                    <span
+                        class="text-slate-300 text-sm font-medium">{{ $member->isMemberKoperasi ? 'Saldo Sukarela' : 'Saldo Bermadani' }}</span>
                 </div>
                 <div class="text-3xl font-bold tracking-tight mb-4">
-                    <span x-show="showBalance">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</span>
-                    <span x-show="!showBalance" x-cloak>Rp ••••••••</span>
+                    Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}
                 </div>
                 <div
                     class="flex items-center gap-2 text-xs text-slate-300 bg-white/5 w-fit px-3 py-1.5 rounded-full border border-white/5">

@@ -1,69 +1,79 @@
-<div>
+<div x-data="{ showBalance: {{ $showBalance ? 'true' : 'false' }} }">
     @section('page-title', 'Simpanan Saya')
 
     {{-- Summary Cards with Hide/Unhide --}}
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg font-bold text-slate-900 dark:text-white">Ringkasan Simpanan</h2>
-        <button wire:click="toggleBalance" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="{{ $showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo' }}">
-            <i class='bx {{ $showBalance ? "bx-hide" : "bx-show" }} text-xl'></i>
+        <button @click="showBalance = !showBalance; $wire.toggleBalance()" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors" title="Sembunyikan/Tampilkan Saldo">
+            <i class='bx text-xl' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 {{ $member->isMemberKoperasi ? 'lg:grid-cols-4' : 'lg:grid-cols-2' }} gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         @if($member->isMemberKoperasi)
+        {{-- Simpanan Pokok --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl flex items-center justify-center flex-shrink-0">
                     <i class='bx bxs-lock-alt text-2xl'></i>
                 </div>
-                <div>
-                    <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Pokok</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance) Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                <div class="min-w-0">
+                    <p class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">Simpanan Pokok</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white truncate">
+                        <span x-show="showBalance">Rp {{ number_format($member->simpananPokok ?? 0, 0, ',', '.') }}</span>
+                        <span x-show="!showBalance" style="display: none;">Rp ••••••</span>
                     </h3>
                 </div>
             </div>
         </div>
+
+        {{-- Simpanan Wajib --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
                     <i class='bx bxs-calendar text-2xl'></i>
                 </div>
-                <div>
-                    <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Wajib</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance) Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                <div class="min-w-0">
+                    <p class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">Simpanan Wajib</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white truncate">
+                        <span x-show="showBalance">Rp {{ number_format($member->simpananWajib ?? 0, 0, ',', '.') }}</span>
+                        <span x-show="!showBalance" style="display: none;">Rp ••••••</span>
                     </h3>
                 </div>
             </div>
         </div>
         @endif
 
+        {{-- Simpanan Sukarela --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-xl flex items-center justify-center flex-shrink-0">
                     <i class='bx bxs-bank text-2xl'></i>
                 </div>
-                <div>
-                    <p class="text-[11px] text-slate-500 uppercase tracking-wider">S. Sukarela</p>
-                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                        @if($showBalance) Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }} @else Rp •••••• @endif
+                <div class="min-w-0">
+                    <p class="text-[11px] text-slate-500 uppercase tracking-wider font-medium">Simpanan Sukarela</p>
+                    <h3 class="text-lg font-bold text-slate-800 dark:text-white truncate">
+                        <span x-show="showBalance">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</span>
+                        <span x-show="!showBalance" style="display: none;">Rp ••••••</span>
                     </h3>
                 </div>
             </div>
         </div>
+
+        {{-- Total Simpanan --}}
         @php
             $totalSimpanan = ($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0) + ($member->simpananSukarela ?? 0);
         @endphp
         <div class="bg-gradient-to-br from-primary to-blue-700 p-5 rounded-2xl shadow-lg text-white">
             <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
                     <i class='bx bxs-wallet text-2xl'></i>
                 </div>
-                <div>
-                    <p class="text-[11px] text-blue-100 uppercase tracking-wider">Total Aset</p>
-                    <h3 class="text-lg font-bold">
-                        @if($showBalance) Rp {{ number_format($totalSimpanan, 0, ',', '.') }} @else Rp •••••• @endif
+                <div class="min-w-0">
+                    <p class="text-[11px] text-blue-100 uppercase tracking-wider font-medium">Total Simpanan</p>
+                    <h3 class="text-lg font-bold truncate">
+                        <span x-show="showBalance">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</span>
+                        <span x-show="!showBalance" style="display: none;">Rp ••••••</span>
                     </h3>
                 </div>
             </div>
@@ -87,14 +97,14 @@
                 </button>
                 @if($member->isMemberKoperasi)
                 <button wire:click="$set('filterType', 'POKOK')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'POKOK' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
-                    S. Pokok
+                    Simpanan Pokok
                 </button>
                 <button wire:click="$set('filterType', 'WAJIB')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'WAJIB' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
-                    S. Wajib
+                    Simpanan Wajib
                 </button>
                 @endif
                 <button wire:click="$set('filterType', 'SUKARELA')" class="py-4 px-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap {{ $filterType === 'SUKARELA' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
-                    S. Sukarela
+                    Simpanan Sukarela
                 </button>
             </nav>
         </div>
