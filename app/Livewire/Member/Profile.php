@@ -91,18 +91,28 @@ class Profile extends Component
     public function updateSimpananSettings()
     {
         $this->validate([
-            'simwa_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL,AUTO_DEBIT',
-            'monthly_sukarela_amount' => 'required|numeric|min:0',
-            'sukarela_payment_method' => 'required|in:SALARY_DEDUCTION,MANUAL,AUTO_DEBIT',
+            'simwa_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
+            'monthly_sukarela_amount' => 'nullable|numeric|min:0',
+            'sukarela_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
         ]);
 
-        $this->member->update([
-            'simwa_payment_method' => $this->simwa_payment_method,
-            'monthly_sukarela_amount' => $this->monthly_sukarela_amount,
-            'sukarela_payment_method' => $this->sukarela_payment_method,
-        ]);
+        $updateData = [
+            'simwa_payment_method' => $this->simwa_payment_method ?: null,
+            'sukarela_payment_method' => $this->sukarela_payment_method ?: null,
+            'monthly_sukarela_amount' => ($this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                ? ($this->monthly_sukarela_amount ?: 0)
+                : 0,
+            'salary_deduction_consent_date' => ($this->simwa_payment_method === 'SALARY_DEDUCTION' || $this->sukarela_payment_method === 'SALARY_DEDUCTION')
+                ? now()->toDateString()
+                : null,
+        ];
+
+        $this->member->update($updateData);
 
         session()->flash('success', 'Pengaturan simpanan berhasil diperbarui!');
+
+        // Refresh local state to reflect changes (e.g. zeroed amount)
+        $this->monthly_sukarela_amount = $updateData['monthly_sukarela_amount'];
     }
 
     public function render()
