@@ -287,7 +287,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.users.index');
     })->name('admin.users');
 
-    // Suppliers Management
+    // Suppliers Management 
     Route::get('/suppliers', function () {
         return view('admin.suppliers.index');
     })->name('admin.suppliers');

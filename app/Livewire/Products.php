@@ -64,9 +64,39 @@ class Products extends Component
     {
         $product = Product::find($productId);
 
-        if ($product) {
+        if (!$product) {
+            session()->flash('error', 'Produk tidak ditemukan');
+            return;
+        }
+
+        // Check if product has related transactions
+        $hasTransactions = $product->transactionItems()->exists();
+
+        if ($hasTransactions) {
+            session()->flash('error', 'Produk tidak dapat dihapus karena sudah memiliki riwayat transaksi. Anda dapat menonaktifkan produk ini.');
+            return;
+        }
+
+        try {
+            // Delete related stock movements first
+            $product->stockMovements()->delete();
+
+            // Delete related consignment items
+            $product->consignmentItems()->delete();
+
+            // Delete related restock requests
+            $product->restockRequests()->delete();
+
+            // Delete product image if exists
+            if ($product->image && \Illuminate\Support\Facades\Storage::disk('public')->exists($product->image)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
+            }
+
             $product->delete();
+
             session()->flash('message', 'Produk berhasil dihapus');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal menghapus produk: ' . $e->getMessage());
         }
     }
 

@@ -100,9 +100,40 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        $product->delete();
 
-        return redirect()->route('admin.products')
-            ->with('message', 'Produk berhasil dihapus');
+        // Check if product has related transactions or stock movements
+        $hasTransactions = $product->transactionItems()->exists();
+        $hasStockMovements = $product->stockMovements()->exists();
+
+        if ($hasTransactions) {
+            return redirect()->route('admin.products')
+                ->with('error', 'Produk tidak dapat dihapus karena sudah memiliki riwayat transaksi. Anda dapat menonaktifkan produk ini.');
+        }
+
+        try {
+            // Delete related stock movements first (if no transactions)
+            if ($hasStockMovements) {
+                $product->stockMovements()->delete();
+            }
+
+            // Delete related consignment items
+            $product->consignmentItems()->delete();
+
+            // Delete related restock requests
+            $product->restockRequests()->delete();
+
+            // Delete product image if exists
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $product->delete();
+
+            return redirect()->route('admin.products')
+                ->with('message', 'Produk berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.products')
+                ->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
+        }
     }
 }

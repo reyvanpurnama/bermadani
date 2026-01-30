@@ -8,6 +8,15 @@
         </div>
     @endif
 
+    {{-- Error Message --}}
+    @if (session()->has('error'))
+        <div
+            class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-xl p-4 mb-6 flex items-center gap-3">
+            <i class='bx bx-error-circle text-2xl text-rose-600 dark:text-rose-400'></i>
+            <span class="text-sm font-medium text-rose-700 dark:text-rose-400">{{ session('error') }}</span>
+        </div>
+    @endif
+
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
