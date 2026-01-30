@@ -246,33 +246,33 @@
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Bulanan</label>
                                     <div class="relative" x-data="{
-                                        amount: $wire.entangle('monthly_simpanan_wajib'),
-                                        display: '',
-                                        format(value) {
-                                            if (value === null || value === '') return '';
-                                            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                        },
-                                        unformat(value) {
-                                            return value.replace(/[^0-9]/g, '');
-                                        },
+                                        displayValue: '',
                                         init() {
-                                            this.display = this.format(this.amount);
-                                            this.$watch('amount', (value) => {
-                                                if (this.unformat(this.display) != value) {
-                                                    this.display = this.format(value);
-                                                }
+                                            // Ensure value is ready if loading via Livewire
+                                            let val = $wire.get('monthly_simpanan_wajib');
+                                            this.displayValue = val ? this.formatCurrency(val) : '';
+                                            
+                                            // Fallback watcher in case Livewire updates it externally
+                                            this.$watch('$wire.monthly_simpanan_wajib', (value) => {
+                                                if (value) this.displayValue = this.formatCurrency(value);
                                             });
                                         },
+                                        formatCurrency(val) {
+                                            if (!val) return '';
+                                            return val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        },
                                         handleInput(e) {
-                                            let raw = this.unformat(e.target.value);
-                                            this.amount = raw ? parseInt(raw) : null;
-                                            this.display = this.format(raw);
+                                            let raw = e.target.value.replace(/\D/g, '');
+                                            this.displayValue = this.formatCurrency(raw);
+                                            $wire.set('monthly_simpanan_wajib', raw);
                                         }
-                                    }" x-init="init()">
-                                        <span
-                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" placeholder="0" x-model="display" @input="handleInput"
-                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                    }">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
+                                        <input type="text" 
+                                               x-model="displayValue" 
+                                               @input="handleInput"
+                                               placeholder="0"
+                                               class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
                                     </div>
                                 </div>
                                 <div>
@@ -303,36 +303,35 @@
                                 <div>
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Auto-Debet Bulanan</label>
-                                <div class="relative" x-data="{
-                                    amount: $wire.entangle('monthly_sukarela_amount'),
-                                    display: '',
-                                    format(value) {
-                                        if (value === null || value === '') return '';
-                                        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                    },
-                                    unformat(value) {
-                                        return value.replace(/[^0-9]/g, '');
-                                    },
-                                    init() {
-                                        this.display = this.format(this.amount);
-                                        this.$watch('amount', (value) => {
-                                            if (this.unformat(this.display) != value) {
-                                                this.display = this.format(value);
-                                            }
-                                        });
-                                    },
-                                    handleInput(e) {
-                                        let raw = this.unformat(e.target.value);
-                                        this.amount = raw ? parseInt(raw) : null;
-                                        this.display = this.format(raw);
-                                    }
-                                }" x-init="init()">
-                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                    <input type="text" placeholder="0" 
-                                        x-model="display"
-                                        @input="handleInput"
-                                        class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
-                                </div>
+                                    <div class="relative" x-data="{
+                                        displayValue: '',
+                                        init() {
+                                            // Ensure value is ready if loading via Livewire
+                                            let val = $wire.get('monthly_sukarela_amount');
+                                            this.displayValue = val ? this.formatCurrency(val) : '';
+                                            
+                                            // Fallback watcher in case Livewire updates it externally
+                                            this.$watch('$wire.monthly_sukarela_amount', (value) => {
+                                                if (value) this.displayValue = this.formatCurrency(value);
+                                            });
+                                        },
+                                        formatCurrency(val) {
+                                            if (!val) return '';
+                                            return val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                                        },
+                                        handleInput(e) {
+                                            let raw = e.target.value.replace(/\D/g, '');
+                                            this.displayValue = this.formatCurrency(raw);
+                                            $wire.set('monthly_sukarela_amount', raw);
+                                        }
+                                    }">
+                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
+                                        <input type="text" 
+                                               x-model="displayValue" 
+                                               @input="handleInput"
+                                               placeholder="0"
+                                               class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                    </div>
                                     <p class="text-[10px] text-slate-400 mt-1">Kosongkan (0) jika tidak ingin menabung
                                         otomatis.</p>
                                 </div>
