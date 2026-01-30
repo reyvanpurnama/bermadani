@@ -69,23 +69,9 @@
                                 <i class='bx bxs-user-detail'></i>
                             </div>
                             <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Informasi Personal</h4>
-                                <p class="text-xs text-slate-400">Nama, Email, Telepon, Alamat</p>
-                            </div>
-                        </div>
-                        <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
-                    </button>
-
-                    <button @click="openModal('profile')"
-                        class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
-                        <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
-                                <i class='bx bxs-briefcase-alt-2'></i>
-                            </div>
-                            <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Unit Kerja</h4>
-                                <p class="text-xs text-slate-400">{{ $member->unitKerja ?? 'Belum diisi' }}</p>
+                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Informasi Personal &
+                                    Pekerjaan</h4>
+                                <p class="text-xs text-slate-400">Nama, Kontak, Alamat, Unit Kerja</p>
                             </div>
                         </div>
                         <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
@@ -300,23 +286,23 @@
                                             class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                             per Bulan</label>
                                         <div class="relative" x-data="{
-                                                                            rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                                            formatted: '',
-                                                                            init() {
-                                                                                this.formatted = this.formatNumber(this.rawValue);
-                                                                            },
-                                                                            formatNumber(num) {
-                                                                                return new Intl.NumberFormat('id-ID').format(num);
-                                                                            },
-                                                                            parseNumber(str) {
-                                                                                return parseInt(str.replace(/\./g, '')) || 0;
-                                                                            },
-                                                                            updateValue(e) {
-                                                                                this.rawValue = this.parseNumber(e.target.value);
-                                                                                this.formatted = this.formatNumber(this.rawValue);
-                                                                                $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                                            }
-                                                                        }">
+                                                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                                                formatted: '',
+                                                                                init() {
+                                                                                    this.formatted = this.formatNumber(this.rawValue);
+                                                                                },
+                                                                                formatNumber(num) {
+                                                                                    return new Intl.NumberFormat('id-ID').format(num);
+                                                                                },
+                                                                                parseNumber(str) {
+                                                                                    return parseInt(str.replace(/\./g, '')) || 0;
+                                                                                },
+                                                                                updateValue(e) {
+                                                                                    this.rawValue = this.parseNumber(e.target.value);
+                                                                                    this.formatted = this.formatNumber(this.rawValue);
+                                                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                                                }
+                                                                            }">
                                             <span
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
