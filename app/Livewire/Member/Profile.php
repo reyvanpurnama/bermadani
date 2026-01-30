@@ -52,9 +52,9 @@ class Profile extends Component
     public function updateProfile()
     {
         $this->validate([
-            'phone' => 'required|string|max:20',
-            'address' => 'required|string|max:500',
-            'unitKerja' => 'required|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:500',
+            'unitKerja' => 'nullable|string|max:255',
         ]);
 
         $this->member->update([
