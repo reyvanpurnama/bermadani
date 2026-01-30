@@ -246,7 +246,6 @@
                                             Pembayaran</label>
                                         <select wire:model="simwa_payment_method"
                                             class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
-                                            <option value="">Tidak Ada (Bukan Anggota)</option>
                                             <option value="SALARY_DEDUCTION">Potong Gaji</option>
                                             <option value="MANUAL">Bayar Manual</option>
                                         </select>
@@ -298,23 +297,23 @@
                                             class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                             per Bulan</label>
                                         <div class="relative" x-data="{
-                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                formatted: '',
-                                                init() {
-                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                },
-                                                formatNumber(num) {
-                                                    return new Intl.NumberFormat('id-ID').format(num);
-                                                },
-                                                parseNumber(str) {
-                                                    return parseInt(str.replace(/\./g, '')) || 0;
-                                                },
-                                                updateValue(e) {
-                                                    this.rawValue = this.parseNumber(e.target.value);
-                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                }
-                                            }">
+                                                    rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                    formatted: '',
+                                                    init() {
+                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                    },
+                                                    formatNumber(num) {
+                                                        return new Intl.NumberFormat('id-ID').format(num);
+                                                    },
+                                                    parseNumber(str) {
+                                                        return parseInt(str.replace(/\./g, '')) || 0;
+                                                    },
+                                                    updateValue(e) {
+                                                        this.rawValue = this.parseNumber(e.target.value);
+                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                        $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                    }
+                                                }">
                                             <span
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
