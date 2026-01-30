@@ -49,23 +49,18 @@
     {{-- Step 1: Input --}}
     @if($step === 1)
         {{-- Balance Card --}}
-        <div x-data="{ showBalance: {{ $showBalance ? 'true' : 'false' }} }"
+        <div
             class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 mb-8 relative overflow-hidden transition-all hover:scale-[1.02]">
             <div class="absolute top-0 right-0 p-4 opacity-10">
                 <i class='bx bx-paper-plane text-9xl'></i>
             </div>
 
             <div class="relative z-10">
-                <div class="flex items-center justify-between mb-2">
+                <div class="mb-2">
                     <span class="text-blue-100 text-sm font-medium">Saldo Sukarela</span>
-                    <button @click="showBalance = !showBalance"
-                        class="p-1.5 hover:bg-white/10 rounded-lg transition-colors">
-                        <i class='bx text-lg' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
-                    </button>
                 </div>
                 <div class="text-3xl font-bold tracking-tight mb-4">
-                    <span x-show="showBalance">Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}</span>
-                    <span x-show="!showBalance" style="display: none;">Rp ••••••••</span>
+                    Rp {{ number_format($member->simpananSukarela ?? 0, 0, ',', '.') }}
                 </div>
                 <div class="flex items-center gap-2 text-xs text-blue-100 bg-white/10 w-fit px-3 py-1.5 rounded-full">
                     <i class='bx bx-info-circle'></i>
