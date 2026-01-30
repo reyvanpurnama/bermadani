@@ -228,11 +228,10 @@
                 class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
                 <div class="w-12 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full mx-auto mb-6 sm:hidden"></div>
 
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Konfigurasi Simpanan</h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Preferensi Pembayaran Simpanan</h3>
 
                 <form wire:submit="updateSimpananSettings">
                     <div class="space-y-6">
-                        {{-- Payment Preferences Card --}}
                         <div class="space-y-4">
                             {{-- SIMWA Payment Method --}}
                             <div
@@ -249,7 +248,7 @@
                                             class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
                                             <option value="SALARY_DEDUCTION">Potong Gaji</option>
                                             <option value="AUTO_DEBIT">Auto Debit (Saldo Sukarela)</option>
-                                            <option value="MANUAL">Transfer Manual</option>
+                                            <option value="MANUAL">Bayar Manual</option>
                                         </select>
                                     </div>
                                     <div>
@@ -269,6 +268,11 @@
                                         </p>
                                     </div>
                                 </div>
+                                @if($simwa_payment_method === 'MANUAL')
+                                    <p class="mt-2 text-[11px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                        <i class='bx bx-info-circle'></i> Anda akan membayar simpanan wajib secara manual
+                                    </p>
+                                @endif
                             </div>
 
                             {{-- Sukarela Payment Method --}}
@@ -285,7 +289,7 @@
                                         <select wire:model.live="sukarela_payment_method"
                                             class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white cursor-pointer">
                                             <option value="SALARY_DEDUCTION">Potong Gaji</option>
-                                            <option value="MANUAL">Transfer Manual</option>
+                                            <option value="MANUAL">Bayar Manual (Opsional)</option>
                                         </select>
                                     </div>
                                     <div>
@@ -314,10 +318,17 @@
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
                                                 @blur="updateValue($event)" @focus="$el.select()" placeholder="0"
-                                                class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white font-bold">
+                                                class="w-full bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 rounded-lg pl-10 pr-3 py-2.5 text-[13px] outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all dark:text-white font-bold {{ $sukarela_payment_method === 'MANUAL' ? 'opacity-50 cursor-not-allowed' : '' }}"
+                                                {{ $sukarela_payment_method === 'MANUAL' ? 'disabled' : '' }}>
                                         </div>
                                     </div>
                                 </div>
+                                @if($sukarela_payment_method === 'SALARY_DEDUCTION' && $monthly_sukarela_amount > 0)
+                                    <p class="mt-2 text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                        <i class='bx bx-check-circle'></i> Simpanan sukarela Rp
+                                        {{ number_format($monthly_sukarela_amount, 0, ',', '.') }} akan dipotong dari gaji
+                                    </p>
+                                @endif
                             </div>
 
                             {{-- Summary --}}
@@ -349,9 +360,8 @@
                             class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                         <button type="submit"
                             class="flex-1 py-3 bg-primary text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-500/20">Simpan
-                            Konfigurasi</button>
+                            Perubahan</button>
                     </div>
-                </form>
             </div>
         </div>
     @endif
