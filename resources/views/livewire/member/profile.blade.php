@@ -163,7 +163,7 @@
 
     {{-- 1. Profile Edit Modal --}}
     <div x-show="activeModal === 'profile'" x-cloak
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style="display: none;">
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
         <div
             class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
@@ -223,7 +223,7 @@
     {{-- 2. Simpanan Config Modal --}}
     @if($member->isMemberKoperasi)
         <div x-show="activeModal === 'simpanan'" x-cloak
-            class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style="display: none;">
+            class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
             <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
             <div
                 class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
@@ -297,23 +297,23 @@
                                             class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                             per Bulan</label>
                                         <div class="relative" x-data="{
-                                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                                formatted: '',
-                                                                init() {
-                                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                                },
-                                                                formatNumber(num) {
-                                                                    return new Intl.NumberFormat('id-ID').format(num);
-                                                                },
-                                                                parseNumber(str) {
-                                                                    return parseInt(str.replace(/\./g, '')) || 0;
-                                                                },
-                                                                updateValue(e) {
-                                                                    this.rawValue = this.parseNumber(e.target.value);
-                                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                                }
-                                                            }">
+                                                                    rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                                    formatted: '',
+                                                                    init() {
+                                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                                    },
+                                                                    formatNumber(num) {
+                                                                        return new Intl.NumberFormat('id-ID').format(num);
+                                                                    },
+                                                                    parseNumber(str) {
+                                                                        return parseInt(str.replace(/\./g, '')) || 0;
+                                                                    },
+                                                                    updateValue(e) {
+                                                                        this.rawValue = this.parseNumber(e.target.value);
+                                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                                        $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                                    }
+                                                                }">
                                             <span
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
@@ -370,7 +370,7 @@
 
     {{-- 3. Password Modal --}}
     <div x-show="activeModal === 'password'" x-cloak
-        class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" style="display: none;">
+        class="fixed inset-0 z-[100] flex items-end sm:items-center justify-center" style="display: none;">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="closeModal()"></div>
         <div
             class="bg-white dark:bg-slate-900 w-full max-w-lg sm:rounded-2xl rounded-t-3xl p-6 relative z-10 max-h-[90vh] overflow-y-auto animate-[slideUp_0.3s_ease-out]">
@@ -378,8 +378,8 @@
 
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Ubah Password</h3>
 
-            <form wire:submit="updatePassword">
-                <div class="space-y-4">
+            <form wire:submit="updatePassword" class="flex flex-col h-full">
+                <div class="space-y-4 pb-24">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Password
                             Lama</label>
@@ -402,7 +402,8 @@
                     </div>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <div
+                    class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
                     <button type="button" @click="closeModal()"
                         class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                     <button type="submit"
