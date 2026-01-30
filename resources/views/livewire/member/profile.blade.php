@@ -246,33 +246,24 @@
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Bulanan</label>
                                     <div class="relative" x-data="{
-                                        displayValue: '',
-                                        init() {
-                                            // Ensure value is ready if loading via Livewire
-                                            let val = $wire.get('monthly_simpanan_wajib');
-                                            this.displayValue = val ? this.formatCurrency(val) : '';
-                                            
-                                            // Fallback watcher in case Livewire updates it externally
-                                            this.$watch('$wire.monthly_simpanan_wajib', (value) => {
-                                                if (value) this.displayValue = this.formatCurrency(value);
-                                            });
-                                        },
-                                        formatCurrency(val) {
-                                            if (!val) return '';
-                                            return val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                        },
-                                        handleInput(e) {
-                                            let raw = e.target.value.replace(/\D/g, '');
-                                            this.displayValue = this.formatCurrency(raw);
-                                            $wire.set('monthly_simpanan_wajib', raw);
-                                        }
-                                    }">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" 
-                                               x-model="displayValue" 
-                                               @input="handleInput"
-                                               placeholder="0"
-                                               class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                                original: @entangle('monthly_simpanan_wajib'),
+                                                display: '',
+                                                init() {
+                                                    this.display = (this.original && this.original != 0) ? new Intl.NumberFormat('id-ID').format(this.original) : '';
+                                                    $watch('original', value => {
+                                                        this.display = (value && value != 0) ? new Intl.NumberFormat('id-ID').format(value) : '';
+                                                    });
+                                                },
+                                                update(e) {
+                                                    let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+                                                    this.original = raw ? parseInt(raw) : null;
+                                                    this.display = (raw && raw != 0) ? new Intl.NumberFormat('id-ID').format(raw) : '';
+                                                }
+                                            }">
+                                        <span
+                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
+                                        <input type="text" x-model="display" @input="update" placeholder="0"
+                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
                                     </div>
                                 </div>
                                 <div>
@@ -304,33 +295,24 @@
                                     <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nominal
                                         Auto-Debet Bulanan</label>
                                     <div class="relative" x-data="{
-                                        displayValue: '',
-                                        init() {
-                                            // Ensure value is ready if loading via Livewire
-                                            let val = $wire.get('monthly_sukarela_amount');
-                                            this.displayValue = val ? this.formatCurrency(val) : '';
-                                            
-                                            // Fallback watcher in case Livewire updates it externally
-                                            this.$watch('$wire.monthly_sukarela_amount', (value) => {
-                                                if (value) this.displayValue = this.formatCurrency(value);
-                                            });
-                                        },
-                                        formatCurrency(val) {
-                                            if (!val) return '';
-                                            return val.toString().replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                                        },
-                                        handleInput(e) {
-                                            let raw = e.target.value.replace(/\D/g, '');
-                                            this.displayValue = this.formatCurrency(raw);
-                                            $wire.set('monthly_sukarela_amount', raw);
-                                        }
-                                    }">
-                                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
-                                        <input type="text" 
-                                               x-model="displayValue" 
-                                               @input="handleInput"
-                                               placeholder="0"
-                                               class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
+                                            original: @entangle('monthly_sukarela_amount'),
+                                            display: '',
+                                            init() {
+                                                this.display = (this.original && this.original != 0) ? new Intl.NumberFormat('id-ID').format(this.original) : '';
+                                                $watch('original', value => {
+                                                    this.display = (value && value != 0) ? new Intl.NumberFormat('id-ID').format(value) : '';
+                                                });
+                                            },
+                                            update(e) {
+                                                let raw = e.target.value.replace(/\./g, '').replace(/[^0-9]/g, '');
+                                                this.original = raw ? parseInt(raw) : null;
+                                                this.display = (raw && raw != 0) ? new Intl.NumberFormat('id-ID').format(raw) : '';
+                                            }
+                                        }">
+                                        <span
+                                            class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">Rp</span>
+                                        <input type="text" x-model="display" @input="update" placeholder="0"
+                                            class="w-full pl-8 pr-3 py-2 bg-white dark:bg-slate-800 border-none rounded-lg text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 focus:ring-0">
                                     </div>
                                     <p class="text-[10px] text-slate-400 mt-1">Kosongkan (0) jika tidak ingin menabung
                                         otomatis.</p>
