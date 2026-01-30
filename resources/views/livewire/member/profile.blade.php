@@ -171,8 +171,8 @@
 
             <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Edit Profil</h3>
 
-            <form wire:submit="updateProfile">
-                <div class="space-y-4">
+            <form wire:submit="updateProfile" class="flex flex-col h-full">
+                <div class="space-y-4 pb-24">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nama
                             Lengkap</label>
@@ -209,7 +209,8 @@
                     </div>
                 </div>
 
-                <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                <div
+                    class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
                     <button type="button" @click="closeModal()"
                         class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                     <button type="submit"
@@ -230,8 +231,8 @@
 
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-6">Preferensi Pembayaran Simpanan</h3>
 
-                <form wire:submit="updateSimpananSettings">
-                    <div class="space-y-6">
+                <form wire:submit="updateSimpananSettings" class="flex flex-col h-full">
+                    <div class="space-y-6 pb-24">
                         <div class="space-y-4">
                             {{-- SIMWA Payment Method --}}
                             <div
@@ -296,23 +297,23 @@
                                             class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                             per Bulan</label>
                                         <div class="relative" x-data="{
-                                                        rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                        formatted: '',
-                                                        init() {
-                                                            this.formatted = this.formatNumber(this.rawValue);
-                                                        },
-                                                        formatNumber(num) {
-                                                            return new Intl.NumberFormat('id-ID').format(num);
-                                                        },
-                                                        parseNumber(str) {
-                                                            return parseInt(str.replace(/\./g, '')) || 0;
-                                                        },
-                                                        updateValue(e) {
-                                                            this.rawValue = this.parseNumber(e.target.value);
-                                                            this.formatted = this.formatNumber(this.rawValue);
-                                                            $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                        }
-                                                    }">
+                                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                                formatted: '',
+                                                                init() {
+                                                                    this.formatted = this.formatNumber(this.rawValue);
+                                                                },
+                                                                formatNumber(num) {
+                                                                    return new Intl.NumberFormat('id-ID').format(num);
+                                                                },
+                                                                parseNumber(str) {
+                                                                    return parseInt(str.replace(/\./g, '')) || 0;
+                                                                },
+                                                                updateValue(e) {
+                                                                    this.rawValue = this.parseNumber(e.target.value);
+                                                                    this.formatted = this.formatNumber(this.rawValue);
+                                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                                }
+                                                            }">
                                             <span
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
@@ -354,13 +355,15 @@
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+                    <div
+                        class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 flex gap-3 sm:absolute sm:rounded-b-2xl">
                         <button type="button" @click="closeModal()"
                             class="flex-1 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm">Batal</button>
                         <button type="submit"
                             class="flex-1 py-3 bg-primary text-white font-bold rounded-xl text-sm shadow-lg shadow-blue-500/20">Simpan
                             Perubahan</button>
                     </div>
+                </form>
             </div>
         </div>
     @endif
