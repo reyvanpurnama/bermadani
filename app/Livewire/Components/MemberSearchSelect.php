@@ -11,6 +11,7 @@ class MemberSearchSelect extends Component
     public $results = [];
     public $selectedName = '';
     public $extraData = null; // To pass rawName or context
+    public $joinedBefore = null; // YYYY-MM
 
     public function updatedQuery()
     {
@@ -19,10 +20,19 @@ class MemberSearchSelect extends Component
             return;
         }
 
-        $this->results = Member::where('name', 'like', '%' . $this->query . '%')
-            ->orWhere('nomorAnggota', 'like', '%' . $this->query . '%')
-            ->limit(5)
-            ->get(['id', 'name', 'nomorAnggota']);
+        $query = Member::query();
+
+        if ($this->joinedBefore) {
+            $cutoff = \Carbon\Carbon::parse($this->joinedBefore)->endOfMonth();
+            $query->where('joinDate', '<=', $cutoff);
+        }
+
+        $this->results = $query->where(function ($q) {
+            $q->where('name', 'like', '%' . $this->query . '%')
+                ->orWhere('nomorAnggota', 'like', '%' . $this->query . '%');
+        })
+            ->limit(10)
+            ->get(['id', 'name', 'nomorAnggota', 'joinDate']);
     }
 
     public function selectResult($id, $name)

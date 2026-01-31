@@ -21,6 +21,11 @@ class SimwaAuditTool extends Component
     public $unmappedEntries = [];
     public $searchMember = '';
 
+    // Progress Tracking
+    public $cleanupProgress = 0;
+    public $cleanupStatus = '';
+    public $isProcessing = false;
+
     protected $listeners = ['audit:member-mapped' => 'handleMemberMapped'];
 
     public function handleMemberMapped($data)
@@ -32,15 +37,15 @@ class SimwaAuditTool extends Component
     {
         $stats = [
             'total_imports' => DB::table('audit_simwa_imports')->count(),
-            'unprocessed' => DB::table('audit_simwa_imports')->whereNull('matched_member_id')->count(),
-            'processed' => DB::table('audit_simwa_imports')->whereNotNull('matched_member_id')->count(),
+            'unprocessed' => DB::table('audit_simwa_imports')->whereNull('matched_member_id')->distinct('raw_name')->count('raw_name'),
+            'processed' => DB::table('audit_simwa_imports')->whereNotNull('matched_member_id')->distinct('matched_member_id')->count('matched_member_id'),
         ];
 
-        // Paginating unmapped distinct names
+        // Paginating unmapped distinct names with their earliest appearance
         $unmappedNames = DB::table('audit_simwa_imports')
-            ->select('raw_name')
+            ->select('raw_name', DB::raw('MIN(period) as earliest_period'))
             ->whereNull('matched_member_id')
-            ->distinct()
+            ->groupBy('raw_name')
             ->orderBy('raw_name')
             ->paginate(10);
 
@@ -216,8 +221,8 @@ class SimwaAuditTool extends Component
     {
         $this->activeTab = 'reconciliation';
 
-        // Members checking
-        $members = Member::where('status', 'ACTIVE')
+        // Members checking - Include both ACTIVE and SUSPENDED (Frozen)
+        $members = Member::whereIn('status', ['ACTIVE', 'SUSPENDED'])
             ->where('isMemberKoperasi', true)
             ->get();
 
@@ -317,30 +322,99 @@ class SimwaAuditTool extends Component
         DB::transaction(function () use ($result, $memberId) {
             $member = Member::find($memberId);
 
-            // 1. Create adjustment transaction
-            // We overwrite the balance to match PROPOSED BALANCE (Pre-Cutoff Assumed + Post-Cutoff CSV)
-            $newBalance = $result['proposed_balance'];
-            $difference = $newBalance - $member->simpananWajib;
+            // CUTOFF: April 1, 2024
+            $cutoffDate = \Carbon\Carbon::create(2024, 4, 1)->startOfMonth();
+            $joinDate = \Carbon\Carbon::parse($member->joinDate)->startOfMonth();
 
-            if ($difference != 0) {
-                \App\Models\SimpananTransaction::create([
-                    'memberId' => $memberId,
-                    'type' => 'WAJIB', // Adjusted to match Model convention if applicable, or generic string
-                    'amount' => abs($difference),
-                    'transactionType' => $difference > 0 ? 'SETOR' : 'TARIK', // CREDIT idx -> SETOR
-                    'balanceAfter' => $newBalance, // REQUIRED FIELD
-                    'notes' => 'Audit Correction: Pre-April Assumed + Post-April CSV',
-                    'status' => 'APPROVED', // Assuming direct approval for system sync
-                    'processedBy' => auth()->id()
-                ]);
+            // 1. DELETE ALL OLD SIMWA HISTORY (Nuke)
+            \App\Models\SimpananTransaction::where('memberId', $memberId)
+                ->where('type', 'WAJIB')
+                ->delete();
 
-                // 2. Update Member Balance
-                $member->update(['simpananWajib' => $newBalance]);
+            $runningBalance = 0;
+            $batchInserts = [];
+
+            // =====================================================
+            // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
+            // =====================================================
+            if ($joinDate->lt($cutoffDate)) {
+                $currentMonth = $joinDate->copy();
+
+                while ($currentMonth->lt($cutoffDate)) {
+                    $runningBalance += 50000;
+                    $transactionDate = $currentMonth->copy()->endOfMonth();
+
+                    $batchInserts[] = [
+                        'memberId' => $memberId,
+                        'type' => 'WAJIB',
+                        'transactionType' => 'SETOR',
+                        'amount' => 50000,
+                        'balanceAfter' => $runningBalance,
+                        'notes' => 'Simpanan Wajib ' . $currentMonth->translatedFormat('F Y'),
+                        'status' => 'APPROVED',
+                        'processedBy' => auth()->id(),
+                        'created_at' => $transactionDate,
+                        'updated_at' => $transactionDate,
+                    ];
+
+                    $currentMonth->addMonth();
+                }
             }
+
+            // =====================================================
+            // 3. POST-APRIL 2024: Use CSV Data (Detailed per period)
+            // =====================================================
+            $csvRows = DB::table('audit_simwa_imports')
+                ->where('matched_member_id', $memberId)
+                ->where(function ($q) {
+                    $q->where(function ($sub) {
+                        $sub->where('raw_uraian', 'like', '%simwa%')
+                            ->where('raw_uraian', 'not like', '%angsuran%')
+                            ->where('amount', '<=', 250000);
+                    })
+                        ->orWhere(function ($sub) {
+                            $sub->whereIn('amount', [50000, 100000, 150000, 200000, 250000])
+                                ->where('raw_uraian', 'not like', '%angsuran%')
+                                ->where('raw_uraian', 'not like', '%panjar%')
+                                ->where('raw_uraian', 'not like', '%simpok%');
+                        });
+                })
+                ->orderBy('period', 'asc')
+                ->get();
+
+            foreach ($csvRows as $row) {
+                $runningBalance += $row->amount;
+                $date = \Carbon\Carbon::parse($row->period)->endOfMonth()->subDays(2);
+
+                $batchInserts[] = [
+                    'memberId' => $memberId,
+                    'type' => 'WAJIB',
+                    'transactionType' => 'SETOR',
+                    'amount' => $row->amount,
+                    'balanceAfter' => $runningBalance,
+                    'notes' => "Setoran Payroll {$row->period}",
+                    'status' => 'APPROVED',
+                    'processedBy' => auth()->id(),
+                    'created_at' => $date,
+                    'updated_at' => $date,
+                ];
+            }
+
+            // =====================================================
+            // 4. BULK INSERT (Much faster than individual inserts)
+            // =====================================================
+            if (!empty($batchInserts)) {
+                // Insert in chunks to avoid memory issues
+                foreach (array_chunk($batchInserts, 100) as $chunk) {
+                    \App\Models\SimpananTransaction::insert($chunk);
+                }
+            }
+
+            // 5. Update Final Member Balance
+            $member->update(['simpananWajib' => $runningBalance]);
         });
 
-        session()->flash('message', "Saldo member {$result['name']} berhasil disinkronisasi!");
-        $this->generateReconciliation(); // Refresh data
+        // Don't call generateReconciliation here to avoid recursion slowdown
     }
 
     public function syncAll()
@@ -351,6 +425,47 @@ class SimwaAuditTool extends Component
             }
         }
         session()->flash('message', "Semua member berhasil disinkronisasi dengan data Payroll!");
+    }
+
+    public function cleanupAllSimwa()
+    {
+        try {
+            // Step 1: Generate reconciliation
+            $this->generateReconciliation();
+
+            $total = count($this->auditResults);
+            if ($total === 0) {
+                session()->flash('error', 'Tidak ada member untuk diproses.');
+                return;
+            }
+
+            // Step 2: Rebuild each member
+            $count = 0;
+            $errors = 0;
+            foreach ($this->auditResults as $result) {
+                try {
+                    $this->syncBalance($result['member_id']);
+                    $count++;
+                } catch (\Exception $e) {
+                    \Log::error("Failed to sync member {$result['member_id']}: " . $e->getMessage());
+                    $errors++;
+                }
+            }
+
+            // Step 3: Refresh reconciliation to show updated data
+            $this->generateReconciliation();
+
+            // Show result
+            if ($errors > 0) {
+                session()->flash('message', "⚠️ Cleanup selesai: {$count} berhasil, {$errors} gagal.");
+            } else {
+                session()->flash('message', "✅ CLEANUP SELESAI! {$count} member history berhasil di-rebuild dengan detail bulanan.");
+            }
+
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            \Log::error("Cleanup failed: " . $e->getMessage());
+        }
     }
 
     private function saveMapping($rawName, $memberId)

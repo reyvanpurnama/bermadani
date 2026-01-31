@@ -7,20 +7,47 @@
         </div>
     </div>
 
+    {{-- Flash Notifications --}}
+    @if (session()->has('message'))
+        <div class="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 px-6 py-4 rounded-2xl flex items-center gap-3 animate-pulse">
+            <i class='bx bx-check-circle text-2xl text-emerald-500'></i>
+            <div>
+                <p class="font-bold">Sukses!</p>
+                <p class="text-sm">{{ session('message') }}</p>
+            </div>
+            <button wire:click="$refresh" class="ml-auto text-emerald-500 hover:text-emerald-700">
+                <i class='bx bx-x text-xl'></i>
+            </button>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200 px-6 py-4 rounded-2xl flex items-center gap-3">
+            <i class='bx bx-error-circle text-2xl text-rose-500'></i>
+            <div>
+                <p class="font-bold">Error!</p>
+                <p class="text-sm">{{ session('error') }}</p>
+            </div>
+            <button wire:click="$refresh" class="ml-auto text-rose-500 hover:text-rose-700">
+                <i class='bx bx-x text-xl'></i>
+            </button>
+        </div>
+    @endif
+
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Rows</h3>
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Records</h3>
             <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($stats['total_imports']) }}
             </p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 class="text-xs font-bold text-rose-500 uppercase tracking-widest mb-2">Unmapped Names</h3>
-            <p class="text-3xl font-bold text-rose-600">{{ number_format($stats['unprocessed']) }}</p>
+            <p class="text-3xl font-bold text-rose-600">{{ number_format($stats['unprocessed']) }} <span class="text-xs font-normal text-rose-400">Orang</span></p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Ready to Sync</h3>
-            <p class="text-3xl font-bold text-emerald-600">{{ number_format($stats['processed']) }}</p>
+            <h3 class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Mapped Members</h3>
+            <p class="text-3xl font-bold text-emerald-600">{{ number_format($stats['processed']) }} <span class="text-xs font-normal text-emerald-400">Orang</span></p>
         </div>
     </div>
 
@@ -145,34 +172,34 @@
                                 <thead
                                     class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                                     <tr>
+                                        <th class="px-4 py-3 w-10 text-center">#</th>
                                         <th class="px-4 py-3">Nama di CSV (Raw)</th>
                                         <th class="px-4 py-3">Cari Member Asli</th>
-                                        <th class="px-4 py-3 w-32">Aksi</th>
+                                        <th class="px-4 py-3 w-32 text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                                    @foreach($unmappedNames as $item)
+                                    @foreach($unmappedNames as $index => $item)
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"
                                             wire:key="row-{{ md5($item->raw_name) }}">
-                                            <td class="px-4 py-3 font-mono text-slate-600 dark:text-slate-300">
-                                                {{ $item->raw_name }}
-                                            </td>
-                                            <td class="px-4 py-3" x-data="{ 
-                                                                        query: '', 
-                                                                        results: [],
-                                                                        selectedId: null,
-                                                                        selectedName: '',
-                                                                        async search() {
-                                                                            if(this.query.length < 2) { this.results = []; return; }
-                                                                            // Simple ajax/fetch or wire call needed here. 
-                                                                            // For cleaner UI, we can use a livewire component inside loop, but for speed let's just use a select for now or simple search logic active on the parent.
-                                                                        }
-                                                                    }">
-                                                {{-- Simple Select2-like implementation using Livewire for simplicity first --}}
-                                                <livewire:components.member-search-select :key="'search-' . md5($item->raw_name)"
-                                                    :wire:key="'search-'.md5($item->raw_name)" :extra-data="$item->raw_name" />
+                                            <td class="px-4 py-3 text-center text-xs font-bold text-slate-400">
+                                                {{ ($unmappedNames->currentPage() - 1) * $unmappedNames->perPage() + $loop->iteration }}
                                             </td>
                                             <td class="px-4 py-3">
+                                                <div class="font-mono font-bold text-slate-700 dark:text-slate-200">{{ $item->raw_name }}</div>
+                                                <div class="text-[10px] text-slate-400 mt-1 uppercase tracking-tighter">
+                                                    Pertama Muncul: <span class="bg-slate-100 dark:bg-slate-800 px-1 rounded font-bold">{{ $item->earliest_period }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                {{-- Filter search results based on the earliest period --}}
+                                                <livewire:components.member-search-select 
+                                                    :key="'search-' . md5($item->raw_name)"
+                                                    :wire:key="'search-'.md5($item->raw_name)" 
+                                                    :extra-data="$item->raw_name"
+                                                    :joined-before="$item->earliest_period" />
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
                                                 {{-- Button triggered by event --}}
                                                 <button
                                                     class="px-3 py-1.5 bg-slate-100 text-slate-400 text-xs font-bold rounded-lg cursor-not-allowed">
@@ -202,21 +229,64 @@
             {{-- Tab 3: Reconciliation --}}
             @if($activeTab === 'reconciliation')
                 <div class="space-y-6">
-                    <div class="flex justify-between items-center">
-                        <button wire:click="generateReconciliation" 
-                            class="px-6 py-2 bg-indigo-600 text-white font-bold rounded-xl shadow-lg hover:bg-indigo-700 transition-colors flex items-center gap-2">
-                            <i class='bx bx-refresh text-xl'></i>
-                            Generate / Refresh Report
-                        </button>
-                        
-                        @if(count($auditResults) > 0)
-                            <button wire:click="syncAll"
-                                class="px-6 py-2 bg-rose-600 text-white font-bold rounded-xl shadow-lg hover:bg-rose-700 transition-colors flex items-center gap-2"
-                                onclick="return confirm('Apakah Anda yakin ingin melakukan sinkronisasi massal? Saldo sistem akan ditimpa dengan data Payroll.')">
-                                <i class='bx bx-sync text-xl'></i>
-                                Sync All Differences
+                    {{-- NUCLEAR OPTION: One-Click Cleanup --}}
+                    <div class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-2xl">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold mb-1">🧹 Final Audit & History Rebuild</h3>
+                                <p class="text-sm text-indigo-100 mb-2">Pilih ini untuk membersihkan total histori dan membangun ulang mutasi 50rb/bulan secara detail.</p>
+                                
+                                {{-- Loading Indicator --}}
+                                <div wire:loading wire:target="cleanupAllSimwa" class="mt-4 space-y-3">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex gap-1">
+                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                        </div>
+                                        <span class="text-sm font-mono tracking-tighter italic">Nuking old data & Rebuilding detailed monthly history...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button wire:click="cleanupAllSimwa"
+                                wire:loading.attr="disabled"
+                                class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-4"
+                                onclick="return confirm('⚠️ KONFIRMASI NUCLEAR REBUILD\n\n1. Semua histori Simpanan Wajib LAMA akan DIHAPUS.\n2. Histori BARU akan dibuat detail 50rb/bulan s/d Mar 2024.\n3. Data CSV payroll akan dimasukkan satu-per-satu.\n\nLanjutkan?')">
+                                <i class='bx bx-brush-alt text-2xl'></i>
+                                <div class="text-left leading-tight">
+                                    <div class="text-sm font-bold">RUN FULL CLEANUP</div>
+                                    <div class="text-[10px] opacity-75">Sikat & Rapihkan Semua</div>
+                                </div>
                             </button>
-                        @endif
+                        </div>
+                    </div>
+
+                    {{-- Manual Controls --}}
+                    <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                        <div class="flex items-center gap-6">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Step 1: Preview Data</p>
+                                <button wire:click="generateReconciliation" 
+                                    class="px-5 py-2.5 bg-slate-800 text-white text-xs font-bold rounded-lg shadow hover:bg-slate-900 transition-colors flex items-center gap-2">
+                                    <i class='bx bx-spreadsheet'></i>
+                                    <span wire:loading.remove wire:target="generateReconciliation">Generate/Refresh Report</span>
+                                    <span wire:loading wire:target="generateReconciliation">Updating...</span>
+                                </button>
+                            </div>
+                            
+                            @if(count($auditResults) > 0)
+                                <div class="h-10 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
+                                <div>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Anggota Terdeteksi</p>
+                                    <p class="text-xl font-black text-slate-900 dark:text-white">{{ count($auditResults) }} <span class="text-[10px] font-normal text-slate-500">Orang</span></p>
+                                </div>
+                            @endif
+                        </div>
+
+                        <div class="text-right">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Step 2: Execution</p>
+                            <p class="text-xs text-slate-500 italic">Gunakan tombol "Run Full Cleanup" di atas ↑</p>
+                        </div>
                     </div>
 
                     @if(count($auditResults) > 0)
@@ -275,9 +345,10 @@
                                             <td class="px-4 py-3 text-center">
                                                 @if($row['gap'] != 0)
                                                     <button wire:click="syncBalance({{ $row['member_id'] }})" 
-                                                        class="px-3 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 dark:bg-slate-700 dark:hover:bg-slate-600 dark:text-slate-300 text-xs font-bold rounded-lg transition-colors"
-                                                        onclick="return confirm('Update saldo member ini agar sesuai dengan data Audit?')">
-                                                        Sync
+                                                        class="px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:text-indigo-300 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 mx-auto"
+                                                        onclick="return confirm('🔄 REBUILD HISTORY?\n\nMember: {{ $row['name'] }}\n\nProses ini akan:\n1. Hapus history Simpanan Wajib lama\n2. Buat ulang history detail per bulan\n\nLanjut?')">
+                                                        <i class='bx bx-refresh'></i>
+                                                        Rebuild
                                                     </button>
                                                 @else
                                                     <i class='bx bx-check text-emerald-500 text-xl'></i>
