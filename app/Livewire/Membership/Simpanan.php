@@ -79,7 +79,12 @@ class Simpanan extends Component
                 ->orderBy('created_at', 'desc');
 
             if ($this->filterType && $this->filterType !== 'all') {
-                $query->where('type', $this->filterType);
+                if (!$this->member->isMemberKoperasi && $this->filterType === 'SUKARELA') {
+                    // For retail members, "Saldo Bermadani" includes both Sukarela and any accidental Wajib entries
+                    $query->whereIn('type', ['SUKARELA', 'WAJIB']);
+                } else {
+                    $query->where('type', $this->filterType);
+                }
             }
 
             $simpanan = $query->paginate(10);

@@ -52,9 +52,17 @@ class Dashboard extends Component
 
     public function loadRecentSimpanan()
     {
-        $this->recentSimpanan = SimpananTransaction::where('memberId', $this->member->id)
-            ->where('status', 'APPROVED')
-            ->orderBy('created_at', 'desc')
+        // For retail members, show both SUKARELA and WAJIB as "Bermadani Balance Activity"
+        $query = SimpananTransaction::where('memberId', $this->member->id)
+            ->where('status', 'APPROVED');
+
+        if (!$this->member->isMemberKoperasi) {
+            $query->whereIn('type', ['SUKARELA', 'WAJIB']);
+        } else {
+            $query->where('type', 'SUKARELA');
+        }
+
+        $this->recentSimpanan = $query->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
     }

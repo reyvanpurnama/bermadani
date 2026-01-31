@@ -109,7 +109,8 @@
                             <div class="flex items-center gap-3 opacity-80">
                                 <div
                                     class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center animate-pulse">
-                                    <i class='bx bx-refresh text-lg text-white'></i></div>
+                                    <i class='bx bx-refresh text-lg text-white'></i>
+                                </div>
                                 <i class='bx bx-wifi text-2xl rotate-90'></i>
                             </div>
                         </div>
@@ -274,10 +275,57 @@
         </div>
     </div>
 
-    {{-- Recent Transactions List --}}
+    {{-- Recent Balance Activity (Payroll/Topup/Transfer) --}}
     <div>
         <div class="flex justify-between items-end mb-4 px-1">
-            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Aktivitas Terakhir</h3>
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Mutasi Saldo Terakhir</h3>
+            <a href="{{ route('membership.simpanan') }}"
+                class="text-xs text-[#6366f1] hover:text-[#4f46e5] font-medium">Lihat Semua</a>
+        </div>
+
+        <div class="space-y-3">
+            @forelse($recentSimpanan as $trx)
+                <div
+                    class="bg-white dark:bg-darkCard rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-transform active:scale-[0.99] hover:shadow-sm">
+                    <div
+                        class="w-12 h-12 rounded-full flex items-center justify-center text-xl shrink-0
+                            {{ in_array($trx->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500' }}">
+                        <i
+                            class='bx {{ in_array($trx->transactionType, ["SETOR", "TRANSFER_IN"]) ? "bx-down-arrow-alt" : "bx-up-arrow-alt" }}'></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
+                            @if($trx->transactionType === 'SETOR') Setoran / Payroll
+                            @elseif($trx->transactionType === 'TRANSFER_IN') Transfer Masuk
+                            @elseif($trx->transactionType === 'TRANSFER_OUT') Transfer Keluar
+                            @else Penarikan @endif
+                        </h4>
+                        <p class="text-[10px] text-slate-500 font-medium">{{ $trx->created_at->format('d M Y • H:i') }}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <p
+                            class="text-sm font-bold {{ in_array($trx->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'text-emerald-600' : 'text-rose-600' }}">
+                            {{ in_array($trx->transactionType, ['SETOR', 'TRANSFER_IN']) ? '+' : '-' }}Rp
+                            {{ number_format($trx->amount, 0, ',', '.') }}
+                        </p>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">
+                            {{ !$member->isMemberKoperasi ? 'BERMADANI' : $trx->type }}
+                        </span>
+                    </div>
+                </div>
+            @empty
+                <div
+                    class="text-center py-6 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700">
+                    <p class="text-xs text-slate-400">Belum ada mutasi saldo</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+
+    {{-- Recent Transactions List (Shopping) --}}
+    <div>
+        <div class="flex justify-between items-end mb-4 px-1">
+            <h3 class="text-sm font-bold text-slate-700 dark:text-slate-200">Aktivitas Belanja</h3>
             <a href="{{ route('membership.history') }}"
                 class="text-xs text-[#6366f1] hover:text-[#4f46e5] font-medium">Lihat Semua</a>
         </div>

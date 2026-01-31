@@ -182,7 +182,7 @@
                                             {{ $item->type === 'WAJIB' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : '' }}
                                             {{ $item->type === 'SUKARELA' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : '' }}
                                         ">
-                                            {{ $item->type === 'SUKARELA' && !$member->isMemberKoperasi ? 'BERMADANI' : $item->type }}
+                                            {{ !$member->isMemberKoperasi ? 'BERMADANI' : $item->type }}
                                         </span>
                                         <span class="text-sm 
                                             @if($item->transactionType === 'SETOR' || $item->transactionType === 'TRANSFER_IN') 

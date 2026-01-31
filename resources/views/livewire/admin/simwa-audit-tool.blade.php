@@ -2,8 +2,8 @@
     {{-- Header --}}
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Audit Simpanan Wajib</h1>
-            <p class="text-xs text-slate-500">Import CSV payroll, mapping nama, dan rekonsiliasi data simpanan.</p>
+            <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Audit Simpanan Wajib & Sukarela</h1>
+            <p class="text-xs text-slate-500">Import CSV payroll, mapping nama, dan rekonsiliasi data simpanan (Wajib & Sukarela).</p>
         </div>
     </div>
 
@@ -233,8 +233,8 @@
                     <div class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-2xl">
                         <div class="flex items-center justify-between">
                             <div class="flex-1">
-                                <h3 class="text-lg font-bold mb-1">🧹 Final Audit & History Rebuild</h3>
-                                <p class="text-sm text-indigo-100 mb-2">Pilih ini untuk membersihkan total histori dan membangun ulang mutasi 50rb/bulan secara detail.</p>
+                                <h3 class="text-lg font-bold mb-1">🧹 Final Audit & History Rebuild (Wajib & Sukarela)</h3>
+                                <p class="text-sm text-indigo-100 mb-2">Pilih ini untuk membangun ulang mutasi Wajib (50rb/bln) dan Sukarela (Payroll) secara detail.</p>
                                 
                                 {{-- Loading Indicator --}}
                                 <div wire:loading wire:target="cleanupAllSimwa" class="mt-4 space-y-3">
@@ -244,15 +244,15 @@
                                             <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></div>
                                             <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                                         </div>
-                                        <span class="text-sm font-mono tracking-tighter italic">Nuking old data & Rebuilding detailed monthly history...</span>
+                                        <span class="text-sm font-mono tracking-tighter italic">Nuking old data & Rebuilding (Wajib + Sukarela) history...</span>
                                     </div>
                                 </div>
                             </div>
                             <button wire:click="cleanupAllSimwa"
                                 wire:loading.attr="disabled"
                                 class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-4"
-                                onclick="return confirm('⚠️ KONFIRMASI NUCLEAR REBUILD\n\n1. Semua histori Simpanan Wajib LAMA akan DIHAPUS.\n2. Histori BARU akan dibuat detail 50rb/bulan s/d Mar 2024.\n3. Data CSV payroll akan dimasukkan satu-per-satu.\n\nLanjutkan?')">
-                                <i class='bx bx-brush-alt text-2xl'></i>
+                                onclick="return confirm('⚠️ NUCLEAR OPTION ⚠️\n\n- SEMUA histori Wajib & Sukarela lama untuk member yang terdeteksi di atas akan DIHAPUS.\n- Histori akan dibangun ulang BERDASARKAN data Payroll CSV ini.\n- Saldo Member akan diupdate otomatis.\n\nLANJUTKAN?')">
+                                <i class='bx bxs-flask-vial text-2xl'></i>
                                 <div class="text-left leading-tight">
                                     <div class="text-sm font-bold">RUN FULL CLEANUP</div>
                                     <div class="text-[10px] opacity-75">Sikat & Rapihkan Semua</div>
@@ -296,63 +296,76 @@
                                     <tr>
                                         <th class="px-4 py-3">Member</th>
                                         <th class="px-4 py-3 text-right">Join Date</th>
-                                        <th class="px-4 py-3 text-right">Pre-Apr'24 (Assumed)</th>
-                                        <th class="px-4 py-3 text-right">Post-Apr'24 (CSV)</th>
-                                        <th class="px-4 py-3 text-right">Proposed Balance</th>
-                                        <th class="px-4 py-3 text-right">System Balance</th>
-                                        <th class="px-4 py-3 text-center">Gap (System)</th>
-                                        <th class="px-4 py-3 text-center">Audit Status</th>
+                                        <th class="px-4 py-3 text-center bg-slate-100/50 dark:bg-slate-800/50" colspan="3">SIMPANAN WAJIB (MANDATORY)</th>
+                                        <th class="px-4 py-3 text-center bg-indigo-50/50 dark:bg-indigo-900/20" colspan="2">SIMPANAN SUKARELA (VOLUNTARY)</th>
                                         <th class="px-4 py-3 text-center">Action</th>
+                                    </tr>
+                                    <tr class="text-[9px] border-b border-slate-100 dark:border-slate-700">
+                                        <th class="px-4"></th>
+                                        <th class="px-4 text-right"></th>
+                                        <th class="px-4 py-2 text-right bg-slate-100/50 dark:bg-slate-800/50">Proposed</th>
+                                        <th class="px-4 py-2 text-right bg-slate-100/50 dark:bg-slate-800/50">System</th>
+                                        <th class="px-4 py-2 text-center bg-slate-100/50 dark:bg-slate-800/50">Gap</th>
+                                        <th class="px-4 py-2 text-right bg-indigo-50/50 dark:bg-indigo-900/20">CSV Total</th>
+                                        <th class="px-4 py-2 text-right bg-indigo-50/50 dark:bg-indigo-900/20">System</th>
+                                        <th class="px-4 py-2"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-darkCard">
                                     @foreach($auditResults as $row)
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                                             <td class="px-4 py-3">
-                                                <p class="font-bold text-slate-700 dark:text-slate-200">{{ $row['name'] }}</p>
-                                                <p class="text-[10px] text-slate-400">ID: {{ $row['member_id'] }}</p>
+                                                <div class="flex items-center gap-2">
+                                                    <div>
+                                                        <p class="font-bold text-slate-700 dark:text-slate-200">{{ $row['name'] }}</p>
+                                                        <div class="flex items-center gap-2">
+                                                            <span class="text-[10px] text-slate-400 font-mono">ID: {{ $row['member_id'] }}</span>
+                                                            @if($row['is_coop'])
+                                                                <span class="text-[9px] bg-emerald-50 text-emerald-600 px-1 rounded border border-emerald-100">COOP</span>
+                                                            @else
+                                                                <span class="text-[9px] bg-slate-50 text-slate-500 px-1 rounded border border-slate-100">RETAIL</span>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td class="px-4 py-3 text-right text-xs font-mono">
+                                            <td class="px-4 py-3 text-right text-xs font-mono text-slate-400">
                                                 {{ \Carbon\Carbon::parse($row['join_date'])->format('d M Y') }}
                                             </td>
-                                            <td class="px-4 py-3 text-right font-mono text-slate-500">
-                                                {{ number_format($row['pre_cutoff_balance']) }}
+                                            {{-- WAJIB --}}
+                                            <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 bg-slate-100/30 dark:bg-slate-800/30">
+                                                {{ number_format($row['proposed_wajib']) }}
+                                                <div class="text-[9px] font-normal text-slate-400">CSV: +{{ number_format($row['actual_payroll']) }}</div>
                                             </td>
-                                            <td class="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                                                {{ number_format($row['actual_payroll']) }}
-                                                <span class="block text-[10px] text-slate-400">Exp: {{ number_format($row['expected_audit']) }}</span>
+                                            <td class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-slate-100/30 dark:bg-slate-800/30">
+                                                {{ number_format($row['current_wajib']) }}
                                             </td>
-                                            <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600">
-                                                {{ number_format($row['proposed_balance']) }}
-                                            </td>
-                                            <td class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300">
-                                                {{ number_format($row['current_system']) }}
-                                            </td>
-                                            <td class="px-4 py-3 text-center">
+                                            <td class="px-4 py-3 text-center bg-slate-100/30 dark:bg-slate-800/30">
                                                 @if($row['gap'] == 0)
-                                                    <span class="px-2 py-1 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">MATCH</span>
+                                                    <i class='bx bxs-check-circle text-emerald-500 text-lg'></i>
                                                 @else
-                                                    <span class="px-2 py-1 bg-rose-100 text-rose-700 text-[10px] font-bold rounded-full">DIFF {{ number_format($row['gap']) }}</span>
+                                                    <span class="px-2 py-1 bg-rose-100 text-rose-700 text-[10px] font-bold rounded-full border border-rose-200">
+                                                        {{ $row['gap'] > 0 ? '+' : '' }}{{ number_format($row['gap']) }}
+                                                    </span>
                                                 @endif
                                             </td>
-                                            <td class="px-4 py-3 text-center">
-                                                @if($row['audit_gap'] < 0)
-                                                    <span class="px-2 py-1 bg-orange-100 text-orange-700 text-[10px] font-bold rounded-full" title="Kurang Bayar di CSV">ARREARS {{ number_format(abs($row['audit_gap'])) }}</span>
-                                                @else
-                                                    <span class="text-xs text-slate-400">-</span>
-                                                @endif
+                                            {{-- SUKARELA --}}
+                                            <td class="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                                {{ number_format($row['actual_sukarela']) }}
+                                            </td>
+                                            <td class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                                {{ number_format($row['current_sukarela']) }}
+                                                <div class="text-[9px] font-normal {{ abs($row['gap_sukarela']) < 100 ? 'text-emerald-500' : 'text-rose-500' }}">
+                                                    Gap: {{ number_format($row['gap_sukarela']) }}
+                                                </div>
                                             </td>
                                             <td class="px-4 py-3 text-center">
-                                                @if($row['gap'] != 0)
-                                                    <button wire:click="syncBalance({{ $row['member_id'] }})" 
-                                                        class="px-3 py-1.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 dark:bg-indigo-900 dark:hover:bg-indigo-800 dark:text-indigo-300 text-xs font-bold rounded-lg transition-colors flex items-center gap-1 mx-auto"
-                                                        onclick="return confirm('🔄 REBUILD HISTORY?\n\nMember: {{ $row['name'] }}\n\nProses ini akan:\n1. Hapus history Simpanan Wajib lama\n2. Buat ulang history detail per bulan\n\nLanjut?')">
-                                                        <i class='bx bx-refresh'></i>
-                                                        Rebuild
-                                                    </button>
-                                                @else
-                                                    <i class='bx bx-check text-emerald-500 text-xl'></i>
-                                                @endif
+                                                <button wire:click="syncBalance({{ $row['member_id'] }})" 
+                                                    class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-1 mx-auto"
+                                                    onclick="return confirm('🔄 REBUILD HISTORY (WAJIB & SUKARELA)?\n\nMember: {{ $row['name'] }}\n\nProses ini akan:\n1. Hapus history Wajib & Sukarela lama\n2. Buat ulang history detail dari Payroll\n\nLanjut?')">
+                                                    <i class='bx bx-refresh'></i>
+                                                    Rebuild History
+                                                </button>
                                             </td>
                                         </tr>
                                     @endforeach

@@ -92,7 +92,7 @@ class SimwaAuditTool extends Component
                     continue;
 
                 $rawUraian = $row[2] ?? '';
-                $rawAmount = str_replace(['.', 'Rp', ' '], '', $row[3]);
+                $rawAmount = str_replace([',', '.', 'Rp', ' '], '', $row[3]);
                 $rawAmount = is_numeric($rawAmount) ? $rawAmount : 0;
 
                 // Auto-match
@@ -221,9 +221,17 @@ class SimwaAuditTool extends Component
     {
         $this->activeTab = 'reconciliation';
 
-        // Members checking - Include both ACTIVE and SUSPENDED (Frozen)
-        $members = Member::whereIn('status', ['ACTIVE', 'SUSPENDED'])
-            ->where('isMemberKoperasi', true)
+        // Members checking:
+        // 1. Regular Cooperative Members (ACTIVE/SUSPENDED)
+        // 2. Retail Members (isMemberKoperasi=0) but ONLY if they have data in our audit imports
+        $members = Member::where(function ($query) {
+            $query->where('isMemberKoperasi', true)
+                ->whereIn('status', ['ACTIVE', 'SUSPENDED']);
+        })
+            ->orWhere(function ($query) {
+                $query->where('isMemberKoperasi', false)
+                    ->whereIn('id', DB::table('audit_simwa_imports')->pluck('matched_member_id'));
+            })
             ->get();
 
         $auditData = [];
@@ -235,9 +243,9 @@ class SimwaAuditTool extends Component
             $now = now()->startOfMonth();
 
             // Part A: Pre-Cutoff (Assumed PAID / MATCH)
-            // If joined before cutoff, calculate months until cutoff.
+            // Only applies to Cooperative Members
             $preCutoffBalance = 0;
-            if ($joinDate->lt($cutoffDate)) {
+            if ($member->isMemberKoperasi && $joinDate->lt($cutoffDate)) {
                 // diffInMonths is basically (Year2 - Year1) * 12 + (Month2 - Month1)
                 $monthsPre = $joinDate->diffInMonths($cutoffDate);
                 // e.g. Join Jan, Cutoff April. Diff = 3 (Jan, Feb, Mar). Correct.
@@ -253,59 +261,79 @@ class SimwaAuditTool extends Component
                 $monthsAudit = $auditStartDate->diffInMonths($now) + 1; // Inclusive current month
             }
 
-            $expectedAuditTotal = $monthsAudit * 50000;
+            $expectedAuditTotal = ($member->isMemberKoperasi) ? ($monthsAudit * 50000) : 0;
 
-            // 2. Calculate Actual from CSV (Which are presumably Post-April)
-            // STRICT FILTER APPLIED
-            $actualAuditTotal = DB::table('audit_simwa_imports')
+            // 2. Calculate Actual from CSV (Post-April)
+            $memberPeriods = DB::table('audit_simwa_imports')
                 ->where('matched_member_id', $member->id)
-                ->where(function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->where('raw_uraian', 'like', '%simwa%')
-                            ->where('raw_uraian', 'not like', '%angsuran%')
-                            ->where('amount', '<=', 250000);
+                ->select('period')
+                ->distinct()
+                ->get();
+
+            $actualWajibTotal = 0;
+            $actualSukarelaTotal = 0;
+
+            foreach ($memberPeriods as $mp) {
+                // 1. Mandatory (Wajib) Logic
+                $specificSimwa = DB::table('audit_simwa_imports')
+                    ->where('matched_member_id', $member->id)
+                    ->where('period', $mp->period)
+                    ->where('raw_uraian', 'like', '%simwa%')
+                    ->sum('amount');
+
+                // 2. Voluntary (Sukarela/Tabungan) Logic
+                $specificSukarela = DB::table('audit_simwa_imports')
+                    ->where('matched_member_id', $member->id)
+                    ->where('period', $mp->period)
+                    ->where(function ($q) {
+                        $q->where('raw_uraian', 'like', '%Tabungan%')
+                            ->orWhere('raw_uraian', 'like', '%Sukarela%');
                     })
-                        ->orWhere(function ($sub) {
-                            $sub->whereIn('amount', [50000, 100000, 150000, 200000, 250000])
-                                ->where('raw_uraian', 'not like', '%angsuran%')
-                                ->where('raw_uraian', 'not like', '%panjar%')
-                                ->where('raw_uraian', 'not like', '%simpok%');
-                        });
-                })
-                ->sum('amount');
+                    ->sum('amount');
+
+                if ($specificSimwa > 0) {
+                    $actualWajibTotal += $specificSimwa;
+                } elseif ($member->isMemberKoperasi) {
+                    $actualWajibTotal += 50000;
+                }
+
+                if ($specificSukarela > 0) {
+                    $actualSukarelaTotal += $specificSukarela;
+                }
+            }
 
             // 3. Final Reconciliation Logic
-            // The "True Balance" should be: Pre-Cutoff (Assumed Paid) + Post-Cutoff (Actual from CSV)
-            $proposedBalance = $preCutoffBalance + $actualAuditTotal;
+            $proposedWajib = $preCutoffBalance + $actualWajibTotal;
+            $currentWajib = $member->simpananWajib;
+            $wajibGap = $proposedWajib - $currentWajib;
 
-            $currentSystemBalance = $member->simpananWajib;
+            $currentSukarela = $member->simpananSukarela ?? 0;
+            $sukarelaGap = $actualSukarelaTotal - $currentSukarela;
 
-            // Gap reflects "Did they miss payments in the Audit Period?"
-            // OR "Is the System Balance wrong compared to Proposed?"
-            // Let's focus on System Integrity -> Gap = Proposed - System.
-            $systemDiff = $proposedBalance - $currentSystemBalance;
-
-            // Audit Gap: Did they miss CSV payments? 
-            $auditGap = $actualAuditTotal - $expectedAuditTotal;
+            $auditGapWajib = $actualWajibTotal - $expectedAuditTotal;
 
             $status = 'MATCH';
-            if ($auditGap < 0)
-                $status = 'ARREARS_DETECTED'; // Detects missing months in CSV
-            if ($systemDiff != 0)
-                $status = $status == 'MATCH' ? 'BALANCE_MISMATCH' : $status;
+            if ($auditGapWajib < 0)
+                $status = 'ARREARS_DETECTED';
+            if ($wajibGap != 0 || abs($sukarelaGap) > 100)
+                $status = ($status == 'MATCH' ? 'BALANCE_MISMATCH' : $status);
 
             $auditData[] = [
                 'member_id' => $member->id,
                 'name' => $member->name,
+                'is_coop' => $member->isMemberKoperasi,
                 'join_date' => $member->joinDate,
-                'months_audit' => $monthsAudit, // Months we checked CSV for
-                'pre_cutoff_balance' => $preCutoffBalance, // Assumed Lunas
+                'months_audit' => $monthsAudit,
+                'pre_cutoff_balance' => $preCutoffBalance,
                 'expected_audit' => $expectedAuditTotal,
-                'actual_payroll' => $actualAuditTotal, // From CSV
-                'proposed_balance' => $proposedBalance, // The Target Balance
-                'current_system' => $currentSystemBalance,
-                'gap' => $systemDiff, // For Sync purpose
-                'audit_gap' => $auditGap, // For "Nunggak" insight
+                'actual_payroll' => $actualWajibTotal,
+                'actual_sukarela' => $actualSukarelaTotal,
+                'proposed_wajib' => $proposedWajib,
+                'current_wajib' => $currentWajib,
+                'current_sukarela' => $currentSukarela,
+                'gap' => $wajibGap,
+                'gap_sukarela' => $sukarelaGap,
+                'audit_gap' => $auditGapWajib,
                 'status' => $status
             ];
         }
@@ -326,22 +354,24 @@ class SimwaAuditTool extends Component
             $cutoffDate = \Carbon\Carbon::create(2024, 4, 1)->startOfMonth();
             $joinDate = \Carbon\Carbon::parse($member->joinDate)->startOfMonth();
 
-            // 1. DELETE ALL OLD SIMWA HISTORY (Nuke)
+            // 1. DELETE ALL OLD SIMWA & SUKARELA HISTORY (Nuke for full rebuild)
             \App\Models\SimpananTransaction::where('memberId', $memberId)
-                ->where('type', 'WAJIB')
+                ->whereIn('type', ['WAJIB', 'SUKARELA'])
                 ->delete();
 
-            $runningBalance = 0;
+            $runningWajib = 0;
+            $runningSukarela = 0;
             $batchInserts = [];
 
             // =====================================================
             // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
+            // Only for Coop Members
             // =====================================================
-            if ($joinDate->lt($cutoffDate)) {
+            if ($member->isMemberKoperasi && $joinDate->lt($cutoffDate)) {
                 $currentMonth = $joinDate->copy();
 
                 while ($currentMonth->lt($cutoffDate)) {
-                    $runningBalance += 50000;
+                    $runningWajib += 50000;
                     $transactionDate = $currentMonth->copy()->endOfMonth();
 
                     $batchInserts[] = [
@@ -349,7 +379,7 @@ class SimwaAuditTool extends Component
                         'type' => 'WAJIB',
                         'transactionType' => 'SETOR',
                         'amount' => 50000,
-                        'balanceAfter' => $runningBalance,
+                        'balanceAfter' => $runningWajib,
                         'notes' => 'Simpanan Wajib ' . $currentMonth->translatedFormat('F Y'),
                         'status' => 'APPROVED',
                         'processedBy' => auth()->id(),
@@ -364,63 +394,97 @@ class SimwaAuditTool extends Component
             // =====================================================
             // 3. POST-APRIL 2024: Use CSV Data (Detailed per period)
             // =====================================================
-            $csvRows = DB::table('audit_simwa_imports')
+            $memberPeriods = DB::table('audit_simwa_imports')
                 ->where('matched_member_id', $memberId)
-                ->where(function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->where('raw_uraian', 'like', '%simwa%')
-                            ->where('raw_uraian', 'not like', '%angsuran%')
-                            ->where('amount', '<=', 250000);
-                    })
-                        ->orWhere(function ($sub) {
-                            $sub->whereIn('amount', [50000, 100000, 150000, 200000, 250000])
-                                ->where('raw_uraian', 'not like', '%angsuran%')
-                                ->where('raw_uraian', 'not like', '%panjar%')
-                                ->where('raw_uraian', 'not like', '%simpok%');
-                        });
-                })
+                ->select('period')
+                ->distinct()
                 ->orderBy('period', 'asc')
                 ->get();
 
-            foreach ($csvRows as $row) {
-                $runningBalance += $row->amount;
-                $date = \Carbon\Carbon::parse($row->period)->endOfMonth()->subDays(2);
+            foreach ($memberPeriods as $mp) {
+                $date = \Carbon\Carbon::parse($mp->period)->endOfMonth()->subDays(2);
 
-                $batchInserts[] = [
-                    'memberId' => $memberId,
-                    'type' => 'WAJIB',
-                    'transactionType' => 'SETOR',
-                    'amount' => $row->amount,
-                    'balanceAfter' => $runningBalance,
-                    'notes' => "Setoran Payroll {$row->period}",
-                    'status' => 'APPROVED',
-                    'processedBy' => auth()->id(),
-                    'created_at' => $date,
-                    'updated_at' => $date,
-                ];
+                // --- A. Handle WAJIB ---
+                $wRows = DB::table('audit_simwa_imports')
+                    ->where('matched_member_id', $memberId)
+                    ->where('period', $mp->period)
+                    ->where('raw_uraian', 'like', '%simwa%')
+                    ->get();
+
+                $wAmount = 0;
+                $isAutoCredit = false;
+
+                if ($wRows->count() > 0) {
+                    $wAmount = $wRows->sum('amount');
+                } elseif ($member->isMemberKoperasi) {
+                    $wAmount = 50000;
+                    $isAutoCredit = true;
+                }
+
+                if ($wAmount > 0) {
+                    $runningWajib += $wAmount;
+                    $batchInserts[] = [
+                        'memberId' => $memberId,
+                        'type' => 'WAJIB',
+                        'transactionType' => 'SETOR',
+                        'amount' => $wAmount,
+                        'balanceAfter' => $runningWajib,
+                        'notes' => ($isAutoCredit ? "Setoran Payroll (via Angsuran/Other) " : "Setoran Payroll ") . $mp->period,
+                        'status' => 'APPROVED',
+                        'processedBy' => auth()->id(),
+                        'created_at' => $date,
+                        'updated_at' => $date,
+                    ];
+                }
+
+                // --- B. Handle SUKARELA ---
+                $sRows = DB::table('audit_simwa_imports')
+                    ->where('matched_member_id', $memberId)
+                    ->where('period', $mp->period)
+                    ->where(function ($q) {
+                        $q->where('raw_uraian', 'like', '%Tabungan%')
+                            ->orWhere('raw_uraian', 'like', '%Sukarela%');
+                    })
+                    ->get();
+
+                foreach ($sRows as $sRow) {
+                    $runningSukarela += $sRow->amount;
+                    $batchInserts[] = [
+                        'memberId' => $memberId,
+                        'type' => 'SUKARELA',
+                        'transactionType' => 'SETOR',
+                        'amount' => $sRow->amount,
+                        'balanceAfter' => $runningSukarela,
+                        'notes' => "Setoran Payroll (Sukarela/Tabungan) " . $mp->period,
+                        'status' => 'APPROVED',
+                        'processedBy' => auth()->id(),
+                        'created_at' => $date,
+                        'updated_at' => $date,
+                    ];
+                }
             }
 
             // =====================================================
-            // 4. BULK INSERT (Much faster than individual inserts)
+            // 4. BULK INSERT
             // =====================================================
             if (!empty($batchInserts)) {
-                // Insert in chunks to avoid memory issues
                 foreach (array_chunk($batchInserts, 100) as $chunk) {
                     \App\Models\SimpananTransaction::insert($chunk);
                 }
             }
 
-            // 5. Update Final Member Balance
-            $member->update(['simpananWajib' => $runningBalance]);
+            // 5. Update Final Member Balances
+            $member->update([
+                'simpananWajib' => $runningWajib,
+                'simpananSukarela' => $runningSukarela
+            ]);
         });
-
-        // Don't call generateReconciliation here to avoid recursion slowdown
     }
 
     public function syncAll()
     {
         foreach ($this->auditResults as $result) {
-            if ($result['proposed_balance'] != $result['current_system']) {
+            if ($result['proposed_wajib'] != $result['current_wajib'] || abs($result['gap_sukarela']) > 0) {
                 $this->syncBalance($result['member_id']);
             }
         }
