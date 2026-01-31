@@ -63,7 +63,7 @@ class Dashboard extends Component
         }
 
         $this->recentSimpanan = $query->orderBy('created_at', 'desc')
-            ->take(5)
+            ->take(3)
             ->get();
     }
 

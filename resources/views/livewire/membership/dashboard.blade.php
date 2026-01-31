@@ -231,46 +231,49 @@
 
     {{-- Quick Actions --}}
     <div>
-        <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 px-1">Menu Utama</h3>
-        <div class="grid grid-cols-4 gap-3">
-            <a href="{{ route('membership.simpanan') }}" class="group flex flex-col items-center gap-2">
+        <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-5 px-1">Menu Utama</h3>
+        <div class="grid grid-cols-4 gap-4">
+            <a href="{{ route('membership.simpanan') }}" class="group flex flex-col items-center gap-3">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-emerald-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    class="w-16 h-16 rounded-[24px] bg-slate-100 dark:bg-slate-800/40 border-2 border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-3xl text-emerald-500 group-hover:scale-110 group-active:scale-95 transition-all duration-300 relative overflow-hidden group-hover:border-emerald-500/30 group-hover:shadow-[0_0_20px_rgba(16,185,129,0.15)]">
                     <div class="absolute inset-0 bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors">
                     </div>
-                    <i class='bx bxs-wallet-alt'></i>
+                    <i class='bx bxs-wallet-alt transition-transform group-hover:rotate-6'></i>
                 </div>
-                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Isi
+                <span
+                    class="text-[11px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-emerald-500 transition-colors">Isi
                     Saldo</span>
             </a>
 
-            <a href="{{ route('membership.transfer') }}" class="group flex flex-col items-center gap-2">
+            <a href="{{ route('membership.transfer') }}" class="group flex flex-col items-center gap-3">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-[#6366f1] group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-[#6366f1]/5 group-hover:bg-[#6366f1]/10 transition-colors">
-                    </div>
-                    <i class='bx bxs-paper-plane'></i>
+                    class="w-16 h-16 rounded-[24px] bg-slate-100 dark:bg-slate-800/40 border-2 border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-3xl text-indigo-500 group-hover:scale-110 group-active:scale-95 transition-all duration-300 relative overflow-hidden group-hover:border-indigo-500/30 group-hover:shadow-[0_0_20px_rgba(99,102,241,0.15)]">
+                    <div class="absolute inset-0 bg-indigo-500/5 group-hover:bg-indigo-500/10 transition-colors"></div>
+                    <i
+                        class='bx bxs-paper-plane transition-transform group-hover:-translate-y-1 group-hover:translate-x-1'></i>
                 </div>
-                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Kirim</span>
+                <span
+                    class="text-[11px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-indigo-500 transition-colors">Kirim</span>
             </a>
 
-            <a href="{{ route('membership.history') }}" class="group flex flex-col items-center gap-2">
+            <a href="{{ route('membership.history') }}" class="group flex flex-col items-center gap-3">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-amber-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
-                    <div class="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors">
-                    </div>
-                    <i class='bx bxs-time-five'></i>
+                    class="w-16 h-16 rounded-[24px] bg-slate-100 dark:bg-slate-800/40 border-2 border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-3xl text-amber-500 group-hover:scale-110 group-active:scale-95 transition-all duration-300 relative overflow-hidden group-hover:border-amber-500/30 group-hover:shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+                    <div class="absolute inset-0 bg-amber-500/5 group-hover:bg-amber-500/10 transition-colors"></div>
+                    <i class='bx bxs-time-five transition-transform group-hover:rotate-12'></i>
                 </div>
-                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Riwayat</span>
+                <span
+                    class="text-[11px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-amber-500 transition-colors">Riwayat</span>
             </a>
 
-            <a href="{{ route('membership.profile') }}" class="group flex flex-col items-center gap-2">
+            <a href="{{ route('membership.profile') }}" class="group flex flex-col items-center gap-3">
                 <div
-                    class="w-14 h-14 rounded-2xl bg-white dark:bg-slate-800 shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-center text-2xl text-rose-500 group-hover:scale-105 group-active:scale-95 transition-all duration-300 relative overflow-hidden">
+                    class="w-16 h-16 rounded-[24px] bg-slate-100 dark:bg-slate-800/40 border-2 border-slate-200/50 dark:border-slate-700/50 flex items-center justify-center text-3xl text-rose-500 group-hover:scale-110 group-active:scale-95 transition-all duration-300 relative overflow-hidden group-hover:border-rose-500/30 group-hover:shadow-[0_0_20px_rgba(244,63,94,0.15)]">
                     <div class="absolute inset-0 bg-rose-500/5 group-hover:bg-rose-500/10 transition-colors"></div>
-                    <i class='bx bxs-user-account'></i>
+                    <i class='bx bxs-user-account transition-transform group-hover:scale-110'></i>
                 </div>
-                <span class="text-[10px] font-medium text-slate-600 dark:text-slate-400 text-center">Akun</span>
+                <span
+                    class="text-[11px] font-bold text-slate-500 dark:text-slate-400 group-hover:text-rose-500 transition-colors">Akun</span>
             </a>
         </div>
     </div>
@@ -289,7 +292,7 @@
                     class="bg-white dark:bg-darkCard rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center gap-4 transition-transform active:scale-[0.99] hover:shadow-sm">
                     <div
                         class="w-12 h-12 rounded-full flex items-center justify-center text-xl shrink-0
-                            {{ in_array($trx->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500' }}">
+                                {{ in_array($trx->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'bg-emerald-50 text-emerald-500' : 'bg-rose-50 text-rose-500' }}">
                         <i
                             class='bx {{ in_array($trx->transactionType, ["SETOR", "TRANSFER_IN"]) ? "bx-down-arrow-alt" : "bx-up-arrow-alt" }}'></i>
                     </div>
