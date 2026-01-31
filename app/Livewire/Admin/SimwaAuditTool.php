@@ -224,13 +224,15 @@ class SimwaAuditTool extends Component
         // Members checking:
         // 1. Regular Cooperative Members (ACTIVE/SUSPENDED)
         // 2. Retail Members (isMemberKoperasi=0) but ONLY if they have data in our audit imports
+        // 3. Any member who has been matched in audit_simwa_imports regardless of status (Safety net)
         $members = Member::where(function ($query) {
             $query->where('isMemberKoperasi', true)
                 ->whereIn('status', ['ACTIVE', 'SUSPENDED']);
         })
-            ->orWhere(function ($query) {
-                $query->where('isMemberKoperasi', false)
-                    ->whereIn('id', DB::table('audit_simwa_imports')->pluck('matched_member_id'));
+            ->orWhereIn('id', function ($q) {
+                $q->select('matched_member_id')
+                    ->from('audit_simwa_imports')
+                    ->whereNotNull('matched_member_id');
             })
             ->get();
 
