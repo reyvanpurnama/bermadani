@@ -67,15 +67,24 @@
                     {{-- Header --}}
                     <div>
                         <div class="flex justify-between items-start mb-6">
-                            <i class='bx bxs-chip text-4xl opacity-80 text-emerald-400'></i>
+                            <i class='bx bxs-chip text-4xl opacity-80 text-yellow-500'></i>
                             <div class="flex items-center gap-3 opacity-80">
+                                <div class="w-6 h-6 rounded-full border border-white/50 flex items-center justify-center animate-pulse">
+                                    <i class='bx bx-refresh text-lg text-white'></i>
+                                </div>
                                 <i class='bx bx-wifi text-2xl rotate-90'></i>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3 mb-1">
+                        <div class="flex items-center gap-3 mb-1 relative z-20" x-data="{ copied: false }">
                             <p class="font-mono text-lg tracking-widest shadow-black drop-shadow-md">
                                 {{ $member->nomorAnggota ?? '--------' }}
                             </p>
+                            <button
+                                @click.stop="navigator.clipboard.writeText('{{ $member->nomorAnggota ?? '' }}'); copied = true; setTimeout(() => copied = false, 2000)"
+                                class="text-white/40 hover:text-white transition-colors p-1"
+                                title="Salin Nomor Anggota">
+                                <i class='bx text-xl' :class="copied ? 'bx-check text-emerald-400' : 'bx-copy'"></i>
+                            </button>
                         </div>
                     </div>
 
