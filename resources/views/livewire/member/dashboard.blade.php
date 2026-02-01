@@ -205,16 +205,27 @@
             <div class="space-y-3">
                 @forelse($recentSimpanan as $simp)
                     <div class="bg-white dark:bg-darkCard rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center gap-4 hover:shadow-sm transition-all">
-                        <div class="w-10 h-10 rounded-full {{ $simp->transactionType === 'SETOR' ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' }} flex items-center justify-center text-lg shrink-0">
-                            <i class='bx {{ $simp->transactionType === 'SETOR' ? 'bx-down-arrow-alt' : 'bx-up-arrow-alt' }}'></i>
+                        <div class="w-10 h-10 rounded-full {{ in_array($simp->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600' : 'bg-rose-50 dark:bg-rose-900/20 text-rose-500' }} flex items-center justify-center text-lg shrink-0">
+                            <i class='bx {{ in_array($simp->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'bx-down-arrow-alt' : 'bx-up-arrow-alt' }}'></i>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">Simpanan {{ ucfirst(strtolower($simp->type)) }}</h4>
-                            <p class="text-[10px] text-slate-500 font-medium">{{ $simp->transactionType === 'SETOR' ? 'Setoran' : 'Penarikan' }} • {{ $simp->created_at->format('d M') }}</p>
+                            <h4 class="text-sm font-bold text-slate-800 dark:text-white truncate">
+                                @if($simp->transactionType === 'SETOR') Simpanan {{ ucfirst(strtolower($simp->type)) }}
+                                @elseif($simp->transactionType === 'TRANSFER_IN') Transfer Masuk
+                                @elseif($simp->transactionType === 'TRANSFER_OUT') Transfer Keluar
+                                @else Penarikan {{ ucfirst(strtolower($simp->type)) }} @endif
+                            </h4>
+                            <p class="text-[10px] text-slate-500 font-medium">
+                                @if($simp->transactionType === 'SETOR') Setoran
+                                @elseif($simp->transactionType === 'TRANSFER_IN') Dari: {{ $simp->relatedMember->name ?? '-' }}
+                                @elseif($simp->transactionType === 'TRANSFER_OUT') Ke: {{ $simp->relatedMember->name ?? '-' }}
+                                @else Penarikan @endif
+                                • {{ $simp->created_at->format('d M') }}
+                            </p>
                         </div>
                         <div class="text-right shrink-0">
-                            <p class="text-sm font-bold {{ $simp->transactionType === 'SETOR' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
-                                {{ $simp->transactionType === 'SETOR' ? '+' : '-' }}Rp {{ number_format($simp->amount, 0, ',', '.') }}
+                            <p class="text-sm font-bold {{ in_array($simp->transactionType, ['SETOR', 'TRANSFER_IN']) ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500' }}">
+                                {{ in_array($simp->transactionType, ['SETOR', 'TRANSFER_IN']) ? '+' : '-' }}Rp {{ number_format($simp->amount, 0, ',', '.') }}
                             </p>
                         </div>
                     </div>
