@@ -14,6 +14,7 @@
     <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     @livewireStyles
+    @stack('styles')
 
     <!-- Config - Koperasi uses Emerald as primary -->
     <script>

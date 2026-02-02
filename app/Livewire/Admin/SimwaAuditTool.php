@@ -292,7 +292,7 @@ class SimwaAuditTool extends Component
                     ->sum('amount');
 
                 if ($specificSimwa > 0) {
-                    $actualWajibTotal += $specificSimwa;
+                    $actualWajibTotal += 50000; // Force 50k standard (User Request: ignore CSV nominal for Simwa)
                 } elseif ($member->isMemberKoperasi) {
                     $actualWajibTotal += 50000;
                 }
@@ -415,7 +415,10 @@ class SimwaAuditTool extends Component
                 $isAutoCredit = false;
 
                 if ($wRows->count() > 0) {
-                    $wAmount = $wRows->sum('amount');
+                    // NOMINAL CSV DIABAIKAN SESUAI REQUEST USER
+                    // Isu Elma Mutiara: Payroll "Simpok+Simwa" 250.000, tapi sistem harus catat Simwa 50.000
+                    // Jadi kita force 50.000 jika ada entry simwa.
+                    $wAmount = 50000;
                 } elseif ($member->isMemberKoperasi) {
                     $wAmount = 50000;
                     $isAutoCredit = true;
