@@ -216,6 +216,9 @@ class SimwaAuditTool extends Component
     // Reconciliation Data
     public $auditResults = [];
     public $filterStatus = 'all'; // all, match, mismatch
+    public $excludedMemberIds = []; // IDs to skip during cleanup
+    public $processWajib = true;
+    public $processSukarela = true;
 
     public function generateReconciliation()
     {
@@ -350,33 +353,57 @@ class SimwaAuditTool extends Component
         $this->auditResults = $auditData;
     }
 
-    public function syncBalance($memberId)
+    public function syncBalance($memberId, $processWajib = true, $processSukarela = true)
     {
         $result = collect($this->auditResults)->firstWhere('member_id', $memberId);
         if (!$result)
             return;
 
-        DB::transaction(function () use ($result, $memberId) {
+        DB::transaction(function () use ($result, $memberId, $processWajib, $processSukarela) {
             $member = Member::find($memberId);
 
             // CUTOFF: April 1, 2024
             $cutoffDate = \Carbon\Carbon::create(2024, 4, 1)->startOfMonth();
             $joinDate = \Carbon\Carbon::parse($member->joinDate)->startOfMonth();
 
-            // 1. DELETE ALL OLD SIMWA & SUKARELA HISTORY (Nuke for full rebuild)
-            \App\Models\SimpananTransaction::where('memberId', $memberId)
-                ->whereIn('type', ['WAJIB', 'SUKARELA'])
-                ->delete();
+            // 1. DELETE logic based on flags
+            $typesToDelete = [];
+            if ($processWajib)
+                $typesToDelete[] = 'WAJIB';
+            if ($processSukarela)
+                $typesToDelete[] = 'SUKARELA';
 
-            $runningWajib = 0;
-            $runningSukarela = 0;
+            if (!empty($typesToDelete)) {
+                // EXCEPTION: Jangan hapus transaksi yang berhubungan dengan 'Angsuran' atau 'Pinjaman'
+                \App\Models\SimpananTransaction::where('memberId', $memberId)
+                    ->whereIn('type', $typesToDelete)
+                    ->where('notes', 'not like', '%Angsuran%')
+                    ->where('notes', 'not like', '%Pinjaman%')
+                    ->delete();
+            }
+
+            // Init running balance (if not processing, keep existing balance logic is complex, 
+            // but for cleanup we assume we rebuild. If we skip Wajib, we shouldn't touch Wajib balance)
+            // Ideally if skipping, we just don't touch that part.
+
             $batchInserts = [];
+            // To properly calculate balanceAfter, we might need current balance if we append.
+            // But cleanup assumes DELETE ALL. If we keep existing, we can't easily append "correct" history without sorting.
+            // So if processWajib is false, we basically DO NOTHING for Wajib.
+            // If processWajib is true, we REBUILD Wajib from scratch (since we deleted old ones).
+
+            $runningWajib = 0; // If rebuilding
+            $runningSukarela = 0; // If rebuilding
 
             // =====================================================
             // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
             // Only for Coop Members
             // =====================================================
-            if ($member->isMemberKoperasi && $joinDate->lt($cutoffDate)) {
+            // =====================================================
+            // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
+            // Only for Coop Members
+            // =====================================================
+            if ($processWajib && $member->isMemberKoperasi && $joinDate->lt($cutoffDate)) {
                 $currentMonth = $joinDate->copy();
 
                 while ($currentMonth->lt($cutoffDate)) {
@@ -413,66 +440,67 @@ class SimwaAuditTool extends Component
             foreach ($memberPeriods as $mp) {
                 $date = \Carbon\Carbon::parse($mp->period)->endOfMonth()->subDays(2);
 
-                // --- A. Handle WAJIB ---
-                $wRows = DB::table('audit_simwa_imports')
-                    ->where('matched_member_id', $memberId)
-                    ->where('period', $mp->period)
-                    ->where('raw_uraian', 'like', '%simwa%')
-                    ->get();
+                if ($processWajib) {
+                    // --- A. Handle WAJIB ---
+                    $wRows = DB::table('audit_simwa_imports')
+                        ->where('matched_member_id', $memberId)
+                        ->where('period', $mp->period)
+                        ->where('raw_uraian', 'like', '%simwa%')
+                        ->get();
 
-                $wAmount = 0;
-                $isAutoCredit = false;
+                    $wAmount = 0;
+                    $isAutoCredit = false;
 
-                if ($wRows->count() > 0) {
-                    // NOMINAL CSV DIABAIKAN SESUAI REQUEST USER
-                    // Isu Elma Mutiara: Payroll "Simpok+Simwa" 250.000, tapi sistem harus catat Simwa 50.000
-                    // Jadi kita force 50.000 jika ada entry simwa.
-                    $wAmount = 50000;
-                } elseif ($member->isMemberKoperasi) {
-                    $wAmount = 50000;
-                    $isAutoCredit = true;
-                }
+                    if ($wRows->count() > 0) {
+                        $wAmount = 50000;
+                    } elseif ($member->isMemberKoperasi) {
+                        $wAmount = 50000;
+                        $isAutoCredit = true;
+                    }
 
-                if ($wAmount > 0) {
-                    $runningWajib += $wAmount;
-                    $batchInserts[] = [
-                        'memberId' => $memberId,
-                        'type' => 'WAJIB',
-                        'transactionType' => 'SETOR',
-                        'amount' => $wAmount,
-                        'balanceAfter' => $runningWajib,
-                        'notes' => ($isAutoCredit ? "Setoran Payroll (via Angsuran/Other) " : "Setoran Payroll ") . $mp->period,
-                        'status' => 'APPROVED',
-                        'processedBy' => auth()->id(),
-                        'created_at' => $date,
-                        'updated_at' => $date,
-                    ];
+                    if ($wAmount > 0) {
+                        $runningWajib += $wAmount;
+                        $batchInserts[] = [
+                            'memberId' => $memberId,
+                            'type' => 'WAJIB',
+                            'transactionType' => 'SETOR',
+                            'amount' => $wAmount,
+                            'balanceAfter' => $runningWajib,
+                            'notes' => ($isAutoCredit ? "Setoran Payroll (via Angsuran/Other) " : "Setoran Payroll ") . $mp->period,
+                            'status' => 'APPROVED',
+                            'processedBy' => auth()->id(),
+                            'created_at' => $date,
+                            'updated_at' => $date,
+                        ];
+                    }
                 }
 
                 // --- B. Handle SUKARELA ---
-                $sRows = DB::table('audit_simwa_imports')
-                    ->where('matched_member_id', $memberId)
-                    ->where('period', $mp->period)
-                    ->where(function ($q) {
-                        $q->where('raw_uraian', 'like', '%Tabungan%')
-                            ->orWhere('raw_uraian', 'like', '%Sukarela%');
-                    })
-                    ->get();
+                if ($processSukarela) {
+                    $sRows = DB::table('audit_simwa_imports')
+                        ->where('matched_member_id', $memberId)
+                        ->where('period', $mp->period)
+                        ->where(function ($q) {
+                            $q->where('raw_uraian', 'like', '%Tabungan%')
+                                ->orWhere('raw_uraian', 'like', '%Sukarela%');
+                        })
+                        ->get();
 
-                foreach ($sRows as $sRow) {
-                    $runningSukarela += $sRow->amount;
-                    $batchInserts[] = [
-                        'memberId' => $memberId,
-                        'type' => 'SUKARELA',
-                        'transactionType' => 'SETOR',
-                        'amount' => $sRow->amount,
-                        'balanceAfter' => $runningSukarela,
-                        'notes' => "Setoran Payroll (Sukarela/Tabungan) " . $mp->period,
-                        'status' => 'APPROVED',
-                        'processedBy' => auth()->id(),
-                        'created_at' => $date,
-                        'updated_at' => $date,
-                    ];
+                    foreach ($sRows as $sRow) {
+                        $runningSukarela += $sRow->amount;
+                        $batchInserts[] = [
+                            'memberId' => $memberId,
+                            'type' => 'SUKARELA',
+                            'transactionType' => 'SETOR',
+                            'amount' => $sRow->amount,
+                            'balanceAfter' => $runningSukarela,
+                            'notes' => "Setoran Payroll (Sukarela/Tabungan) " . $mp->period,
+                            'status' => 'APPROVED',
+                            'processedBy' => auth()->id(),
+                            'created_at' => $date,
+                            'updated_at' => $date,
+                        ];
+                    }
                 }
             }
 
@@ -486,10 +514,15 @@ class SimwaAuditTool extends Component
             }
 
             // 5. Update Final Member Balances
-            $member->update([
-                'simpananWajib' => $runningWajib,
-                'simpananSukarela' => $runningSukarela
-            ]);
+            $updates = [];
+            if ($processWajib)
+                $updates['simpananWajib'] = $runningWajib;
+            if ($processSukarela)
+                $updates['simpananSukarela'] = $runningSukarela;
+
+            if (!empty($updates)) {
+                $member->update($updates);
+            }
         });
     }
 
@@ -519,8 +552,13 @@ class SimwaAuditTool extends Component
             $count = 0;
             $errors = 0;
             foreach ($this->auditResults as $result) {
+                // Check if member is excluded
+                if (in_array($result['member_id'], $this->excludedMemberIds)) {
+                    continue;
+                }
+
                 try {
-                    $this->syncBalance($result['member_id']);
+                    $this->syncBalance($result['member_id'], $this->processWajib, $this->processSukarela);
                     $count++;
                 } catch (\Exception $e) {
                     \Log::error("Failed to sync member {$result['member_id']}: " . $e->getMessage());

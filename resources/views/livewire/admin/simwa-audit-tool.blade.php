@@ -230,34 +230,63 @@
             @if($activeTab === 'reconciliation')
                 <div class="space-y-6">
                     {{-- NUCLEAR OPTION: One-Click Cleanup --}}
-                    <div class="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-2xl">
-                        <div class="flex items-center justify-between">
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold mb-1">🧹 Final Audit & History Rebuild (Wajib & Sukarela)</h3>
-                                <p class="text-sm text-indigo-100 mb-2">Pilih ini untuk membangun ulang mutasi Wajib (50rb/bln) dan Sukarela (Payroll) secara detail.</p>
-                                
-                                {{-- Loading Indicator --}}
-                                <div wire:loading wire:target="cleanupAllSimwa" class="mt-4 space-y-3">
-                                    <div class="flex items-center gap-3">
-                                        <div class="flex gap-1">
-                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {{-- Controls --}}
+                        <div class="bg-white dark:bg-darkCard rounded-2xl p-6 border border-slate-200 dark:border-slate-700 h-full">
+                            <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                                <i class='bx bx-slider-alt'></i> Pengaturan Cleanup
+                            </h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <input type="checkbox" wire:model="processWajib" class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300">
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Rebuild Simpanan Wajib</p>
+                                        <p class="text-[10px] text-slate-400">Hapus & buat ulang history simpanan wajib (Rp 50rb/bln)</p>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 dark:border-slate-700 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                    <input type="checkbox" wire:model="processSukarela" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300">
+                                    <div>
+                                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200">Rebuild Simpanan Sukarela</p>
+                                        <p class="text-[10px] text-slate-400">Hapus & buat ulang history sukarela sesuai nominal CSV Payroll</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Action Button --}}
+                        <div class="lg:col-span-2 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white shadow-2xl flex flex-col justify-center">
+                            <div class="flex items-center justify-between">
+                                <div class="flex-1 pr-6">
+                                    <h3 class="text-lg font-bold mb-1">🧹 Final Audit & History Rebuild</h3>
+                                    <p class="text-sm text-indigo-100 mb-2">
+                                        Proses ini akan <strong class="text-white">MENGHAPUS (Reset)</strong> history simpanan lama dan membangun ulang berdasarkan data CSV Import yang sudah Anda upload.
+                                        Saldo member akan otomatis disesuaikan.
+                                    </p>
+                                    
+                                    {{-- Loading Indicator --}}
+                                    <div wire:loading wire:target="cleanupAllSimwa" class="mt-4 space-y-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex gap-1">
+                                                <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                                <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                                <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                            </div>
+                                            <span class="text-sm font-mono tracking-tighter italic">Processing cleanup... (Excluded: {{ count($excludedMemberIds) }} members)</span>
                                         </div>
-                                        <span class="text-sm font-mono tracking-tighter italic">Nuking old data & Rebuilding (Wajib + Sukarela) history...</span>
                                     </div>
                                 </div>
+                                <button wire:click="cleanupAllSimwa"
+                                    wire:loading.attr="disabled"
+                                    class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    onclick="return confirm('⚠️ KONFIRMASI FINAL ⚠️\n\nAnda akan melakukan REBUILD HISTORY untuk {{ count($auditResults) - count($excludedMemberIds) }} anggota.\n\n- Data Angsuran/Pinjaman: AMAN (TIDAK DIHAPUS)\n- Simpanan Wajib: {{ $processWajib ? 'DI-RESET' : 'DIBIARKAN' }}\n- Simpanan Sukarela: {{ $processSukarela ? 'DI-RESET' : 'DIBIARKAN' }}\n\nLanjutkan?')">
+                                    <i class='bx bxs-flask-vial text-2xl'></i>
+                                    <div class="text-left leading-tight">
+                                        <div class="text-sm font-bold">RUN FULL CLEANUP</div>
+                                        <div class="text-[10px] opacity-75">Sikat & Rapihkan Semua</div>
+                                    </div>
+                                </button>
                             </div>
-                            <button wire:click="cleanupAllSimwa"
-                                wire:loading.attr="disabled"
-                                class="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ml-4"
-                                onclick="return confirm('⚠️ NUCLEAR OPTION ⚠️\n\n- SEMUA histori Wajib & Sukarela lama untuk member yang terdeteksi di atas akan DIHAPUS.\n- Histori akan dibangun ulang BERDASARKAN data Payroll CSV ini.\n- Saldo Member akan diupdate otomatis.\n\nLANJUTKAN?')">
-                                <i class='bx bxs-flask-vial text-2xl'></i>
-                                <div class="text-left leading-tight">
-                                    <div class="text-sm font-bold">RUN FULL CLEANUP</div>
-                                    <div class="text-[10px] opacity-75">Sikat & Rapihkan Semua</div>
-                                </div>
-                            </button>
                         </div>
                     </div>
 
@@ -294,6 +323,7 @@
                             <table class="w-full text-left text-sm">
                                 <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                                     <tr>
+                                        <th class="px-4 py-3 text-center w-12 bg-rose-50/50 dark:bg-rose-900/10 rounded-tl-xl"><i class='bx bx-block text-rose-500 text-lg' title="Exclude / Lewati Anggota Ini"></i></th>
                                         <th class="px-4 py-3">Member</th>
                                         <th class="px-4 py-3 w-48">CSV Source Names</th>
                                         <th class="px-4 py-3 text-right">Join Date</th>
@@ -302,6 +332,7 @@
                                         <th class="px-4 py-3 text-center">Action</th>
                                     </tr>
                                     <tr class="text-[9px] border-b border-slate-100 dark:border-slate-700">
+                                        <th class="px-4 bg-rose-50/50 dark:bg-rose-900/10"></th>
                                         <th class="px-4"></th>
                                         <th class="px-4"></th>
                                         <th class="px-4 text-right"></th>
@@ -315,7 +346,11 @@
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-darkCard">
                                     @foreach($auditResults as $row)
-                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($row['member_id'], $excludedMemberIds) ? 'opacity-50 grayscale bg-slate-50' : '' }}">
+                                            <td class="px-4 py-3 text-center bg-rose-50/20 dark:bg-rose-900/5 border-r border-rose-100 dark:border-rose-900/20">
+                                                <input type="checkbox" wire:model="excludedMemberIds" value="{{ $row['member_id'] }}" 
+                                                    class="w-4 h-4 text-rose-600 rounded border-gray-300 focus:ring-rose-500 cursor-pointer shadow-sm">
+                                            </td>
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center gap-2">
                                                     <div>
