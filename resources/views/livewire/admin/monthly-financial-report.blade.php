@@ -83,16 +83,16 @@
                     <div class="flex gap-2">
                         <button wire:click="downloadPDF"
                             class="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-500/10 group"
-                            title="Laporan lengkap untuk internal koperasi">
+                            title="Rekapitulasi lengkap untuk arsip internal koperasi">
                             <i class='bx bxs-file-pdf text-lg'></i>
-                            <span>PDF Internal</span>
+                            <span>PDF Rekapitulasi</span>
                         </button>
 
                         <button wire:click="downloadSimplePDF"
                             class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-amber-500/10 group"
-                            title="Laporan singkat untuk Unit Keuangan Kampus">
+                            title="Dokumen dasar pemotongan gaji untuk Unit Keuangan">
                             <i class='bx bxs-institution text-lg'></i>
-                            <span>PDF Keuangan</span>
+                            <span>PDF Slip Potongan</span>
                         </button>
                     </div>
                 </div>
@@ -103,6 +103,49 @@
     {{-- Preview Section --}}
     @if($showPreview && $reportData)
         <div class="space-y-6">
+            {{-- Execution Status Card --}}
+            <div class="bg-white dark:bg-darkCard rounded-2xl border {{ $isExecuted ? 'border-emerald-100 dark:border-emerald-900/30' : 'border-amber-100 dark:border-amber-900/30' }} p-6 shadow-sm overflow-hidden relative">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-start gap-4">
+                        <div class="w-12 h-12 rounded-xl {{ $isExecuted ? 'bg-emerald-50 text-emerald-500' : 'bg-amber-50 text-amber-500' }} flex items-center justify-center text-2xl shrink-0">
+                            <i class='bx {{ $isExecuted ? 'bx-check-double' : 'bx-time-five' }}'></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                Status Pembukuan: 
+                                <span class="{{ $isExecuted ? 'text-emerald-600' : 'text-amber-600' }}">
+                                    {{ $isExecuted ? 'Sudah Dibukukan' : 'Belum Dibukukan' }}
+                                </span>
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-1 max-w-xl">
+                                @if($isExecuted)
+                                    Potongan gaji periode ini telah berhasil dibukukan ke dalam sistem pembukuan koperasi.
+                                @else
+                                    Data di bawah adalah <strong>proyeksi (draft)</strong>. Klik tombol posting di samping kanan setelah dana dari Keuangan Kampus diterima untuk membukukan transaksi secara resmi.
+                                @endif
+                            </p>
+                        </div>
+                    </div>
+
+                    @if(!$isExecuted)
+                        <button onclick="confirm('Konfirmasi Pembukuan: Apakah Anda yakin dana dari Keuangan Kampus sudah diterima? Tindakan ini akan memposting seluruh transaksi simpanan dan angsuran pinjaman ke dalam buku besar anggota secara permanen.') || event.stopImmediatePropagation()"
+                            wire:click="executePayroll"
+                            class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-slate-900/20 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
+                            <i class='bx bx-archive-in text-xl'></i>
+                            Posting / Bukukan Transaksi
+                        </button>
+                    @else
+                        <div class="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-500/20 text-xs font-bold flex items-center gap-2">
+                            <i class='bx bxs-check-shield text-lg'></i>
+                            Telah Terposting
+                        </div>
+                    @endif
+                </div>
+
+                {{-- Decoration --}}
+                <div class="absolute -right-4 -bottom-4 w-24 h-24 {{ $isExecuted ? 'bg-emerald-500/5' : 'bg-amber-500/5' }} rounded-full blur-2xl"></div>
+            </div>
+
             {{-- Summary Cards Grid --}}
             <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {{-- Total Member --}}
@@ -118,7 +161,7 @@
 
                 {{-- Grand Total --}}
                 <div
-                    class="bg-primary text-white p-4 rounded-xl shadow-lg shadow-indigo-500/20 flex flex-col justify-between h-full col-span-2 md:col-span-2">
+                    class="bg-indigo-600 text-white p-4 rounded-xl shadow-lg shadow-indigo-500/20 flex flex-col justify-between h-full col-span-2 md:col-span-2">
                     <div class="text-indigo-100 text-xs font-bold uppercase tracking-wider mb-2">Grand Total Potongan</div>
                     <div class="flex items-end justify-between">
                         <span class="text-3xl font-bold tracking-tight">Rp
