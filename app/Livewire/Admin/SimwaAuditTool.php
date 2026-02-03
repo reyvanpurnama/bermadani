@@ -302,6 +302,14 @@ class SimwaAuditTool extends Component
                 }
             }
 
+            // Get mapped CSV names
+            $mappedNames = DB::table('audit_simwa_imports')
+                ->where('matched_member_id', $member->id)
+                ->pluck('raw_name')
+                ->unique()
+                ->values()
+                ->toArray();
+
             // 3. Final Reconciliation Logic
             $proposedWajib = $preCutoffBalance + $actualWajibTotal;
             $currentWajib = $member->simpananWajib;
@@ -334,7 +342,8 @@ class SimwaAuditTool extends Component
                 'gap' => $wajibGap,
                 'gap_sukarela' => $sukarelaGap,
                 'audit_gap' => $auditGapWajib,
-                'status' => $status
+                'status' => $status,
+                'mapped_names' => $mappedNames,
             ];
         }
 

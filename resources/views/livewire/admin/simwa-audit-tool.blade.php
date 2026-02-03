@@ -295,12 +295,14 @@
                                 <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                                     <tr>
                                         <th class="px-4 py-3">Member</th>
+                                        <th class="px-4 py-3 w-48">CSV Source Names</th>
                                         <th class="px-4 py-3 text-right">Join Date</th>
                                         <th class="px-4 py-3 text-center bg-slate-100/50 dark:bg-slate-800/50" colspan="3">SIMPANAN WAJIB (MANDATORY)</th>
                                         <th class="px-4 py-3 text-center bg-indigo-50/50 dark:bg-indigo-900/20" colspan="2">SIMPANAN SUKARELA (VOLUNTARY)</th>
                                         <th class="px-4 py-3 text-center">Action</th>
                                     </tr>
                                     <tr class="text-[9px] border-b border-slate-100 dark:border-slate-700">
+                                        <th class="px-4"></th>
                                         <th class="px-4"></th>
                                         <th class="px-4 text-right"></th>
                                         <th class="px-4 py-2 text-right bg-slate-100/50 dark:bg-slate-800/50">Proposed</th>
@@ -328,6 +330,19 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </td>
+                                            <td class="px-4 py-3 max-w-[200px]">
+                                                @if(!empty($row['mapped_names']))
+                                                    <div class="flex flex-wrap gap-1">
+                                                        @foreach($row['mapped_names'] as $csvName)
+                                                            <span class="px-1.5 py-0.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded text-[10px] font-mono border border-yellow-100 dark:border-yellow-700 truncate max-w-full block" title="{{ $csvName }}">
+                                                                {{ $csvName }}
+                                                            </span>
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <span class="text-slate-300 italic text-xs">-</span>
+                                                @endif
                                             </td>
                                             <td class="px-4 py-3 text-right text-xs font-mono text-slate-400">
                                                 {{ \Carbon\Carbon::parse($row['join_date'])->format('d M Y') }}
