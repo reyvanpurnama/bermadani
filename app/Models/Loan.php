@@ -62,11 +62,11 @@ class Loan extends Model
         return $query->where('status', 'OVERDUE');
     }
 
-    public function addPayment($amount, $description = null)
+    public function addPayment($amount, $description = null, $date = null)
     {
         $payment = $this->payments()->create([
             'amount' => $amount,
-            'paymentDate' => now(),
+            'paymentDate' => $date ?? now(),
             'description' => $description,
         ]);
 

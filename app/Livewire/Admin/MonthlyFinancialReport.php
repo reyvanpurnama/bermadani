@@ -52,6 +52,11 @@ class MonthlyFinancialReport extends Component
         $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
         $monthName = Carbon::createFromFormat('m', $this->selectedMonth)->locale('id')->translatedFormat('F Y');
 
+        // Set Transaction Date: 29th of the selected month (or last day if < 29) - 09:00 AM
+        $lastDay = Carbon::createFromDate($this->selectedYear, $this->selectedMonth, 1)->endOfMonth()->day;
+        $day = min(29, $lastDay);
+        $transactionDate = Carbon::create($this->selectedYear, $this->selectedMonth, $day, 9, 0, 0);
+
         DB::beginTransaction();
         try {
             foreach ($data['items'] as $item) {
@@ -73,7 +78,9 @@ class MonthlyFinancialReport extends Component
                         'status' => 'APPROVED',
                         'processedBy' => auth()->id(),
                         'approvedBy' => auth()->id(),
-                        'approvedAt' => now(),
+                        'approvedAt' => $transactionDate,
+                        'created_at' => $transactionDate,
+                        'updated_at' => $transactionDate,
                     ]);
                     $member->increment('simpananWajib', $item['simwa']);
                 }
@@ -92,7 +99,9 @@ class MonthlyFinancialReport extends Component
                         'status' => 'APPROVED',
                         'processedBy' => auth()->id(),
                         'approvedBy' => auth()->id(),
-                        'approvedAt' => now(),
+                        'approvedAt' => $transactionDate,
+                        'created_at' => $transactionDate,
+                        'updated_at' => $transactionDate,
                     ]);
                     $member->increment('simpananSukarela', $item['sukarela']);
                 }
@@ -103,26 +112,12 @@ class MonthlyFinancialReport extends Component
                     if (!$loan)
                         continue;
 
-                    $loan->addPayment($l['installment'], "Potongan Payroll $monthName (Angsuran ke-{$l['ke']})");
+                    $loan->addPayment(
+                        $l['installment'],
+                        "Potongan Payroll $monthName (Angsuran ke-{$l['ke']})",
+                        $transactionDate
+                    );
                     $loan->increment('paid_installments');
-
-                    if ($l['simwa_bmt'] > 0) {
-                        $newB = ($member->simpananSukarela ?? 0) + $l['simwa_bmt'];
-                        SimpananTransaction::create([
-                            'memberId' => $member->id,
-                            'type' => 'SUKARELA',
-                            'transactionType' => 'SETOR',
-                            'amount' => $l['simwa_bmt'],
-                            'balanceAfter' => $newB,
-                            'notes' => "Setoran Simwa BMT ({$loan->loanSource}) - $monthName",
-                            'billingMonth' => $billingMonth,
-                            'status' => 'APPROVED',
-                            'processedBy' => auth()->id(),
-                            'approvedBy' => auth()->id(),
-                            'approvedAt' => now(),
-                        ]);
-                        $member->increment('simpananSukarela', $l['simwa_bmt']);
-                    }
                 }
             }
             DB::commit();
