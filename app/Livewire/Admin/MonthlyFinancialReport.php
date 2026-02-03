@@ -9,6 +9,7 @@ use App\Models\LoanPayment;
 use App\Models\SimpananTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class MonthlyFinancialReport extends Component
 {
@@ -16,6 +17,7 @@ class MonthlyFinancialReport extends Component
     public $selectedYear;
     public $reportData;
     public $showPreview = false;
+    public $isExecuted = false;
 
     public function mount()
     {
@@ -27,6 +29,110 @@ class MonthlyFinancialReport extends Component
     {
         $this->reportData = $this->collectReportData();
         $this->showPreview = true;
+        $this->checkIfExecuted();
+    }
+
+    private function checkIfExecuted()
+    {
+        $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
+
+        $this->isExecuted = SimpananTransaction::where('billingMonth', $billingMonth)
+            ->where('notes', 'like', '%Payroll%')
+            ->exists();
+    }
+
+    public function executePayroll()
+    {
+        if ($this->isExecuted) {
+            session()->flash('error', 'Potongan gaji untuk bulan ini sudah pernah dieksekusi.');
+            return;
+        }
+
+        $data = $this->collectReportData();
+        $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);
+        $monthName = Carbon::createFromFormat('m', $this->selectedMonth)->locale('id')->translatedFormat('F Y');
+
+        DB::beginTransaction();
+        try {
+            foreach ($data['items'] as $item) {
+                $member = Member::find($item['member_id']);
+                if (!$member)
+                    continue;
+
+                // 1. Simwa Koperasi
+                if ($item['simwa'] > 0) {
+                    $newBalance = ($member->simpananWajib ?? 0) + $item['simwa'];
+                    SimpananTransaction::create([
+                        'memberId' => $member->id,
+                        'type' => 'WAJIB',
+                        'transactionType' => 'SETOR',
+                        'amount' => $item['simwa'],
+                        'balanceAfter' => $newBalance,
+                        'notes' => "Setoran Payroll (Simwa Koperasi) - $monthName",
+                        'billingMonth' => $billingMonth,
+                        'status' => 'APPROVED',
+                        'processedBy' => auth()->id(),
+                        'approvedBy' => auth()->id(),
+                        'approvedAt' => now(),
+                    ]);
+                    $member->increment('simpananWajib', $item['simwa']);
+                }
+
+                // 2. Sukarela
+                if ($item['sukarela'] > 0) {
+                    $newBalance = ($member->simpananSukarela ?? 0) + $item['sukarela'];
+                    SimpananTransaction::create([
+                        'memberId' => $member->id,
+                        'type' => 'SUKARELA',
+                        'transactionType' => 'SETOR',
+                        'amount' => $item['sukarela'],
+                        'balanceAfter' => $newBalance,
+                        'notes' => "Setoran Payroll (Sukarela) - $monthName",
+                        'billingMonth' => $billingMonth,
+                        'status' => 'APPROVED',
+                        'processedBy' => auth()->id(),
+                        'approvedBy' => auth()->id(),
+                        'approvedAt' => now(),
+                    ]);
+                    $member->increment('simpananSukarela', $item['sukarela']);
+                }
+
+                // 3. Loans
+                foreach ($item['loan_details'] as $l) {
+                    $loan = Loan::find($l['loan_id']);
+                    if (!$loan)
+                        continue;
+
+                    $loan->addPayment($l['installment'], "Potongan Payroll $monthName (Angsuran ke-{$l['ke']})");
+                    $loan->increment('paid_installments');
+
+                    if ($l['simwa_bmt'] > 0) {
+                        $newB = ($member->simpananSukarela ?? 0) + $l['simwa_bmt'];
+                        SimpananTransaction::create([
+                            'memberId' => $member->id,
+                            'type' => 'SUKARELA',
+                            'transactionType' => 'SETOR',
+                            'amount' => $l['simwa_bmt'],
+                            'balanceAfter' => $newB,
+                            'notes' => "Setoran Simwa BMT ({$loan->loanSource}) - $monthName",
+                            'billingMonth' => $billingMonth,
+                            'status' => 'APPROVED',
+                            'processedBy' => auth()->id(),
+                            'approvedBy' => auth()->id(),
+                            'approvedAt' => now(),
+                        ]);
+                        $member->increment('simpananSukarela', $l['simwa_bmt']);
+                    }
+                }
+            }
+            DB::commit();
+            $this->isExecuted = true;
+            session()->flash('success', "✅ Berhasil eksekusi potongan gaji $monthName.");
+            $this->generateReport();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', $e->getMessage());
+        }
     }
 
     public function downloadPDF()
@@ -108,172 +214,128 @@ class MonthlyFinancialReport extends Component
 
         // Process members with loans (angsuran) - group by member
         foreach ($membersWithLoans as $member) {
-            // Bermadani loan data
             $angsuranBermadani = 0;
             $angsuranKeBermadani = 0;
             $tenorBermadani = 0;
-
-            // BMT ITQAN 1 loan data
             $angsuranBmtItqan1 = 0;
-            $simwaBmtItqan1 = 0; // Init
+            $simwaBmtItqan1 = 0;
             $angsuranKeBmtItqan1 = 0;
             $tenorBmtItqan1 = 0;
-
-            // BMT ITQAN 2 loan data
             $angsuranBmtItqan2 = 0;
-            $simwaBmtItqan2 = 0; // Init
+            $simwaBmtItqan2 = 0;
             $angsuranKeBmtItqan2 = 0;
             $tenorBmtItqan2 = 0;
-
             $bmtItqanCount = 0;
+            $loanDetails = [];
 
             foreach ($member->loans as $loan) {
-                $monthlyPayment = $loan->monthlyPayment ?? 0;
-                $simwaBmtAmount = $loan->simwa_amount ?? 0;
-                $pureInstallment = max(0, $monthlyPayment - $simwaBmtAmount); // Angsuran murni tanpa simwa
+                $monthlyPayment = (float) ($loan->monthlyPayment ?? 0);
+                $simwaBmtAmount = (float) ($loan->simwa_amount ?? 0);
+                $pureInstallment = max(0, $monthlyPayment - $simwaBmtAmount);
+                $angsuranKe = ($loan->paid_installments ?? 0) + 1;
 
-                $tenor = $loan->tenor ?? 0;
-                $paidInstallments = $loan->paid_installments ?? 0; // Fix: use snake_case column name
-                $angsuranKe = $paidInstallments + 1;
+                $loanDetails[] = [
+                    'loan_id' => $loan->id,
+                    'installment' => $pureInstallment,
+                    'simwa_bmt' => $simwaBmtAmount,
+                    'ke' => $angsuranKe
+                ];
 
-                // Pisahkan berdasarkan loanSource
                 if ($loan->loanSource === 'BMT_ITQAN') {
                     $bmtItqanCount++;
                     if ($bmtItqanCount == 1) {
-                        // BMT ITQAN 1
                         $angsuranBmtItqan1 = $pureInstallment;
-                        $simwaBmtItqan1 = $simwaBmtAmount; // Store Simwa Separately
+                        $simwaBmtItqan1 = $simwaBmtAmount;
                         $angsuranKeBmtItqan1 = $angsuranKe;
-                        $tenorBmtItqan1 = $tenor;
+                        $tenorBmtItqan1 = $loan->tenor;
                     } else {
-                        // BMT ITQAN 2
                         $angsuranBmtItqan2 = $pureInstallment;
                         $simwaBmtItqan2 = $simwaBmtAmount;
                         $angsuranKeBmtItqan2 = $angsuranKe;
-                        $tenorBmtItqan2 = $tenor;
+                        $tenorBmtItqan2 = $loan->tenor;
                     }
                 } else {
-                    // BERMADANI
-                    $angsuranBermadani = $monthlyPayment; // Bermadani no separate simwa in loan, it's global 50k
+                    $angsuranBermadani = $monthlyPayment;
                     $angsuranKeBermadani = $angsuranKe;
-                    $tenorBermadani = $tenor;
+                    $tenorBermadani = $loan->tenor;
                 }
             }
 
-            // SIMWA: cek preferensi pembayaran member (HANYA KOPERASI)
-            $simwaAmount = 0;
-            if ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) {
-                $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
-            }
-
-            // Sukarela: cek preferensi pembayaran member
-            $sukarelaAmount = 0;
-            if ($member->hasSalaryDeductionSukarela()) {
-                $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
-            }
-
+            $simwaAmount = ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) ? ($member->monthly_simpanan_wajib ?? 50000) : 0;
+            $sukarelaAmount = $member->hasSalaryDeductionSukarela() ? ($member->monthly_sukarela_amount ?? 0) : 0;
             $total = $angsuranBermadani + $angsuranBmtItqan1 + $simwaBmtItqan1 + $angsuranBmtItqan2 + $simwaBmtItqan2 + $simwaAmount + $sukarelaAmount;
 
             $reportItems[] = [
+                'member_id' => $member->id,
                 'nama' => $member->name,
-                'unit_kerja' => (
-                    $member->unitKerja &&
-                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
-                ) ? $member->unitKerja : '-',
+                'unit_kerja' => $member->unitKerja ?? '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => $angsuranBermadani,
                 'angsuran_ke_bermadani' => $angsuranKeBermadani,
                 'tenor_bermadani' => $tenorBermadani,
                 'angsuran_bmt_itqan_1' => $angsuranBmtItqan1,
-                'simwa_bmt_itqan_1' => $simwaBmtItqan1, // Add to array
+                'simwa_bmt_itqan_1' => $simwaBmtItqan1,
                 'angsuran_ke_bmt_itqan_1' => $angsuranKeBmtItqan1,
                 'tenor_bmt_itqan_1' => $tenorBmtItqan1,
                 'angsuran_bmt_itqan_2' => $angsuranBmtItqan2,
-                'simwa_bmt_itqan_2' => $simwaBmtItqan2, // Add to array
+                'simwa_bmt_itqan_2' => $simwaBmtItqan2,
                 'angsuran_ke_bmt_itqan_2' => $angsuranKeBmtItqan2,
                 'tenor_bmt_itqan_2' => $tenorBmtItqan2,
                 'total' => $total,
                 'has_loan' => true,
-                'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
-                'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
+                'loan_details' => $loanDetails,
             ];
 
             $totalAngsuranBermadani += $angsuranBermadani;
-            // Include Simwa BMT in the total accumulation for BMT Itqan columns
             $totalAngsuranBmtItqan1 += ($angsuranBmtItqan1 + $simwaBmtItqan1);
             $totalAngsuranBmtItqan2 += ($angsuranBmtItqan2 + $simwaBmtItqan2);
-
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
         }
 
-        // 2. Ambil semua member koperasi AKTIF yang SIMWA-nya potong gaji (tanpa pinjaman)
-        $membersWithSalaryDeduction = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
-            // ->where('isMemberKoperasi', true) // REMOVED: Include all active members regardless of flexible boolean
+        $membersWithSalaryDeduction = Member::where('status', 'ACTIVE')
             ->whereNotIn('id', $processedMemberIds ?: [0])
             ->where(function ($query) {
-                // Member yang SIMWA atau Sukarela-nya potong gaji
                 $query->where('simwa_payment_method', 'SALARY_DEDUCTION')
                     ->orWhere(function ($q) {
-                    $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')
-                        ->where('monthly_sukarela_amount', '>', 0);
-                });
-            })
-            ->get();
+                        $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('monthly_sukarela_amount', '>', 0);
+                    });
+            })->get();
 
         foreach ($membersWithSalaryDeduction as $member) {
-            // SIMWA: cek preferensi pembayaran (HANYA KOPERASI)
-            $simwaAmount = 0;
-            if ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) {
-                $simwaAmount = $member->monthly_simpanan_wajib ?? 50000;
-            }
-
-            // Sukarela: cek preferensi pembayaran
-            $sukarelaAmount = 0;
-            if ($member->hasSalaryDeductionSukarela()) {
-                $sukarelaAmount = $member->monthly_sukarela_amount ?? 0;
-            }
-
-            // Skip jika tidak ada yang perlu dipotong
-            if ($simwaAmount == 0 && $sukarelaAmount == 0) {
+            $simwaAmount = ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) ? ($member->monthly_simpanan_wajib ?? 50000) : 0;
+            $sukarelaAmount = $member->hasSalaryDeductionSukarela() ? ($member->monthly_sukarela_amount ?? 0) : 0;
+            if ($simwaAmount == 0 && $sukarelaAmount == 0)
                 continue;
-            }
 
             $reportItems[] = [
+                'member_id' => $member->id,
                 'nama' => $member->name,
-                'unit_kerja' => (
-                    $member->unitKerja &&
-                    !in_array(strtolower($member->unitKerja), ['unknown', 'null', '-'])
-                ) ? $member->unitKerja : '-',
+                'unit_kerja' => $member->unitKerja ?? '-',
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => 0,
                 'angsuran_ke_bermadani' => 0,
                 'tenor_bermadani' => 0,
                 'angsuran_bmt_itqan_1' => 0,
-                'simwa_bmt_itqan_1' => 0, // Fix key
+                'simwa_bmt_itqan_1' => 0,
                 'angsuran_ke_bmt_itqan_1' => 0,
                 'tenor_bmt_itqan_1' => 0,
                 'angsuran_bmt_itqan_2' => 0,
-                'simwa_bmt_itqan_2' => 0, // Fix key
+                'simwa_bmt_itqan_2' => 0,
                 'angsuran_ke_bmt_itqan_2' => 0,
                 'tenor_bmt_itqan_2' => 0,
                 'total' => $simwaAmount + $sukarelaAmount,
                 'has_loan' => false,
-                'simwa_method' => $member->simwa_payment_method ?? 'SALARY_DEDUCTION',
-                'sukarela_method' => $member->sukarela_payment_method ?? 'MANUAL',
+                'loan_details' => [],
             ];
-
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
         }
 
-        // Sort by name
-        usort($reportItems, function ($a, $b) {
-            return strcmp($a['nama'], $b['nama']);
-        });
+        usort($reportItems, fn($a, $b) => strcmp($a['nama'], $b['nama']));
 
         return [
             'items' => $reportItems,
