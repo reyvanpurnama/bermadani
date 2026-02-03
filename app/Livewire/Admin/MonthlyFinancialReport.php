@@ -127,11 +127,11 @@ class MonthlyFinancialReport extends Component
             }
             DB::commit();
             $this->isExecuted = true;
-            session()->flash('success', "✅ Berhasil eksekusi potongan gaji $monthName.");
+            session()->flash('success', "✅ Berhasil membukukan potongan gaji bulan $monthName. Seluruh data simpanan dan pinjaman anggota telah diperbarui.");
             $this->generateReport();
         } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', $e->getMessage());
+            session()->flash('error', 'Gagal memproses pembukuan: ' . $e->getMessage());
         }
     }
 

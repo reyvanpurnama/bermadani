@@ -83,16 +83,16 @@
                     <div class="flex gap-2">
                         <button wire:click="downloadPDF"
                             class="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-500/10 group"
-                            title="Laporan lengkap untuk internal koperasi">
+                            title="Rekapitulasi lengkap untuk arsip internal koperasi">
                             <i class='bx bxs-file-pdf text-lg'></i>
-                            <span>PDF Internal</span>
+                            <span>PDF Rekapitulasi</span>
                         </button>
 
                         <button wire:click="downloadSimplePDF"
                             class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-amber-500/10 group"
-                            title="Laporan singkat untuk Unit Keuangan Kampus">
+                            title="Dokumen dasar pemotongan gaji untuk Unit Keuangan">
                             <i class='bx bxs-institution text-lg'></i>
-                            <span>PDF Keuangan</span>
+                            <span>PDF Slip Potongan</span>
                         </button>
                     </div>
                 </div>
@@ -112,32 +112,32 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                Status Eksekusi: 
+                                Status Pembukuan: 
                                 <span class="{{ $isExecuted ? 'text-emerald-600' : 'text-amber-600' }}">
-                                    {{ $isExecuted ? 'Sudah Dieksekusi' : 'Belum Dieksekusi' }}
+                                    {{ $isExecuted ? 'Sudah Dibukukan' : 'Belum Dibukukan' }}
                                 </span>
                             </h3>
                             <p class="text-xs text-slate-500 mt-1 max-w-xl">
                                 @if($isExecuted)
-                                    Potongan gaji periode ini telah berhasil dibukukan ke dalam riwayat simpanan dan angsuran masing-masing anggota.
+                                    Potongan gaji periode ini telah berhasil dibukukan ke dalam sistem pembukuan koperasi.
                                 @else
-                                    Data di bawah adalah <strong>proyeksi (draft)</strong>. Klik tombol eksekusi setelah dana dari Keuangan Kampus diterima untuk memasukkan transaksi ke database secara permanen.
+                                    Data di bawah adalah <strong>proyeksi (draft)</strong>. Klik tombol posting di samping kanan setelah dana dari Keuangan Kampus diterima untuk membukukan transaksi secara resmi.
                                 @endif
                             </p>
                         </div>
                     </div>
 
                     @if(!$isExecuted)
-                        <button onclick="confirm('Apakah Anda yakin dana dari Keuangan Kampus sudah diterima dan ingin mengeksekusi potongan gaji ini? Tindakan ini akan menambah saldo simpanan & mengurangi sisa pinjaman anggota secara massal.') || event.stopImmediatePropagation()"
+                        <button onclick="confirm('Konfirmasi Pembukuan: Apakah Anda yakin dana dari Keuangan Kampus sudah diterima? Tindakan ini akan memposting seluruh transaksi simpanan dan angsuran pinjaman ke dalam buku besar anggota secara permanen.') || event.stopImmediatePropagation()"
                             wire:click="executePayroll"
                             class="bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm shadow-xl shadow-slate-900/20 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all">
-                            <i class='bx bx-play-circle text-xl'></i>
-                            Eksekusi Potongan Gaji
+                            <i class='bx bx-archive-in text-xl'></i>
+                            Posting / Bukukan Transaksi
                         </button>
                     @else
                         <div class="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-500/20 text-xs font-bold flex items-center gap-2">
                             <i class='bx bxs-check-shield text-lg'></i>
-                            Transaksi Terverifikasi
+                            Telah Terposting
                         </div>
                     @endif
                 </div>
