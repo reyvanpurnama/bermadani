@@ -25,6 +25,23 @@ class MonthlyFinancialReport extends Component
         $this->selectedYear = now()->format('Y');
     }
 
+    public function updatedSelectedMonth()
+    {
+        $this->resetState();
+    }
+
+    public function updatedSelectedYear()
+    {
+        $this->resetState();
+    }
+
+    private function resetState()
+    {
+        $this->showPreview = false;
+        $this->isExecuted = false;
+        $this->reportData = null;
+    }
+
     public function generateReport()
     {
         $this->reportData = $this->collectReportData();
