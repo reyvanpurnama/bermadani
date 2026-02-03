@@ -21,78 +21,82 @@
     </div>
 
     {{-- Filter Section --}}
-    <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-5">
-        <div class="flex items-center gap-2 mb-4">
-            <div
-                class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-500">
-                <i class='bx bx-filter-alt text-lg'></i>
-            </div>
-            <h3 class="font-bold text-slate-800 dark:text-white">Filter Laporan</h3>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div class="md:col-span-3">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Bulan</label>
-                <div class="relative">
-                    <select wire:model="selectedMonth"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
-                        <option value="01">Januari</option>
-                        <option value="02">Februari</option>
-                        <option value="03">Maret</option>
-                        <option value="04">April</option>
-                        <option value="05">Mei</option>
-                        <option value="06">Juni</option>
-                        <option value="07">Juli</option>
-                        <option value="08">Agustus</option>
-                        <option value="09">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                        <i class='bx bx-chevron-down text-lg'></i>
+    {{-- Modern Filter & Action Bar --}}
+    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <div class="p-5 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            {{-- Left: Selection Group --}}
+            <div class="flex flex-1 flex-col sm:flex-row items-end gap-4">
+                <div class="w-full sm:w-48">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Periode Bulan</label>
+                    <div class="relative group">
+                        <select wire:model="selectedMonth"
+                            class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer transition-all">
+                            <option value="01">Januari</option>
+                            <option value="02">Februari</option>
+                            <option value="03">Maret</option>
+                            <option value="04">April</option>
+                            <option value="05">Mei</option>
+                            <option value="06">Juni</option>
+                            <option value="07">Juli</option>
+                            <option value="08">Agustus</option>
+                            <option value="09">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                            <i class='bx bx-chevron-down text-lg'></i>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="md:col-span-3">
-                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Tahun</label>
-                <div class="relative">
-                    <select wire:model="selectedYear"
-                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-1 focus:ring-primary focus:border-primary appearance-none cursor-pointer">
-                        @for ($year = now()->year; $year >= 2020; $year--)
-                            <option value="{{ $year }}">{{ $year }}</option>
-                        @endfor
-                    </select>
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                        <i class='bx bx-chevron-down text-lg'></i>
+                <div class="w-full sm:w-32">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 ml-1">Tahun</label>
+                    <div class="relative group">
+                        <select wire:model="selectedYear"
+                            class="w-full bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer transition-all">
+                            @for ($year = now()->year; $year >= 2020; $year--)
+                                <option value="{{ $year }}">{{ $year }}</option>
+                            @endfor
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                            <i class='bx bx-chevron-down text-lg'></i>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="md:col-span-6 flex items-end gap-3">
                 <button wire:click="generateReport"
-                    class="flex-1 bg-primary hover:bg-primary/90 text-white font-semibold py-2.5 px-6 rounded-lg transition-all shadow-sm shadow-indigo-500/20 flex items-center justify-center gap-2 group">
-                    <i class='bx bx-file text-xl group-hover:scale-110 transition-transform'></i>
-                    <span>Generate Laporan</span>
+                    class="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group whitespace-nowrap">
+                    <i class='bx bx-refresh text-xl group-hover:rotate-180 transition-transform duration-700'></i>
+                    <span>Tampilkan Data</span>
                 </button>
-
-                @if($showPreview)
-                    <button wire:click="downloadPDF"
-                        class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-sm shadow-emerald-500/20 flex items-center justify-center gap-2 group"
-                        title="Laporan lengkap untuk internal koperasi">
-                        <i class='bx bx-download text-xl group-hover:scale-110 transition-transform'></i>
-                        <span>PDF Internal</span>
-                    </button>
-
-                    <button wire:click="downloadSimplePDF"
-                        class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2.5 px-4 rounded-lg transition-all shadow-sm shadow-amber-500/20 flex items-center justify-center gap-2 group"
-                        title="Laporan singkat untuk Unit Keuangan Kampus">
-                        <i class='bx bx-building text-xl group-hover:scale-110 transition-transform'></i>
-                        <span>PDF Keuangan</span>
-                    </button>
-                @endif
             </div>
+
+            {{-- Right: Export Actions (Only if preview shown) --}}
+            @if($showPreview)
+                <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-100 dark:border-slate-700/50 self-start lg:self-center">
+                    <div class="pr-3 border-r border-slate-200 dark:border-slate-700 hidden sm:block">
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Cetak Laporan</p>
+                        <p class="text-[10px] text-slate-500 font-medium leading-none">Pilih format PDF</p>
+                    </div>
+                    
+                    <div class="flex gap-2">
+                        <button wire:click="downloadPDF"
+                            class="flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-500/10 group"
+                            title="Laporan lengkap untuk internal koperasi">
+                            <i class='bx bxs-file-pdf text-lg'></i>
+                            <span>PDF Internal</span>
+                        </button>
+
+                        <button wire:click="downloadSimplePDF"
+                            class="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-amber-500/10 group"
+                            title="Laporan singkat untuk Unit Keuangan Kampus">
+                            <i class='bx bxs-institution text-lg'></i>
+                            <span>PDF Keuangan</span>
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -174,7 +178,7 @@
                                     class="px-3 py-3 w-10 border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-0 z-20">
                                     No</th>
                                 <th
-                                    class="px-3 py-3 min-w-[200px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-10 z-20">
+                                    class="px-3 py-3 max-w-[150px] truncate border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 sticky left-10 z-20">
                                     Nama Anggota</th>
 
                                 {{-- Simpanan Group --}}
@@ -197,7 +201,7 @@
                                     class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-pink-50/30 dark:bg-pink-900/10 text-pink-700">
                                     BMT Itqan 2</th>
 
-                                <th
+                                <th rowspan="2"
                                     class="px-3 py-3 text-right bg-slate-100 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 min-w-[120px]">
                                     Total Potongan</th>
                             </tr>
@@ -254,8 +258,7 @@
                                     class="px-1 py-2 text-center text-[9px] border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800 w-8">
                                     Tnr</th>
 
-                                <th class="border-b border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800">
-                                </th>
+
                             </tr>
                         </thead>
                         <tbody class="text-xs divide-y divide-slate-100 dark:divide-slate-700">
@@ -266,11 +269,13 @@
                                         class="px-3 py-2 font-mono text-slate-500 border-r border-slate-100 dark:border-slate-700 sticky left-0 bg-inherit z-10">
                                         {{ $index + 1 }}</td>
                                     <td
-                                        class="px-3 py-2 font-semibold text-slate-800 dark:text-white border-r border-slate-100 dark:border-slate-700 sticky left-10 bg-inherit z-10 whitespace-nowrap">
-                                        {{ $item['nama'] }}
-                                        @if($item['has_loan'])
-                                            <span class="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 ml-1"></span>
-                                        @endif
+                                        class="px-3 py-2 font-semibold text-slate-800 dark:text-white border-r border-slate-100 dark:border-slate-700 sticky left-10 bg-inherit z-10">
+                                        <div class="flex items-center gap-1.5 max-w-[150px]">
+                                            <span class="truncate" title="{{ $item['nama'] }}">{{ $item['nama'] }}</span>
+                                            @if($item['has_loan'])
+                                                <span class="inline-block w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0"></span>
+                                            @endif
+                                        </div>
                                     </td>
 
                                     {{-- Simpanan --}}
@@ -343,13 +348,11 @@
                                 <td class="px-2 py-3 text-right text-purple-600">
                                     {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_1'], 0, ',', '.') }}
                                 </td>
-                                <td colspan="2"></td>
-                                <td colspan="2"></td>
+                                <td colspan="3"></td>
                                 <td class="px-2 py-3 text-right text-pink-600">
                                     {{ number_format($reportData['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}
                                 </td>
-                                <td colspan="2"></td>
-                                <td colspan="2"></td>
+                                <td colspan="3"></td>
                                 <td class="px-3 py-3 text-right text-primary text-sm">
                                     {{ number_format($reportData['summary']['grand_total'], 0, ',', '.') }}</td>
                             </tr>
