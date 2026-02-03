@@ -270,8 +270,13 @@ class MonthlyFinancialReport extends Component
             $totalSukarela += $sukarelaAmount;
         }
 
-        // Sort by name
+        // Sort: members with loans first, then by name alphabetically
         usort($reportItems, function ($a, $b) {
+            // First priority: has_loan (true first)
+            if ($a['has_loan'] !== $b['has_loan']) {
+                return $a['has_loan'] ? -1 : 1;
+            }
+            // Second priority: alphabetical by name
             return strcmp($a['nama'], $b['nama']);
         });
 

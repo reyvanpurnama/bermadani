@@ -202,18 +202,31 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th class="center" style="width: 40px;">No</th>
-                <th>Nama Anggota</th>
-                <th style="width: 200px;">Unit Kerja</th>
-                <th class="right" style="width: 150px;">Jumlah (Rp)</th>
+                <th class="center" style="width: 35px;">No</th>
+                <th style="width: 180px;">Nama Anggota</th>
+                <th class="right" style="width: 100px;">Simpanan Wajib</th>
+                <th class="right" style="width: 100px;">Pinjaman</th>
+                <th class="right" style="width: 90px;">Sukarela</th>
+                <th class="right" style="width: 100px;">Total (Rp)</th>
             </tr>
         </thead>
         <tbody>
             @foreach($data['items'] as $index => $item)
+                @php
+                    $totalPinjaman = ($item['angsuran_bermadani'] ?? 0) + ($item['angsuran_bmt_itqan_1'] ?? 0) + ($item['simwa_bmt_itqan_1'] ?? 0) + ($item['angsuran_bmt_itqan_2'] ?? 0) + ($item['simwa_bmt_itqan_2'] ?? 0);
+                @endphp
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
                     <td><strong>{{ strtoupper($item['nama']) }}</strong></td>
-                    <td>{{ $item['unit_kerja'] }}</td>
+                    <td class="right" style="font-family: 'Courier New', monospace;">
+                        {{ $item['simwa'] > 0 ? number_format($item['simwa'], 0, ',', '.') : '-' }}
+                    </td>
+                    <td class="right" style="font-family: 'Courier New', monospace;">
+                        {{ $totalPinjaman > 0 ? number_format($totalPinjaman, 0, ',', '.') : '-' }}
+                    </td>
+                    <td class="right" style="font-family: 'Courier New', monospace;">
+                        {{ $item['sukarela'] > 0 ? number_format($item['sukarela'], 0, ',', '.') : '-' }}
+                    </td>
                     <td class="right" style="font-family: 'Courier New', monospace; font-weight: bold;">
                         {{ number_format($item['total'], 0, ',', '.') }}
                     </td>
@@ -222,7 +235,10 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="3" class="right">TOTAL POTONGAN</td>
+                <td colspan="2" class="right">TOTAL</td>
+                <td class="right">{{ number_format($data['summary']['total_simwa'], 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($data['summary']['total_angsuran_bermadani'] + $data['summary']['total_angsuran_bmt_itqan_1'] + $data['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</td>
+                <td class="right">{{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['grand_total'], 0, ',', '.') }}</td>
             </tr>
         </tfoot>
