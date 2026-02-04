@@ -25,6 +25,8 @@ class SimpananTransaction extends Model
         'paidAmount',
         'transferReference',
         'isRead',
+        'created_at',
+        'updated_at',
     ];
 
     protected $casts = [
@@ -121,17 +123,17 @@ class SimpananTransaction extends Model
      */
     public function getFormattedAmountAttribute()
     {
-        return 'Rp ' . number_format((float)$this->amount, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->amount, 0, ',', '.');
     }
 
     public function getFormattedBalanceAttribute()
     {
-        return 'Rp ' . number_format((float)$this->balanceAfter, 0, ',', '.');
+        return 'Rp ' . number_format((float) $this->balanceAfter, 0, ',', '.');
     }
 
     public function getTypeLabelAttribute()
     {
-        return match($this->type) {
+        return match ($this->type) {
             'POKOK' => 'Simpanan Pokok',
             'WAJIB' => 'Simpanan Wajib',
             'SUKARELA' => 'Simpanan Sukarela',
@@ -141,7 +143,7 @@ class SimpananTransaction extends Model
 
     public function getTransactionTypeLabelAttribute()
     {
-        return match($this->transactionType) {
+        return match ($this->transactionType) {
             'SETOR' => 'Setoran',
             'TARIK' => 'Penarikan',
             default => $this->transactionType,
@@ -150,7 +152,7 @@ class SimpananTransaction extends Model
 
     public function getStatusBadgeAttribute()
     {
-        return match($this->status) {
+        return match ($this->status) {
             'APPROVED' => 'success',
             'PENDING' => 'warning',
             'REJECTED' => 'danger',

@@ -65,6 +65,53 @@ class Simpanan extends Component
         $this->selectedTransfer = null;
     }
 
+    public function getSimwaGridProperty()
+    {
+        if (!$this->member)
+            return [];
+
+        $grid = [];
+        $today = Carbon::now();
+        $joinDate = $this->member->joinDate ? Carbon::parse($this->member->joinDate) : $today;
+
+        // Fetch WAJIB transactions for the selected year
+        $transactions = SimpananTransaction::where('memberId', $this->member->id)
+            ->where('type', 'WAJIB')
+            ->where('status', 'APPROVED')
+            ->whereYear('created_at', $this->selectedYear)
+            ->get()
+            ->groupBy(function ($item) {
+                // Group by month index (1-12)
+                return (int) $item->created_at->format('n');
+            });
+
+        for ($i = 1; $i <= 12; $i++) {
+            $currentMonthDate = Carbon::createFromDate($this->selectedYear, $i, 1)->endOfMonth();
+            $status = 'UNPAID';
+
+            // Check if already paid
+            if (isset($transactions[$i])) {
+                $status = 'PAID';
+            }
+            // Check if future
+            elseif ($currentMonthDate->isFuture() && $currentMonthDate->format('Y-m') > $today->format('Y-m')) {
+                $status = 'FUTURE';
+            }
+            // Check if before join
+            elseif ($currentMonthDate->lt($joinDate->startOfMonth())) {
+                $status = 'NOT_MEMBER';
+            }
+
+            $grid[$i] = [
+                'monthName' => Carbon::create()->month($i)->translatedFormat('M'),
+                'fullName' => Carbon::create()->month($i)->translatedFormat('F'),
+                'status' => $status,
+            ];
+        }
+
+        return $grid;
+    }
+
     public function render()
     {
         $simpanan = collect();

@@ -110,7 +110,77 @@
         </div>
     </div>
 
-    {{-- Simpanan List --}}
+    {{-- Kartu Kontrol Simpanan Wajib --}}
+    @if($member->isMemberKoperasi && ($filterType === '' || $filterType === 'all' || $filterType === 'WAJIB'))
+        <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-5 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-calendar-check text-blue-500'></i> Kartu Kontrol
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1">Status pembayaran Simpanan Wajib per bulan</p>
+                </div>
+                
+                {{-- Year Selector --}}
+                <div class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+                    <button wire:click="$set('selectedYear', {{ $selectedYear - 1 }})" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-white dark:hover:bg-slate-700 rounded-md transition-all">
+                        <i class='bx bx-chevron-left'></i>
+                    </button>
+                    <span class="px-4 font-bold text-sm text-slate-700 dark:text-slate-300 font-mono">{{ $selectedYear }}</span>
+                    <button wire:click="$set('selectedYear', {{ $selectedYear + 1 }})" class="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-white dark:hover:bg-slate-700 rounded-md transition-all" {{ $selectedYear >= date('Y') ? 'disabled opacity-50' : '' }}>
+                        <i class='bx bx-chevron-right'></i>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Grid --}}
+            <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">
+                @foreach($this->simwaGrid as $month => $data)
+                    @php
+                        $colorClass = match($data['status']) {
+                            'PAID' => 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400',
+                            'UNPAID' => 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-900/20 dark:border-rose-800 dark:text-rose-400',
+                            'FUTURE' => 'bg-slate-50 border-slate-100 text-slate-400 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-500',
+                            'NOT_MEMBER' => 'bg-slate-50 border-slate-100 text-slate-300 dark:bg-slate-800/30 dark:border-slate-800 dark:text-slate-600',
+                        };
+                        
+                        $iconClass = match($data['status']) {
+                            'PAID' => 'bx-check-circle',
+                            'UNPAID' => 'bx-x-circle',
+                            'FUTURE' => 'bx-time',
+                            'NOT_MEMBER' => 'bx-block',
+                        };
+                    @endphp
+                    <div class="relative border rounded-xl p-3 flex flex-col items-center justify-center text-center transition-all {{ $colorClass }}">
+                        <span class="text-[10px] uppercase font-bold tracking-wider mb-1">{{ $data['monthName'] }}</span>
+                        <i class='bx {{ $iconClass }} text-xl mb-1'></i>
+                        <span class="text-[9px] font-bold">
+                            @if($data['status'] === 'PAID') LUNAS
+                            @elseif($data['status'] === 'UNPAID') BELUM
+                            @elseif($data['status'] === 'FUTURE') -
+                            @else N/A @endif
+                        </span>
+                    </div>
+                @endforeach
+            </div>
+
+            {{-- Summary/Legend --}}
+            <div class="flex gap-4 mt-6 justify-center flex-wrap">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                    <span class="text-[10px] text-slate-500">Lunas</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                    <span class="text-[10px] text-slate-500">Belum Bayar</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                    <span class="text-[10px] text-slate-500">Belum Waktunya</span>
+                </div>
+            </div>
+        </div>
+    @endif
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
         @if($simpanan->count() > 0)
             <div class="overflow-x-auto">
