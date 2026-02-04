@@ -7,6 +7,7 @@ use Livewire\Attributes\Layout;
 use Livewire\WithPagination;
 use App\Models\Member;
 use App\Models\SimpananTransaction;
+use Carbon\Carbon;
 
 #[Layout('layouts.member')]
 class Simpanan extends Component
@@ -20,11 +21,13 @@ class Simpanan extends Component
     public $unreadCount = 0;
     public $selectedTransfer = null;
     public $showReceiptModal = false;
+    public $selectedYear;
 
     public function mount()
     {
         $user = auth()->user();
         $this->member = Member::where('userId', $user->id)->first();
+        $this->selectedYear = date('Y');
         $this->markAsRead();
     }
 
