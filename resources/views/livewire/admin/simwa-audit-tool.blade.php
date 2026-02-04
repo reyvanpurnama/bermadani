@@ -346,9 +346,9 @@
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-darkCard">
                                     @foreach($auditResults as $row)
-                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($row['member_id'], $excludedMemberIds) ? 'opacity-50 grayscale bg-slate-50' : '' }}">
+                                        <tr wire:key="audit-row-{{ $row['member_id'] }}" class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($row['member_id'], $excludedMemberIds) ? 'opacity-50 grayscale bg-slate-50 dark:bg-slate-800' : '' }}">
                                             <td class="px-4 py-3 text-center bg-rose-50/20 dark:bg-rose-900/5 border-r border-rose-100 dark:border-rose-900/20">
-                                                <input type="checkbox" wire:model="excludedMemberIds" value="{{ $row['member_id'] }}" 
+                                                <input type="checkbox" wire:model.live="excludedMemberIds" value="{{ $row['member_id'] }}" 
                                                     class="w-4 h-4 text-rose-600 rounded border-gray-300 focus:ring-rose-500 cursor-pointer shadow-sm">
                                             </td>
                                             <td class="px-4 py-3">
