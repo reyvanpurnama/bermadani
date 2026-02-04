@@ -121,12 +121,14 @@
                 <span class="text-[10px] font-medium">Simpanan</span>
             </a>
 
-            <!-- Transfer (Center Floating) -->
+            <!-- Pinjaman (Center Floating) -->
             <div class="relative -top-5">
-                <a href="{{ route('member.transfer') }}"
+                <a href="{{ route('member.loans') }}"
                     class="w-14 h-14 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/40 flex items-center justify-center text-white transform transition-transform active:scale-95 border-4 border-white dark:border-darkBg">
-                    <i class='bx bx-transfer text-2xl'></i>
+                    <i class='bx bx-money-withdraw text-2xl'></i>
                 </a>
+                <span
+                    class="absolute -bottom-5 left-1/2 transform -translate-x-1/2 text-[10px] font-medium text-emerald-600 dark:text-emerald-400">Pinjaman</span>
             </div>
 
             <!-- Transactions -->

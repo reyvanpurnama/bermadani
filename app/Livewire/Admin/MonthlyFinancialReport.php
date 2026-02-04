@@ -7,6 +7,7 @@ use App\Models\Member;
 use App\Models\Loan;
 use App\Models\LoanPayment;
 use App\Models\SimpananTransaction;
+use App\Models\FinancialReportSnapshot;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class MonthlyFinancialReport extends Component
     public $reportData;
     public $showPreview = false;
     public $isExecuted = false;
+    public $isSnapshot = false;
 
     public function mount()
     {
@@ -39,14 +41,29 @@ class MonthlyFinancialReport extends Component
     {
         $this->showPreview = false;
         $this->isExecuted = false;
+        $this->isSnapshot = false;
         $this->reportData = null;
     }
 
     public function generateReport()
     {
-        $this->reportData = $this->collectReportData();
+        // 1. Check for Snapshot (Archive)
+        $snapshot = FinancialReportSnapshot::where('month', $this->selectedMonth)
+            ->where('year', $this->selectedYear)
+            ->first();
+
+        if ($snapshot) {
+            $this->reportData = $snapshot->data;
+            $this->isSnapshot = true;
+            $this->isExecuted = true; // Technically if snapshot exists, it was executed
+        } else {
+            // 2. No Snapshot -> Live Calculation
+            $this->reportData = $this->collectReportData();
+            $this->isSnapshot = false;
+            $this->checkIfExecuted(); // Check old method (transaction based)
+        }
+
         $this->showPreview = true;
-        $this->checkIfExecuted();
     }
 
     private function checkIfExecuted()
@@ -138,9 +155,32 @@ class MonthlyFinancialReport extends Component
                 }
             }
             DB::commit();
+
+            // Create Snapshot (Archive)
+            try {
+                FinancialReportSnapshot::updateOrCreate(
+                    [
+                        'month' => (int) $this->selectedMonth,
+                        'year' => (int) $this->selectedYear
+                    ],
+                    [
+                        'data' => $data,
+                        'status' => 'EXECUTED',
+                        'executed_by' => auth()->id()
+                    ]
+                );
+            } catch (\Exception $e) {
+                // Sillent fail or log? Snapshot failure shouldn't rollback financial transaction, 
+                // but it's important. Let's log it.
+                \Log::error('Failed to create payroll snapshot: ' . $e->getMessage());
+            }
+
             $this->isExecuted = true;
-            session()->flash('success', "✅ Berhasil membukukan potongan gaji bulan $monthName. Seluruh data simpanan dan pinjaman anggota telah diperbarui.");
-            $this->generateReport();
+            $this->isSnapshot = true; // Auto switch to snapshot view
+            $this->reportData = $data; // Update local data to match snapshot just in case
+
+            session()->flash('success', "✅ Berhasil membukukan potongan gaji bulan $monthName. Seluruh data simpanan dan pinjaman anggota telah diperbarui & diarsipkan.");
+            // No need to regenerate report, we have the data
         } catch (\Exception $e) {
             DB::rollBack();
             session()->flash('error', 'Gagal memproses pembukuan: ' . $e->getMessage());

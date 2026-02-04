@@ -108,18 +108,29 @@
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 rounded-xl {{ $isExecuted ? 'bg-emerald-50 text-emerald-500' : 'bg-amber-50 text-amber-500' }} flex items-center justify-center text-2xl shrink-0">
-                            <i class='bx {{ $isExecuted ? 'bx-check-double' : 'bx-time-five' }}'></i>
+                            <i class='bx {{ $isExecuted ? ($isSnapshot ? 'bx-archive' : 'bx-check-double') : 'bx-time-five' }}'></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                                Status Pembukuan: 
-                                <span class="{{ $isExecuted ? 'text-emerald-600' : 'text-amber-600' }}">
-                                    {{ $isExecuted ? 'Sudah Dibukukan' : 'Belum Dibukukan' }}
-                                </span>
-                            </h3>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                    Status Pembukuan: 
+                                    <span class="{{ $isExecuted ? 'text-emerald-600' : 'text-amber-600' }}">
+                                        {{ $isExecuted ? 'Sudah Dibukukan' : 'Belum Dibukukan' }}
+                                    </span>
+                                </h3>
+                                @if($isSnapshot)
+                                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded text-[10px] font-bold border border-blue-200 dark:border-blue-800 uppercase tracking-wide">
+                                        <i class='bx bx-lock-alt'></i> Archived
+                                    </span>
+                                @endif
+                            </div>
                             <p class="text-xs text-slate-500 mt-1 max-w-xl">
                                 @if($isExecuted)
-                                    Potongan gaji periode ini telah berhasil dibukukan ke dalam sistem pembukuan koperasi.
+                                    @if($isSnapshot)
+                                        Anda sedang melihat <strong>Arsip Permanen (Snapshot)</strong>. Data ini disimpan saat pembukuan dilakukan dan tidak akan berubah meskipun data anggota (Master Data) diubah.
+                                    @else
+                                        Potongan gaji periode ini telah berhasil dibukukan ke dalam sistem.
+                                    @endif
                                 @else
                                     Data di bawah adalah <strong>proyeksi (draft)</strong>. Klik tombol posting di samping kanan setelah dana dari Keuangan Kampus diterima untuk membukukan transaksi secara resmi.
                                 @endif
@@ -135,9 +146,14 @@
                             Posting / Bukukan Transaksi
                         </button>
                     @else
-                        <div class="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-500/20 text-xs font-bold flex items-center gap-2">
-                            <i class='bx bxs-check-shield text-lg'></i>
-                            Telah Terposting
+                        <div class="flex flex-col items-end gap-1">
+                            <div class="px-4 py-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-500/20 text-xs font-bold flex items-center gap-2">
+                                <i class='bx bxs-check-shield text-lg'></i>
+                                Telah Terposting
+                            </div>
+                            @if($isSnapshot)
+                                <span class="text-[10px] text-slate-400 font-mono">Snapshot Loaded</span>
+                            @endif
                         </div>
                     @endif
                 </div>
