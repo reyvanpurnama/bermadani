@@ -506,6 +506,7 @@ class SimwaAuditTool extends Component
                             $q->where('raw_uraian', 'like', '%Tabungan%')
                                 ->orWhere('raw_uraian', 'like', '%Sukarela%');
                         })
+                        ->where('raw_uraian', 'not like', '%Angsuran%') // SAFETY: Prevent counting Angsuran rows that mention Sukarela in notes
                         ->get();
 
                     foreach ($sRows as $sRow) {
