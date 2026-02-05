@@ -327,6 +327,7 @@ class SimwaAuditTool extends Component
                         $q->where('raw_uraian', 'like', '%Tabungan%')
                             ->orWhere('raw_uraian', 'like', '%Sukarela%');
                     })
+                    ->where('raw_uraian', 'not like', '%Angsuran%')
                     ->sum('amount');
 
                 if ($specificSimwa > 0) {
