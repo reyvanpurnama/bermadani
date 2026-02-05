@@ -36,6 +36,13 @@
                     <span class="text-xs text-slate-500 dark:text-slate-400">{{ $member->email }}</span>
                 </div>
 
+                @if($member->joinDate)
+                    <div class="text-[10px] text-slate-400 mb-4 flex items-center justify-center gap-1">
+                        <i class='bx bx-calendar'></i>
+                        Bergabung pada {{ \Carbon\Carbon::parse($member->joinDate)->locale('id')->translatedFormat('d F Y') }}
+                    </div>
+                @endif
+
                 <div class="flex justify-center gap-2">
                     <div
                         class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
@@ -286,23 +293,23 @@
                                             class="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Jumlah
                                             per Bulan</label>
                                         <div class="relative" x-data="{
-                                                                                rawValue: {{ $monthly_sukarela_amount ?? 0 }},
-                                                                                formatted: '',
-                                                                                init() {
-                                                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                                                },
-                                                                                formatNumber(num) {
-                                                                                    return new Intl.NumberFormat('id-ID').format(num);
-                                                                                },
-                                                                                parseNumber(str) {
-                                                                                    return parseInt(str.replace(/\./g, '')) || 0;
-                                                                                },
-                                                                                updateValue(e) {
-                                                                                    this.rawValue = this.parseNumber(e.target.value);
-                                                                                    this.formatted = this.formatNumber(this.rawValue);
-                                                                                    $wire.set('monthly_sukarela_amount', this.rawValue);
-                                                                                }
-                                                                            }">
+                                                                                    rawValue: {{ $monthly_sukarela_amount ?? 0 }},
+                                                                                    formatted: '',
+                                                                                    init() {
+                                                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                                                    },
+                                                                                    formatNumber(num) {
+                                                                                        return new Intl.NumberFormat('id-ID').format(num);
+                                                                                    },
+                                                                                    parseNumber(str) {
+                                                                                        return parseInt(str.replace(/\./g, '')) || 0;
+                                                                                    },
+                                                                                    updateValue(e) {
+                                                                                        this.rawValue = this.parseNumber(e.target.value);
+                                                                                        this.formatted = this.formatNumber(this.rawValue);
+                                                                                        $wire.set('monthly_sukarela_amount', this.rawValue);
+                                                                                    }
+                                                                                }">
                                             <span
                                                 class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[12px]">Rp</span>
                                             <input type="text" x-model="formatted" @input="updateValue($event)"
