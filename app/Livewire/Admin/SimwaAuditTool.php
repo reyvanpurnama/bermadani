@@ -95,7 +95,26 @@ class SimwaAuditTool extends Component
                 $rawAmount = str_replace([',', '.', 'Rp', ' '], '', $row[3]);
                 $rawAmount = is_numeric($rawAmount) ? $rawAmount : 0;
 
-                // Auto-match
+                // Check for Extra Sukarela in Column 4 (Notes)
+                // Example: "+ Sukarela 200" or "Tabungan 100"
+                $extraSukarelaAmount = 0;
+                $extraNote = $row[4] ?? '';
+
+                if (!empty($extraNote) && preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $extraNote, $matches)) {
+                    // Extract number, e.g. 200 -> 200000 (usually abbreviated in thousands if small, or full?)
+                    // User said "Sukarela 200" -> 200rb.
+                    // Let's assume if < 1000, it's in thousands.
+                    $val = (int) $matches[3];
+                    if ($val < 1000)
+                        $val *= 1000;
+                    if ($val < 10000)
+                        $val *= 1000; // Double check, usually 200 means 200000.  Minimum deposit usually 10k.
+
+                    $extraSukarelaAmount = $val;
+                    $rawUraian .= ' ' . $extraNote; // Append to main uraian too
+                }
+
+                // Auto-match logic ...
                 $mapping = DB::table('audit_simwa_name_mappings')->where('raw_name', $rawName)->first();
                 $matchedMemberId = $mapping ? $mapping->member_id : null;
 
@@ -107,6 +126,7 @@ class SimwaAuditTool extends Component
                     }
                 }
 
+                // 1. Insert Main Record
                 $batchData[] = [
                     'filename' => $filename,
                     'period' => $period,
@@ -117,6 +137,20 @@ class SimwaAuditTool extends Component
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
+
+                // 2. Insert Extra Sukarela Record if exists
+                if ($extraSukarelaAmount > 0) {
+                    $batchData[] = [
+                        'filename' => $filename,
+                        'period' => $period,
+                        'raw_name' => $rawName,
+                        'raw_uraian' => 'AUTO-DETECT EXTRA: ' . $extraNote, // Special uraian to be caught by syncBalance
+                        'amount' => $extraSukarelaAmount,
+                        'matched_member_id' => $matchedMemberId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
 
                 // Chunk insert to avoid memory issues
                 if (count($batchData) >= 100) {
@@ -354,8 +388,12 @@ class SimwaAuditTool extends Component
         $this->auditResults = $auditData;
     }
 
-    public function syncBalance($memberId, $processWajib = true, $processSukarela = true, $silent = false)
+    public function syncBalance($memberId, $processWajib = null, $processSukarela = null, $silent = false)
     {
+        // Use class properties as default if arguments are not provided (e.g. from single button click)
+        $processWajib = $processWajib ?? $this->processWajib;
+        $processSukarela = $processSukarela ?? $this->processSukarela;
+
         $result = collect($this->auditResults)->firstWhere('member_id', $memberId);
         if (!$result)
             return;
