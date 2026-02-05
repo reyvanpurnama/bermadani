@@ -353,7 +353,7 @@ class SimwaAuditTool extends Component
         $this->auditResults = $auditData;
     }
 
-    public function syncBalance($memberId, $processWajib = true, $processSukarela = true)
+    public function syncBalance($memberId, $processWajib = true, $processSukarela = true, $silent = false)
     {
         $result = collect($this->auditResults)->firstWhere('member_id', $memberId);
         if (!$result)
@@ -382,27 +382,11 @@ class SimwaAuditTool extends Component
                     ->delete();
             }
 
-            // Init running balance (if not processing, keep existing balance logic is complex, 
-            // but for cleanup we assume we rebuild. If we skip Wajib, we shouldn't touch Wajib balance)
-            // Ideally if skipping, we just don't touch that part.
-
             $batchInserts = [];
-            // To properly calculate balanceAfter, we might need current balance if we append.
-            // But cleanup assumes DELETE ALL. If we keep existing, we can't easily append "correct" history without sorting.
-            // So if processWajib is false, we basically DO NOTHING for Wajib.
-            // If processWajib is true, we REBUILD Wajib from scratch (since we deleted old ones).
+            $runningWajib = 0;
+            $runningSukarela = 0;
 
-            $runningWajib = 0; // If rebuilding
-            $runningSukarela = 0; // If rebuilding
-
-            // =====================================================
             // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
-            // Only for Coop Members
-            // =====================================================
-            // =====================================================
-            // 2. PRE-APRIL 2024: Generate 50k per month (ASSUMED PAID)
-            // Only for Coop Members
-            // =====================================================
             if ($processWajib && $member->isMemberKoperasi && $joinDate->lt($cutoffDate)) {
                 $currentMonth = $joinDate->copy();
 
@@ -427,9 +411,7 @@ class SimwaAuditTool extends Component
                 }
             }
 
-            // =====================================================
             // 3. POST-APRIL 2024: Use CSV Data (Detailed per period)
-            // =====================================================
             $memberPeriods = DB::table('audit_simwa_imports')
                 ->where('matched_member_id', $memberId)
                 ->select('period')
@@ -438,10 +420,12 @@ class SimwaAuditTool extends Component
                 ->get();
 
             foreach ($memberPeriods as $mp) {
-                $date = \Carbon\Carbon::parse($mp->period)->endOfMonth()->subDays(2);
+                // Ensure date is 29th or End of Month (for Feb)
+                $periodDate = \Carbon\Carbon::parse($mp->period);
+                $day = min(29, $periodDate->daysInMonth);
+                $date = $periodDate->copy()->setDay($day)->endOfDay();
 
                 if ($processWajib) {
-                    // --- A. Handle WAJIB ---
                     $wRows = DB::table('audit_simwa_imports')
                         ->where('matched_member_id', $memberId)
                         ->where('period', $mp->period)
@@ -475,7 +459,6 @@ class SimwaAuditTool extends Component
                     }
                 }
 
-                // --- B. Handle SUKARELA ---
                 if ($processSukarela) {
                     $sRows = DB::table('audit_simwa_imports')
                         ->where('matched_member_id', $memberId)
@@ -504,16 +487,12 @@ class SimwaAuditTool extends Component
                 }
             }
 
-            // =====================================================
-            // 4. BULK INSERT
-            // =====================================================
             if (!empty($batchInserts)) {
                 foreach (array_chunk($batchInserts, 100) as $chunk) {
                     \App\Models\SimpananTransaction::insert($chunk);
                 }
             }
 
-            // 5. Update Final Member Balances
             $updates = [];
             if ($processWajib)
                 $updates['simpananWajib'] = $runningWajib;
@@ -524,6 +503,10 @@ class SimwaAuditTool extends Component
                 $member->update($updates);
             }
         });
+
+        if (!$silent) {
+            session()->flash('message', "History member {$memberId} berhasil di-rebuild!");
+        }
     }
 
     public function syncAll()
@@ -558,7 +541,8 @@ class SimwaAuditTool extends Component
                 }
 
                 try {
-                    $this->syncBalance($result['member_id'], $this->processWajib, $this->processSukarela);
+                    // Pass silent=true specifically for bulk operation
+                    $this->syncBalance($result['member_id'], $this->processWajib, $this->processSukarela, true);
                     $count++;
                 } catch (\Exception $e) {
                     \Log::error("Failed to sync member {$result['member_id']}: " . $e->getMessage());
