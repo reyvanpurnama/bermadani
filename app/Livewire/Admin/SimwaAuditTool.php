@@ -131,9 +131,10 @@ class SimwaAuditTool extends Component
         }
 
         $this->reset('csvFiles');
-        session()->flash('message', 'File berhasil diimport dan data lama (jika ada) untuk bulan tersebut telah diganti.');
+        $this->dispatch('notify', ['type' => 'success', 'message' => 'File berhasil diimport dan data lama (jika ada) untuk bulan tersebut telah diganti.']);
         $this->activeTab = 'upload'; // Stay on upload to see list
     }
+
 
     private function parsePeriodFromFilename($filename)
     {
@@ -185,7 +186,7 @@ class SimwaAuditTool extends Component
     public function deletePeriod($period)
     {
         DB::table('audit_simwa_imports')->where('period', $period)->delete();
-        session()->flash('message', "Data periode $period berhasil dihapus.");
+        $this->dispatch('notify', ['type' => 'success', 'message' => "Data periode $period berhasil dihapus."]);
     }
 
     public function getImportedPeriodsProperty()
@@ -210,7 +211,7 @@ class SimwaAuditTool extends Component
             ->where('raw_name', $rawName)
             ->update(['matched_member_id' => $memberId]);
 
-        session()->flash('message', "Berhasil mapping: $rawName");
+        $this->dispatch('notify', ['type' => 'success', 'message' => "Berhasil mapping: $rawName"]);
     }
 
     // Reconciliation Data
@@ -505,7 +506,7 @@ class SimwaAuditTool extends Component
         });
 
         if (!$silent) {
-            session()->flash('message', "History member {$memberId} berhasil di-rebuild!");
+            $this->dispatch('notify', ['type' => 'success', 'message' => "History member {$memberId} berhasil di-rebuild!"]);
         }
     }
 
@@ -516,7 +517,7 @@ class SimwaAuditTool extends Component
                 $this->syncBalance($result['member_id']);
             }
         }
-        session()->flash('message', "Semua member berhasil disinkronisasi dengan data Payroll!");
+        $this->dispatch('notify', ['type' => 'success', 'message' => "Semua member berhasil disinkronisasi dengan data Payroll!"]);
     }
 
     public function cleanupAllSimwa()
@@ -555,13 +556,13 @@ class SimwaAuditTool extends Component
 
             // Show result
             if ($errors > 0) {
-                session()->flash('message', "⚠️ Cleanup selesai: {$count} berhasil, {$errors} gagal.");
+                $this->dispatch('notify', ['type' => 'warning', 'message' => "⚠️ Cleanup selesai: {$count} berhasil, {$errors} gagal."]);
             } else {
-                session()->flash('message', "✅ CLEANUP SELESAI! {$count} member history berhasil di-rebuild dengan detail bulanan.");
+                $this->dispatch('notify', ['type' => 'success', 'message' => "✅ CLEANUP SELESAI! {$count} member history berhasil di-rebuild dengan detail bulanan."]);
             }
 
         } catch (\Exception $e) {
-            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
             \Log::error("Cleanup failed: " . $e->getMessage());
         }
     }

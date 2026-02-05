@@ -8,31 +8,7 @@
     </div>
 
     {{-- Flash Notifications --}}
-    @if (session()->has('message'))
-        <div class="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-700 text-emerald-800 dark:text-emerald-200 px-6 py-4 rounded-2xl flex items-center gap-3 animate-pulse">
-            <i class='bx bx-check-circle text-2xl text-emerald-500'></i>
-            <div>
-                <p class="font-bold">Sukses!</p>
-                <p class="text-sm">{{ session('message') }}</p>
-            </div>
-            <button wire:click="$refresh" class="ml-auto text-emerald-500 hover:text-emerald-700">
-                <i class='bx bx-x text-xl'></i>
-            </button>
-        </div>
-    @endif
 
-    @if (session()->has('error'))
-        <div class="bg-rose-50 dark:bg-rose-900/30 border border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200 px-6 py-4 rounded-2xl flex items-center gap-3">
-            <i class='bx bx-error-circle text-2xl text-rose-500'></i>
-            <div>
-                <p class="font-bold">Error!</p>
-                <p class="text-sm">{{ session('error') }}</p>
-            </div>
-            <button wire:click="$refresh" class="ml-auto text-rose-500 hover:text-rose-700">
-                <i class='bx bx-x text-xl'></i>
-            </button>
-        </div>
-    @endif
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -412,7 +388,15 @@
                                             <td class="px-4 py-3 text-center">
                                                 <button wire:click="syncBalance({{ $row['member_id'] }})" 
                                                     class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-1 mx-auto"
-                                                    onclick="return confirm('🔄 REBUILD HISTORY (WAJIB & SUKARELA)?\n\nMember: {{ $row['name'] }}\n\nProses ini akan:\n1. Hapus history Wajib & Sukarela lama\n2. Buat ulang history detail dari Payroll\n\nLanjut?')">
+                                                    wire:confirm="🔄 REBUILD HISTORY (WAJIB & SUKARELA)?
+
+Member: {{ $row['name'] }}
+
+Proses ini akan:
+1. Hapus history Wajib & Sukarela lama
+2. Buat ulang history detail dari Payroll
+
+Lanjut?">
                                                     <i class='bx bx-refresh'></i>
                                                     Rebuild History
                                                 </button>
