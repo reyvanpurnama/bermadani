@@ -198,6 +198,46 @@ class SimwaAuditTool extends Component
                         $splitSukarela = $rawAmount;
                         $mainRecordAmount = 0;
                     }
+                } else {
+                    // =============================================
+                    // PATTERN 6: ANGSURAN - Always includes Simwa 50k!
+                    // Total angsuran amount INCLUDES: Simwa 50k + optional Sukarela
+                    // E.g. "Angsuran 12, 1.383.350, + Sukarela 100"
+                    //      = Simwa 50k + Sukarela 100k + Angsuran sisa (IGNORED)
+                    // =============================================
+
+                    // ALWAYS extract Simwa 50k from Angsuran rows
+                    $splitSimwa = 50000;
+
+                    // Check URAIAN column for embedded Sukarela amount
+                    // Pattern: "Sukarela X" or "+ Sukarela X" in uraian
+                    if (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian, $uraianMatch)) {
+                        $val = (int) $uraianMatch[3];
+                        // Convert abbreviated amounts: 100 -> 100,000
+                        if ($val < 1000)
+                            $val *= 1000;
+                        if ($val < 10000)
+                            $val *= 1000;
+                        $splitSukarela = $val;
+                    }
+
+                    // Check NOTES column for Sukarela (e.g. "+ Sukarela 100")
+                    // This was already handled by $extraSukarelaAmount above, so we combine
+                    if ($extraSukarelaAmount > 0) {
+                        $splitSukarela += $extraSukarelaAmount;
+                        $extraSukarelaAmount = 0; // Don't double-count in extra record
+                    }
+
+                    // Check for EXTRA Simwa in uraian (rare case: "Angsuran 5+Simwa 2" = 2x 50k)
+                    // Pattern: "simwa" with number > 1 means multiple months
+                    if (preg_match('/simwa\s*(\d+)/i', $rawUraian, $simwaMatch)) {
+                        $simwaCount = (int) $simwaMatch[1];
+                        if ($simwaCount > 1) {
+                            $splitSimwa = $simwaCount * 50000; // Override with explicit count
+                        }
+                    }
+
+                    // Main Angsuran amount stays full (will be marked as IGNORED in display)
                 }
 
                 // ============================================
