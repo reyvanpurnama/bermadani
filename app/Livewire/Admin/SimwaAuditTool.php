@@ -126,7 +126,18 @@ class SimwaAuditTool extends Component
                     }
                 }
 
-                // 1. Insert Main Record
+                // 1. Detect if this is a SIMWA entry that needs splitting
+                // Rule: If uraian contains 'simwa' (not part of combo like Angsuran+Simwa) and amount > 50k
+                //       then 50k goes to Wajib, remainder goes to Sukarela
+                $isSimwaEntry = preg_match('/\bsimwa\b/i', $rawUraian) && !preg_match('/angsuran/i', $rawUraian);
+                $simwaExcessAmount = 0;
+
+                if ($isSimwaEntry && $rawAmount > 50000) {
+                    $simwaExcessAmount = $rawAmount - 50000;
+                    $rawAmount = 50000; // Override main amount to standard Wajib
+                }
+
+                // 2. Insert Main Record (possibly adjusted)
                 $batchData[] = [
                     'filename' => $filename,
                     'period' => $period,
@@ -138,13 +149,27 @@ class SimwaAuditTool extends Component
                     'updated_at' => now(),
                 ];
 
-                // 2. Insert Extra Sukarela Record if exists
+                // 3. Insert SIMWA Excess as Sukarela (if any)
+                if ($simwaExcessAmount > 0) {
+                    $batchData[] = [
+                        'filename' => $filename,
+                        'period' => $period,
+                        'raw_name' => $rawName,
+                        'raw_uraian' => 'AUTO-SPLIT SIMWA: Kelebihan Simwa -> Sukarela',
+                        'amount' => $simwaExcessAmount,
+                        'matched_member_id' => $matchedMemberId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // 4. Insert Extra Sukarela Record from Notes Column (if exists)
                 if ($extraSukarelaAmount > 0) {
                     $batchData[] = [
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => 'AUTO-DETECT EXTRA: ' . $extraNote, // Special uraian to be caught by syncBalance
+                        'raw_uraian' => 'AUTO-DETECT EXTRA: ' . $extraNote,
                         'amount' => $extraSukarelaAmount,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
@@ -325,7 +350,8 @@ class SimwaAuditTool extends Component
                     ->where('period', $mp->period)
                     ->where(function ($q) {
                         $q->where('raw_uraian', 'like', '%Tabungan%')
-                            ->orWhere('raw_uraian', 'like', '%Sukarela%');
+                            ->orWhere('raw_uraian', 'like', '%Sukarela%')
+                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%'); // Catch excess simwa
                     })
                     ->where('raw_uraian', 'not like', '%Angsuran%')
                     ->sum('amount');
@@ -505,7 +531,8 @@ class SimwaAuditTool extends Component
                         ->where('period', $mp->period)
                         ->where(function ($q) {
                             $q->where('raw_uraian', 'like', '%Tabungan%')
-                                ->orWhere('raw_uraian', 'like', '%Sukarela%');
+                                ->orWhere('raw_uraian', 'like', '%Sukarela%')
+                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%'); // Catch excess simwa
                         })
                         ->where('raw_uraian', 'not like', '%Angsuran%') // SAFETY: Prevent counting Angsuran rows that mention Sukarela in notes
                         ->get();
@@ -605,6 +632,32 @@ class SimwaAuditTool extends Component
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Terjadi kesalahan: ' . $e->getMessage()]);
             \Log::error("Cleanup failed: " . $e->getMessage());
         }
+    }
+
+    // Detail Modal Logic
+    public $showDetailModal = false;
+    public $detailMember = null;
+    public $detailRows = [];
+
+    public function openDetailModal($memberId)
+    {
+        $this->detailMember = Member::find($memberId);
+        if (!$this->detailMember)
+            return;
+
+        $this->detailRows = DB::table('audit_simwa_imports')
+            ->where('matched_member_id', $memberId)
+            ->orderBy('period', 'desc')
+            ->get();
+
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->detailMember = null;
+        $this->detailRows = [];
     }
 
     private function saveMapping($rawName, $memberId)

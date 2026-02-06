@@ -330,7 +330,12 @@
                                             <td class="px-4 py-3">
                                                 <div class="flex items-center gap-2">
                                                     <div>
-                                                        <p class="font-bold text-slate-700 dark:text-slate-200">{{ $row['name'] }}</p>
+                                                        <div class="flex items-center gap-2">
+                                                            <p class="font-bold text-slate-700 dark:text-slate-200">{{ $row['name'] }}</p>
+                                                            <button wire:click="openDetailModal({{ $row['member_id'] }})" class="text-slate-400 hover:text-indigo-500 transition-colors" title="Lihat Detail CSV">
+                                                                <i class='bx bx-search-alt-2'></i>
+                                                            </button>
+                                                        </div>
                                                         <div class="flex items-center gap-2">
                                                             <span class="text-[10px] text-slate-400 font-mono">ID: {{ $row['member_id'] }}</span>
                                                             @if($row['is_coop'])
@@ -415,4 +420,73 @@ Lanjut?">
             @endif
         </div>
     </div>
+
+    {{-- Detail Modal --}}
+    @if($showDetailModal && $detailMember)
+    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        {{-- Backdrop --}}
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" wire:click="closeDetailModal"></div>
+
+        {{-- Modal Content --}}
+        <div class="relative w-full max-w-4xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-lg">Detail Import CSV</h3>
+                    <p class="text-sm text-slate-500">{{ $detailMember->name }} ({{ $detailMember->nomorAnggota }})</p>
+                </div>
+                <button wire:click="closeDetailModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-0">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-100 dark:bg-slate-700/50 text-xs text-slate-500 uppercase font-medium sticky top-0">
+                        <tr>
+                            <th class="px-6 py-3 text-left w-12">No</th>
+                            <th class="px-6 py-3 text-left">Period</th>
+                            <th class="px-6 py-3 text-left">File Source</th>
+                            <th class="px-6 py-3 text-left">Nama di CSV</th>
+                            <th class="px-6 py-3 text-left">Uraian / Notes</th>
+                            <th class="px-6 py-3 text-right">Nominal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+                        @forelse($detailRows as $r)
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 {{ str_contains($r->raw_uraian, 'Angsuran') ? 'opacity-60 bg-slate-50 dark:bg-slate-700/20' : '' }}">
+                                <td class="px-6 py-3 font-mono text-slate-500 text-xs">{{ $loop->iteration }}</td>
+                                <td class="px-6 py-3 font-mono text-slate-600 dark:text-slate-400">{{ $r->period }}</td>
+                                <td class="px-6 py-3 text-xs text-slate-500 max-w-[150px] truncate" title="{{ $r->filename }}">
+                                    {{ $r->filename }}
+                                </td>
+                                <td class="px-6 py-3 font-bold">{{ $r->raw_name }}</td>
+                                <td class="px-6 py-3">
+                                    <span class="px-2 py-1 rounded text-xs font-mono {{ str_contains($r->raw_uraian, 'AUTO-DETECT') ? 'bg-indigo-100 text-indigo-700' : (str_contains($r->raw_uraian, 'Angsuran') ? 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300') }}">
+                                        {{ $r->raw_uraian }}
+                                        @if(str_contains($r->raw_uraian, 'Angsuran')) <span class="ml-1 text-[9px] uppercase border border-slate-300 dark:border-slate-500 px-1 rounded">Ignored</span> @endif
+                                    </span>
+                                </td>
+                                <td class="px-6 py-3 text-right font-mono {{ $r->amount > 0 && !str_contains($r->raw_uraian, 'Angsuran') ? 'text-emerald-600 font-bold' : 'text-slate-400 dark:text-slate-600 decoration-slate-400/50' }} {{ str_contains($r->raw_uraian, 'Angsuran') ? 'line-through' : '' }}">
+                                    {{ number_format($r->amount) }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                                    Tidak ada data import CSV yang terhubung ke member ini.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 text-right">
+                <button wire:click="closeDetailModal" class="px-4 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-600 hover:bg-slate-50 transition-colors">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
