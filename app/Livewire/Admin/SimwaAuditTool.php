@@ -126,44 +126,141 @@ class SimwaAuditTool extends Component
                     }
                 }
 
-                // 1. Detect if this is a SIMWA entry that needs splitting
-                // Rule: If uraian contains 'simwa' (not part of combo like Angsuran+Simwa) and amount > 50k
-                //       then 50k goes to Wajib, remainder goes to Sukarela
-                $isSimwaEntry = preg_match('/\bsimwa\b/i', $rawUraian) && !preg_match('/angsuran/i', $rawUraian);
-                $simwaExcessAmount = 0;
+                // ============================================
+                // SMART SPLIT LOGIC FOR SIMPOK, SIMWA, TABUNGAN
+                // ============================================
 
-                if ($isSimwaEntry && $rawAmount > 50000) {
-                    $simwaExcessAmount = $rawAmount - 50000;
-                    $rawAmount = 50000; // Override main amount to standard Wajib
+                $lowerUraian = strtolower($rawUraian);
+                $lowerNote = strtolower($extraNote);
+                $combinedText = $lowerUraian . ' ' . $lowerNote;
+
+                // Skip Angsuran rows (loan repayments) - they are handled separately
+                $isAngsuran = str_contains($combinedText, 'angsuran') || str_contains($combinedText, 'angs');
+
+                // Detect patterns
+                $hasSimpok = str_contains($combinedText, 'simpok');
+                $hasSimwa = preg_match('/\bsimwa\b/i', $combinedText);
+                $hasTabungan = str_contains($combinedText, 'tabungan') || str_contains($combinedText, 'tab+');
+
+                // Initialize split amounts
+                $splitSimpok = 0;
+                $splitSimwa = 0;
+                $splitSukarela = 0;
+                $mainRecordAmount = $rawAmount;
+                $mainRecordUraian = $rawUraian;
+
+                if (!$isAngsuran) {
+
+                    // PATTERN 1: "simpok+simwa" or "simpok simwa" = 250k (200k Simpok + 50k Simwa)
+                    if ($hasSimpok && $hasSimwa && !$hasTabungan && $rawAmount >= 250000) {
+                        $splitSimpok = 200000;
+                        $splitSimwa = 50000;
+                        $splitSukarela = $rawAmount - 250000; // Any excess
+                        $mainRecordAmount = 0; // All split out
+                    }
+
+                    // PATTERN 2: "tab+simpok+simwa" = 450k (200k Tabungan + 200k Simpok + 50k Simwa)
+                    elseif ($hasTabungan && $hasSimpok && $hasSimwa && $rawAmount >= 450000) {
+                        $splitSimpok = 200000;
+                        $splitSimwa = 50000;
+                        $splitSukarela = $rawAmount - 250000; // Remaining is Tabungan/Sukarela (200k for 450k input)
+                        $mainRecordAmount = 0; // All split out
+                    }
+
+                    // PATTERN 3: Pure "simpokX" cicilan (e.g. simpok1, simpok 2, Simpok3)
+                    // These are 50k installments of Simpanan Pokok
+                    elseif ($hasSimpok && !$hasSimwa && !$hasTabungan && preg_match('/simpok\s*\d/i', $combinedText)) {
+                        // Check if it's a double payment like "simpok 1,2" = 100k
+                        if (preg_match('/simpok\s*\d\s*,\s*\d/i', $combinedText)) {
+                            $splitSimpok = $rawAmount; // Full amount is Simpok (usually 100k for 2 installments)
+                        } else {
+                            $splitSimpok = $rawAmount; // Full amount is Simpok (usually 50k for 1 installment)
+                        }
+                        $mainRecordAmount = 0;
+                    }
+
+                    // PATTERN 4: Pure "simwa" only (no simpok)
+                    // If amount > 50k, split: 50k Simwa + excess to Sukarela
+                    elseif ($hasSimwa && !$hasSimpok && !$hasTabungan) {
+                        if ($rawAmount > 50000) {
+                            $splitSimwa = 50000;
+                            $splitSukarela = $rawAmount - 50000;
+                            $mainRecordAmount = 0;
+                        } else {
+                            $splitSimwa = $rawAmount;
+                            $mainRecordAmount = 0;
+                        }
+                    }
+
+                    // PATTERN 5: Pure "Tabungan" only
+                    // All goes to Sukarela
+                    elseif ($hasTabungan && !$hasSimpok && !$hasSimwa) {
+                        $splitSukarela = $rawAmount;
+                        $mainRecordAmount = 0;
+                    }
                 }
 
-                // 2. Insert Main Record (possibly adjusted)
-                $batchData[] = [
-                    'filename' => $filename,
-                    'period' => $period,
-                    'raw_name' => $rawName,
-                    'raw_uraian' => $rawUraian,
-                    'amount' => $rawAmount,
-                    'matched_member_id' => $matchedMemberId,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
+                // ============================================
+                // INSERT RECORDS
+                // ============================================
 
-                // 3. Insert SIMWA Excess as Sukarela (if any)
-                if ($simwaExcessAmount > 0) {
+                // Main record (for unhandled/Angsuran cases, or remaining amount)
+                if ($mainRecordAmount > 0 || (!$hasSimpok && !$hasSimwa && !$hasTabungan)) {
                     $batchData[] = [
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => 'AUTO-SPLIT SIMWA: Kelebihan Simwa -> Sukarela',
-                        'amount' => $simwaExcessAmount,
+                        'raw_uraian' => $mainRecordUraian,
+                        'amount' => $mainRecordAmount > 0 ? $mainRecordAmount : $rawAmount,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];
                 }
 
-                // 4. Insert Extra Sukarela Record from Notes Column (if exists)
+                // SIMPOK Record
+                if ($splitSimpok > 0) {
+                    $batchData[] = [
+                        'filename' => $filename,
+                        'period' => $period,
+                        'raw_name' => $rawName,
+                        'raw_uraian' => 'AUTO-SPLIT SIMPOK: ' . $rawUraian,
+                        'amount' => $splitSimpok,
+                        'matched_member_id' => $matchedMemberId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // SIMWA Record
+                if ($splitSimwa > 0) {
+                    $batchData[] = [
+                        'filename' => $filename,
+                        'period' => $period,
+                        'raw_name' => $rawName,
+                        'raw_uraian' => 'AUTO-SPLIT SIMWA: ' . $rawUraian,
+                        'amount' => $splitSimwa,
+                        'matched_member_id' => $matchedMemberId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // SUKARELA/TABUNGAN Record
+                if ($splitSukarela > 0) {
+                    $batchData[] = [
+                        'filename' => $filename,
+                        'period' => $period,
+                        'raw_name' => $rawName,
+                        'raw_uraian' => 'AUTO-SPLIT SUKARELA: ' . $rawUraian,
+                        'amount' => $splitSukarela,
+                        'matched_member_id' => $matchedMemberId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                // Extra Sukarela from Notes Column (e.g. "+ Sukarela 200")
                 if ($extraSukarelaAmount > 0) {
                     $batchData[] = [
                         'filename' => $filename,
@@ -351,7 +448,8 @@ class SimwaAuditTool extends Component
                     ->where(function ($q) {
                         $q->where('raw_uraian', 'like', '%Tabungan%')
                             ->orWhere('raw_uraian', 'like', '%Sukarela%')
-                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%'); // Catch excess simwa
+                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%')
+                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SUKARELA%'); // Catch tabungan from combo splits
                     })
                     ->where('raw_uraian', 'not like', '%Angsuran%')
                     ->sum('amount');
@@ -532,7 +630,8 @@ class SimwaAuditTool extends Component
                         ->where(function ($q) {
                             $q->where('raw_uraian', 'like', '%Tabungan%')
                                 ->orWhere('raw_uraian', 'like', '%Sukarela%')
-                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%'); // Catch excess simwa
+                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%')
+                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SUKARELA%'); // Catch tabungan from combo splits
                         })
                         ->where('raw_uraian', 'not like', '%Angsuran%') // SAFETY: Prevent counting Angsuran rows that mention Sukarela in notes
                         ->get();

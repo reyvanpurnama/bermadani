@@ -443,36 +443,68 @@ Lanjut?">
                 <table class="w-full text-sm">
                     <thead class="bg-slate-100 dark:bg-slate-700/50 text-xs text-slate-500 uppercase font-medium sticky top-0">
                         <tr>
-                            <th class="px-6 py-3 text-left w-12">No</th>
-                            <th class="px-6 py-3 text-left">Period</th>
-                            <th class="px-6 py-3 text-left">File Source</th>
-                            <th class="px-6 py-3 text-left">Nama di CSV</th>
-                            <th class="px-6 py-3 text-left">Uraian / Notes</th>
-                            <th class="px-6 py-3 text-right">Nominal</th>
+                            <th class="px-4 py-3 text-left w-10">No</th>
+                            <th class="px-4 py-3 text-left">Period</th>
+                            <th class="px-4 py-3 text-left">Nama di CSV</th>
+                            <th class="px-4 py-3 text-left">Uraian Asli</th>
+                            <th class="px-4 py-3 text-center">Diproses Sebagai</th>
+                            <th class="px-4 py-3 text-right">Nominal</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                         @forelse($detailRows as $r)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 {{ str_contains($r->raw_uraian, 'Angsuran') ? 'opacity-60 bg-slate-50 dark:bg-slate-700/20' : '' }}">
-                                <td class="px-6 py-3 font-mono text-slate-500 text-xs">{{ $loop->iteration }}</td>
-                                <td class="px-6 py-3 font-mono text-slate-600 dark:text-slate-400">{{ $r->period }}</td>
-                                <td class="px-6 py-3 text-xs text-slate-500 max-w-[150px] truncate" title="{{ $r->filename }}">
-                                    {{ $r->filename }}
-                                </td>
-                                <td class="px-6 py-3 font-bold">{{ $r->raw_name }}</td>
-                                <td class="px-6 py-3">
-                                    <span class="px-2 py-1 rounded text-xs font-mono {{ str_contains($r->raw_uraian, 'AUTO-DETECT') ? 'bg-indigo-100 text-indigo-700' : (str_contains($r->raw_uraian, 'Angsuran') ? 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300') }}">
-                                        {{ $r->raw_uraian }}
-                                        @if(str_contains($r->raw_uraian, 'Angsuran')) <span class="ml-1 text-[9px] uppercase border border-slate-300 dark:border-slate-500 px-1 rounded">Ignored</span> @endif
+                            @php
+                                // Determine what this row was processed as
+                                $processedAs = 'OTHER';
+                                $badgeClass = 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400';
+                                
+                                if (str_contains($r->raw_uraian, 'AUTO-SPLIT SIMPOK')) {
+                                    $processedAs = 'SIMPOK';
+                                    $badgeClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+                                } elseif (str_contains($r->raw_uraian, 'AUTO-SPLIT SIMWA')) {
+                                    $processedAs = 'SIMWA';
+                                    $badgeClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+                                } elseif (str_contains($r->raw_uraian, 'AUTO-SPLIT SUKARELA') || str_contains($r->raw_uraian, 'AUTO-DETECT EXTRA')) {
+                                    $processedAs = 'SUKARELA';
+                                    $badgeClass = 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400';
+                                } elseif (preg_match('/\bsimwa\b/i', $r->raw_uraian) && !str_contains($r->raw_uraian, 'AUTO-')) {
+                                    $processedAs = 'SIMWA';
+                                    $badgeClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+                                } elseif (str_contains(strtolower($r->raw_uraian), 'tabungan') || str_contains(strtolower($r->raw_uraian), 'sukarela')) {
+                                    $processedAs = 'SUKARELA';
+                                    $badgeClass = 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400';
+                                } elseif (str_contains(strtolower($r->raw_uraian), 'angsuran')) {
+                                    $processedAs = 'IGNORED';
+                                    $badgeClass = 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400';
+                                }
+                                
+                                // Extract original uraian (remove AUTO- prefix if present)
+                                $originalUraian = $r->raw_uraian;
+                                if (preg_match('/^AUTO-[A-Z\s]+:\s*(.+)$/i', $r->raw_uraian, $m)) {
+                                    $originalUraian = $m[1];
+                                }
+                            @endphp
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 {{ $processedAs === 'IGNORED' ? 'opacity-50' : '' }}">
+                                <td class="px-4 py-3 font-mono text-slate-400 text-xs">{{ $loop->iteration }}</td>
+                                <td class="px-4 py-3 font-mono text-slate-600 dark:text-slate-400 text-xs">{{ $r->period }}</td>
+                                <td class="px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{{ $r->raw_name }}</td>
+                                <td class="px-4 py-3 text-xs">
+                                    <span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">
+                                        {{ $originalUraian }}
                                     </span>
                                 </td>
-                                <td class="px-6 py-3 text-right font-mono {{ $r->amount > 0 && !str_contains($r->raw_uraian, 'Angsuran') ? 'text-emerald-600 font-bold' : 'text-slate-400 dark:text-slate-600 decoration-slate-400/50' }} {{ str_contains($r->raw_uraian, 'Angsuran') ? 'line-through' : '' }}">
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ $badgeClass }}">
+                                        {{ $processedAs }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right font-mono font-bold {{ $processedAs === 'IGNORED' ? 'text-slate-400 line-through' : 'text-emerald-600' }}">
                                     {{ number_format($r->amount) }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-12 text-center text-slate-500">
+                                <td colspan="7" class="px-6 py-12 text-center text-slate-500">
                                     Tidak ada data import CSV yang terhubung ke member ini.
                                 </td>
                             </tr>
