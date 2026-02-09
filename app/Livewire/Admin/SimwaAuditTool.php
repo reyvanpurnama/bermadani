@@ -199,9 +199,13 @@ class SimwaAuditTool extends Component
                     }
 
                     // PATTERN 5: Pure "Tabungan" only
-                    // All goes to Sukarela
+                    // ALWAYS includes SIMWA 50k! Remaining goes to Sukarela
+                    // E.g. "Tabungan 200k" = 50k SIMWA + 150k Sukarela
                     elseif ($hasTabungan && !$hasSimpok && !$hasSimwa) {
-                        $splitSukarela = $rawAmount;
+                        $splitSimwa = 50000; // Mandatory SIMWA
+                        $splitSukarela = $rawAmount - 50000; // Rest to Sukarela
+                        if ($splitSukarela < 0)
+                            $splitSukarela = 0; // Safety check
                         $mainRecordAmount = 0;
                     }
                 } else {
@@ -478,30 +482,30 @@ class SimwaAuditTool extends Component
             $actualSukarelaTotal = 0;
 
             foreach ($memberPeriods as $mp) {
-                // 1. Mandatory (Wajib) Logic
+                // 1. Mandatory (Wajib/SIMWA) Logic - from AUTO-SPLIT or pure SIMWA rows
                 $specificSimwa = DB::table('audit_simwa_imports')
                     ->where('matched_member_id', $member->id)
                     ->where('period', $mp->period)
-                    ->where('raw_uraian', 'like', '%simwa%')
+                    ->where(function ($q) {
+                        $q->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')
+                            ->orWhere(function ($q2) {
+                                $q2->where('raw_uraian', 'like', '%simwa%')
+                                    ->where('raw_uraian', 'not like', 'AUTO-%');
+                            });
+                    })
                     ->sum('amount');
 
-                // 2. Voluntary (Sukarela/Tabungan) Logic
+                // 2. Voluntary (Sukarela) Logic - ONLY from AUTO-SPLIT SUKARELA rows
                 $specificSukarela = DB::table('audit_simwa_imports')
                     ->where('matched_member_id', $member->id)
                     ->where('period', $mp->period)
-                    ->where(function ($q) {
-                        $q->where('raw_uraian', 'like', '%Tabungan%')
-                            ->orWhere('raw_uraian', 'like', '%Sukarela%')
-                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%')
-                            ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SUKARELA%'); // Catch tabungan from combo splits
-                    })
-                    ->where('raw_uraian', 'not like', '%Angsuran%')
+                    ->where('raw_uraian', 'like', 'AUTO-SPLIT SUKARELA:%')
                     ->sum('amount');
 
                 if ($specificSimwa > 0) {
-                    $actualWajibTotal += 50000; // Force 50k standard (User Request: ignore CSV nominal for Simwa)
+                    $actualWajibTotal += $specificSimwa; // Use actual amount from splits
                 } elseif ($member->isMemberKoperasi) {
-                    $actualWajibTotal += 50000;
+                    $actualWajibTotal += 50000; // Auto-credit for koperasi members
                 }
 
                 if ($specificSukarela > 0) {
@@ -634,18 +638,28 @@ class SimwaAuditTool extends Component
                 $date = $periodDate->copy()->setDay($day)->endOfDay();
 
                 if ($processWajib) {
+                    // Query for SIMWA amounts - these come from AUTO-SPLIT or pure SIMWA rows
                     $wRows = DB::table('audit_simwa_imports')
                         ->where('matched_member_id', $memberId)
                         ->where('period', $mp->period)
-                        ->where('raw_uraian', 'like', '%simwa%')
+                        ->where(function ($q) {
+                            $q->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')  // From splits (Tabungan, Angsuran, etc)
+                                ->orWhere(function ($q2) {
+                                    // Pure SIMWA rows (not auto-split)
+                                    $q2->where('raw_uraian', 'like', '%simwa%')
+                                        ->where('raw_uraian', 'not like', 'AUTO-%');
+                                });
+                        })
                         ->get();
 
                     $wAmount = 0;
                     $isAutoCredit = false;
 
                     if ($wRows->count() > 0) {
-                        $wAmount = 50000;
+                        // Sum up all SIMWA amounts for this period
+                        $wAmount = $wRows->sum('amount');
                     } elseif ($member->isMemberKoperasi) {
+                        // Auto-credit for koperasi members without CSV data
                         $wAmount = 50000;
                         $isAutoCredit = true;
                     }
@@ -668,25 +682,23 @@ class SimwaAuditTool extends Component
                 }
 
                 if ($processSukarela) {
+                    // Query for SUKARELA amounts - ONLY from AUTO-SPLIT rows
+                    // This ensures we get the correct split amounts, not full raw amounts
                     $sRows = DB::table('audit_simwa_imports')
                         ->where('matched_member_id', $memberId)
                         ->where('period', $mp->period)
-                        ->where(function ($q) {
-                            $q->where('raw_uraian', 'like', '%Tabungan%')
-                                ->orWhere('raw_uraian', 'like', '%Sukarela%')
-                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SIMWA%')
-                                ->orWhere('raw_uraian', 'like', '%AUTO-SPLIT SUKARELA%'); // Catch tabungan from combo splits
-                        })
-                        ->where('raw_uraian', 'not like', '%Angsuran%') // SAFETY: Prevent counting Angsuran rows that mention Sukarela in notes
+                        ->where('raw_uraian', 'like', 'AUTO-SPLIT SUKARELA:%')
                         ->get();
 
-                    foreach ($sRows as $sRow) {
-                        $runningSukarela += $sRow->amount;
+                    $sAmount = $sRows->sum('amount');
+
+                    if ($sAmount > 0) {
+                        $runningSukarela += $sAmount;
                         $batchInserts[] = [
                             'memberId' => $memberId,
                             'type' => 'SUKARELA',
                             'transactionType' => 'SETOR',
-                            'amount' => $sRow->amount,
+                            'amount' => $sAmount,
                             'balanceAfter' => $runningSukarela,
                             'notes' => "Setoran Payroll (Sukarela/Tabungan) " . $mp->period,
                             'status' => 'APPROVED',
