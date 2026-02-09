@@ -243,14 +243,9 @@ class SimwaAuditTool extends Component
                         $splitSukarela = $val;
                     }
 
-                    // Check for EXTRA Simwa in uraian (rare case: "Angsuran 5+Simwa 2" = 2x 50k)
-                    // Pattern: "simwa" with number > 1 means multiple months
-                    if (preg_match('/simwa\s*(\d+)/i', $rawUraian, $simwaMatch)) {
-                        $simwaCount = (int) $simwaMatch[1];
-                        if ($simwaCount > 1) {
-                            $splitSimwa = $simwaCount * 50000; // Override with explicit count
-                        }
-                    }
+                    // Note: Don't multiply Simwa by any number in uraian!
+                    // "Angsuran 5+Simwa 2" means Simwa installment #2, NOT 2 months of Simwa
+                    // Each CSV row = 1 month = 50k SIMWA fixed
 
                     // Main Angsuran amount stays full (will be marked as IGNORED in display)
                 }
