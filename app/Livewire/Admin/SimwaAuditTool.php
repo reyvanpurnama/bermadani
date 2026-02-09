@@ -148,6 +148,9 @@ class SimwaAuditTool extends Component
                 $hasSimwa = preg_match('/\bsimwa\b/i', $combinedText);
                 $hasTabungan = str_contains($combinedText, 'tabungan') || str_contains($combinedText, 'tab+');
 
+                // Detect if this is a panjar row (down payment - excess should be ignored, not counted as savings)
+                $isPanjar = str_contains($combinedText, 'panjar');
+
                 // Initialize split amounts
                 $splitSimpok = 0;
                 $splitSimwa = 0;
@@ -158,10 +161,14 @@ class SimwaAuditTool extends Component
                 if (!$isAngsuran) {
 
                     // PATTERN 1: "simpok+simwa" or "simpok simwa" = 250k (200k Simpok + 50k Simwa)
+                    // If panjar is present, excess is ignored (not SUKARELA)
                     if ($hasSimpok && $hasSimwa && !$hasTabungan && $rawAmount >= 250000) {
                         $splitSimpok = 200000;
                         $splitSimwa = 50000;
-                        $splitSukarela = $rawAmount - 250000; // Any excess
+                        // Only count excess as SUKARELA if NOT a panjar row
+                        if (!$isPanjar) {
+                            $splitSukarela = $rawAmount - 250000; // Any excess
+                        }
                         $mainRecordAmount = 0; // All split out
                     }
 
