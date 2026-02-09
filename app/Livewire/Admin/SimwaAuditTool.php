@@ -98,7 +98,13 @@ class SimwaAuditTool extends Component
                 // Check for Extra Sukarela in Column 4 (Notes)
                 // Example: "+ Sukarela 200" or "Tabungan 100"
                 $extraSukarelaAmount = 0;
-                $extraNote = $row[4] ?? '';
+                $extraNote = trim($row[4] ?? '');
+
+                // Create full uraian for display (uraian + notes)
+                $fullUraian = $rawUraian;
+                if (!empty($extraNote)) {
+                    $fullUraian .= ' | ' . $extraNote;
+                }
 
                 if (!empty($extraNote) && preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $extraNote, $matches)) {
                     // Extract number, e.g. 200 -> 200000 (usually abbreviated in thousands if small, or full?)
@@ -111,7 +117,7 @@ class SimwaAuditTool extends Component
                         $val *= 1000; // Double check, usually 200 means 200000.  Minimum deposit usually 10k.
 
                     $extraSukarelaAmount = $val;
-                    $rawUraian .= ' ' . $extraNote; // Append to main uraian too
+                    // DON'T append to rawUraian - this causes double counting!
                 }
 
                 // Auto-match logic ...
@@ -209,9 +215,14 @@ class SimwaAuditTool extends Component
                     // ALWAYS extract Simwa 50k from Angsuran rows
                     $splitSimwa = 50000;
 
-                    // Check URAIAN column for embedded Sukarela amount
-                    // Pattern: "Sukarela X" or "+ Sukarela X" in uraian
-                    if (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian, $uraianMatch)) {
+                    // Check for Sukarela - PRIORITIZE notes column, then uraian
+                    // Don't combine both to avoid double-counting same info
+                    if ($extraSukarelaAmount > 0) {
+                        // Use notes column value (already calculated above)
+                        $splitSukarela = $extraSukarelaAmount;
+                        $extraSukarelaAmount = 0; // Don't add again in extra record
+                    } elseif (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian, $uraianMatch)) {
+                        // Fallback to uraian column if notes is empty
                         $val = (int) $uraianMatch[3];
                         // Convert abbreviated amounts: 100 -> 100,000
                         if ($val < 1000)
@@ -219,13 +230,6 @@ class SimwaAuditTool extends Component
                         if ($val < 10000)
                             $val *= 1000;
                         $splitSukarela = $val;
-                    }
-
-                    // Check NOTES column for Sukarela (e.g. "+ Sukarela 100")
-                    // This was already handled by $extraSukarelaAmount above, so we combine
-                    if ($extraSukarelaAmount > 0) {
-                        $splitSukarela += $extraSukarelaAmount;
-                        $extraSukarelaAmount = 0; // Don't double-count in extra record
                     }
 
                     // Check for EXTRA Simwa in uraian (rare case: "Angsuran 5+Simwa 2" = 2x 50k)
@@ -250,7 +254,7 @@ class SimwaAuditTool extends Component
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => $mainRecordUraian,
+                        'raw_uraian' => $fullUraian,
                         'amount' => $mainRecordAmount > 0 ? $mainRecordAmount : $rawAmount,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
@@ -264,7 +268,7 @@ class SimwaAuditTool extends Component
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => 'AUTO-SPLIT SIMPOK: ' . $rawUraian,
+                        'raw_uraian' => 'AUTO-SPLIT SIMPOK: ' . $fullUraian,
                         'amount' => $splitSimpok,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
@@ -278,7 +282,7 @@ class SimwaAuditTool extends Component
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => 'AUTO-SPLIT SIMWA: ' . $rawUraian,
+                        'raw_uraian' => 'AUTO-SPLIT SIMWA: ' . $fullUraian,
                         'amount' => $splitSimwa,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
@@ -292,7 +296,7 @@ class SimwaAuditTool extends Component
                         'filename' => $filename,
                         'period' => $period,
                         'raw_name' => $rawName,
-                        'raw_uraian' => 'AUTO-SPLIT SUKARELA: ' . $rawUraian,
+                        'raw_uraian' => 'AUTO-SPLIT SUKARELA: ' . $fullUraian,
                         'amount' => $splitSukarela,
                         'matched_member_id' => $matchedMemberId,
                         'created_at' => now(),
@@ -784,11 +788,62 @@ class SimwaAuditTool extends Component
         if (!$this->detailMember)
             return;
 
-        $this->detailRows = DB::table('audit_simwa_imports')
+        // Fetch raw rows
+        $rawRows = DB::table('audit_simwa_imports')
             ->where('matched_member_id', $memberId)
-            ->orderBy('period', 'desc')
+            ->orderBy('period', 'asc')
+            ->orderBy('id', 'asc')
             ->get();
 
+        // Consolidate rows by period + original uraian (group splits into single row)
+        $consolidated = [];
+        foreach ($rawRows as $row) {
+            // Extract original uraian (remove AUTO-SPLIT prefix)
+            $originalUraian = $row->raw_uraian;
+            if (preg_match('/^AUTO-[A-Z\s]+:\s*(.+)$/i', $row->raw_uraian, $m)) {
+                $originalUraian = $m[1];
+            }
+
+            // Create unique key for grouping
+            $key = $row->period . '|' . $row->raw_name . '|' . $originalUraian;
+
+            if (!isset($consolidated[$key])) {
+                $consolidated[$key] = (object) [
+                    'period' => $row->period,
+                    'raw_name' => $row->raw_name,
+                    'original_uraian' => $originalUraian,
+                    'total_amount' => 0,
+                    'simpok' => 0,
+                    'simwa' => 0,
+                    'sukarela' => 0,
+                    'ignored' => 0,
+                    'is_ignored' => false,
+                ];
+            }
+
+            $entry = $consolidated[$key];
+
+            // Categorize and sum amounts
+            if (str_contains($row->raw_uraian, 'AUTO-SPLIT SIMPOK')) {
+                $entry->simpok += $row->amount;
+            } elseif (str_contains($row->raw_uraian, 'AUTO-SPLIT SIMWA')) {
+                $entry->simwa += $row->amount;
+            } elseif (str_contains($row->raw_uraian, 'AUTO-SPLIT SUKARELA') || str_contains($row->raw_uraian, 'AUTO-DETECT EXTRA')) {
+                $entry->sukarela += $row->amount;
+            } elseif (str_contains(strtolower($row->raw_uraian), 'angsuran') || str_contains(strtolower($row->raw_uraian), 'angs ')) {
+                $entry->ignored += $row->amount;
+                $entry->is_ignored = true;
+            } elseif (preg_match('/\bsimwa\b/i', $row->raw_uraian)) {
+                $entry->simwa += $row->amount;
+            } elseif (str_contains(strtolower($row->raw_uraian), 'tabungan') || str_contains(strtolower($row->raw_uraian), 'sukarela')) {
+                $entry->sukarela += $row->amount;
+            }
+
+            $entry->total_amount += $row->amount;
+            $consolidated[$key] = $entry;
+        }
+
+        $this->detailRows = collect(array_values($consolidated));
         $this->showDetailModal = true;
     }
 

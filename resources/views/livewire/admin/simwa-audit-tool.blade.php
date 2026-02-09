@@ -170,7 +170,8 @@
                                             </td>
                                             <td class="px-4 py-3">
                                                 <div class="font-mono font-bold text-slate-700 dark:text-slate-200">
-                                                    {{ $item->raw_name }}</div>
+                                                    {{ $item->raw_name }}
+                                                </div>
                                                 <div class="text-[10px] text-slate-400 mt-1 uppercase tracking-tighter">
                                                     Pertama Muncul: <span
                                                         class="bg-slate-100 dark:bg-slate-800 px-1 rounded font-bold">{{ $item->earliest_period }}</span>
@@ -310,7 +311,8 @@
                                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Anggota
                                             Terdeteksi</p>
                                         <p class="text-xl font-black text-slate-900 dark:text-white">{{ count($auditResults) }}
-                                            <span class="text-[10px] font-normal text-slate-500">Orang</span></p>
+                                            <span class="text-[10px] font-normal text-slate-500">Orang</span>
+                                        </p>
                                     </div>
                                 @endif
                             </div>
@@ -331,7 +333,8 @@
                                             <th
                                                 class="px-4 py-3 text-center w-12 bg-rose-50/50 dark:bg-rose-900/10 rounded-tl-xl">
                                                 <i class='bx bx-block text-rose-500 text-lg'
-                                                    title="Exclude / Lewati Anggota Ini"></i></th>
+                                                    title="Exclude / Lewati Anggota Ini"></i>
+                                            </th>
                                             <th class="px-4 py-3">Member</th>
                                             <th class="px-4 py-3 w-48">CSV Source Names</th>
                                             <th class="px-4 py-3 text-right">Join Date</th>
@@ -357,109 +360,110 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-darkCard">
                                         @foreach($auditResults as $row)
-                                                                            <tr wire:key="audit-row-{{ $row['member_id'] }}"
-                                                                                class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($row['member_id'], $excludedMemberIds) ? 'opacity-50 grayscale bg-slate-50 dark:bg-slate-800' : '' }}">
-                                                                                <td
-                                                                                    class="px-4 py-3 text-center bg-rose-50/20 dark:bg-rose-900/5 border-r border-rose-100 dark:border-rose-900/20">
-                                                                                    <input type="checkbox" wire:model.live="excludedMemberIds"
-                                                                                        value="{{ $row['member_id'] }}"
-                                                                                        class="w-4 h-4 text-rose-600 rounded border-gray-300 focus:ring-rose-500 cursor-pointer shadow-sm">
-                                                                                </td>
-                                                                                <td class="px-4 py-3">
-                                                                                    <div class="flex items-center gap-2">
-                                                                                        <div>
-                                                                                            <div class="flex items-center gap-2">
-                                                                                                <p class="font-bold text-slate-700 dark:text-slate-200">
-                                                                                                    {{ $row['name'] }}</p>
-                                                                                                <button wire:click="openDetailModal({{ $row['member_id'] }})"
-                                                                                                    class="text-slate-400 hover:text-indigo-500 transition-colors"
-                                                                                                    title="Lihat Detail CSV">
-                                                                                                    <i class='bx bx-search-alt-2'></i>
-                                                                                                </button>
-                                                                                            </div>
-                                                                                            <div class="flex items-center gap-2">
-                                                                                                <span class="text-[10px] text-slate-400 font-mono">ID:
-                                                                                                    {{ $row['member_id'] }}</span>
-                                                                                                @if($row['is_coop'])
-                                                                                                    <span
-                                                                                                        class="text-[9px] bg-emerald-50 text-emerald-600 px-1 rounded border border-emerald-100">COOP</span>
-                                                                                                @else
-                                                                                                    <span
-                                                                                                        class="text-[9px] bg-slate-50 text-slate-500 px-1 rounded border border-slate-100">RETAIL</span>
-                                                                                                @endif
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td class="px-4 py-3 max-w-[200px]">
-                                                                                    @if(!empty($row['mapped_names']))
-                                                                                        <div class="flex flex-wrap gap-1">
-                                                                                            @foreach($row['mapped_names'] as $csvName)
-                                                                                                <span
-                                                                                                    class="px-1.5 py-0.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded text-[10px] font-mono border border-yellow-100 dark:border-yellow-700 truncate max-w-full block"
-                                                                                                    title="{{ $csvName }}">
-                                                                                                    {{ $csvName }}
-                                                                                                </span>
-                                                                                            @endforeach
-                                                                                        </div>
-                                                                                    @else
-                                                                                        <span class="text-slate-300 italic text-xs">-</span>
-                                                                                    @endif
-                                                                                </td>
-                                                                                <td class="px-4 py-3 text-right text-xs font-mono text-slate-400">
-                                                                                    {{ \Carbon\Carbon::parse($row['join_date'])->format('d M Y') }}
-                                                                                </td>
-                                                                                {{-- WAJIB --}}
-                                                                                <td
-                                                                                    class="px-4 py-3 text-right font-mono font-bold text-emerald-600 bg-slate-100/30 dark:bg-slate-800/30">
-                                                                                    {{ number_format($row['proposed_wajib']) }}
-                                                                                    <div class="text-[9px] font-normal text-slate-400">CSV:
-                                                                                        +{{ number_format($row['actual_payroll']) }}</div>
-                                                                                </td>
-                                                                                <td
-                                                                                    class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-slate-100/30 dark:bg-slate-800/30">
-                                                                                    {{ number_format($row['current_wajib']) }}
-                                                                                </td>
-                                                                                <td class="px-4 py-3 text-center bg-slate-100/30 dark:bg-slate-800/30">
-                                                                                    @if($row['gap'] == 0)
-                                                                                        <i class='bx bxs-check-circle text-emerald-500 text-lg'></i>
-                                                                                    @else
-                                                                                        <span
-                                                                                            class="px-2 py-1 bg-rose-100 text-rose-700 text-[10px] font-bold rounded-full border border-rose-200">
-                                                                                            {{ $row['gap'] > 0 ? '+' : '' }}{{ number_format($row['gap']) }}
-                                                                                        </span>
-                                                                                    @endif
-                                                                                </td>
-                                                                                {{-- SUKARELA --}}
-                                                                                <td
-                                                                                    class="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50/20 dark:bg-indigo-900/10">
-                                                                                    {{ number_format($row['actual_sukarela']) }}
-                                                                                </td>
-                                                                                <td
-                                                                                    class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-indigo-50/20 dark:bg-indigo-900/10">
-                                                                                    {{ number_format($row['current_sukarela']) }}
-                                                                                    <div
-                                                                                        class="text-[9px] font-normal {{ abs($row['gap_sukarela']) < 100 ? 'text-emerald-500' : 'text-rose-500' }}">
-                                                                                        Gap: {{ number_format($row['gap_sukarela']) }}
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td class="px-4 py-3 text-center">
-                                                                                    <button wire:click="syncBalance({{ $row['member_id'] }})"
-                                                                                        class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-1 mx-auto"
-                                                                                        wire:confirm="🔄 REBUILD HISTORY (WAJIB & SUKARELA)?
+                                            <tr wire:key="audit-row-{{ $row['member_id'] }}"
+                                                class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($row['member_id'], $excludedMemberIds) ? 'opacity-50 grayscale bg-slate-50 dark:bg-slate-800' : '' }}">
+                                                <td
+                                                    class="px-4 py-3 text-center bg-rose-50/20 dark:bg-rose-900/5 border-r border-rose-100 dark:border-rose-900/20">
+                                                    <input type="checkbox" wire:model.live="excludedMemberIds"
+                                                        value="{{ $row['member_id'] }}"
+                                                        class="w-4 h-4 text-rose-600 rounded border-gray-300 focus:ring-rose-500 cursor-pointer shadow-sm">
+                                                </td>
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <div>
+                                                            <div class="flex items-center gap-2">
+                                                                <p class="font-bold text-slate-700 dark:text-slate-200">
+                                                                    {{ $row['name'] }}
+                                                                </p>
+                                                                <button wire:click="openDetailModal({{ $row['member_id'] }})"
+                                                                    class="text-slate-400 hover:text-indigo-500 transition-colors"
+                                                                    title="Lihat Detail CSV">
+                                                                    <i class='bx bx-search-alt-2'></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-[10px] text-slate-400 font-mono">ID:
+                                                                    {{ $row['member_id'] }}</span>
+                                                                @if($row['is_coop'])
+                                                                    <span
+                                                                        class="text-[9px] bg-emerald-50 text-emerald-600 px-1 rounded border border-emerald-100">COOP</span>
+                                                                @else
+                                                                    <span
+                                                                        class="text-[9px] bg-slate-50 text-slate-500 px-1 rounded border border-slate-100">RETAIL</span>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 max-w-[200px]">
+                                                    @if(!empty($row['mapped_names']))
+                                                        <div class="flex flex-wrap gap-1">
+                                                            @foreach($row['mapped_names'] as $csvName)
+                                                                <span
+                                                                    class="px-1.5 py-0.5 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 rounded text-[10px] font-mono border border-yellow-100 dark:border-yellow-700 truncate max-w-full block"
+                                                                    title="{{ $csvName }}">
+                                                                    {{ $csvName }}
+                                                                </span>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <span class="text-slate-300 italic text-xs">-</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-4 py-3 text-right text-xs font-mono text-slate-400">
+                                                    {{ \Carbon\Carbon::parse($row['join_date'])->format('d M Y') }}
+                                                </td>
+                                                {{-- WAJIB --}}
+                                                <td
+                                                    class="px-4 py-3 text-right font-mono font-bold text-emerald-600 bg-slate-100/30 dark:bg-slate-800/30">
+                                                    {{ number_format($row['proposed_wajib']) }}
+                                                    <div class="text-[9px] font-normal text-slate-400">CSV:
+                                                        +{{ number_format($row['actual_payroll']) }}</div>
+                                                </td>
+                                                <td
+                                                    class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-slate-100/30 dark:bg-slate-800/30">
+                                                    {{ number_format($row['current_wajib']) }}
+                                                </td>
+                                                <td class="px-4 py-3 text-center bg-slate-100/30 dark:bg-slate-800/30">
+                                                    @if($row['gap'] == 0)
+                                                        <i class='bx bxs-check-circle text-emerald-500 text-lg'></i>
+                                                    @else
+                                                        <span
+                                                            class="px-2 py-1 bg-rose-100 text-rose-700 text-[10px] font-bold rounded-full border border-rose-200">
+                                                            {{ $row['gap'] > 0 ? '+' : '' }}{{ number_format($row['gap']) }}
+                                                        </span>
+                                                    @endif
+                                                </td>
+                                                {{-- SUKARELA --}}
+                                                <td
+                                                    class="px-4 py-3 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                                    {{ number_format($row['actual_sukarela']) }}
+                                                </td>
+                                                <td
+                                                    class="px-4 py-3 text-right font-mono text-slate-600 dark:text-slate-300 bg-indigo-50/20 dark:bg-indigo-900/10">
+                                                    {{ number_format($row['current_sukarela']) }}
+                                                    <div
+                                                        class="text-[9px] font-normal {{ abs($row['gap_sukarela']) < 100 ? 'text-emerald-500' : 'text-rose-500' }}">
+                                                        Gap: {{ number_format($row['gap_sukarela']) }}
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <button wire:click="syncBalance({{ $row['member_id'] }})"
+                                                        class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold rounded-lg transition-all shadow-sm hover:shadow-md flex items-center gap-1 mx-auto"
+                                                        wire:confirm="🔄 REBUILD HISTORY (WAJIB & SUKARELA)?
 
-                                            Member: {{ $row['name'] }}
+                                                        Member: {{ $row['name'] }}
 
-                                            Proses ini akan:
-                                            1. Hapus history Wajib & Sukarela lama
-                                            2. Buat ulang history detail dari Payroll
+                                                        Proses ini akan:
+                                                        1. Hapus history Wajib & Sukarela lama
+                                                        2. Buat ulang history detail dari Payroll
 
-                                            Lanjut?">
-                                                                                        <i class='bx bx-refresh'></i>
-                                                                                        Rebuild History
-                                                                                    </button>
-                                                                                </td>
-                                                                            </tr>
+                                                        Lanjut?">
+                                                        <i class='bx bx-refresh'></i>
+                                                        Rebuild History
+                                                    </button>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -502,80 +506,69 @@
                                 class="bg-slate-100 dark:bg-slate-700/50 text-xs text-slate-500 uppercase font-medium sticky top-0">
                                 <tr>
                                     <th class="px-4 py-3 text-left w-10">No</th>
-                                    <th class="px-4 py-3 text-left">Period</th>
-                                    <th class="px-4 py-3 text-left">Nama di CSV</th>
-                                    <th class="px-4 py-3 text-left">Uraian Asli</th>
-                                    <th class="px-4 py-3 text-center">Diproses Sebagai</th>
-                                    <th class="px-4 py-3 text-right">Nominal</th>
+                                    <th class="px-4 py-3 text-left w-24">Period</th>
+                                    <th class="px-4 py-3 text-left">Uraian CSV</th>
+                                    <th class="px-4 py-3 text-left">Breakdown</th>
+                                    <th class="px-4 py-3 text-right w-28">Total</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                                 @forelse($detailRows as $r)
-                                    @php
-                                        // Determine what this row was processed as
-                                        $processedAs = 'OTHER';
-                                        $badgeClass = 'bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400';
-                                        $lowerUraian = strtolower($r->raw_uraian);
-
-                                        // Priority 1: AUTO-SPLIT records (created by import logic)
-                                        if (str_contains($r->raw_uraian, 'AUTO-SPLIT SIMPOK')) {
-                                            $processedAs = 'SIMPOK';
-                                            $badgeClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
-                                        } elseif (str_contains($r->raw_uraian, 'AUTO-SPLIT SIMWA')) {
-                                            $processedAs = 'SIMWA';
-                                            $badgeClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
-                                        } elseif (str_contains($r->raw_uraian, 'AUTO-SPLIT SUKARELA') || str_contains($r->raw_uraian, 'AUTO-DETECT EXTRA')) {
-                                            $processedAs = 'SUKARELA';
-                                            $badgeClass = 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400';
-                                        }
-                                        // Priority 2: Angsuran (IGNORED) - check BEFORE tabungan/sukarela!
-                                        elseif (str_contains($lowerUraian, 'angsuran') || str_contains($lowerUraian, 'angs ')) {
-                                            $processedAs = 'IGNORED';
-                                            $badgeClass = 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400';
-                                        }
-                                        // Priority 3: Pure SIMWA (no angsuran)
-                                        elseif (preg_match('/\bsimwa\b/i', $r->raw_uraian)) {
-                                            $processedAs = 'SIMWA';
-                                            $badgeClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
-                                        }
-                                        // Priority 4: Pure Tabungan/Sukarela (no angsuran)
-                                        elseif (str_contains($lowerUraian, 'tabungan') || str_contains($lowerUraian, 'sukarela')) {
-                                            $processedAs = 'SUKARELA';
-                                            $badgeClass = 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400';
-                                        }
-
-                                        // Extract original uraian (remove AUTO- prefix if present)
-                                        $originalUraian = $r->raw_uraian;
-                                        if (preg_match('/^AUTO-[A-Z\s]+:\s*(.+)$/i', $r->raw_uraian, $m)) {
-                                            $originalUraian = $m[1];
-                                        }
-                                    @endphp
                                     <tr
-                                        class="hover:bg-slate-50 dark:hover:bg-slate-700/30 {{ $processedAs === 'IGNORED' ? 'opacity-50' : '' }}">
+                                        class="hover:bg-slate-50 dark:hover:bg-slate-700/30 {{ $r->is_ignored ? 'bg-rose-50/50 dark:bg-rose-900/10' : '' }}">
                                         <td class="px-4 py-3 font-mono text-slate-400 text-xs">{{ $loop->iteration }}</td>
                                         <td class="px-4 py-3 font-mono text-slate-600 dark:text-slate-400 text-xs">
                                             {{ $r->period }}</td>
-                                        <td class="px-4 py-3 font-medium text-slate-700 dark:text-slate-200">{{ $r->raw_name }}
+                                        <td class="px-4 py-3">
+                                            <div class="text-xs font-medium text-slate-700 dark:text-slate-200">
+                                                {{ $r->raw_name }}</div>
+                                            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">
+                                                {{ $r->original_uraian }}</div>
                                         </td>
-                                        <td class="px-4 py-3 text-xs">
-                                            <span
-                                                class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-mono">
-                                                {{ $originalUraian }}
-                                            </span>
-                                        </td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-1 rounded text-[10px] font-bold uppercase {{ $badgeClass }}">
-                                                {{ $processedAs }}
-                                            </span>
+                                        <td class="px-4 py-3">
+                                            <div class="flex flex-wrap gap-1">
+                                                @if($r->simpok > 0)
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                                                        SIMPOK <span class="font-mono">{{ number_format($r->simpok / 1000) }}k</span>
+                                                    </span>
+                                                @endif
+                                                @if($r->simwa > 0)
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                                        SIMWA <span class="font-mono">{{ number_format($r->simwa / 1000) }}k</span>
+                                                    </span>
+                                                @endif
+                                                @if($r->sukarela > 0)
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">
+                                                        SUKARELA <span
+                                                            class="font-mono">{{ number_format($r->sukarela / 1000) }}k</span>
+                                                    </span>
+                                                @endif
+                                                @if($r->ignored > 0)
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400 opacity-60">
+                                                        ANGSURAN <span
+                                                            class="font-mono line-through">{{ number_format($r->ignored / 1000) }}k</span>
+                                                    </span>
+                                                @endif
+                                                @if($r->simpok == 0 && $r->simwa == 0 && $r->sukarela == 0 && $r->ignored == 0)
+                                                    <span
+                                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+                                                        ? <span class="font-mono">{{ number_format($r->total_amount / 1000) }}k</span>
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td
-                                            class="px-4 py-3 text-right font-mono font-bold {{ $processedAs === 'IGNORED' ? 'text-slate-400 line-through' : 'text-emerald-600' }}">
-                                            {{ number_format($r->amount) }}
+                                            class="px-4 py-3 text-right font-mono font-bold {{ $r->is_ignored && $r->simwa == 0 && $r->sukarela == 0 ? 'text-slate-400' : 'text-emerald-600 dark:text-emerald-400' }}">
+                                            {{ number_format($r->total_amount) }}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-6 py-12 text-center text-slate-500">
+                                        <td colspan="5" class="px-6 py-12 text-center text-slate-500">
                                             Tidak ada data import CSV yang terhubung ke member ini.
                                         </td>
                                     </tr>
@@ -588,41 +581,28 @@
                     @if($detailRows && count($detailRows) > 0)
                         @php
                             $totalSimwa = 0;
-                            $countSimwa = 0;
                             $totalSukarela = 0;
-                            $countSukarela = 0;
                             $totalSimpok = 0;
-                            $countSimpok = 0;
                             $totalIgnored = 0;
-                            $countIgnored = 0;
+                            $countRows = count($detailRows);
 
                             foreach ($detailRows as $row) {
-                                $lowerUraian = strtolower($row->raw_uraian);
-
-                                if (str_contains($row->raw_uraian, 'AUTO-SPLIT SIMPOK')) {
-                                    $totalSimpok += $row->amount;
-                                    $countSimpok++;
-                                } elseif (str_contains($row->raw_uraian, 'AUTO-SPLIT SIMWA')) {
-                                    $totalSimwa += $row->amount;
-                                    $countSimwa++;
-                                } elseif (str_contains($row->raw_uraian, 'AUTO-SPLIT SUKARELA') || str_contains($row->raw_uraian, 'AUTO-DETECT EXTRA')) {
-                                    $totalSukarela += $row->amount;
-                                    $countSukarela++;
-                                } elseif (str_contains($lowerUraian, 'angsuran') || str_contains($lowerUraian, 'angs ')) {
-                                    $totalIgnored += $row->amount;
-                                    $countIgnored++;
-                                } elseif (preg_match('/\bsimwa\b/i', $row->raw_uraian)) {
-                                    $totalSimwa += $row->amount;
-                                    $countSimwa++;
-                                } elseif (str_contains($lowerUraian, 'tabungan') || str_contains($lowerUraian, 'sukarela')) {
-                                    $totalSukarela += $row->amount;
-                                    $countSukarela++;
-                                }
+                                $totalSimwa += $row->simwa;
+                                $totalSukarela += $row->sukarela;
+                                $totalSimpok += $row->simpok;
+                                $totalIgnored += $row->ignored;
                             }
+                            
+                            $countSimwa = $totalSimwa > 0 ? intval($totalSimwa / 50000) : 0;
                         @endphp
                         <div
                             class="px-6 py-4 bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-800/50 border-t border-slate-200 dark:border-slate-700">
-                            <div class="text-xs font-bold uppercase text-slate-500 mb-3">Ringkasan Transaksi</div>
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-xs font-bold uppercase text-slate-500">Ringkasan Transaksi</div>
+                                <div class="text-xs text-slate-500">
+                                    <span class="font-bold text-slate-700 dark:text-slate-300">{{ $countRows }}</span> baris CSV
+                                </div>
+                            </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                                 {{-- SIMWA --}}
                                 <div
@@ -632,7 +612,8 @@
                                             class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">SIMWA</span>
                                     </div>
                                     <div class="text-lg font-bold text-emerald-600 dark:text-emerald-400">Rp
-                                        {{ number_format($totalSimwa) }}</div>
+                                        {{ number_format($totalSimwa) }}
+                                    </div>
                                     <div class="text-xs text-slate-500">{{ $countSimwa }} bulan × Rp 50.000</div>
                                 </div>
 
@@ -644,8 +625,9 @@
                                             class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">SUKARELA</span>
                                     </div>
                                     <div class="text-lg font-bold text-indigo-600 dark:text-indigo-400">Rp
-                                        {{ number_format($totalSukarela) }}</div>
-                                    <div class="text-xs text-slate-500">{{ $countSukarela }} transaksi</div>
+                                        {{ number_format($totalSukarela) }}
+                                    </div>
+                                    <div class="text-xs text-slate-500">Total tabungan</div>
                                 </div>
 
                                 {{-- SIMPOK --}}
@@ -656,8 +638,9 @@
                                             class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">SIMPOK</span>
                                     </div>
                                     <div class="text-lg font-bold text-amber-600 dark:text-amber-400">Rp
-                                        {{ number_format($totalSimpok) }}</div>
-                                    <div class="text-xs text-slate-500">{{ $countSimpok }} transaksi</div>
+                                        {{ number_format($totalSimpok) }}
+                                    </div>
+                                    <div class="text-xs text-slate-500">Simpanan pokok</div>
                                 </div>
 
                                 {{-- IGNORED --}}
@@ -668,8 +651,9 @@
                                             class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400">IGNORED</span>
                                     </div>
                                     <div class="text-lg font-bold text-rose-500 dark:text-rose-400 line-through">Rp
-                                        {{ number_format($totalIgnored) }}</div>
-                                    <div class="text-xs text-slate-500">{{ $countIgnored }} angsuran</div>
+                                        {{ number_format($totalIgnored) }}
+                                    </div>
+                                    <div class="text-xs text-slate-500">Angsuran (diabaikan)</div>
                                 </div>
                             </div>
                         </div>
