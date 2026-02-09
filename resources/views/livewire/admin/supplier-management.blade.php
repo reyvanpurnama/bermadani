@@ -17,6 +17,9 @@
             <a href="{{ route('admin.consignment-report') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-file'></i> Laporan
             </a>
+            <button wire:click="openCreateModal" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[13px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bx-plus text-lg'></i> Tambah Supplier
+            </button>
         </div>
     </div>
 
@@ -228,6 +231,136 @@
             <div class="flex justify-end gap-3">
                 <button wire:click="closeSuspendModal" class="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Batal</button>
                 <button wire:click="suspend" class="px-4 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors">Suspend Supplier</button>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <!-- Create Supplier Modal -->
+    @if($showCreateModal)
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" wire:click="closeCreateModal">
+        <div @click.stop class="bg-white dark:bg-darkCard rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-up">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary to-indigo-600 px-6 py-4 flex justify-between items-center rounded-t-xl">
+                <div>
+                    <h3 class="text-xl font-bold text-white">Buat Akun Supplier Baru</h3>
+                    <p class="text-indigo-100 text-sm">Akun langsung aktif tanpa proses approval</p>
+                </div>
+                <button wire:click="closeCreateModal" class="text-white hover:bg-white/20 rounded-full p-2 transition-colors">
+                    <i class='bx bx-x text-2xl'></i>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {{-- Nama Pemilik --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Pemilik <span class="text-rose-500">*</span></label>
+                        <input wire:model="createOwnerName" type="text" placeholder="Nama lengkap pemilik" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                        @error('createOwnerName') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Nama Bisnis --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nama Bisnis <span class="text-rose-500">*</span></label>
+                        <input wire:model="createBusinessName" type="text" placeholder="Nama usaha / toko" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                        @error('createBusinessName') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Email --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email <span class="text-rose-500">*</span></label>
+                        <input wire:model="createEmail" type="email" placeholder="email@supplier.com" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                        @error('createEmail') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Phone --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">No. Telepon <span class="text-rose-500">*</span></label>
+                        <input wire:model="createPhone" type="text" placeholder="08xxxxxxxxxx" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                        @error('createPhone') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Kategori Produk --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Kategori Produk</label>
+                        <select wire:model="createProductCategory" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
+                            <option value="">Pilih Kategori</option>
+                            <option value="Makanan">Makanan</option>
+                            <option value="Minuman">Minuman</option>
+                            <option value="Snack">Snack</option>
+                            <option value="ATK">ATK</option>
+                            <option value="Kebutuhan Harian">Kebutuhan Harian</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                        @error('createProductCategory') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Max Products --}}
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Limit Produk Aktif</label>
+                        <input wire:model="createMaxProducts" type="number" min="1" max="50" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                        @error('createMaxProducts') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Alamat (full width) --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Alamat <span class="text-rose-500">*</span></label>
+                        <textarea wire:model="createAddress" rows="2" placeholder="Alamat lengkap supplier" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white"></textarea>
+                        @error('createAddress') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+
+                    {{-- Deskripsi (full width) --}}
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Deskripsi (Opsional)</label>
+                        <textarea wire:model="createDescription" rows="2" placeholder="Deskripsi singkat tentang supplier" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white"></textarea>
+                        @error('createDescription') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                {{-- Password Section --}}
+                <div class="mt-5 p-4 bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-lg">
+                    <h4 class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class='bx bx-lock-alt'></i> Kredensial Login
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Email Login</label>
+                            <input type="text" disabled :value="$wire.createEmail || 'Otomatis dari email di atas'" class="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm text-slate-500 dark:text-slate-400 cursor-not-allowed">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Password <span class="text-rose-500">*</span></label>
+                            <input wire:model="createPassword" type="text" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-white">
+                            @error('createPassword') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                            <p class="text-[10px] text-slate-400 mt-1">Default: 12345678. Supplier bisa ubah setelah login.</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Info Banner --}}
+                <div class="mt-4 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
+                    <i class='bx bx-info-circle text-blue-500 text-xl mt-0.5'></i>
+                    <div class="text-xs text-blue-700 dark:text-blue-400">
+                        <p class="font-semibold mb-1">Akun yang dibuat oleh admin:</p>
+                        <ul class="list-disc list-inside space-y-0.5">
+                            <li>Langsung berstatus <strong>AKTIF</strong> (tanpa approval)</li>
+                            <li>Biaya registrasi <strong>Rp 0</strong> (gratis)</li>
+                            <li>Supplier bisa langsung login dan upload produk</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Actions -->
+            <div class="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3 rounded-b-xl">
+                <button wire:click="closeCreateModal" class="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                    Batal
+                </button>
+                <button wire:click="createSupplier" wire:loading.attr="disabled" class="px-6 py-2.5 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-lg transition-colors flex items-center gap-2 disabled:opacity-50">
+                    <span wire:loading.remove wire:target="createSupplier"><i class='bx bx-check'></i> Buat Akun Supplier</span>
+                    <span wire:loading wire:target="createSupplier"><i class='bx bx-loader-alt bx-spin'></i> Memproses...</span>
+                </button>
             </div>
         </div>
     </div>
