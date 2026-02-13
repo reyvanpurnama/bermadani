@@ -12,16 +12,14 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
-    public $filter = 'today';
-    public $dateFilter = 'this_month';
+    public $filter = 'month'; // Unified filter untuk card DAN chart
     public $startDate;
     public $endDate;
     public $chartData = [];
 
     public function mount()
     {
-        $this->filter = 'today';
-        $this->dateFilter = 'this_month';
+        $this->filter = 'month';
         $this->startDate = now()->startOfMonth()->toDateString();
         $this->endDate = now()->endOfMonth()->toDateString();
         $this->chartData = $this->generateChartData();
@@ -30,19 +28,13 @@ class Dashboard extends Component
     public function setFilter($filter)
     {
         $this->filter = $filter;
-    }
-
-    public function setDateFilter($filter)
-    {
-        $this->dateFilter = $filter;
         
+        // Update date range
         match($filter) {
             'today' => $this->setDateRange(today(), today()),
-            'yesterday' => $this->setDateRange(today()->subDay(), today()->subDay()),
-            'this_week' => $this->setDateRange(now()->startOfWeek(), now()->endOfWeek()),
-            'this_month' => $this->setDateRange(now()->startOfMonth(), now()->endOfMonth()),
-            'last_month' => $this->setDateRange(now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()),
-            'this_year' => $this->setDateRange(now()->startOfYear(), now()->endOfYear()),
+            'week' => $this->setDateRange(now()->startOfWeek(), now()->endOfWeek()),
+            'month' => $this->setDateRange(now()->startOfMonth(), now()->endOfMonth()),
+            'year' => $this->setDateRange(now()->startOfYear(), now()->endOfYear()),
             default => null,
         };
         
@@ -427,8 +419,8 @@ class Dashboard extends Component
             'granularity' => 'daily'
         ];
 
-        // Determine date range and granularity based on dateFilter
-        switch ($this->dateFilter) {
+        // Determine date range and granularity based on filter
+        switch ($this->filter) {
             case 'today':
                 $data['granularity'] = 'hourly';
                 $start = today()->startOfDay();
@@ -462,36 +454,7 @@ class Dashboard extends Component
                 }
                 break;
 
-            case 'yesterday':
-                $data['granularity'] = 'hourly';
-                $yesterday = today()->subDay();
-                
-                for ($hour = 0; $hour < 24; $hour++) {
-                    $hourStart = $yesterday->copy()->setHour($hour)->startOfHour();
-                    $hourEnd = $yesterday->copy()->setHour($hour)->endOfHour();
-                    
-                    $data['categories'][] = $hourStart->toIso8601String();
-                    
-                    $posSales = Transaction::where('type', 'SALE')
-                        ->where('status', 'COMPLETED')
-                        ->whereBetween('date', [$hourStart, $hourEnd])
-                        ->sum('totalAmount') ?? 0;
-                    
-                    $manualIncome = FinancialTransaction::income()
-                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
-                        ->sum('amount') ?? 0;
-                    
-                    $data['income'][] = (int) ($posSales + $manualIncome);
-                    
-                    $expense = FinancialTransaction::expense()
-                        ->whereBetween('transactionDate', [$hourStart, $hourEnd])
-                        ->sum('amount') ?? 0;
-                    
-                    $data['expense'][] = (int) $expense;
-                }
-                break;
-
-            case 'this_week':
+            case 'week':
                 $data['granularity'] = 'daily';
                 $start = now()->startOfWeek();
                 $end = now()->endOfWeek();
@@ -521,18 +484,11 @@ class Dashboard extends Component
                 }
                 break;
 
-            case 'this_month':
-            case 'last_month':
+            case 'month':
             default:
                 $data['granularity'] = 'daily';
-                
-                if ($this->dateFilter === 'last_month') {
-                    $start = now()->subMonth()->startOfMonth();
-                    $end = now()->subMonth()->endOfMonth();
-                } else {
-                    $start = now()->startOfMonth();
-                    $end = now()->endOfMonth();
-                }
+                $start = now()->startOfMonth();
+                $end = now()->endOfMonth();
                 
                 for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
                     $dayStart = $day->copy()->startOfDay();
@@ -559,7 +515,7 @@ class Dashboard extends Component
                 }
                 break;
 
-            case 'this_year':
+            case 'year':
                 $data['granularity'] = 'monthly';
                 $start = now()->startOfYear();
                 $end = now()->endOfYear();

@@ -88,19 +88,13 @@
                                         class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
                                         <i class='bx bx-calendar text-slate-500 text-sm'></i>
                                         <span class="truncate max-w-[120px] sm:max-w-none">
-                                            @if($dateFilter === 'custom')
-                                                {{ \Carbon\Carbon::parse($startDate)->format('d M y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d M y') }}
-                                            @else
-                                                {{ match($dateFilter) {
-                                                    'today' => 'Hari Ini',
-                                                    'yesterday' => 'Kemarin',
-                                                    'this_week' => 'Minggu Ini',
-                                                    'this_month' => 'Bulan Ini',
-                                                    'last_month' => 'Bulan Lalu',
-                                                    'this_year' => 'Tahun Ini',
-                                                    default => 'Bulan Ini'
-                                                } }}
-                                            @endif
+                                            {{ match($filter) {
+                                                'today' => 'Hari Ini',
+                                                'week' => 'Minggu Ini',
+                                                'month' => 'Bulan Ini',
+                                                'year' => 'Tahun Ini',
+                                                default => 'Bulan Ini'
+                                            } }}
                                         </span>
                                         <i class='bx bx-chevron-down text-slate-400'></i>
                                     </button>
@@ -132,55 +126,15 @@
                                         <div class="w-full md:w-36 bg-slate-50 dark:bg-slate-900/50 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 p-2 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible">
                                             @foreach([
                                                 'today' => 'Hari Ini',
-                                                'yesterday' => 'Kemarin',
-                                                'this_week' => 'Minggu Ini',
-                                                'this_month' => 'Bulan Ini',
-                                                'last_month' => 'Bulan Lalu',
-                                                'this_year' => 'Tahun Ini'
+                                                'week' => 'Minggu Ini',
+                                                'month' => 'Bulan Ini',
+                                                'year' => 'Tahun Ini'
                                             ] as $key => $label)
-                                                <button wire:click="setDateFilter('{{ $key }}')" @click="open = false"
-                                                    class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $dateFilter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
+                                                <button wire:click="setFilter('{{ $key }}')" @click="open = false"
+                                                    class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $filter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
                                                     {{ $label }}
                                                 </button>
                                             @endforeach
-                                            <div class="w-px md:w-full h-8 md:h-px bg-slate-200 dark:bg-slate-700 mx-1 md:mx-0 md:my-1 flex-shrink-0"></div>
-                                            <button @click="document.getElementById('startDate').focus()"
-                                                class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $dateFilter === 'custom' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
-                                                Custom Range
-                                            </button>
-                                        </div>
-
-                                        {{-- Custom Range Area --}}
-                                        <div class="flex-1 p-4 bg-white dark:bg-slate-800 flex flex-col justify-center pb-10 md:pb-4">
-                                            <h4 class="text-[10px] font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-3 hidden md:block">Pilih Rentang Tanggal</h4>
-                                            
-                                            {{-- Mobile Title --}}
-                                            <div class="mb-4 md:hidden">
-                                                <h3 class="text-sm font-bold text-slate-900 dark:text-white">Pilih Tanggal</h3>
-                                                <p class="text-[11px] text-slate-500">Sesuaikan rentang waktu laporan</p>
-                                            </div>
-
-                                            <div class="grid grid-cols-2 gap-3 mb-4">
-                                                <div>
-                                                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Dari</label>
-                                                    <input type="date" wire:model.live.debounce.500ms="startDate" id="startDate"
-                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-2 md:py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                                </div>
-                                                <div>
-                                                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Sampai</label>
-                                                    <input type="date" wire:model.live.debounce.500ms="endDate"
-                                                        class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md px-2 py-2 md:py-1.5 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                                                </div>
-                                            </div>
-                                            <div class="flex justify-between items-center pt-2 border-t border-slate-100 dark:border-slate-700">
-                                                <span class="text-[10px] text-slate-400">
-                                                    {{ \Carbon\Carbon::parse($startDate)->diffInDays(\Carbon\Carbon::parse($endDate)) + 1 }} Hari
-                                                </span>
-                                                <button type="button" @click="open = false"
-                                                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] uppercase font-bold px-4 py-2.5 md:py-2 rounded-md transition-colors shadow-sm shadow-indigo-200 dark:shadow-none w-full md:w-auto ml-3 md:ml-0">
-                                                    Selesai
-                                                </button>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

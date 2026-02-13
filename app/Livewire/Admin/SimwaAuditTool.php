@@ -484,17 +484,12 @@ class SimwaAuditTool extends Component
             $actualSukarelaTotal = 0;
 
             foreach ($memberPeriods as $mp) {
-                // 1. Mandatory (Wajib/SIMWA) Logic - from AUTO-SPLIT or pure SIMWA rows
+                // 1. Mandatory (Wajib/SIMWA) Logic - ONLY from AUTO-SPLIT SIMWA rows
+                // All SIMWA extractions are stored as AUTO-SPLIT SIMWA rows during import
                 $specificSimwa = DB::table('audit_simwa_imports')
                     ->where('matched_member_id', $member->id)
                     ->where('period', $mp->period)
-                    ->where(function ($q) {
-                        $q->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')
-                            ->orWhere(function ($q2) {
-                                $q2->where('raw_uraian', 'like', '%simwa%')
-                                    ->where('raw_uraian', 'not like', 'AUTO-%');
-                            });
-                    })
+                    ->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')
                     ->sum('amount');
 
                 // 2. Voluntary (Sukarela) Logic - ONLY from AUTO-SPLIT SUKARELA rows
@@ -640,18 +635,11 @@ class SimwaAuditTool extends Component
                 $date = $periodDate->copy()->setDay($day)->endOfDay();
 
                 if ($processWajib) {
-                    // Query for SIMWA amounts - these come from AUTO-SPLIT or pure SIMWA rows
+                    // Query for SIMWA amounts - ONLY from AUTO-SPLIT SIMWA rows
                     $wRows = DB::table('audit_simwa_imports')
                         ->where('matched_member_id', $memberId)
                         ->where('period', $mp->period)
-                        ->where(function ($q) {
-                            $q->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')  // From splits (Tabungan, Angsuran, etc)
-                                ->orWhere(function ($q2) {
-                                    // Pure SIMWA rows (not auto-split)
-                                    $q2->where('raw_uraian', 'like', '%simwa%')
-                                        ->where('raw_uraian', 'not like', 'AUTO-%');
-                                });
-                        })
+                        ->where('raw_uraian', 'like', 'AUTO-SPLIT SIMWA:%')
                         ->get();
 
                     $wAmount = 0;
