@@ -19,6 +19,9 @@ class BankAuditTool extends Component
     public $csvFiles = [];
     public $activeTab = 'upload'; // upload, review, rules, sync
     
+    // Balance tracking
+    public $saldoAwal = 9582656.65; // Initial balance
+    
     // Review filters
     public $filterType = 'all'; // all, INCOME, EXPENSE
     public $filterCategory = '';
@@ -41,6 +44,24 @@ class BankAuditTool extends Component
             'total_income' => AuditBankImport::where('detected_type', 'INCOME')->sum('kredit'),
             'total_expense' => AuditBankImport::where('detected_type', 'EXPENSE')->sum('debet'),
         ];
+
+        // Calculate balance
+        $totalKredit = AuditBankImport::sum('kredit');
+        $totalDebet = AuditBankImport::sum('debet');
+        $saldoAkhirCalculated = $this->saldoAwal + $totalKredit - $totalDebet;
+        
+        // Get actual final balance from last transaction
+        $lastTransaction = AuditBankImport::orderBy('transaction_date', 'desc')
+            ->orderBy('transaction_time', 'desc')
+            ->first();
+        $saldoAkhirActual = $lastTransaction ? $lastTransaction->saldo : $this->saldoAwal;
+
+        $stats['saldo_awal'] = $this->saldoAwal;
+        $stats['total_kredit'] = $totalKredit;
+        $stats['total_debet'] = $totalDebet;
+        $stats['saldo_akhir_calculated'] = $saldoAkhirCalculated;
+        $stats['saldo_akhir_actual'] = $saldoAkhirActual;
+        $stats['selisih'] = $saldoAkhirActual - $saldoAkhirCalculated;
 
         // Get imported periods for upload tab
         $importedPeriods = DB::table('audit_bank_imports')

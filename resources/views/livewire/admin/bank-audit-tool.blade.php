@@ -8,26 +8,36 @@
     </div>
 
     {{-- Stats Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-7 gap-4">
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Total Records</h3>
             <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($stats['total_imports']) }}</p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-amber-500 uppercase tracking-widest mb-2">Unreviewed</h3>
-            <p class="text-3xl font-bold text-amber-600">{{ number_format($stats['unreviewed']) }}</p>
+            <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2">Saldo Awal</h3>
+            <p class="text-xl font-bold text-blue-600">Rp {{ number_format($stats['saldo_awal'], 0) }}</p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-rose-500 uppercase tracking-widest mb-2">Unsynced</h3>
-            <p class="text-3xl font-bold text-rose-600">{{ number_format($stats['unsynced']) }}</p>
+            <h3 class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Total Kredit</h3>
+            <p class="text-xl font-bold text-emerald-600">Rp {{ number_format($stats['total_kredit'], 0) }}</p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Total Income</h3>
-            <p class="text-2xl font-bold text-emerald-600">Rp {{ number_format($stats['total_income'], 0) }}</p>
+            <h3 class="text-xs font-bold text-red-500 uppercase tracking-widest mb-2">Total Debet</h3>
+            <p class="text-xl font-bold text-red-600">Rp {{ number_format($stats['total_debet'], 0) }}</p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-red-500 uppercase tracking-widest mb-2">Total Expense</h3>
-            <p class="text-2xl font-bold text-red-600">Rp {{ number_format($stats['total_expense'], 0) }}</p>
+            <h3 class="text-xs font-bold text-purple-500 uppercase tracking-widest mb-2">Saldo Akhir (Calc)</h3>
+            <p class="text-xl font-bold text-purple-600">Rp {{ number_format($stats['saldo_akhir_calculated'], 0) }}</p>
+        </div>
+        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">Saldo Akhir (CSV)</h3>
+            <p class="text-xl font-bold text-indigo-600">Rp {{ number_format($stats['saldo_akhir_actual'], 0) }}</p>
+        </div>
+        <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+            <h3 class="text-xs font-bold {{ abs($stats['selisih']) < 1 ? 'text-emerald-500' : 'text-amber-500' }} uppercase tracking-widest mb-2">Selisih</h3>
+            <p class="text-xl font-bold {{ abs($stats['selisih']) < 1 ? 'text-emerald-600' : 'text-amber-600' }}">
+                {{ $stats['selisih'] >= 0 ? '+' : '' }}Rp {{ number_format($stats['selisih'], 2) }}
+            </p>
         </div>
     </div>
 
