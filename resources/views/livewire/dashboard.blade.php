@@ -345,7 +345,7 @@
                             @endphp
                             <div class="flex justify-between items-end mb-1">
                                 <span
-                                    class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total
+                                    class="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                                     Pengeluaran Operasional</span>
                                 <span
                                     class="text-[11px] font-bold text-slate-700 dark:text-white">{{ number_format($expenseBarPercent, 1) }}%</span>
