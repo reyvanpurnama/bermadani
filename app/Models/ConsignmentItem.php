@@ -13,6 +13,7 @@ class ConsignmentItem extends Model
         'batchId',
         'productId',
         'initialQty',
+        'receivedQty',
         'damagedQty',
         'returnedQty',
         'soldQty',

@@ -15,7 +15,18 @@
                 <h1 class="text-xl font-bold text-slate-900 dark:text-white">Riwayat Stok & Pengiriman</h1>
                 <p class="text-[11px] text-slate-500 mt-0.5">Daftar batch konsinyasi dan histori pengiriman barang Anda</p>
             </div>
+            <a href="{{ route('supplier.restock.create') }}"
+                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-emerald-500/20">
+                <i class='bx bx-package text-lg'></i> Kirim Barang Hari Ini
+            </a>
         </div>
+
+        @if(session('success'))
+        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-3">
+            <i class='bx bx-check-circle text-xl'></i>
+            <span class="text-sm font-medium">{{ session('success') }}</span>
+        </div>
+        @endif
 
         {{-- Batch List --}}
         <div

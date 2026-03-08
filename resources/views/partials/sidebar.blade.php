@@ -80,6 +80,26 @@
                     class="sidebar-text text-xs {{ request()->routeIs('kasir.shift-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
                     Shift</span>
             </a>
+
+            <p class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-3 opacity-80 whitespace-nowrap">Supplier</p>
+
+            <a href="{{ route('kasir.terima-barang') }}"
+                class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.terima-barang') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <div class="flex items-center">
+                    <i class='bx bx-package text-sm mr-2 {{ request()->routeIs('kasir.terima-barang') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                    <span class="sidebar-text text-xs {{ request()->routeIs('kasir.terima-barang') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Terima Barang</span>
+                </div>
+                @php $pendingBatch = \App\Models\ConsignmentBatch::where('status','REQUESTED')->count(); @endphp
+                @if($pendingBatch > 0)
+                <span class="sidebar-text text-[10px] bg-blue-500 text-white font-bold px-1.5 py-0.5 rounded-full leading-none">{{ $pendingBatch }}</span>
+                @endif
+            </a>
+
+            <a href="{{ route('kasir.laporan-supplier') }}"
+                class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.laporan-supplier') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <i class='bx bx-bar-chart-alt-2 text-sm mr-2 {{ request()->routeIs('kasir.laporan-supplier') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                <span class="sidebar-text text-xs {{ request()->routeIs('kasir.laporan-supplier') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan Supplier</span>
+            </a>
         @else
             {{-- ADMIN --}}
 

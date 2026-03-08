@@ -157,6 +157,8 @@ Route::middleware(['auth:supplier', 'supplier.status', 'log.activity'])->prefix(
     Route::get('/sales', [App\Http\Controllers\Supplier\SupplierSalesController::class, 'index'])->name('supplier.sales');
 
     Route::get('/restock', [App\Http\Controllers\Supplier\SupplierRestockController::class, 'index'])->name('supplier.restock');
+    Route::get('/restock/create', [App\Http\Controllers\Supplier\SupplierRestockController::class, 'create'])->name('supplier.restock.create');
+    Route::post('/restock', [App\Http\Controllers\Supplier\SupplierRestockController::class, 'store'])->name('supplier.restock.store');
 
     Route::get('/profile', function () {
         return view('supplier.profile');
@@ -360,6 +362,12 @@ Route::middleware(['auth', 'role:KASIR', 'log.activity'])->prefix('kasir')->grou
 
     // My Shift History
     Route::get('/riwayat-shift', \App\Livewire\Kasir\ShiftHistory::class)->name('kasir.shift-history');
+
+    // Terima Barang dari Supplier
+    Route::get('/terima-barang', \App\Livewire\Kasir\TerimaBrang::class)->name('kasir.terima-barang');
+
+    // Laporan Harian Supplier
+    Route::get('/laporan-supplier', \App\Livewire\Kasir\LaporanSupplier::class)->name('kasir.laporan-supplier');
 });
 
 // Keep old /pos route for backward compatibility
