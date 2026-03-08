@@ -270,6 +270,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.placeholder', ['title' => 'Simpanan']);
     })->name('admin.savings');
     Route::get('/audit/simwa', \App\Livewire\Admin\SimwaAuditTool::class)->name('admin.audit.simwa');
+    Route::get('/audit/bank', \App\Livewire\Admin\BankAuditTool::class)->name('admin.audit.bank');
 
     // Payments - Pembayaran Simpanan
     Route::prefix('payments')->name('admin.payments.')->group(function () {

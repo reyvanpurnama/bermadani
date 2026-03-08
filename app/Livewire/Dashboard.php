@@ -35,6 +35,7 @@ class Dashboard extends Component
             'week' => $this->setDateRange(now()->startOfWeek(), now()->endOfWeek()),
             'month' => $this->setDateRange(now()->startOfMonth(), now()->endOfMonth()),
             'year' => $this->setDateRange(now()->startOfYear(), now()->endOfYear()),
+            'prev_year' => $this->setDateRange(now()->subYear()->startOfYear(), now()->subYear()->endOfYear()),
             default => null,
         };
         
@@ -57,6 +58,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->sum('totalAmount'),
             'month' => $query->whereMonth('date', now()->month)->whereYear('date', now()->year)->sum('totalAmount'),
             'year' => $query->whereYear('date', now()->year)->sum('totalAmount'),
+            'prev_year' => $query->whereYear('date', now()->subYear()->year)->sum('totalAmount'),
             default => $query->whereDate('date', today())->sum('totalAmount'),
         };
     }
@@ -70,6 +72,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('date', [now()->startOfWeek(), now()->endOfWeek()])->count(),
             'month' => $query->whereMonth('date', now()->month)->whereYear('date', now()->year)->count(),
             'year' => $query->whereYear('date', now()->year)->count(),
+            'prev_year' => $query->whereYear('date', now()->subYear()->year)->count(),
             default => $query->whereDate('date', today())->count(),
         };
     }
@@ -92,6 +95,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
             'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
             'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            'prev_year' => $query->whereYear('transactionDate', now()->subYear()->year)->sum('amount'),
             default => $query->whereDate('transactionDate', today())->sum('amount'),
         };
     }
@@ -108,6 +112,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('transactions.date', [now()->startOfWeek(), now()->endOfWeek()])->sum('transaction_items.totalCogs'),
             'month' => $query->whereMonth('transactions.date', now()->month)->whereYear('transactions.date', now()->year)->sum('transaction_items.totalCogs'),
             'year' => $query->whereYear('transactions.date', now()->year)->sum('transaction_items.totalCogs'),
+            'prev_year' => $query->whereYear('transactions.date', now()->subYear()->year)->sum('transaction_items.totalCogs'),
             default => $query->whereDate('transactions.date', today())->sum('transaction_items.totalCogs'),
         };
 
@@ -142,6 +147,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
             'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
             'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            'prev_year' => $query->whereYear('transactionDate', now()->subYear()->year)->sum('amount'),
             default => $query->whereDate('transactionDate', today())->sum('amount'),
         };
 
@@ -159,6 +165,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
             'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
             'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            'prev_year' => $query->whereYear('transactionDate', now()->subYear()->year)->sum('amount'),
             default => $query->whereDate('transactionDate', today())->sum('amount'),
         };
 
@@ -176,6 +183,7 @@ class Dashboard extends Component
             'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
             'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
             'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            'prev_year' => $query->whereYear('transactionDate', now()->subYear()->year)->sum('amount'),
             default => $query->whereDate('transactionDate', today())->sum('amount'),
         };
 
@@ -273,6 +281,7 @@ class Dashboard extends Component
             'week' => 'vs Minggu Lalu',
             'month' => 'vs Bulan Lalu',
             'year' => 'vs Tahun Lalu',
+            'prev_year' => 'vs 2 Tahun Lalu',
             default => 'vs Kemarin',
         };
     }
@@ -284,6 +293,7 @@ class Dashboard extends Component
             'week' => [now()->startOfWeek(), now()->endOfWeek()],
             'month' => [now()->startOfMonth(), now()->endOfMonth()],
             'year' => [now()->startOfYear(), now()->endOfYear()],
+            'prev_year' => [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()],
             default => [today()->startOfDay(), today()->endOfDay()],
         };
     }
@@ -295,6 +305,7 @@ class Dashboard extends Component
             'week' => [now()->subWeek()->startOfWeek(), now()->subWeek()->endOfWeek()],
             'month' => [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()],
             'year' => [now()->subYear()->startOfYear(), now()->subYear()->endOfYear()],
+            'prev_year' => [now()->subYears(2)->startOfYear(), now()->subYears(2)->endOfYear()],
             default => [today()->subDay()->startOfDay(), today()->subDay()->endOfDay()],
         };
     }
@@ -394,6 +405,7 @@ class Dashboard extends Component
             ->when($this->filter === 'week', fn($q) => $q->whereBetween('transactions.date', [now()->startOfWeek(), now()->endOfWeek()]))
             ->when($this->filter === 'month', fn($q) => $q->whereMonth('transactions.date', now()->month)->whereYear('transactions.date', now()->year))
             ->when($this->filter === 'year', fn($q) => $q->whereYear('transactions.date', now()->year))
+            ->when($this->filter === 'prev_year', fn($q) => $q->whereYear('transactions.date', now()->subYear()->year))
             ->groupBy('products.id', 'products.name', 'products.categoryId')
             ->orderByDesc('total_sold')
             ->limit(5)
@@ -414,6 +426,7 @@ class Dashboard extends Component
     {
         $data = [
             'categories' => [],
+            'tooltipCategories' => [],
             'income' => [],
             'expense' => [],
             'granularity' => 'daily'
@@ -486,39 +499,62 @@ class Dashboard extends Component
 
             case 'month':
             default:
-                $data['granularity'] = 'daily';
-                $start = now()->startOfMonth();
-                $end = now()->endOfMonth();
-                
-                for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
-                    $dayStart = $day->copy()->startOfDay();
-                    $dayEnd = $day->copy()->endOfDay();
-                    
-                    $data['categories'][] = $dayStart->toIso8601String();
-                    
+                $data['granularity'] = 'weekly';
+                $monthStart = now()->startOfMonth();
+                $monthEnd = now()->endOfMonth();
+
+                $cursor = $monthStart->copy();
+                $weekIndex = 1;
+
+                while ($cursor->lte($monthEnd)) {
+                    $weekStart = $cursor->copy()->startOfWeek();
+                    if ($weekStart->lt($monthStart)) {
+                        $weekStart = $monthStart->copy();
+                    }
+
+                    $weekEnd = $cursor->copy()->endOfWeek();
+                    if ($weekEnd->gt($monthEnd)) {
+                        $weekEnd = $monthEnd->copy();
+                    }
+
+                    $rangeStart = $weekStart->copy()->startOfDay();
+                    $rangeEnd = $weekEnd->copy()->endOfDay();
+
+                    $data['categories'][] = 'Week ' . $weekIndex;
+                    $data['tooltipCategories'][] = $weekStart->format('d M') . ' - ' . $weekEnd->format('d M Y');
+
                     $posSales = Transaction::where('type', 'SALE')
                         ->where('status', 'COMPLETED')
-                        ->whereBetween('date', [$dayStart, $dayEnd])
+                        ->whereBetween('date', [$rangeStart, $rangeEnd])
                         ->sum('totalAmount') ?? 0;
-                    
+
                     $manualIncome = FinancialTransaction::income()
-                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->whereBetween('transactionDate', [$rangeStart, $rangeEnd])
                         ->sum('amount') ?? 0;
-                    
+
                     $data['income'][] = (int) ($posSales + $manualIncome);
-                    
+
                     $expense = FinancialTransaction::expense()
-                        ->whereBetween('transactionDate', [$dayStart, $dayEnd])
+                        ->whereBetween('transactionDate', [$rangeStart, $rangeEnd])
                         ->sum('amount') ?? 0;
-                    
+
                     $data['expense'][] = (int) $expense;
+
+                    $cursor = $weekEnd->copy()->addDay();
+                    $weekIndex++;
                 }
                 break;
 
             case 'year':
+            case 'prev_year':
                 $data['granularity'] = 'monthly';
-                $start = now()->startOfYear();
-                $end = now()->endOfYear();
+                if ($this->filter === 'prev_year') {
+                    $start = now()->subYear()->startOfYear();
+                    $end = now()->subYear()->endOfYear();
+                } else {
+                    $start = now()->startOfYear();
+                    $end = now()->endOfYear();
+                }
                 
                 for ($month = $start->copy(); $month->lte($end); $month->addMonth()) {
                     $monthStart = $month->copy()->startOfMonth();

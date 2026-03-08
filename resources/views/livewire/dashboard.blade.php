@@ -78,374 +78,171 @@
                     <div>
                         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-2">
                             <div>
-                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Ringkasan Omzet</h3>
-                                <p class="text-[11px] text-slate-500">Analisis Omzet vs Beban</p>
+                                <h3 class="font-bold text-base text-slate-800 dark:text-white">Ringkasan
+                                    Pendapatan</h3>
+                                <p class="text-[11px] text-slate-500">Analisis Pemasukan vs Pengeluaran</p>
                             </div>
                             <div class="flex items-center gap-4">
-                                {{-- Date Range Picker --}}
-                                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
-                                    <button @click="open = !open"
-                                        class="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-                                        <i class='bx bx-calendar text-slate-500 text-sm'></i>
-                                        <span class="truncate max-w-[120px] sm:max-w-none">
-                                            {{ match($filter) {
-                                                'today' => 'Hari Ini',
-                                                'week' => 'Minggu Ini',
-                                                'month' => 'Bulan Ini',
-                                                'year' => 'Tahun Ini',
-                                                default => 'Bulan Ini'
-                                            } }}
-                                        </span>
-                                        <i class='bx bx-chevron-down text-slate-400'></i>
-                                    </button>
-
-                                    {{-- Mobile Backdrop --}}
-                                    <div x-show="open" x-transition.opacity 
-                                        @click="open = false"
-                                        class="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden"
-                                        x-cloak></div>
-
-                                    <div x-show="open" 
-                                        x-transition:enter="transition ease-out duration-300"
-                                        x-transition:enter-start="opacity-0 translate-y-full md:translate-y-0 md:opacity-0 md:scale-95"
-                                        x-transition:enter-end="opacity-100 translate-y-0 md:opacity-100 md:scale-100"
-                                        x-transition:leave="transition ease-in duration-200"
-                                        x-transition:leave-start="opacity-100 translate-y-0 md:opacity-100 md:scale-100"
-                                        x-transition:leave-end="opacity-0 translate-y-full md:translate-y-0 md:opacity-0 md:scale-95"
-                                        x-cloak 
-                                        class="fixed bottom-0 left-0 right-0 z-50 w-full bg-white dark:bg-slate-800 rounded-t-2xl shadow-2xl border-t border-slate-200 dark:border-slate-700 
-                                               md:absolute md:bottom-auto md:left-auto md:right-0 md:top-full md:mt-2 md:w-auto md:min-w-[450px] md:max-w-[450px] md:rounded-xl md:border md:shadow-xl md:flex md:flex-row overflow-hidden
-                                               flex flex-col max-h-[85vh] md:max-h-none">
-                                        
-                                        {{-- Mobile Handle --}}
-                                        <div class="flex justify-center p-3 md:hidden">
-                                            <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
-                                        </div>
-
-                                        {{-- Presets Sidebar --}}
-                                        <div class="w-full md:w-36 bg-slate-50 dark:bg-slate-900/50 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-700 p-2 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-visible">
-                                            @foreach([
-                                                'today' => 'Hari Ini',
-                                                'week' => 'Minggu Ini',
-                                                'month' => 'Bulan Ini',
-                                                'year' => 'Tahun Ini'
-                                            ] as $key => $label)
-                                                <button wire:click="setFilter('{{ $key }}')" @click="open = false"
-                                                    class="whitespace-nowrap md:whitespace-normal text-left px-3 py-2 rounded-md text-[11px] font-medium transition-colors flex-shrink-0 md:w-full {{ $filter === $key ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700' }}">
-                                                    {{ $label }}
-                                                </button>
-                                            @endforeach
-                                        </div>
+                                <div class="flex gap-3 hidden sm:flex">
+                                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span><span
+                                            class="text-[10px] text-slate-500 font-medium">Pemasukan</span></div>
+                                    <div class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300"></span><span
+                                            class="text-[10px] text-slate-500 font-medium">Pengeluaran</span></div>
+                                </div>
+                                <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 hidden sm:block"></div>
+                                <div class="relative">
+                                    <select x-ref="revenueFilter"
+                                        class="appearance-none bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-[11px] font-semibold rounded-md pl-3 pr-8 py-1.5 outline-none focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all hover:bg-slate-100 dark:hover:bg-slate-700">
+                                        <option value="today" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" @selected($filter === 'today')>
+                                            Hari Ini</option>
+                                        <option value="week" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" @selected($filter === 'week')>1 Minggu Terakhir
+                                        </option>
+                                        <option value="month" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" @selected($filter === 'month')>1 Bulan Terakhir
+                                        </option>
+                                        <option value="year" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" @selected($filter === 'year')>Tahun Ini
+                                        </option>
+                                        <option value="prev_year" class="bg-card dark:bg-slate-800 text-slate-700 dark:text-slate-200" @selected($filter === 'prev_year')>Tahun Sebelumnya ({{ now()->subYear()->year }})
+                                        </option>
+                                    </select>
+                                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                                        <i class='bx bx-chevron-down text-sm'></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="flex-1 w-full min-h-[260px] relative group/chart" x-data="{
+                    <div class="flex-1 w-full min-h-[260px]" x-data="{
                             chart: null,
-                            hasData: false,
-                            get isDark() { return document.documentElement.classList.contains('dark') },
-                            init() {
-                                let colors = {
-                                    text: this.isDark ? '#94a3b8' : '#64748b',
-                                    grid: this.isDark ? '#1e293b' : '#e2e8f0',
-                                    tooltip: this.isDark ? 'dark' : 'light',
-                                    income: this.isDark ? '#10b981' : '#059669',
-                                    expense: this.isDark ? '#ef4444' : '#dc2626'
+                            chartData: @js($chartData),
+                            currentGranularity: @js($chartData['granularity'] ?? 'daily'),
+                            tooltipCategories: [],
+                            getColors() {
+                                const isDark = document.documentElement.classList.contains('dark');
+                                return {
+                                    text: isDark ? '#94a3b8' : '#64748b',
+                                    grid: isDark ? '#1e293b' : '#e2e8f0',
+                                    tooltipTheme: isDark ? 'dark' : 'light'
                                 };
+                            },
+                            formatCategory(value, granularity) {
+                                if (granularity === 'weekly') {
+                                    return value;
+                                }
 
-                                var options = {
-                                    series: [],
+                                const d = new Date(value);
+                                if (isNaN(d.getTime())) return value;
+
+                                if (granularity === 'hourly') {
+                                    return d.toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
+                                }
+
+                                if (granularity === 'monthly') {
+                                    return d.toLocaleString('id-ID', { month: 'short' });
+                                }
+
+                                return d.toLocaleString('id-ID', { day: '2-digit', month: 'short' });
+                            },
+                            normalize(data) {
+                                const raw = data || {};
+                                const granularity = raw.granularity || 'daily';
+                                const categories = (raw.categories || []).map((item) => this.formatCategory(item, granularity));
+                                const tooltipCategories = (raw.tooltipCategories && raw.tooltipCategories.length)
+                                    ? raw.tooltipCategories.map((item) => String(item))
+                                    : categories;
+                                const displayCategories = granularity === 'hourly'
+                                    ? categories.map((item, index) => index % 3 === 0 ? item : '')
+                                    : categories;
+
+                                return {
+                                    categories: displayCategories,
+                                    tooltipCategories,
+                                    income: raw.income || [],
+                                    expense: raw.expense || []
+                                };
+                            },
+                            init() {
+                                const c = this.getColors();
+                                const initial = this.normalize(this.chartData);
+                                this.tooltipCategories = initial.tooltipCategories;
+
+                                this.chart = new ApexCharts(this.$refs.revenueChart, {
+                                    series: [
+                                        { name: 'Pemasukan', data: initial.income },
+                                        { name: 'Pengeluaran', data: initial.expense }
+                                    ],
                                     chart: {
                                         height: '100%',
                                         type: 'area',
                                         toolbar: { show: false },
-                                        fontFamily: 'Inter, system-ui, sans-serif',
-                                        foreColor: colors.text,
-                                        background: 'transparent',
-                                        animations: { 
-                                            enabled: true,
-                                            easing: 'easeinout',
-                                            speed: 800,
-                                            animateGradually: {
-                                                enabled: true,
-                                                delay: 150
-                                            },
-                                            dynamicAnimation: {
-                                                enabled: true,
-                                                speed: 350
-                                            }
-                                        },
-                                        zoom: { enabled: false },
-                                        selection: { enabled: false }
+                                        fontFamily: 'Inter',
+                                        foreColor: c.text
                                     },
-                                    colors: [colors.income, colors.expense],
+                                    colors: ['#4F46E5', '#cbd5e1'],
                                     dataLabels: { enabled: false },
-                                    stroke: { 
-                                        curve: 'smooth', 
-                                        width: [3, 3],
-                                        lineCap: 'round'
+                                    stroke: { curve: 'smooth', width: 2 },
+                                    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 90, 100] } },
+                                    xaxis: {
+                                        type: 'category',
+                                        categories: initial.categories,
+                                        axisBorder: { show: false },
+                                        axisTicks: { show: false }
                                     },
-                                    fill: { 
-                                        type: 'gradient',
-                                        gradient: { 
-                                            type: 'vertical',
-                                            shadeIntensity: 1,
-                                            opacityFrom: [0.5, 0.3],
-                                            opacityTo: [0.05, 0.02],
-                                            stops: [0, 85, 100]
-                                        }
-                                    },
-                                    markers: {
-                                        size: 0,
-                                        hover: {
-                                            size: 5,
-                                            sizeOffset: 3
-                                        }
-                                    },
-                                    xaxis: { 
-                                        type: 'datetime', 
-                                        categories: [], 
-                                        axisBorder: { show: false }, 
-                                        axisTicks: { show: false },
-                                        labels: {
-                                            style: { 
-                                                fontSize: '11px',
-                                                fontWeight: 500,
-                                                colors: colors.text
-                                            },
-                                            rotate: 0,
-                                            hideOverlappingLabels: true,
-                                            datetimeUTC: false
-                                        },
-                                        tooltip: { enabled: false }
-                                    },
-                                    yaxis: {
-                                        labels: {
-                                            style: { 
-                                                fontSize: '11px',
-                                                fontWeight: 500,
-                                                colors: colors.text
-                                            },
-                                            formatter: function(value) {
-                                                if (value >= 1000000) {
-                                                    return 'Rp ' + (value / 1000000).toFixed(1) + 'jt';
-                                                } else if (value >= 1000) {
-                                                    return 'Rp ' + (value / 1000).toFixed(0) + 'rb';
-                                                }
-                                                return 'Rp ' + value.toFixed(0);
-                                            }
-                                        },
-                                        min: 0
-                                    },
-                                    grid: { 
-                                        borderColor: colors.grid,
-                                        strokeDashArray: 3,
-                                        xaxis: { lines: { show: false } },
-                                        yaxis: { lines: { show: true } },
-                                        padding: {
-                                            top: 0,
-                                            right: 10,
-                                            bottom: 0,
-                                            left: 10
-                                        }
-                                    },
-                                    legend: { 
-                                        show: true,
-                                        position: 'top',
-                                        horizontalAlign: 'right',
-                                        fontSize: '13px',
-                                        fontWeight: 600,
-                                        markers: {
-                                            width: 8,
-                                            height: 8,
-                                            strokeWidth: 0,
-                                            radius: 12
-                                        },
-                                        itemMargin: {
-                                            horizontal: 12,
-                                            vertical: 0
-                                        }
-                                    },
-                                    tooltip: { 
-                                        theme: colors.tooltip,
-                                        shared: true,
-                                        intersect: false,
+                                    grid: { borderColor: c.grid, strokeDashArray: 4 },
+                                    legend: { show: false },
+                                    tooltip: {
+                                        theme: c.tooltipTheme,
                                         x: {
-                                            format: 'dd MMM yyyy HH:mm'
-                                        },
-                                        y: {
-                                            formatter: function(value) {
-                                                if (!value) return 'Rp 0';
-                                                return 'Rp ' + value.toLocaleString('id-ID');
-                                            }
-                                        },
-                                        marker: {
-                                            show: true
-                                        },
-                                        style: {
-                                            fontSize: '12px',
-                                            fontFamily: 'Inter, system-ui, sans-serif'
-                                        }
-                                    },
-                                    responsive: [
-                                        {
-                                            breakpoint: 768,
-                                            options: {
-                                                legend: {
-                                                    position: 'bottom',
-                                                    horizontalAlign: 'center'
-                                                },
-                                                xaxis: {
-                                                    labels: {
-                                                        style: { fontSize: '10px' }
-                                                    }
-                                                }
+                                            formatter: (value, opts) => {
+                                                const index = opts?.dataPointIndex ?? 0;
+                                                return this.tooltipCategories[index] ?? value;
                                             }
                                         }
-                                    ]
-                                };
+                                    }
+                                });
 
-                                this.chart = new ApexCharts(this.$refs.revenueChart, options);
                                 this.chart.render();
 
-                                this.update($wire.chartData);
+                                this.$refs.revenueFilter.addEventListener('change', (e) => {
+                                    $wire.setFilter(e.target.value);
+                                });
+
+                                // Ensure initial selected filter in UI and backend are always synchronized
+                                this.$refs.revenueFilter.value = @js($filter);
+                                $wire.setFilter(this.$refs.revenueFilter.value);
 
                                 $wire.watch('chartData', (value) => {
-                                    this.update(value);
+                                    this.chartData = value;
+                                    this.applyChart(value);
                                 });
-                                
-                                const observer = new MutationObserver((mutations) => {
-                                    mutations.forEach((mutation) => {
-                                        if (mutation.attributeName === 'class') {
-                                            const darkNow = document.documentElement.classList.contains('dark');
-                                            const incomeColor = darkNow ? '#10b981' : '#059669';
-                                            const expenseColor = darkNow ? '#ef4444' : '#dc2626';
-                                            
-                                            this.chart.updateOptions({
-                                                chart: { foreColor: darkNow ? '#94a3b8' : '#64748b' },
-                                                colors: [incomeColor, expenseColor],
-                                                grid: { borderColor: darkNow ? '#1e293b' : '#e2e8f0' },
-                                                tooltip: { theme: darkNow ? 'dark' : 'light' },
-                                                yaxis: {
-                                                    labels: {
-                                                        style: { 
-                                                            colors: darkNow ? '#94a3b8' : '#64748b'
-                                                        }
-                                                    }
-                                                },
-                                                xaxis: {
-                                                    labels: {
-                                                        style: { 
-                                                            colors: darkNow ? '#94a3b8' : '#64748b'
-                                                        }
-                                                    }
-                                                }
-                                            });
-                                        }
+
+                                const observer = new MutationObserver(() => {
+                                    const nc = this.getColors();
+                                    this.chart.updateOptions({
+                                        chart: { foreColor: nc.text },
+                                        grid: { borderColor: nc.grid },
+                                        tooltip: { theme: nc.tooltipTheme }
                                     });
                                 });
-                                observer.observe(document.documentElement, { attributes: true });
+                                observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
                             },
-                            update(data) {
-                                if(!data || !data.categories || data.categories.length === 0) {
-                                    this.hasData = false;
-                                    return;
-                                }
-
-                                this.hasData = true;
-
-                                // Clean Update - Width is always 100%
-                                if (this.$refs.chartContainer) {
-                                    this.$refs.chartContainer.style.width = '100%';
-                                }
-                                
-                                const granularity = data.granularity || 'daily';
-
+                            applyChart(data) {
+                                const normalized = this.normalize(data);
+                                this.currentGranularity = (data && data.granularity) ? data.granularity : 'daily';
+                                this.tooltipCategories = normalized.tooltipCategories;
                                 this.chart.updateOptions({
-                                    xaxis: { 
-                                        categories: data.categories,
-                                        labels: {
-                                            formatter: function(val, timestamp) {
-                                                const d = new Date(timestamp || val);
-                                                if(isNaN(d.getTime())) return val;
-                                                
-                                                if (granularity === 'hourly') {
-                                                    const hour = d.getHours().toString().padStart(2, '0');
-                                                    return hour + ':00';
-                                                } else if (granularity === 'monthly') {
-                                                     const month = d.toLocaleString('id-ID', { month: 'short' });
-                                                     const year = d.getFullYear();
-                                                     return `${month} ${year}`;
-                                                } else {
-                                                     const day = d.getDate();
-                                                     const month = d.toLocaleString('id-ID', { month: 'short' });
-                                                     return `${day} ${month}`;
-                                                }
-                                            },
-                                            style: { 
-                                                fontSize: '11px',
-                                                fontWeight: 500,
-                                                colors: this.isDark ? '#94a3b8' : '#64748b'
-                                            }
-                                        }
-                                    },
-                                    tooltip: {
-                                        x: {
-                                            formatter: function(value) {
-                                                const d = new Date(value);
-                                                if (granularity === 'hourly') {
-                                                    return d.toLocaleString('id-ID', { 
-                                                        day: 'numeric', 
-                                                        month: 'short', 
-                                                        hour: '2-digit', 
-                                                        minute: '2-digit' 
-                                                    });
-                                                } else if (granularity === 'monthly') {
-                                                    return d.toLocaleString('id-ID', { month: 'long', year: 'numeric' });
-                                                } else {
-                                                    return d.toLocaleString('id-ID', { 
-                                                        day: 'numeric', 
-                                                        month: 'long', 
-                                                        year: 'numeric' 
-                                                    });
-                                                }
-                                            }
-                                        }
+                                    xaxis: {
+                                        type: 'category',
+                                        categories: normalized.categories
                                     },
                                     series: [
-                                        { name: 'Pemasukan', data: data.income || [] },
-                                        { name: 'Pengeluaran', data: data.expense || [] }
+                                        { name: 'Pemasukan', data: normalized.income },
+                                        { name: 'Pengeluaran', data: normalized.expense }
                                     ]
                                 });
                             }
                         }" wire:ignore>
-                        <!-- Empty State -->
-                        <div x-show="!hasData" 
-                             x-transition
-                             class="absolute inset-0 flex flex-col items-center justify-center bg-slate-50/50 dark:bg-slate-900/20 backdrop-blur-sm rounded-xl z-10">
-                            <div class="text-center px-4">
-                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
-                                    <i class='bx bx-line-chart text-3xl text-slate-400'></i>
-                                </div>
-                                <h3 class="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Belum Ada Data</h3>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 max-w-xs">
-                                    Grafik akan muncul setelah ada transaksi pada periode ini
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="absolute inset-0 overflow-x-auto custom-scroll pb-2">
-                            <div x-ref="chartContainer" class="h-full min-w-full transition-all duration-300">
-                                <div x-ref="revenueChart" class="w-full h-full"></div>
-                            </div>
-                        </div>
-                        {{-- Hint Overlay for Scroll --}}
-                        <div x-show="$refs.chartContainer && $refs.chartContainer.style.width !== '100%'" 
-                             class="absolute bottom-2 right-2 pointer-events-none opacity-0 group-hover/chart:opacity-100 transition-opacity bg-black/50 text-white text-[9px] px-2 py-1 rounded-full backdrop-blur-sm z-10">
-                            Scroll for more <i class='bx bx-right-arrow-alt align-middle'></i>
-                        </div>
+                        <div x-ref="revenueChart" class="w-full h-full"></div>
                     </div>
                 </div>
 
@@ -454,7 +251,7 @@
                     class="w-full md:w-[260px] p-5 flex flex-col justify-between bg-slate-50/50 dark:bg-slate-800/30 border-l border-slate-100 dark:border-slate-700">
                     <div class="mb-2">
                         <h3 class="font-bold text-[14px] text-slate-800 dark:text-white">Profitabilitas</h3>
-                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Analisis Laba & Beban</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">Margin Bersih vs Kotor</p>
                     </div>
 
                     <div
@@ -465,7 +262,7 @@
                         </div>
                         <p
                             class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
-                            Laba Bersih</p>
+                            Laba Bersih Saat Ini</p>
 
                         <h2 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight relative z-10">
                             Rp {{ number_format($this->netProfit, 0, ',', '.') }}
@@ -477,15 +274,13 @@
                                     class="flex items-center justify-center bg-emerald-500 text-white rounded-full w-4 h-4 shadow-sm shadow-emerald-500/30">
                                     <i class='bx bx-trending-up text-[10px]'></i>
                                 </div>
-                                <span
-                                    class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+{{ $this->profitGrowth }}%</span>
+                                <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">+{{ $this->profitGrowth }}%</span>
                             @elseif($this->profitGrowth < 0)
                                 <div
                                     class="flex items-center justify-center bg-rose-500 text-white rounded-full w-4 h-4 shadow-sm shadow-rose-500/30">
                                     <i class='bx bx-trending-down text-[10px]'></i>
                                 </div>
-                                <span
-                                    class="text-[11px] font-bold text-rose-700 dark:text-rose-400">{{ $this->profitGrowth }}%</span>
+                                <span class="text-[11px] font-bold text-rose-700 dark:text-rose-400">{{ $this->profitGrowth }}%</span>
                             @else
                                 <div
                                     class="flex items-center justify-center bg-slate-400 text-white rounded-full w-4 h-4 shadow-sm">
