@@ -274,10 +274,9 @@ class PosCustom extends Component
 
         DB::beginTransaction();
         try {
-            $invoiceNumber = 'INV-' . date('Ymd') . '-' . str_pad(Transaction::whereDate('created_at', today())->count() + 1, 4, '0', STR_PAD_LEFT);
-
+            // Buat transaksi dulu tanpa invoice number — ID auto-increment jadi patokan unik
             $transaction = Transaction::create([
-                'invoiceNumber' => $invoiceNumber,
+                'invoiceNumber' => 'PENDING-' . uniqid(),   // sementara, dijamin unik
                 'memberId' => $this->selectedMember['id'] ?? null,
                 'userId' => auth()->id(),
                 'type' => 'SALE',
@@ -288,8 +287,19 @@ class PosCustom extends Component
                 'date' => now(),
             ]);
 
+            // Invoice number pakai ID auto-increment — dijamin tidak pernah duplikat
+            $invoiceNumber = 'INV-' . date('Ymd') . '-' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT);
+            $transaction->update(['invoiceNumber' => $invoiceNumber]);
+
             foreach ($this->cart as $item) {
-                $product = Product::find($item['productId']);
+                // lockForUpdate() → SELECT ... FOR UPDATE
+                // Row di-lock sampai transaksi commit; kasir lain yang akses produk sama akan WAIT
+                // Ini mencegah stock negatif akibat race condition TOCTOU
+                $product = Product::lockForUpdate()->find($item['productId']);
+
+                if (!$product || $product->stock < $item['quantity']) {
+                    throw new \Exception('Stok ' . ($product->name ?? 'produk') . ' tidak mencukupi (sisa: ' . ($product->stock ?? 0) . ')');
+                }
 
                 TransactionItem::create([
                     'transactionId' => $transaction->id,
