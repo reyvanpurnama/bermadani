@@ -294,76 +294,181 @@
 
             {{-- Summary Tab --}}
             @if($activeTab === 'summary')
+                @php
+                    $totalJamMenit   = $kasirPerforma->sum('total_work_minutes_raw');
+                    $totalJamH       = floor($totalJamMenit / 60);
+                    $totalJamM       = $totalJamMenit % 60;
+                    $totalPenjualan  = $kasirPerforma->sum('total_sales_sum');
+                    $totalTrx        = $kasirPerforma->sum('total_transactions');
+                    $kasirCount      = $kasirPerforma->count();
+                @endphp
+
+                {{-- Aggregate Mini Cards --}}
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 text-center">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-1">Kasir (periode)</p>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $kasirCount }}</p>
+                        <p class="text-xs text-gray-400 mt-1">orang</p>
+                    </div>
+                    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 text-center">
+                        <p class="text-xs text-blue-600 dark:text-blue-400 mb-1">Total Jam Kerja</p>
+                        <p class="text-2xl font-bold text-blue-700 dark:text-blue-300">{{ $totalJamH }}j {{ $totalJamM }}m</p>
+                        <p class="text-xs text-blue-400 mt-1">semua kasir</p>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-emerald-900/20 rounded-xl p-4 text-center">
+                        <p class="text-xs text-emerald-600 dark:text-emerald-400 mb-1">Total Penjualan</p>
+                        <p class="text-lg font-bold text-emerald-700 dark:text-emerald-300">Rp {{ number_format($totalPenjualan, 0, ',', '.') }}</p>
+                        <p class="text-xs text-emerald-400 mt-1">periode ini</p>
+                    </div>
+                    <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 text-center">
+                        <p class="text-xs text-purple-600 dark:text-purple-400 mb-1">Total Transaksi</p>
+                        <p class="text-2xl font-bold text-purple-700 dark:text-purple-300">{{ number_format($totalTrx, 0) }}</p>
+                        <p class="text-xs text-purple-400 mt-1">transaksi</p>
+                    </div>
+                </div>
+
+                {{-- Per-Kasir Table --}}
                 <div class="overflow-x-auto">
                     <table class="w-full">
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
                                 <th class="px-4 py-3 text-left text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Kasir</th>
-                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Total Shift</th>
-                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Shift Selesai</th>
-                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Total Transaksi</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Jam Kerja</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Shift</th>
                                 <th class="px-4 py-3 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Total Penjualan</th>
-                                <th class="px-4 py-3 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Total Selisih</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Tunai / Non-Tunai</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Rata-rata/Shift</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Transaksi</th>
+                                <th class="px-4 py-3 text-right text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Selisih Saldo</th>
                                 <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Akurasi</th>
+                                <th class="px-4 py-3 text-center text-xs font-bold text-gray-600 dark:text-gray-300 uppercase">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                            @forelse($kasirSummary as $kasir)
+                            @forelse($kasirPerforma as $kasir)
                                 @php
-                                    $accuracy = $kasir->closed_shifts > 0 
-                                        ? 100 - (abs($kasir->total_difference_sum ?? 0) / max(($kasir->total_sales_sum ?? 1), 1) * 100) 
-                                        : 0;
-                                    $accuracy = max(0, min(100, $accuracy));
+                                    $accuracy = $kasir->accuracy;
+                                    if ($accuracy === null) {
+                                        $statusLabel = 'Belum Bekerja';
+                                        $statusClass = 'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400';
+                                    } elseif ($accuracy >= 97) {
+                                        $statusLabel = 'Performa Baik';
+                                        $statusClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400';
+                                    } elseif ($accuracy >= 85) {
+                                        $statusLabel = 'Cukup Baik';
+                                        $statusClass = 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+                                    } else {
+                                        $statusLabel = 'Perlu Perhatian';
+                                        $statusClass = 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400';
+                                    }
+                                    $accuracyDisplay  = $accuracy !== null ? number_format($accuracy, 1) . '%' : '-';
+                                    $accuracyBarWidth = $accuracy !== null ? $accuracy : 0;
+                                    $accuracyColor    = ($accuracy ?? 0) >= 97 ? 'bg-emerald-500' : (($accuracy ?? 0) >= 85 ? 'bg-amber-500' : 'bg-rose-500');
+                                    $diff = $kasir->total_difference_sum ?? 0;
                                 @endphp
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                    {{-- Kasir --}}
+                                    <td class="px-4 py-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold shrink-0">
                                                 {{ substr($kasir->name, 0, 1) }}
                                             </div>
                                             <div>
-                                                <p class="font-medium text-gray-900 dark:text-white">{{ $kasir->name }}</p>
-                                                <p class="text-xs text-gray-500">{{ $kasir->role }}</p>
+                                                <p class="font-semibold text-gray-900 dark:text-white">{{ $kasir->name }}</p>
+                                                <span class="inline-flex px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400">{{ $kasir->role }}</span>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                                            {{ $kasir->total_shifts }}
-                                        </span>
+                                    {{-- Jam Kerja --}}
+                                    <td class="px-4 py-4 text-center">
+                                        @if($kasir->total_work_minutes_raw > 0)
+                                            <div class="inline-flex flex-col items-center">
+                                                <span class="text-base font-bold text-blue-600 dark:text-blue-400">{{ $kasir->total_work_hours }}j {{ $kasir->total_work_minutes }}m</span>
+                                                <span class="text-xs text-gray-400">{{ $kasir->closed_shifts }} shift selesai</span>
+                                            </div>
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
                                     </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                            {{ $kasir->closed_shifts }}
-                                        </span>
+                                    {{-- Shift --}}
+                                    <td class="px-4 py-4 text-center">
+                                        <div class="inline-flex flex-col items-center gap-1">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+                                                {{ $kasir->total_shifts }}
+                                            </span>
+                                            @if($kasir->total_shifts > $kasir->closed_shifts)
+                                                <span class="text-xs text-emerald-500">
+                                                    <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-0.5"></span>{{ $kasir->total_shifts - $kasir->closed_shifts }} aktif
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
-                                    <td class="px-4 py-3 text-center">
+                                    {{-- Total Penjualan --}}
+                                    <td class="px-4 py-4 text-right">
+                                        <p class="font-semibold text-gray-900 dark:text-white">Rp {{ number_format($kasir->total_sales_sum ?? 0, 0, ',', '.') }}</p>
+                                        @if(($kasir->total_sales_sum ?? 0) > 0 && $kasir->closed_shifts > 0)
+                                            <p class="text-xs text-gray-400">avg Rp {{ number_format($kasir->avg_sales_per_shift, 0, ',', '.') }}/shift</p>
+                                        @endif
+                                    </td>
+                                    {{-- Tunai / Non-Tunai --}}
+                                    <td class="px-4 py-4 text-right">
+                                        <div class="space-y-1">
+                                            <div class="flex items-center justify-end gap-2 text-xs">
+                                                <span class="px-1.5 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 font-semibold">T</span>
+                                                <span class="text-gray-700 dark:text-gray-300">Rp {{ number_format($kasir->total_cash_sales, 0, ',', '.') }}</span>
+                                            </div>
+                                            <div class="flex items-center justify-end gap-2 text-xs">
+                                                <span class="px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 font-semibold">NT</span>
+                                                <span class="text-gray-700 dark:text-gray-300">Rp {{ number_format($kasir->total_non_cash_sales, 0, ',', '.') }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {{-- Rata-rata/Shift --}}
+                                    <td class="px-4 py-4 text-right">
+                                        <p class="font-semibold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($kasir->avg_sales_per_shift, 0, ',', '.') }}</p>
+                                        <p class="text-xs text-gray-400">{{ $kasir->avg_trx_per_shift }} trx/shift</p>
+                                    </td>
+                                    {{-- Total Transaksi --}}
+                                    <td class="px-4 py-4 text-center">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">
                                             {{ $kasir->total_transactions }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-3 text-right font-semibold text-emerald-600 dark:text-emerald-400">
-                                        Rp {{ number_format($kasir->total_sales_sum ?? 0, 0, ',', '.') }}
+                                    {{-- Selisih Saldo --}}
+                                    <td class="px-4 py-4 text-right">
+                                        @if($kasir->closed_shifts > 0)
+                                            <span class="font-semibold {{ $diff >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
+                                                {{ $diff >= 0 ? '+' : '' }}Rp {{ number_format($diff, 0, ',', '.') }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <span class="font-medium {{ ($kasir->total_difference_sum ?? 0) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400' }}">
-                                            {{ ($kasir->total_difference_sum ?? 0) >= 0 ? '+' : '' }}Rp {{ number_format($kasir->total_difference_sum ?? 0, 0, ',', '.') }}
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <div class="flex items-center justify-center gap-2">
-                                            <div class="w-20 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                                                <div class="h-2 rounded-full {{ $accuracy >= 95 ? 'bg-emerald-500' : ($accuracy >= 80 ? 'bg-amber-500' : 'bg-rose-500') }}" style="width: {{ $accuracy }}%"></div>
+                                    {{-- Akurasi --}}
+                                    <td class="px-4 py-4 text-center">
+                                        @if($accuracy !== null)
+                                            <div class="flex flex-col items-center gap-1">
+                                                <div class="w-24 bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                                    <div class="h-2 rounded-full {{ $accuracyColor }}" style="width: {{ $accuracyBarWidth }}%"></div>
+                                                </div>
+                                                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ $accuracyDisplay }}</span>
                                             </div>
-                                            <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{{ number_format($accuracy, 1) }}%</span>
-                                        </div>
+                                        @else
+                                            <span class="text-gray-400 text-xs">-</span>
+                                        @endif
+                                    </td>
+                                    {{-- Status --}}
+                                    <td class="px-4 py-4 text-center">
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusClass }}">
+                                            {{ $statusLabel }}
+                                        </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-4 py-12 text-center text-gray-400">
+                                    <td colspan="10" class="px-4 py-12 text-center text-gray-400">
                                         <i class='bx bx-bar-chart-alt-2 text-4xl mb-2'></i>
-                                        <p>Belum ada data performa</p>
+                                        <p>Belum ada data performa kasir</p>
                                     </td>
                                 </tr>
                             @endforelse

@@ -99,47 +99,93 @@ class KasirHistory extends Component
             ->paginate(25);
     }
 
-    public function getKasirSummaryProperty()
+    public function getKasirPerformaProperty()
     {
-        $kasirIds = $this->selectedKasir 
-            ? [$this->selectedKasir] 
+        $kasirIds = $this->selectedKasir
+            ? [$this->selectedKasir]
             : User::whereIn('role', ['KASIR', 'ADMIN', 'SUPER_ADMIN'])->pluck('id')->toArray();
+
+        // Total menit kerja per kasir (hanya shift CLOSED)
+        $workMinutes = CashierShift::selectRaw('user_id, SUM(TIMESTAMPDIFF(MINUTE, check_in_at, check_out_at)) as total_minutes')
+            ->whereIn('user_id', $kasirIds)
+            ->where('status', 'CLOSED')
+            ->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
+            ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo))
+            ->groupBy('user_id')
+            ->pluck('total_minutes', 'user_id');
+
+        // Breakdown tunai & non-tunai per kasir
+        $salesBreakdown = CashierShift::selectRaw('user_id, SUM(total_cash_sales) as cash, SUM(total_non_cash_sales) as non_cash')
+            ->whereIn('user_id', $kasirIds)
+            ->where('status', 'CLOSED')
+            ->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
+            ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo))
+            ->groupBy('user_id')
+            ->get()
+            ->keyBy('user_id');
 
         return User::whereIn('id', $kasirIds)
             ->withCount([
-                'cashierShifts as total_shifts' => function($q) {
+                'cashierShifts as total_shifts' => function ($q) {
                     $q->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
                       ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo));
                 },
-                'cashierShifts as closed_shifts' => function($q) {
+                'cashierShifts as closed_shifts' => function ($q) {
                     $q->where('status', 'CLOSED')
                       ->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
                       ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo));
                 },
             ])
             ->withSum([
-                'cashierShifts as total_sales_sum' => function($q) {
+                'cashierShifts as total_sales_sum' => function ($q) {
                     $q->where('status', 'CLOSED')
                       ->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
                       ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo));
                 }
             ], 'total_sales')
             ->withSum([
-                'cashierShifts as total_difference_sum' => function($q) {
+                'cashierShifts as total_difference_sum' => function ($q) {
                     $q->where('status', 'CLOSED')
                       ->when($this->dateFrom, fn($q) => $q->whereDate('check_in_at', '>=', $this->dateFrom))
                       ->when($this->dateTo, fn($q) => $q->whereDate('check_in_at', '<=', $this->dateTo));
                 }
             ], 'difference')
             ->withCount([
-                'transactions as total_transactions' => function($q) {
+                'transactions as total_transactions' => function ($q) {
                     $q->where('type', 'SALE')
                       ->where('status', 'COMPLETED')
                       ->when($this->dateFrom, fn($q) => $q->whereDate('date', '>=', $this->dateFrom))
                       ->when($this->dateTo, fn($q) => $q->whereDate('date', '<=', $this->dateTo));
                 }
             ])
-            ->get();
+            ->get()
+            ->map(function ($kasir) use ($workMinutes, $salesBreakdown) {
+                $minutes = (int) ($workMinutes[$kasir->id] ?? 0);
+                $kasir->total_work_hours          = floor($minutes / 60);
+                $kasir->total_work_minutes        = $minutes % 60;
+                $kasir->total_work_minutes_raw    = $minutes;
+
+                $bd = $salesBreakdown[$kasir->id] ?? null;
+                $kasir->total_cash_sales     = $bd ? (float) $bd->cash : 0;
+                $kasir->total_non_cash_sales = $bd ? (float) $bd->non_cash : 0;
+
+                $kasir->avg_sales_per_shift = $kasir->closed_shifts > 0
+                    ? ($kasir->total_sales_sum ?? 0) / $kasir->closed_shifts
+                    : 0;
+
+                $kasir->avg_trx_per_shift = $kasir->closed_shifts > 0
+                    ? round($kasir->total_transactions / $kasir->closed_shifts, 1)
+                    : 0;
+
+                $diff  = $kasir->total_difference_sum ?? 0;
+                $sales = max($kasir->total_sales_sum ?? 0, 1);
+                $kasir->accuracy = $kasir->closed_shifts > 0
+                    ? max(0, min(100, 100 - (abs($diff) / $sales * 100)))
+                    : null;
+
+                return $kasir;
+            })
+            ->sortByDesc('total_sales_sum');
     }
 
     public function setTab($tab)
@@ -210,7 +256,7 @@ class KasirHistory extends Component
             'transactions' => $this->transactions,
             'activityLogs' => $this->activityLogs,
             'kasirList' => $this->kasirList,
-            'kasirSummary' => $this->kasirSummary,
+            'kasirPerforma' => $this->kasirPerforma,
         ])->layout('layouts.admin');
     }
 }
