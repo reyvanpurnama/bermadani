@@ -1,0 +1,789 @@
+================================================================================
+              LAPORAN PRAKTIK KERJA (KP) - PERANCANGAN SISTEM
+          Sistem Informasi Koperasi Bermadani - Universitas Mercu Buana
+================================================================================
+
+Bagian       : Perancangan Sistem (System Design)
+Periode      : November 2025 - Januari 2026 (±3 Bulan)
+Institusi    : Koperasi Bermadani, Universitas Mercu Buana
+Nama Proyek  : Web Koperasi UMB (web-koperasi-umb)
+
+================================================================================
+1. LATAR BELAKANG
+================================================================================
+
+Koperasi Bermadani merupakan unit usaha di lingkungan Universitas Mercu Buana
+yang menjalankan dua fungsi utama: minimarket (penjualan retail) dan simpan
+pinjam (keuangan koperasi). Selama ini, pengelolaan operasional koperasi masih
+dilakukan secara manual/konvensional sehingga menimbulkan berbagai kendala
+seperti:
+  - Pencatatan transaksi penjualan yang tidak terintegrasi
+  - Pengelolaan stok barang yang tidak akurat
+  - Proses pendaftaran dan manajemen supplier yang lambat
+  - Pencatatan simpanan anggota yang rawan kesalahan
+  - Pelaporan keuangan yang memakan waktu lama
+
+Untuk mengatasi permasalahan tersebut, dirancang sebuah Sistem Informasi
+Koperasi berbasis web yang mengintegrasikan seluruh fungsi operasional ke
+dalam satu platform digital.
+
+
+================================================================================
+2. TUJUAN PERANCANGAN SISTEM
+================================================================================
+
+a) Merancang sistem Point of Sale (POS) untuk transaksi penjualan minimarket
+b) Merancang sistem manajemen supplier dengan alur pendaftaran dan approval
+c) Merancang sistem simpan pinjam untuk anggota koperasi
+d) Merancang sistem konsinyasi (titipan barang) dari supplier
+e) Merancang portal anggota untuk akses mandiri informasi simpanan & pinjaman
+f) Merancang sistem pelaporan keuangan bulanan dan neraca
+g) Merancang sistem audit untuk rekonsiliasi data keuangan
+
+
+================================================================================
+3. TEKNOLOGI YANG DIGUNAKAN (TECH STACK)
+================================================================================
+
+3.1 Backend
+  - Bahasa       : PHP 8.2
+  - Framework    : Laravel 12.0
+  - ORM          : Eloquent (Object Relational Mapping)
+  - Database     : MySQL
+  - Dependency   : Composer (PHP package manager)
+
+3.2 Frontend
+  - Template     : Blade (Laravel templating engine)
+  - CSS          : Tailwind CSS 4.0 (utility-first framework)
+  - Reaktivitas  : Livewire 3.x (server-side reactive components)
+  - JavaScript   : Alpine.js (lightweight interactivity)
+  - Icon         : Boxicons (via CDN)
+
+3.3 Build Tools
+  - Bundler      : Vite 7.0.7 (modern build tool, pengganti Webpack)
+  - Plugin       : laravel-vite-plugin, @tailwindcss/vite
+  - HTTP Client  : Axios 1.11.0
+
+3.4 Package Tambahan
+  - PDF          : dompdf 3.1 (generate struk/laporan PDF)
+  - Excel/CSV    : maatwebsite/excel 3.1 (import/export data)
+  - Log Viewer   : laravel/pail (real-time log monitoring)
+
+3.5 Arsitektur Pattern
+  - TALL Stack   : Tailwind + Alpine.js + Laravel + Livewire
+  - Server-Side Rendering (SSR) dengan Livewire untuk reaktivitas UI
+  - Tidak menggunakan SPA framework (React/Vue/Angular)
+  - Multi-guard Authentication (web guard + supplier guard)
+
+
+================================================================================
+4. PERANCANGAN DATABASE (Entity Relationship)
+================================================================================
+
+Sistem ini dirancang dengan 20+ tabel yang saling berelasi. Berikut tabel-tabel
+utama beserta atribut kunci dan relasinya:
+
+4.1 TABEL USERS (Pengguna Sistem)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | name                | VARCHAR                   |
+    | email               | VARCHAR (Unique)          |
+    | password            | VARCHAR (Hashed)          |
+    | role                | ENUM (SUPER_ADMIN, ADMIN, |
+    |                     |   KASIR, SUPPLIER, USER,  |
+    |                     |   DEVELOPER)              |
+    | isActive            | BOOLEAN                   |
+    | mustChangePassword  | BOOLEAN                   |
+    | timestamps          | TIMESTAMP                 |
+    +---------------------+---------------------------+
+
+4.2 TABEL MEMBERS (Anggota Koperasi)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | userId              | BIGINT (FK -> users.id)   |
+    | nomorAnggota        | VARCHAR (Unique)          |
+    | name                | VARCHAR                   |
+    | email               | VARCHAR (Unique)          |
+    | phone               | VARCHAR                   |
+    | address             | TEXT                      |
+    | gender              | ENUM (MALE, FEMALE)       |
+    | unitKerja           | VARCHAR                   |
+    | joinDate            | TIMESTAMP                 |
+    | status              | ENUM (ACTIVE, INACTIVE,   |
+    |                     |   SUSPENDED)              |
+    | isMemberKoperasi    | BOOLEAN                   |
+    | simpananPokok       | DECIMAL(15,2)             |
+    | simpananWajib       | DECIMAL(15,2)             |
+    | simpananSukarela    | DECIMAL(15,2)             |
+    | points              | INT                       |
+    | tier                | ENUM (BRONZE, SILVER,     |
+    |                     |   GOLD, PLATINUM)         |
+    | totalSpent          | DECIMAL(15,2)             |
+    +---------------------+---------------------------+
+    Relasi: members.userId -> users.id (One-to-One)
+
+4.3 TABEL CATEGORIES (Kategori Produk)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | name                | VARCHAR                   |
+    | icon                | VARCHAR                   |
+    | isActive            | BOOLEAN                   |
+    | timestamps          | TIMESTAMP                 |
+    +---------------------+---------------------------+
+
+4.4 TABEL SUPPLIERS (Pemasok/Supplier)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | code                | VARCHAR (Unique)          |
+    | ownerName           | VARCHAR                   |
+    | businessName        | VARCHAR                   |
+    | phone               | VARCHAR                   |
+    | email               | VARCHAR (Unique)          |
+    | address             | TEXT                      |
+    | description         | TEXT                      |
+    | productCategory     | VARCHAR                   |
+    | password            | VARCHAR (Hashed)          |
+    | monthlyFee          | DECIMAL(15,2)             |
+    | paymentStatus       | ENUM (UNPAID, PARTIAL,    |
+    |                     |   PAID, PAID_PENDING_     |
+    |                     |   APPROVAL, PAID_APPROVED,|
+    |                     |   PAID_REJECTED)          |
+    | maxActiveProducts   | INT                       |
+    | status              | ENUM (PENDING, APPROVED,  |
+    |                     |   ACTIVE, REJECTED,       |
+    |                     |   SUSPENDED)              |
+    | approvedById        | BIGINT (FK -> users.id)   |
+    | evaluationNotes     | TEXT                      |
+    +---------------------+---------------------------+
+    Relasi: suppliers.approvedById -> users.id (Many-to-One)
+
+4.5 TABEL PRODUCTS (Produk/Barang)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | name                | VARCHAR                   |
+    | description         | TEXT                      |
+    | categoryId          | BIGINT (FK -> categories) |
+    | sku                 | VARCHAR (Unique)          |
+    | buyPrice            | DECIMAL(15,2)             |
+    | sellPrice           | DECIMAL(15,2)             |
+    | stock               | INT                       |
+    | threshold           | INT (batas stok minimum)  |
+    | unit                | VARCHAR (pcs, kg, dll)    |
+    | ownershipType       | ENUM (TOKO, TITIPAN,      |
+    |                     |   SUPPLIER)               |
+    | status              | ENUM (ACTIVE, INACTIVE,   |
+    |                     |   SEASONAL)               |
+    | isConsignment       | BOOLEAN                   |
+    | supplierId          | BIGINT (FK -> suppliers)  |
+    | profitShareRate     | DECIMAL(5,2) default 90%  |
+    | stockCycle          | ENUM (HARIAN, MINGGUAN,   |
+    |                     |   DUA_MINGGUAN)           |
+    +---------------------+---------------------------+
+    Relasi:
+    - products.categoryId -> categories.id (Many-to-One)
+    - products.supplierId -> suppliers.id (Many-to-One)
+
+4.6 TABEL TRANSACTIONS (Transaksi Penjualan/POS)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | invoiceNumber       | VARCHAR (Unique)          |
+    | memberId            | BIGINT (FK -> members)    |
+    | type                | ENUM (SALE, PURCHASE,     |
+    |                     |   RETURN, INCOME, EXPENSE)|
+    | totalAmount         | DECIMAL(15,2)             |
+    | paymentMethod       | ENUM (CASH, TRANSFER,     |
+    |                     |   CREDIT)                 |
+    | status              | ENUM (PENDING, COMPLETED, |
+    |                     |   CANCELLED)              |
+    | note                | TEXT                      |
+    | date                | TIMESTAMP                 |
+    +---------------------+---------------------------+
+    Relasi: transactions.memberId -> members.id (Many-to-One)
+
+4.7 TABEL TRANSACTION_ITEMS (Item dalam Transaksi)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | transactionId       | BIGINT (FK -> transactions)|
+    | productId           | BIGINT (FK -> products)   |
+    | quantity            | INT                       |
+    | price               | DECIMAL(15,2)             |
+    | subtotal            | DECIMAL(15,2)             |
+    +---------------------+---------------------------+
+    Relasi:
+    - transaction_items.transactionId -> transactions.id
+    - transaction_items.productId -> products.id
+
+4.8 TABEL SAVINGS (Simpanan Anggota)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | member_id           | BIGINT (FK -> members)    |
+    | type                | ENUM (POKOK, WAJIB,       |
+    |                     |   SUKARELA, WITHDRAWAL)   |
+    | amount              | DECIMAL(15,2)             |
+    | description         | TEXT                      |
+    | date                | TIMESTAMP                 |
+    +---------------------+---------------------------+
+    Relasi: savings.member_id -> members.id (Many-to-One)
+
+4.9 TABEL SIMPANAN_TRANSACTIONS (Transaksi Simpanan Detail)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | memberId            | BIGINT (FK -> members)    |
+    | type                | ENUM (POKOK, WAJIB,       |
+    |                     |   SUKARELA)               |
+    | transactionType     | ENUM (SETOR, TARIK)       |
+    | amount              | DECIMAL(15,2)             |
+    | balanceAfter        | DECIMAL(15,2)             |
+    | notes               | TEXT                      |
+    | buktiPath           | VARCHAR (path bukti)      |
+    | processedBy         | BIGINT (FK -> users)      |
+    | status              | ENUM (PENDING, APPROVED,  |
+    |                     |   REJECTED)               |
+    | approvedBy          | BIGINT (FK -> users)      |
+    +---------------------+---------------------------+
+    Relasi:
+    - simpanan_transactions.memberId -> members.id
+    - simpanan_transactions.processedBy -> users.id
+    - simpanan_transactions.approvedBy -> users.id
+
+4.10 TABEL LOANS (Pinjaman Anggota)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | member_id           | BIGINT (FK -> members)    |
+    | amount              | DECIMAL(15,2)             |
+    | interestRate        | DECIMAL(5,2)              |
+    | tenor               | INT (bulan)               |
+    | monthlyPayment      | DECIMAL(15,2)             |
+    | remainingAmount     | DECIMAL(15,2)             |
+    | status              | ENUM (PENDING, APPROVED,  |
+    |                     |   REJECTED, ACTIVE,       |
+    |                     |   COMPLETED, OVERDUE)     |
+    | purpose             | TEXT                      |
+    | approvedBy          | VARCHAR                   |
+    | startDate           | TIMESTAMP                 |
+    | endDate             | DATE                      |
+    +---------------------+---------------------------+
+    Relasi: loans.member_id -> members.id (Many-to-One)
+
+4.11 TABEL LOAN_PAYMENTS (Angsuran Pinjaman)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | loanId              | BIGINT (FK -> loans)      |
+    | amount              | DECIMAL(15,2)             |
+    | paymentDate         | TIMESTAMP                 |
+    | note                | TEXT                      |
+    +---------------------+---------------------------+
+    Relasi: loan_payments.loanId -> loans.id (Many-to-One)
+
+4.12 TABEL FINANCIAL_TRANSACTIONS (Pemasukan/Pengeluaran Operasional)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | type                | ENUM (INCOME, EXPENSE)    |
+    | category            | VARCHAR (Listrik, Gaji,   |
+    |                     |   Modal, dll)             |
+    | amount              | DECIMAL(15,2)             |
+    | transactionDate     | DATE                      |
+    | description         | TEXT                      |
+    | proofFile           | VARCHAR (path bukti)      |
+    | userId              | BIGINT (FK -> users)      |
+    +---------------------+---------------------------+
+    Relasi: financial_transactions.userId -> users.id
+
+4.13 TABEL CONSIGNMENT_BATCHES (Batch Konsinyasi/Titipan)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | batchCode           | VARCHAR (Unique)          |
+    | supplierId          | BIGINT (FK -> suppliers)  |
+    | status              | ENUM (ACTIVE, PENDING_    |
+    |                     |   SETTLEMENT, SETTLED,    |
+    |                     |   CANCELLED)              |
+    | totalValue          | DECIMAL(15,2)             |
+    | totalSold           | DECIMAL(15,2)             |
+    | feeAmount           | DECIMAL(15,2) - fee toko  |
+    | payableAmount       | DECIMAL(15,2) - hak suppl |
+    | receivedAt          | TIMESTAMP                 |
+    | settledAt           | TIMESTAMP                 |
+    +---------------------+---------------------------+
+    Relasi: consignment_batches.supplierId -> suppliers.id
+
+4.14 TABEL CONSIGNMENT_ITEMS (Item dalam Batch Konsinyasi)
+    +---------------------+---------------------------+
+    | Kolom               | Tipe                      |
+    +---------------------+---------------------------+
+    | id                  | BIGINT (PK, Auto)         |
+    | batchId             | BIGINT (FK -> consignment |
+    |                     |   _batches)               |
+    | productId           | BIGINT (FK -> products)   |
+    | initialQty          | INT (jumlah awal)         |
+    | soldQty             | INT (terjual)             |
+    | remainingQty        | INT (sisa)                |
+    | sellPrice           | DECIMAL(15,2)             |
+    | feePercent          | DECIMAL(5,2) - fee %      |
+    | priceAfterFee       | DECIMAL(15,2) - hak suppl |
+    +---------------------+---------------------------+
+    Relasi:
+    - consignment_items.batchId -> consignment_batches.id
+    - consignment_items.productId -> products.id
+
+4.15 TABEL PENDUKUNG LAINNYA
+    - stock_movements       : Riwayat pergerakan stok (masuk/keluar/adjustment)
+    - cashier_shifts        : Pencatatan shift kasir (buka/tutup kasir)
+    - activity_logs         : Log aktivitas pengguna (audit trail)
+    - notifications         : Notifikasi sistem untuk admin
+    - supplier_notifications: Notifikasi khusus portal supplier
+    - restock_requests      : Permintaan restok dari supplier
+    - work_logs             : Log jam kerja developer
+    - member_points_histories: Riwayat poin loyalitas anggota
+    - financial_report_snapshots: Snapshot laporan keuangan bulanan
+    - bank_transactions     : Data transaksi rekening bank (audit)
+    - audit_bank_imports    : Staging data import CSV rekening koran
+    - audit_bank_category_rules: Aturan auto-kategorisasi transaksi bank
+
+
+================================================================================
+5. DIAGRAM RELASI ANTAR TABEL (Ringkasan ERD)
+================================================================================
+
+    users (1) ----< (N) activity_logs
+      |
+      |--- (1:1) ---> members
+      |                  |
+      |                  |----< (N) savings
+      |                  |----< (N) simpanan_transactions
+      |                  |----< (N) loans ----< (N) loan_payments
+      |                  |----< (N) transactions ----< (N) transaction_items
+      |                  |                                       |
+      |                  |                                  products (N)
+      |                  |                                    |    |
+      |--- (1:N) ---> financial_transactions            (1)  |    | (N:1)
+                                                    categories    suppliers
+                                                                     |
+                                                                     |
+                                                         consignment_batches
+                                                              |
+                                                         consignment_items
+
+
+================================================================================
+6. PERANCANGAN ARSITEKTUR SISTEM
+================================================================================
+
+6.1 Arsitektur Keseluruhan (Three-Tier Architecture)
+
+    +--------------------------------------------------+
+    |              PRESENTATION LAYER                   |
+    |  Blade Templates + Tailwind CSS + Alpine.js       |
+    |  Livewire Components (server-side reactivity)     |
+    +--------------------------------------------------+
+                          |
+    +--------------------------------------------------+
+    |              APPLICATION LAYER                    |
+    |  Laravel 12 (Controllers, Livewire Components,    |
+    |  Middleware, Services, Models, Enums)             |
+    +--------------------------------------------------+
+                          |
+    +--------------------------------------------------+
+    |                DATA LAYER                         |
+    |  MySQL Database + Eloquent ORM                    |
+    |  Migrations, Seeders, Query Builder               |
+    +--------------------------------------------------+
+
+6.2 Pola Arsitektur yang Diterapkan
+
+    a) MVC (Model-View-Controller)
+       - Model     : Eloquent ORM (app/Models/)
+       - View      : Blade templates (resources/views/)
+       - Controller: HTTP Controllers + Livewire Components
+
+    b) Component-Based Architecture (Livewire)
+       - Setiap fitur utama dibuat sebagai Livewire Component
+       - Property binding (wire:model) untuk reaktivitas
+       - Server-side rendering tanpa JavaScript framework
+
+    c) Middleware Pipeline
+       - Authentication: Custom multi-guard (web, supplier)
+       - Authorization : Custom CheckRole middleware
+       - Logging       : LogActivity middleware
+       - Shift Check   : CashierShift middleware (khusus POS kasir)
+
+
+================================================================================
+7. PERANCANGAN MODUL SISTEM
+================================================================================
+
+7.1 MODUL AUTENTIKASI & OTORISASI
+    - Login multi-kredensial (email / nomor anggota / telepon)
+    - Multi-guard: web guard (admin/kasir), supplier guard
+    - Role-based access: SUPER_ADMIN, ADMIN, KASIR, SUPPLIER, USER, DEVELOPER
+    - Middleware CheckRole untuk proteksi route per role
+    - Fitur enforce password change pada login pertama
+    - Activity logging pada setiap login/logout
+
+7.2 MODUL DASHBOARD ADMIN
+    - Statistik ringkas: total transaksi, pendapatan hari ini, rata-rata basket
+    - Grafik penjualan (harian/mingguan/bulanan)
+    - Transaksi terbaru
+    - Alert stok menipis (produk di bawah threshold)
+
+7.3 MODUL POINT OF SALE (POS)
+    - Grid produk dengan pencarian realtime
+    - Keranjang belanja (shopping cart)
+    - Multiple metode pembayaran (Cash, Transfer, Credit)
+    - Kalkulasi otomatis (subtotal, total)
+    - Auto-deduction stok setelah transaksi
+    - Generate nomor invoice unik
+    - Cetak struk (PDF via dompdf)
+    - Dukungan shift kasir (buka/tutup kasir)
+
+7.4 MODUL MANAJEMEN INVENTARIS/PRODUK
+    - CRUD produk lengkap (tambah, edit, hapus)
+    - Pencarian berdasarkan nama/SKU
+    - Filter berdasarkan kategori & status stok
+    - Stats card: total produk, stok rendah, habis, total nilai inventaris
+    - Mutasi stok manual (penyesuaian)
+    - Tipe kepemilikan: TOKO (milik sendiri), TITIPAN, SUPPLIER
+    - Review produk dari supplier (approve/reject)
+
+7.5 MODUL MANAJEMEN KATEGORI
+    - CRUD via modal (tanpa pindah halaman)
+    - Pencarian & filter
+    - Dukungan ikon per kategori
+    - Toggle aktif/nonaktif
+
+7.6 MODUL TRANSAKSI & RIWAYAT
+    - Daftar transaksi dengan filter lengkap
+    - Pencarian berdasarkan nomor invoice
+    - Filter: status, metode pembayaran, rentang tanggal
+    - Detail transaksi (item, pembayaran, info pelanggan)
+    - Timeline aktivitas per transaksi
+    - Void/cancel transaksi
+    - Cetak ulang struk
+
+7.7 MODUL SUPPLIER
+    a) Pendaftaran Supplier (Publik)
+       - Formulir registrasi (info bisnis, produk, kontak)
+       - Upload sample produk
+       - Status: PENDING setelah registrasi
+
+    b) Manajemen Supplier (Admin)
+       - Daftar supplier dengan filter status
+       - Approval workflow (approve/reject dengan catatan)
+       - Evaluasi produk (skor kualitas, harga, kemasan)
+       - Manajemen status (Active, Suspended, Rejected)
+       - Verifikasi pembayaran bulanan
+
+    c) Portal Supplier (Setelah Login)
+       - Dashboard: ringkasan penjualan, status pembayaran
+       - My Products: daftar produk, status approval, stok
+       - Submit produk baru untuk direview admin
+       - Riwayat penjualan produk milik supplier
+       - Permintaan restock
+       - Notifikasi dari admin
+
+7.8 MODUL KONSINYASI (TITIPAN BARANG)
+    - Batch management: terima stok dari supplier
+    - Tracking kuantitas: diterima, terjual, retur, sisa
+    - Kalkulasi fee koperasi (persentase dari harga jual)
+    - Kalkulasi hak supplier (harga jual - fee)
+    - Settlement/pelunasan ke supplier
+    - Laporan konsinyasi per batch & per supplier
+
+7.9 MODUL SIMPAN PINJAM
+    a) Simpanan Anggota
+       - 3 jenis simpanan: Pokok, Wajib, Sukarela
+       - Setor & tarik simpanan
+       - Riwayat transaksi simpanan per anggota
+       - Saldo real-time per jenis simpanan
+       - Upload bukti setoran/transfer
+       - Approval system untuk penarikan
+       - Debit bulanan simpanan wajib
+
+    b) Pinjaman Anggota
+       - Pengajuan pinjaman dengan tenor & bunga
+       - Approval workflow (pending -> approved -> active)
+       - Kalkulasi angsuran bulanan otomatis
+       - Tracking sisa pinjaman
+       - Riwayat pembayaran angsuran
+       - Import data pinjaman via CSV
+
+7.10 MODUL MANAJEMEN ANGGOTA
+    - CRUD anggota koperasi
+    - Pencarian & filter (status, unit kerja)
+    - Detail anggota (simpanan, pinjaman, transaksi)
+    - Anggota koperasi vs anggota retail (minimarket)
+    - Sistem poin loyalitas & tier (Bronze, Silver, Gold, Platinum)
+    - Import data anggota via Excel/CSV
+
+7.11 MODUL PORTAL ANGGOTA (MEMBER)
+    - Dashboard: ringkasan simpanan, pinjaman, poin
+    - Informasi simpanan (Pokok, Wajib, Sukarela)
+    - Informasi pinjaman aktif
+    - Riwayat transaksi belanja
+    - Transfer antar simpanan
+    - Profil & ubah password
+
+7.12 MODUL PELAPORAN KEUANGAN
+    a) Laporan Keuangan Bulanan
+       - Pendapatan minimarket (penjualan, konsinyasi, fee)
+       - Beban operasional (listrik, gaji, dll)
+       - Laba/rugi bersih per bulan
+       - Perbandingan dengan bulan sebelumnya
+       - Snapshot laporan untuk arsip
+
+    b) Neraca (Balance Sheet)
+       - Aset: kas, piutang, persediaan, simpanan di bank
+       - Kewajiban: hutang supplier, simpanan anggota
+       - Modal: simpanan pokok, SHU
+
+    c) Transaksi Manual (Income/Expense)
+       - Input pemasukan/pengeluaran non-POS
+       - Kategori: listrik, gaji, modal, sewa, dll
+       - Upload bukti transaksi
+
+7.13 MODUL AUDIT & REKONSILIASI
+    a) Audit SIMWA (Simpanan Wajib)
+       - Import data simpanan wajib dari CSV
+       - Matching dengan data di database
+       - Deteksi selisih/perbedaan
+       - Approve/reject per record
+
+    b) Audit Bank (Rekening Koran)
+       - Import CSV rekening koran bank (20,000+ transaksi)
+       - Auto-kategorisasi transaksi (QRIS, transfer, biaya admin)
+       - 13 aturan regex untuk deteksi otomatis jenis transaksi
+       - Rekonsiliasi saldo (saldo awal + kredit - debet)
+       - Review & approval sebelum sync ke tabel final
+       - Tracking per periode (bulanan)
+
+
+================================================================================
+8. PERANCANGAN HAK AKSES (AUTHORIZATION MATRIX)
+================================================================================
+
++------------------+-------+-------+-------+----------+------+-----------+
+| Fitur            | Super | Admin | Kasir | Supplier | User | Developer |
+|                  | Admin |       |       |          |      |           |
++------------------+-------+-------+-------+----------+------+-----------+
+| Dashboard Admin  |  V    |  V    |  -    |    -     |  -   |    V      |
+| POS              |  V    |  V    |  V    |    -     |  -   |    V      |
+| Inventaris       |  V    |  V    |  -    |    -     |  -   |    V      |
+| Kategori         |  V    |  V    |  -    |    -     |  -   |    V      |
+| Transaksi        |  V    |  V    |  V*   |    -     |  -   |    V      |
+| Members          |  V    |  V    |  -    |    -     |  -   |    V      |
+| Suppliers        |  V    |  V    |  -    |    -     |  -   |    V      |
+| Konsinyasi       |  V    |  V    |  -    |    -     |  -   |    V      |
+| Simpanan         |  V    |  V    |  -    |    -     |  -   |    V      |
+| Pinjaman         |  V    |  V    |  -    |    -     |  -   |    V      |
+| Laporan Keuangan |  V    |  V    |  -    |    -     |  -   |    V      |
+| Audit            |  V    |  V    |  -    |    -     |  -   |    V      |
+| User Management  |  V    |  -*   |  -    |    -     |  -   |    V      |
+| Activity Logs    |  V    |  V    |  -    |    -     |  -   |    V      |
+| Portal Supplier  |  -    |  -    |  -    |    V     |  -   |    -      |
+| Portal Anggota   |  -    |  -    |  -    |    -     |  V   |    -      |
+| Dev Payroll      |  V    |  V    |  -    |    -     |  -   |    -      |
+| Work Logs        |  -    |  -    |  -    |    -     |  -   |    V      |
++------------------+-------+-------+-------+----------+------+-----------+
+Keterangan:
+  V   = Akses penuh
+  V*  = Kasir hanya melihat transaksi sendiri
+  -*  = Admin read-only untuk user management
+  -   = Tidak bisa akses
+
+
+================================================================================
+9. PERANCANGAN ALUR KERJA (WORKFLOW DESIGN)
+================================================================================
+
+9.1 Alur Registrasi & Approval Supplier
+
+    [Supplier] Isi Form Registrasi
+         |
+         v
+    Status: PENDING ---> [Admin] Review Data
+                              |
+                 +------------+------------+
+                 |                         |
+            [APPROVE]                 [REJECT]
+                 |                         |
+            Status: APPROVED          Kirim Alasan
+                 |                    Penolakan
+            Bayar Biaya Bulanan
+                 |
+            Status: ACTIVE
+                 |
+            Akses Portal Supplier
+
+9.2 Alur Transaksi POS
+
+    [Kasir] Buka Shift
+         |
+    [Kasir] Pilih Produk -> Tambah ke Keranjang
+         |
+    [Kasir] Pilih Metode Bayar -> Proses
+         |
+    [Sistem] Generate Invoice
+    [Sistem] Kurangi Stok Produk
+    [Sistem] Catat ke transactions & transaction_items
+    [Sistem] Update poin member (jika member)
+         |
+    [Kasir] Cetak Struk (PDF)
+         |
+    [Kasir] Tutup Shift (akhir hari)
+
+9.3 Alur Simpanan Anggota
+
+    a) Setoran:
+       [Admin] Input Setor -> Pilih Anggota -> Pilih Jenis
+            |
+       [Sistem] Tambah saldo -> Catat simpanan_transactions
+            |
+       Saldo anggota terupdate realtime
+
+    b) Penarikan:
+       [Admin] Input Tarik -> Status: PENDING
+            |
+       [Admin/SuperAdmin] Approve/Reject
+            |
+       [Sistem] Kurangi saldo -> Catat simpanan_transactions
+
+9.4 Alur Konsinyasi
+
+    [Admin] Buat Batch -> Pilih Supplier -> Input Produk & Qty
+         |
+    [Sistem] Stok produk bertambah (status: TITIPAN)
+         |
+    [POS] Produk terjual -> soldQty bertambah
+         |
+    [Admin] Lihat Laporan Konsinyasi
+         |
+    [Admin] Settlement -> Hitung fee & hak supplier
+         |
+    [Admin] Bayar ke supplier -> Status: SETTLED
+
+
+================================================================================
+10. PERANCANGAN ANTARMUKA (UI DESIGN)
+================================================================================
+
+10.1 Layout Utama
+    - Sidebar navigasi (collapsible) di sebelah kiri
+    - Header dengan info user, notifikasi, logout
+    - Content area di sebelah kanan
+    - Responsive design (mobile-friendly)
+
+10.2 Komponen UI yang Digunakan
+    - Stats Cards      : Kartu statistik ringkas di atas halaman
+    - Data Tables      : Tabel data dengan sorting, search, filter, pagination
+    - Modal Dialogs    : Form CRUD tanpa pindah halaman
+    - Toast/Alert      : Notifikasi sukses/error
+    - Loading States   : Indikator loading saat proses Livewire
+    - Tabs             : Navigasi antar sub-bagian dalam satu halaman
+    - Charts           : Grafik penjualan (line/bar chart)
+    - Badges           : Status indicator (warna berbeda per status)
+    - Dropdown Menus   : Aksi per baris tabel (edit, hapus, detail)
+    - File Upload      : Upload bukti bayar, foto produk, CSV import
+
+10.3 Skema Warna
+    - Primary    : Biru (navigasi, tombol utama)
+    - Success    : Hijau (status aktif, approve, income)
+    - Danger     : Merah (status nonaktif, reject, expense, hapus)
+    - Warning    : Kuning (status pending, peringatan stok)
+    - Info       : Biru muda (informasi, supplier badge)
+    - Neutral    : Abu-abu (background, border, disabled)
+
+
+================================================================================
+11. PERANCANGAN KEAMANAN SISTEM
+================================================================================
+
+a) Autentikasi
+   - Password di-hash menggunakan bcrypt (Laravel default)
+   - Session-based authentication dengan CSRF protection
+   - Multi-guard untuk memisahkan sesi admin & supplier
+   - Rate limiting pada endpoint login
+
+b) Otorisasi
+   - Middleware CheckRole pada setiap grup route
+   - Validasi isActive sebelum akses diberikan
+   - Role-based menu visibility di sidebar
+
+c) Validasi Data
+   - Server-side validation menggunakan Laravel Validator
+   - Type casting pada Eloquent model
+   - Prepared statements (Eloquent) untuk mencegah SQL Injection
+   - XSS protection via Blade {{ }} auto-escaping
+
+d) Audit Trail
+   - Activity logging pada login/logout
+   - LogActivity middleware pada route yang dilindungi
+   - Pencatatan user yang memproses setiap transaksi (processedBy, approvedBy)
+
+
+================================================================================
+12. DEPLOYMENT & INFRASTRUKTUR
+================================================================================
+
+Target Environment  : Shared hosting (cPanel - Rumahweb)
+Web Server          : Apache/Nginx
+PHP Version         : 8.2+
+Database Server     : MySQL 8.0
+Domain              : (disesuaikan)
+
+Langkah Deployment:
+  1. composer install --optimize-autoloader --no-dev
+  2. npm run build (compile CSS/JS via Vite)
+  3. php artisan config:cache
+  4. php artisan route:cache
+  5. php artisan view:cache
+  6. Set APP_ENV=production, APP_DEBUG=false
+  7. Konfigurasi .env (database, mail, dll)
+  8. php artisan migrate --force
+
+
+================================================================================
+13. KESIMPULAN
+================================================================================
+
+Perancangan sistem informasi koperasi ini telah mencakup seluruh aspek yang
+dibutuhkan untuk digitalisasi operasional Koperasi Bermadani UMB, meliputi:
+
+  1. Perancangan database yang terstruktur dengan 20+ tabel berelasi
+  2. Arsitektur sistem three-tier dengan pattern MVC + component-based
+  3. 13 modul fungsional yang terintegrasi
+  4. Sistem keamanan berlapis (autentikasi, otorisasi, validasi, audit)
+  5. Multi-portal untuk berbagai jenis pengguna (admin, kasir, supplier, anggota)
+  6. Sistem pelaporan dan audit keuangan
+
+Sistem ini dirancang untuk skalabilitas dan kemudahan maintenance jangka panjang
+dengan menggunakan framework Laravel yang memiliki ekosistem dan komunitas besar,
+serta convention-over-configuration yang memudahkan onboarding developer baru.
+
+================================================================================
+                              --- SELESAI ---
+================================================================================

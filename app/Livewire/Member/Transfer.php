@@ -20,7 +20,7 @@ class Transfer extends Component
     const ADMIN_FEE = 0;
 
     public $member;
-    public $step = 1; // 1: form, 2: confirm, 3: success
+    public $step = 1; // 1: form, 2: confirm, 3: success ==== state awal
 
     // Form fields
     public $recipientNumber = '';

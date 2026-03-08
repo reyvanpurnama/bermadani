@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Web Development UMB - Fajar Yogananda</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+                        dark: { bg: '#0a0a0a', card: '#171717', border: '#262626' }
+                    },
+                    animation: { 'blob': 'blob 7s infinite' },
+                    keyframes: {
+                        blob: {
+                            '0%':   { transform: 'translate(0px,0px) scale(1)' },
+                            '33%':  { transform: 'translate(30px,-50px) scale(1.1)' },
+                            '66%':  { transform: 'translate(-20px,20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px,0px) scale(1)' },
+                        },
+                        fadeInUp: {
+                            '0%':   { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        *, *::before, *::after { cursor: none !important; }
+        body { background-color: #0a0a0a; color: #f5f5f5; overflow: hidden; margin: 0; padding: 0; }
+
+        .cursor-dot {
+            position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+            background: #fff; border-radius: 50%; pointer-events: none; z-index: 9999;
+            transform: translate(-50%,-50%);
+            transition: width .25s ease, height .25s ease, opacity .25s ease;
+        }
+        .cursor-ring {
+            position: fixed; top: 0; left: 0; width: 40px; height: 40px;
+            border: 1.5px solid rgba(255,255,255,.4); border-radius: 50%;
+            pointer-events: none; z-index: 9998; transform: translate(-50%,-50%);
+            transition: width .3s ease, height .3s ease, border-color .3s ease, opacity .3s ease;
+        }
+        .cursor-dot.hovering  { width: 0; height: 0; opacity: 0; }
+        .cursor-ring.hovering { width: 60px; height: 60px; border-color: rgba(52,211,153,.6); }
+        .cursor-ring.clicking { width: 30px; height: 30px; border-color: rgba(52,211,153,.9); }
+
+        .glow-bg { position: fixed; top:0; left:0; width:100vw; height:100vh; z-index:-1; overflow:hidden; pointer-events:none; }
+        .glow-1 { position:absolute; top:-10%; left:-10%; width:55vw; height:55vw; background:radial-gradient(circle,rgba(16,185,129,.14) 0%,rgba(0,0,0,0) 70%); border-radius:50%; filter:blur(60px); }
+        .glow-2 { position:absolute; bottom:-20%; right:-10%; width:60vw; height:60vw; background:radial-gradient(circle,rgba(6,182,212,.09) 0%,rgba(0,0,0,0) 70%); border-radius:50%; filter:blur(60px); }
+
+        .slide-container { position:relative; width:100vw; height:100vh; display:flex; justify-content:center; align-items:center; }
+        .slide { position:absolute; width:100%; height:100%; opacity:0; visibility:hidden; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:2rem; pointer-events:none; }
+        .slide.active { opacity:1; visibility:visible; z-index:10; pointer-events:auto; }
+        .slide.enter-right { animation: enterFromRight .7s cubic-bezier(.16,1,.3,1) forwards; }
+        .slide.enter-left  { animation: enterFromLeft  .7s cubic-bezier(.16,1,.3,1) forwards; }
+
+        @keyframes enterFromRight { from{opacity:0;transform:translateX(80px)}  to{opacity:1;transform:translateX(0)} }
+        @keyframes enterFromLeft  { from{opacity:0;transform:translateX(-80px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes fadeInUp       { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
+
+        .slide.animating .animate-stagger-1 { animation: fadeInUp .6s cubic-bezier(.16,1,.3,1) .15s both; }
+        .slide.animating .animate-stagger-2 { animation: fadeInUp .6s cubic-bezier(.16,1,.3,1) .25s both; }
+        .slide.animating .animate-stagger-3 { animation: fadeInUp .6s cubic-bezier(.16,1,.3,1) .35s both; }
+        .slide.animating .animate-stagger-4 { animation: fadeInUp .6s cubic-bezier(.16,1,.3,1) .45s both; }
+        .slide.animating .animate-stagger-5 { animation: fadeInUp .6s cubic-bezier(.16,1,.3,1) .55s both; }
+
+        .bento-card {
+            background: rgba(23,23,23,.6);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.08); border-radius: 24px;
+            transition: transform .3s ease, border-color .3s ease;
+        }
+        .bento-card:hover { border-color: rgba(255,255,255,.15); transform: translateY(-2px); }
+
+        .text-gradient-brand { background: linear-gradient(135deg, #34d399 0%, #06b6d4 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .nav-dots { position:fixed; right:2rem; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; z-index:50; }
+        .nav-dot { width:8px; height:8px; border-radius:50%; background:rgba(255,255,255,.2); transition:all .3s ease; }
+        .nav-dot.active { background:#10b981; transform:scale(1.5); box-shadow:0 0 10px rgba(16,185,129,.5); }
+
+        .slide-counter { position:fixed; bottom:2rem; right:2.5rem; font-size:.7rem; color:rgba(255,255,255,.25); font-variant-numeric:tabular-nums; letter-spacing:.05em; z-index:50; }
+
+        .tech-icon-wrap iconify-icon { filter:grayscale(1) brightness(.45); transition:filter .35s ease,transform .35s ease; display:block; }
+        .tech-icon-wrap:hover iconify-icon { filter:grayscale(0) brightness(1); transform:scale(1.1); }
+    </style>
+</head>
+<body>
+    <div class="cursor-dot"  id="cursor-dot"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <div class="glow-bg">
+        <div class="glow-1 animate-blob"></div>
+        <div class="glow-2 animate-blob" style="animation-delay:2s;"></div>
+    </div>
+
+    <div class="nav-dots" id="nav-dots"></div>
+    <div class="slide-counter" id="slide-counter">1 / 5</div>
+
+    <div class="slide-container" id="presentation">
+
+        <!-- SLIDE 1: LATAR BELAKANG -->
+        <div class="slide active animating" id="slide-1">
+            <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-5 gap-10 items-center">
+                <div class="space-y-7 lg:col-span-2">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium animate-stagger-1">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Sidang Kerja Praktik &middot; 2025/2026
+                    </div>
+                    <h1 class="text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] animate-stagger-2">
+                        Latar Belakang<br>
+                        <span class="text-gradient-brand">Praktik Kerja</span><br>
+                        Lapangan.
+                    </h1>
+                    <p class="text-base text-gray-400 leading-relaxed animate-stagger-3 max-w-md">
+                        Di era transformasi digital, website resmi universitas berperan sebagai representasi digital institusi &mdash; mencerminkan identitas, profesionalisme, serta kualitas akademik.
+                    </p>
+                    <div class="space-y-1 animate-stagger-4">
+                        <p class="text-lg text-white font-semibold">Fajar Yogananda</p>
+                        <p class="text-sm text-gray-400">220102027 &middot; Universitas Muhammadiyah Bandung</p>
+                        <p class="text-xs text-gray-500">Bagian Sistem Informasi &middot; Web Development</p>
+                    </div>
+                    <div class="flex gap-3 pt-2 animate-stagger-4">
+                        <button onclick="nextSlide()" class="px-6 py-3 bg-white text-black font-semibold rounded-lg hover:bg-gray-200 transition-colors flex items-center gap-2 text-sm">
+                            Selanjutnya
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Stats Card -->
+                <div class="hidden lg:flex lg:col-span-3 items-center justify-center animate-stagger-3">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 blur-3xl rounded-full pointer-events-none -z-10"></div>
+                        <div class="bento-card p-7 w-[540px]">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                    <span class="text-xs font-mono text-gray-400">umbandung.ac.id</span>
+                                </div>
+                                <span class="text-[10px] text-gray-600 uppercase tracking-widest">Nov 2025 &ndash; Feb 2026</span>
+                            </div>
+
+                            <!-- Contribution graph -->
+                            <div class="mb-6">
+                                <div class="text-[10px] text-gray-600 uppercase tracking-widest mb-2">Contribution Activity</div>
+                                <div class="grid gap-[3px]" style="grid-template-columns:repeat(20,1fr)">
+                                    <div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div>
+                                    <div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div>
+                                    <div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div>
+                                    <div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div><div class="h-3 rounded-sm bg-emerald-500/70"></div><div class="h-3 rounded-sm bg-emerald-500/30"></div><div class="h-3 rounded-sm bg-emerald-500/90"></div><div class="h-3 rounded-sm bg-emerald-500/10"></div><div class="h-3 rounded-sm bg-emerald-500/60"></div><div class="h-3 rounded-sm bg-emerald-500/40"></div><div class="h-3 rounded-sm bg-emerald-500/80"></div><div class="h-3 rounded-sm bg-emerald-500/20"></div><div class="h-3 rounded-sm bg-emerald-500/50"></div>
+                                </div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="rounded-2xl bg-white/5 border border-white/5 p-4">
+                                    <div class="text-3xl font-bold text-emerald-400 tracking-tighter">29</div>
+                                    <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">Total Commits</div>
+                                </div>
+                                <div class="rounded-2xl bg-white/5 border border-white/5 p-4">
+                                    <div class="text-3xl font-bold text-white tracking-tighter">1,500<span class="text-emerald-400">+</span></div>
+                                    <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">Lines of Code</div>
+                                </div>
+                                <div class="rounded-2xl bg-white/5 border border-white/5 p-4">
+                                    <div class="text-3xl font-bold text-white tracking-tighter">48<span class="text-cyan-400">+</span></div>
+                                    <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">Asset Gambar</div>
+                                </div>
+                                <div class="rounded-2xl bg-white/5 border border-white/5 p-4">
+                                    <div class="text-3xl font-bold text-white tracking-tighter">3</div>
+                                    <div class="text-[11px] text-gray-500 mt-1 uppercase tracking-widest">Halaman Utama</div>
+                                </div>
+                            </div>
+
+                            <!-- Tech row -->
+                            <div class="mt-4 flex items-center gap-3 pt-4 border-t border-white/5">
+                                <span class="text-[10px] text-gray-600 uppercase tracking-widest">Stack:</span>
+                                <div class="flex items-center gap-3 tech-icon-wrap">
+                                    <iconify-icon icon="logos:codeigniter" width="22"></iconify-icon>
+                                    <iconify-icon icon="logos:php" width="26"></iconify-icon>
+                                    <iconify-icon icon="logos:html-5" width="20"></iconify-icon>
+                                    <iconify-icon icon="logos:css-3" width="20"></iconify-icon>
+                                    <iconify-icon icon="logos:javascript" width="20"></iconify-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SLIDE 2: TUJUAN -->
+        <div class="slide" id="slide-2">
+            <div class="max-w-5xl w-full">
+                <div class="text-center mb-10 animate-stagger-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4">Slide 2</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-3">Tujuan Utama Praktik Kerja</h2>
+                    <p class="text-gray-400 text-base max-w-xl mx-auto">Empat fokus utama yang menjadi landasan pelaksanaan Kerja Praktik di Bagian Sistem Informasi UMB.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 animate-stagger-2">
+                    <div class="bento-card p-7 flex gap-5">
+                        <div class="shrink-0 w-11 h-11 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mt-0.5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-blue-400 uppercase tracking-widest mb-1.5">01 &middot; Web Engineering</div>
+                            <p class="text-sm text-gray-300 leading-relaxed">Mengimplementasikan konsep <span class="text-white font-medium">Web Engineering</span> dan desain UI/UX pada website institusi.</p>
+                        </div>
+                    </div>
+                    <div class="bento-card p-7 flex gap-5">
+                        <div class="shrink-0 w-11 h-11 rounded-xl bg-yellow-500/10 flex items-center justify-center text-yellow-400 mt-0.5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-yellow-400 uppercase tracking-widest mb-1.5">02 &middot; Optimasi Tampilan</div>
+                            <p class="text-sm text-gray-300 leading-relaxed">Melakukan <span class="text-white font-medium">optimasi tampilan dan tata letak</span> website agar informasi mudah dipahami pengguna.</p>
+                        </div>
+                    </div>
+                    <div class="bento-card p-7 flex gap-5">
+                        <div class="shrink-0 w-11 h-11 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 mt-0.5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-purple-400 uppercase tracking-widest mb-1.5">03 &middot; Alur Kerja SI</div>
+                            <p class="text-sm text-gray-300 leading-relaxed">Mempelajari <span class="text-white font-medium">alur kerja pengelolaan sistem informasi</span> dan website di lingkungan perguruan tinggi.</p>
+                        </div>
+                    </div>
+                    <div class="bento-card p-7 flex gap-5 bg-gradient-to-br from-emerald-900/20 to-transparent">
+                        <div class="shrink-0 w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mt-0.5">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs font-semibold text-emerald-400 uppercase tracking-widest mb-1.5">04 &middot; Performa &amp; Responsivitas</div>
+                            <p class="text-sm text-gray-300 leading-relaxed">Menjaga <span class="text-white font-medium">performa serta responsivitas</span> website saat dilakukan pembaruan konten dan pengembangan halaman baru.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SLIDE 3: GAMBARAN UMUM BAGIAN SI -->
+        <div class="slide" id="slide-3">
+            <div class="max-w-6xl w-full">
+                <div class="mb-10 animate-stagger-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4">Slide 3</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-2">Bagian Sistem Informasi</h2>
+                    <p class="text-gray-400 text-base">Universitas Muhammadiyah Bandung</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 animate-stagger-2">
+                    <div class="bento-card p-8 md:col-span-2 flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 mb-5">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3 text-white">Peran &amp; Tanggung Jawab</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">Unit yang bertanggung jawab terhadap pengelolaan dan pemeliharaan <span class="text-white">sistem informasi</span> serta <span class="text-white">website resmi universitas</span>. Berperan dalam pengelolaan aset digital, pengembangan halaman web, serta dukungan teknis teknologi informasi.</p>
+                        </div>
+                        <div class="mt-6 grid grid-cols-3 gap-3">
+                            <div class="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                                <div class="text-emerald-400 mb-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mx-auto"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+                                <div class="text-xs text-gray-300 font-medium">Aset Digital</div>
+                            </div>
+                            <div class="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                                <div class="text-cyan-400 mb-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mx-auto"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                                <div class="text-xs text-gray-300 font-medium">Web Dev</div>
+                            </div>
+                            <div class="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                                <div class="text-purple-400 mb-1"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mx-auto"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                                <div class="text-xs text-gray-300 font-medium">IT Support</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                        <div class="bento-card p-6 bg-gradient-to-br from-emerald-900/30 to-cyan-900/10 flex-grow flex flex-col justify-between">
+                            <div class="text-2xl mb-3">&#127919;</div>
+                            <div>
+                                <h4 class="font-semibold text-white text-sm mb-2">Visi Universitas</h4>
+                                <p class="text-xs text-emerald-300 font-medium leading-snug">"Digital dan Technopreneur University"</p>
+                            </div>
+                        </div>
+                        <div class="bento-card p-6 flex-grow">
+                            <div class="text-2xl mb-3">&#9881;&#65039;</div>
+                            <h4 class="font-semibold text-white text-sm mb-2">Peran Strategis</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">Memastikan seluruh layanan informasi digital berjalan secara <span class="text-white">efektif</span> dan <span class="text-white">efisien</span> selaras dengan visi universitas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SLIDE 4: PELAKSANAAN -->
+        <div class="slide" id="slide-4">
+            <div class="max-w-5xl w-full">
+                <div class="mb-8 animate-stagger-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-4">Slide 4</div>
+                    <h2 class="text-3xl md:text-5xl font-bold mb-2">Pelaksanaan Kegiatan Magang</h2>
+                    <p class="text-gray-400 text-base">5 tahapan kegiatan selama Praktik Kerja Lapangan di UMB.</p>
+                </div>
+                <div class="space-y-3 animate-stagger-2">
+                    <div class="bento-card p-5 flex items-start gap-5 hover:border-blue-500/20">
+                        <div class="shrink-0 w-9 h-9 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-bold">1</div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-white text-sm mb-0.5">Analisis &amp; Perancangan Kebutuhan</h4>
+                            <p class="text-xs text-gray-400">Analisis dan perancangan kebutuhan halaman website fakultas dan program studi.</p>
+                        </div>
+                        <span class="shrink-0 hidden sm:flex px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-medium border border-blue-500/15 items-center">Analisis</span>
+                    </div>
+                    <div class="bento-card p-5 flex items-start gap-5 hover:border-yellow-500/20">
+                        <div class="shrink-0 w-9 h-9 rounded-full bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-yellow-400 text-sm font-bold">2</div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-white text-sm mb-0.5">Pengembangan Frontend &amp; UI/UX</h4>
+                            <p class="text-xs text-gray-400">Pengembangan frontend dengan tampilan modern serta penerapan prinsip UI/UX.</p>
+                        </div>
+                        <span class="shrink-0 hidden sm:flex px-2.5 py-1 rounded-full bg-yellow-500/10 text-yellow-400 text-[10px] font-medium border border-yellow-500/15 items-center">Frontend</span>
+                    </div>
+                    <div class="bento-card p-5 flex items-start gap-5 hover:border-purple-500/20">
+                        <div class="shrink-0 w-9 h-9 rounded-full bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 text-sm font-bold">3</div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-white text-sm mb-0.5">Pengelolaan Backend &mdash; CodeIgniter</h4>
+                            <p class="text-xs text-gray-400">Pengelolaan backend menggunakan framework CodeIgniter untuk penanganan data dinamis.</p>
+                        </div>
+                        <span class="shrink-0 hidden sm:flex px-2.5 py-1 rounded-full bg-purple-500/10 text-purple-400 text-[10px] font-medium border border-purple-500/15 items-center">Backend</span>
+                    </div>
+                    <div class="bento-card p-5 flex items-start gap-5 hover:border-orange-500/20">
+                        <div class="shrink-0 w-9 h-9 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-orange-400 text-sm font-bold">4</div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-white text-sm mb-0.5">Optimasi Performa Website</h4>
+                            <p class="text-xs text-gray-400">Optimasi performa melalui kompresi aset dan pengaturan caching untuk kecepatan akses.</p>
+                        </div>
+                        <span class="shrink-0 hidden sm:flex px-2.5 py-1 rounded-full bg-orange-500/10 text-orange-400 text-[10px] font-medium border border-orange-500/15 items-center">Optimasi</span>
+                    </div>
+                    <div class="bento-card p-5 flex items-start gap-5 hover:border-emerald-500/20">
+                        <div class="shrink-0 w-9 h-9 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 text-sm font-bold">5</div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-white text-sm mb-0.5">Pengujian, Debugging &amp; Finalisasi</h4>
+                            <p class="text-xs text-gray-400">Pengujian, debugging, serta finalisasi halaman agar siap digunakan di lingkungan produksi.</p>
+                        </div>
+                        <span class="shrink-0 hidden sm:flex px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-medium border border-emerald-500/15 items-center">Produksi</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- SLIDE 5: KESIMPULAN -->
+        <div class="slide" id="slide-5">
+            <div class="max-w-3xl w-full text-center">
+                <div class="w-16 h-16 mx-auto bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-8 animate-stagger-1 shadow-2xl shadow-emerald-500/20">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
+                </div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium mb-6 animate-stagger-1">Slide 5 &middot; Kesimpulan</div>
+                <h2 class="text-4xl md:text-6xl font-bold mb-8 animate-stagger-2 leading-tight">
+                    Praktik Kerja<br>
+                    <span class="text-gradient-brand">yang Bermakna.</span>
+                </h2>
+                <div class="flex flex-wrap justify-center gap-3 mb-12 animate-stagger-3">
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/[.08] text-sm text-gray-300">
+                        <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>Kemampuan Teknis
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/[.08] text-sm text-gray-300">
+                        <div class="w-1.5 h-1.5 rounded-full bg-cyan-400"></div>Kerja Sama Tim
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/[.08] text-sm text-gray-300">
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-400"></div>Standar SI Perguruan Tinggi
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/[.08] text-sm text-gray-300">
+                        <div class="w-1.5 h-1.5 rounded-full bg-purple-400"></div>Tanggung Jawab Profesional
+                    </div>
+                </div>
+                <div class="animate-stagger-5">
+                    <p class="text-xs text-gray-600 uppercase tracking-widest mb-3">Q&amp;A Session</p>
+                    <h3 class="text-2xl font-semibold text-white">Terima Kasih &#128591;</h3>
+                    <p class="text-sm text-gray-500 mt-2">Fajar Yogananda &middot; 220102027 &middot; Universitas Muhammadiyah Bandung &middot; 2025/2026</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 5;
+        let isAnimating = false;
+
+        const navDotsContainer = document.getElementById('nav-dots');
+        for (let i = 1; i <= totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = `nav-dot ${i === 1 ? 'active' : ''}`;
+            dot.onclick = () => goToSlide(i);
+            navDotsContainer.appendChild(dot);
+        }
+
+        function updateUI() {
+            document.querySelectorAll('.nav-dot').forEach((dot, i) => dot.classList.toggle('active', i + 1 === currentSlide));
+            document.getElementById('slide-counter').textContent = `${currentSlide} / ${totalSlides}`;
+        }
+
+        function goToSlide(n) {
+            if (n < 1 || n > totalSlides || isAnimating || n === currentSlide) return;
+            isAnimating = true;
+            const cur  = document.getElementById(`slide-${currentSlide}`);
+            const next = document.getElementById(`slide-${n}`);
+            const goFwd = n > currentSlide;
+            cur.classList.remove('active', 'animating', 'enter-right', 'enter-left');
+            next.classList.remove('enter-right', 'enter-left', 'animating');
+            void next.offsetHeight;
+            next.classList.add('active', goFwd ? 'enter-right' : 'enter-left', 'animating');
+            currentSlide = n;
+            updateUI();
+            setTimeout(() => { isAnimating = false; }, 700);
+        }
+
+        function nextSlide() { goToSlide(currentSlide + 1); }
+        function prevSlide() { goToSlide(currentSlide - 1); }
+
+        document.addEventListener('keydown', (e) => {
+            if      (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') nextSlide();
+            else if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Custom Cursor
+        const dot  = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+        });
+        function animateRing() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+            requestAnimationFrame(animateRing);
+        }
+        animateRing();
+
+        const hoverTargets = 'a, button, .nav-dot, .bento-card, [onclick]';
+        document.addEventListener('mouseover', (e) => { if (e.target.closest(hoverTargets)) { dot.classList.add('hovering'); ring.classList.add('hovering'); } });
+        document.addEventListener('mouseout',  (e) => { if (e.target.closest(hoverTargets)) { dot.classList.remove('hovering'); ring.classList.remove('hovering'); } });
+        document.addEventListener('mousedown', () => ring.classList.add('clicking'));
+        document.addEventListener('mouseup',   () => ring.classList.remove('clicking'));
+    </script>
+</body>
+</html>

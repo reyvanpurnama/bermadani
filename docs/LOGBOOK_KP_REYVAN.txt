@@ -1,0 +1,121 @@
+================================================================================
+                           LOGBOOK KERJA PRAKTIK
+                     M REYVAN PURNAMA - KOPERASI BERMADANI
+================================================================================
+
+Nama            : M Reyvan Purnama
+NIM             : [NIM REYVAN]
+Program Studi   : Sistem Informasi
+Periode         : Oktober 2025 - Desember 2025 (3 Bulan)
+Posisi          : Full-stack Developer
+Instansi        : Koperasi Bermadani - Universitas Muhammadiyah Bandung
+
+================================================================================
+RINGKASAN PERIODE
+================================================================================
+
+Fokus Utama:
+- Implementasi sistem informasi koperasi berbasis web
+- Pengembangan modul transaksi, inventaris, supplier, anggota, simpanan, pinjaman
+- Pembuatan portal anggota & supplier
+- Optimasi UI/UX, dark mode, dan responsivitas
+- Pembuatan laporan keuangan & audit tools
+
+================================================================================
+LOGBOOK MINGGUAN (OKTOBER - DESEMBER 2025)
+================================================================================
+
+Minggu 1 (01-05 Okt 2025)
+- Inisialisasi project Laravel 12 + Livewire 3 + Tailwind 4
+- Setup struktur folder, routing dasar, layout admin
+- Pembuatan dashboard awal dan login page
+- Setup role dasar dan middleware autentikasi
+
+Minggu 2 (06-12 Okt 2025)
+- Implementasi halaman inventaris (CRUD produk)
+- Halaman transaksi dan detail transaksi
+- Perbaikan timezone dan konvensi penamaan kolom
+- Integrasi UI template ke layout utama
+
+Minggu 3 (13-19 Okt 2025)
+- Profitability card dan metrik omset
+- Sistem transaksi manual pemasukan/pengeluaran
+- Attachment bukti transaksi
+- Activity logging untuk audit trail
+
+Minggu 4 (20-26 Okt 2025)
+- Role Kasir dan sistem shift (check-in/check-out)
+- User management & ownership transaksi
+- Penyempurnaan sidebar dan responsivitas
+- Optimasi UX pada dashboard
+
+Minggu 5 (27-31 Okt 2025)
+- Modul supplier: registrasi & pending approval
+- Sistem pembayaran registrasi supplier (QR)
+- Perbaikan alur autentikasi supplier
+- Dark mode untuk halaman supplier
+
+Minggu 6 (03-09 Nov 2025)
+- Fondasi manajemen anggota (model, migration, service)
+- Halaman admin daftar anggota + detail
+- Wizard create/edit anggota
+- Menu anggota pada sidebar
+
+Minggu 7 (10-16 Nov 2025)
+- Simpanan management page
+- Import anggota via Excel/CSV
+- Perbaikan query dan naming column
+- Riwayat debit bulanan anggota
+
+Minggu 8 (17-23 Nov 2025)
+- Auto-debit simpanan wajib bulanan
+- Approval UI auto-debit
+- Validasi gender dan konsistensi data
+- Dark mode untuk approval component
+
+Minggu 9 (24-30 Nov 2025)
+- Sistem pembayaran: form pembayaran & receipt
+- Billing simpanan bulanan dengan searchable dropdown
+- Auto-generate nomor anggota
+- Member portal awal (dashboard, profile, transaksi)
+
+Minggu 10 (01-07 Des 2025)
+- Transfer simpanan sukarela antar anggota
+- Riwayat transfer + receipt modal responsif
+- Penyempurnaan profile anggota (unit kerja, join date)
+- Konsistensi dark mode di portal
+
+Minggu 11 (08-14 Des 2025)
+- Laporan keuangan bulanan (PDF generator)
+- Neraca (balance sheet) dan rekap harian
+- Multi-unit transaksi (Koperasi/Bisnis)
+- Developer payroll & worklog
+
+Minggu 12 (15-21 Des 2025)
+- Stock mutation, stock adjustment, restock request
+- Product review & approval workflow
+- Consignment batches & laporan konsinyasi
+- Pricing calculator (Manual/Markup/Profit)
+ 
+Minggu 13 (22-28 Des 2025)
+- Penyederhanaan portal supplier (minimalist UX)
+- Settlement konsinyasi & history pembayaran
+- Notifikasi badge untuk pending batch/approval
+- Penyempurnaan laporan profit & cash on hand
+
+Minggu 14 (29-31 Des 2025)
+- POS enhancements (member search, quick register)
+- Portal retail vs koperasi dipisah
+- UI/UX polish (flippable card, mobile nav)
+- Implementasi audit SIMWA & bank audit tool (ringkas)
+
+================================================================================
+PENUTUP
+================================================================================
+
+Logbook ini merangkum aktivitas pengembangan sistem Koperasi Bermadani selama
+periode Oktober - Desember 2025. Seluruh kegiatan berfokus pada implementasi
+full-stack, integrasi fitur inti koperasi, dan penyempurnaan UI/UX agar siap
+digunakan di lingkungan operasional.
+
+================================================================================

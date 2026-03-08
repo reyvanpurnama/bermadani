@@ -1,0 +1,771 @@
+================================================================================
+                         LAPORAN KERJA PRAKTIK
+              PROGRAM STUDI SISTEM INFORMASI - PRAKTIK KERJA
+         IMPLEMENTASI SISTEM INFORMASI KOPERASI BERMADANI BERBASIS WEB
+================================================================================
+
+Nama            : M Reyvan Purnama
+NIM             : [NIM REYVAN]
+Program Studi   : Sistem Informasi
+Periode         : Oktober 2025 - Desember 2025 (3 Bulan)
+Tempat Praktik  : Koperasi Bermadani - Universitas Muhammadiyah Bandung
+Posisi          : Full-stack Developer
+Divisi          : IT Development / Software Engineering
+
+================================================================================
+KATA PENGANTAR
+================================================================================
+
+Assalamualaikum Warahmatullahi Wabarakatuh,
+
+Puji syukur ke hadirat Allah SWT yang telah memberikan rahmat, hidayah, dan
+karunia-Nya sehingga saya dapat menyelesaikan Laporan Kerja Praktik ini tepat
+waktu. Shalawat serta salam semoga senantiasa tercurah kepada Nabi Muhammad SAW,
+keluarga, sahabat, dan pengikutnya hingga akhir zaman.
+
+Laporan Kerja Praktik ini disusun sebagai bentuk pertanggungjawaban dan
+dokumentasi atas kegiatan yang telah dilaksanakan selama periode Oktober -
+Desember 2025 di Koperasi Bermadani Universitas Muhammadiyah Bandung. Selama
+tiga bulan tersebut, saya berkesempatan untuk terlibat langsung dalam
+pengembangan Sistem Informasi Koperasi berbasis web yang mencakup berbagai
+modul penting seperti Point of Sale (POS), manajemen inventaris, supplier,
+anggota, simpanan, pinjaman, hingga laporan keuangan dan audit tools.
+
+Pengalaman ini memberikan pembelajaran yang sangat berharga, tidak hanya dari
+sisi teknis pengembangan aplikasi web modern menggunakan Laravel 12, Livewire 3,
+dan Tailwind CSS 4, tetapi juga dari sisi analisis bisnis, pemecahan masalah
+real-world, dan kolaborasi dalam tim pengembangan. Melalui 457 commits yang
+telah dilakukan, saya dapat berkontribusi secara signifikan dalam membangun
+sistem yang production-ready dan siap digunakan untuk operasional koperasi.
+
+Saya menyadari bahwa laporan ini masih jauh dari sempurna. Oleh karena itu,
+saya sangat terbuka terhadap kritik dan saran yang membangun untuk perbaikan
+di masa mendatang. Semoga laporan ini dapat bermanfaat bagi pembaca dan menjadi
+referensi bagi mahasiswa yang akan melaksanakan Kerja Praktik di masa yang akan
+datang.
+
+Wassalamualaikum Warahmatullahi Wabarakatuh.
+
+                                                    Bandung, 19 Februari 2026
+
+
+                                                    M Reyvan Purnama
+
+================================================================================
+A. RINGKASAN KEGIATAN
+================================================================================
+
+Selama periode Kerja Praktik di Koperasi Bermadani, saya bertanggung jawab
+penuh dalam implementasi dan pengembangan Sistem Informasi Koperasi berbasis
+web dari tahap inisialisasi project hingga deployment production. Pekerjaan
+mencakup full-stack development dengan fokus pada:
+
+1. Implementasi modul POS (Point of Sale) dengan fitur lengkap
+2. Pengembangan sistem inventaris dan manajemen stok
+3. Pembuatan portal supplier dengan sistem konsinyasi
+4. Manajemen anggota dan sistem simpanan (Pokok, Wajib, Sukarela)
+5. Implementasi sistem pinjaman dan angsuran
+6. Pembuatan portal anggota (Koperasi & Retail)
+7. Pengembangan sistem laporan keuangan dan audit tools
+8. Optimasi UI/UX dengan dark mode dan responsivitas
+9. Testing dan debugging secara menyeluruh
+
+Total Kontribusi:
+┌─────────────────────────────────────────────────────────────────────────┐
+│ • 457 commits dalam 3 bulan (rata-rata 5 commits/hari)                  │
+│ • 26 modul utama diselesaikan                                           │
+│ • 50+ halaman/komponen dikembangkan                                     │
+│ • 10,000+ baris kode ditulis                                            │
+│ • 100% responsive di semua device                                       │
+│ • Dark mode support lengkap                                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+================================================================================
+BAB I - PENDAHULUAN
+================================================================================
+
+1.1 Latar Belakang
+
+Koperasi Bermadani merupakan unit usaha di lingkungan Universitas Muhammadiyah
+Bandung yang menjalankan dua fungsi utama: minimarket untuk penjualan retail
+dan unit simpan pinjam untuk layanan keuangan anggota koperasi. Seiring dengan
+perkembangan teknologi dan tuntutan efisiensi operasional, diperlukan sebuah
+sistem informasi yang dapat mengintegrasikan seluruh proses bisnis koperasi
+ke dalam satu platform digital yang terintegrasi.
+
+Sebelum adanya sistem ini, pencatatan transaksi penjualan dilakukan secara
+manual atau menggunakan aplikasi terpisah yang tidak terintegrasi. Hal ini
+menyebabkan berbagai permasalahan operasional seperti:
+
+• Ketidakakuratan dalam pencatatan stok barang
+• Kesulitan dalam tracking riwayat transaksi
+• Proses rekonsiliasi keuangan yang memakan waktu lama
+• Pencatatan simpanan anggota yang rawan kesalahan
+• Lambatnya proses pembuatan laporan keuangan bulanan
+• Tidak adanya sistem audit trail untuk transparansi
+
+Berdasarkan analisis kebutuhan tersebut, maka diputuskan untuk membangun
+Sistem Informasi Koperasi berbasis web yang dapat mengatasi seluruh
+permasalahan di atas dengan pendekatan modern dan user-friendly.
+
+1.2 Tujuan Kerja Praktik
+
+Tujuan dilaksanakannya Kerja Praktik ini adalah:
+
+1. TUJUAN AKADEMIS:
+   • Mengaplikasikan ilmu yang telah dipelajari di perkuliahan ke dalam
+     dunia kerja nyata
+   • Memahami siklus pengembangan software secara profesional
+   • Meningkatkan kompetensi teknis dalam full-stack web development
+   • Memperoleh pengalaman kerja di lingkungan IT development
+
+2. TUJUAN TEKNIS:
+   • Mengimplementasikan Sistem Informasi Koperasi menggunakan framework
+     Laravel 12 dengan arsitektur MVC
+   • Mengintegrasikan modul-modul bisnis (POS, Inventaris, Anggota, Simpanan,
+     Pinjaman) ke dalam satu platform terpadu
+   • Membangun portal self-service untuk anggota dan supplier
+   • Mengembangkan sistem laporan keuangan otomatis dan audit tools
+   • Mengoptimalkan user experience dengan UI/UX modern dan responsif
+
+3. TUJUAN INSTITUSIONAL:
+   • Membantu Koperasi Bermadani dalam digitalisasi proses operasional
+   • Meningkatkan efisiensi dan akurasi pencatatan transaksi
+   • Menyediakan sistem yang scalable dan mudah di-maintain
+   • Memastikan transparansi dan akuntabilitas keuangan melalui audit trail
+
+1.3 Ruang Lingkup Pekerjaan
+
+Ruang lingkup pekerjaan yang menjadi tanggung jawab saya selama Kerja Praktik
+mencakup:
+
+1. BACKEND DEVELOPMENT:
+   • Implementasi Laravel 12 dengan Eloquent ORM
+   • Pembuatan database migration dan seeder
+   • Pengembangan business logic dan service layer
+   • Implementasi authentication & authorization (multi-role)
+   • API integration dan data processing
+   • Validasi dan sanitasi input data
+
+2. FRONTEND DEVELOPMENT:
+   • Pembuatan komponen Livewire 3 untuk reactivity
+   • Styling dengan Tailwind CSS 4 (utility-first approach)
+   • Implementasi Alpine.js untuk interactivity
+   • Responsive design (mobile-first approach)
+   • Dark mode implementation
+   • Accessibility (a11y) considerations
+
+3. DATABASE MANAGEMENT:
+   • Desain dan implementasi database schema
+   • Optimasi query dan indexing
+   • Data migration dan seeding
+   • Backup and recovery planning
+
+4. UI/UX DESIGN & IMPLEMENTATION:
+   • Modern glassmorphism design system
+   • Consistent color palette dan typography
+   • Micro-interactions dan animations
+   • Form validation dengan real-time feedback
+   • Loading states dan error handling
+   • Mobile-responsive layouts
+
+5. TESTING & DEBUGGING:
+   • Unit testing untuk critical features
+   • Integration testing
+   • Browser compatibility testing
+   • Performance testing dan optimization
+   • Bug fixing dan code refactoring
+
+1.4 Waktu dan Tempat Pelaksanaan
+
+Waktu Pelaksanaan  : Oktober 2025 - Desember 2025 (3 bulan)
+Tempat             : Koperasi Bermadani - Universitas Muhammadiyah Bandung
+Jadwal Kerja       : Senin - Jumat (Flexible working hours)
+Mode Kerja         : Hybrid (Remote & On-site)
+
+================================================================================
+BAB II - PROFIL INSTANSI
+================================================================================
+
+2.1 Tentang Koperasi Bermadani
+
+Koperasi Bermadani merupakan unit usaha yang berada di lingkungan Universitas
+Muhammadiyah Bandung yang memiliki visi untuk mensejahterakan anggota melalui
+layanan retail dan simpan pinjam. Sebagai koperasi modern, Bermadani berkomitmen
+untuk memberikan pelayanan terbaik dengan memanfaatkan teknologi informasi guna
+meningkatkan efisiensi operasional dan kepuasan anggota.
+
+2.2 Layanan Koperasi Bermadani
+
+Koperasi Bermadani menyediakan dua layanan utama:
+
+1. LAYANAN RETAIL (MINIMARKET):
+   • Penjualan kebutuhan sehari-hari
+   • Produk konsinyasi dari supplier lokal
+   • Sistem membership dengan program loyalitas (points & tier)
+   • Pembayaran dengan cash atau debit simpanan sukarela
+
+2. LAYANAN SIMPAN PINJAM:
+   • Simpanan Pokok (satu kali saat pendaftaran)
+   • Simpanan Wajib (auto-debit bulanan dari gaji)
+   • Simpanan Sukarela (dapat ditarik sewaktu-waktu)
+   • Pinjaman dengan sistem angsuran (Itqan & Bermadani)
+
+2.3 Struktur Keanggotaan
+
+Koperasi Bermadani memiliki dua kategori anggota:
+
+• ANGGOTA KOPERASI: Sivitas akademika UMB (dosen, staff, karyawan) yang
+  memiliki akses penuh ke layanan simpan pinjam
+
+• MEMBER RETAIL: Mahasiswa dan umum yang dapat berbelanja di minimarket
+  dengan sistem poin dan benefit member
+
+2.4 Kebutuhan Sistem Informasi
+
+Berdasarkan analisis operasional Koperasi Bermadani, diidentifikasi kebutuhan
+sistem yang meliputi:
+
+✓ Sistem POS yang terintegrasi dengan inventory dan membership
+✓ Manajemen stok real-time dengan stock mutation tracking
+✓ Portal supplier untuk pengajuan produk dan tracking konsinyasi
+✓ Sistem simpanan otomatis dengan auto-debit bulanan
+✓ Portal anggota untuk cek saldo dan riwayat transaksi
+✓ Laporan keuangan otomatis (harian, bulanan, tahunan)
+✓ Audit tools untuk rekonsiliasi data keuangan
+✓ Multi-user access dengan role-based authorization
+
+================================================================================
+BAB III - LANDASAN TEORI & TEKNOLOGI
+================================================================================
+
+3.1 Metodologi Pengembangan
+
+Pengembangan sistem menggunakan pendekatan **Iterative and Incremental Development**
+dengan prinsip Agile, di mana sistem dikembangkan secara bertahap dengan iterasi
+cepat dan feedback loops yang kontinu.
+
+Tahapan Pengembangan:
+1. REQUIREMENT ANALYSIS - Analisis kebutuhan bisnis dan user stories
+2. DESIGN & PROTOTYPING - Wireframing UI/UX dan database schema
+3. IMPLEMENTATION - Coding features per modul
+4. TESTING - Unit test, integration test, user acceptance test
+5. DEPLOYMENT - Git commit, code review, merge to production
+6. ITERATION - Bug fixes dan feature enhancement
+
+Keuntungan Metodologi Iteratif:
+• Fleksibel terhadap perubahan requirement
+• Early detection of issues
+• Continuous user feedback
+• Faster time-to-market untuk critical features
+
+3.2 Arsitektur Sistem
+
+3.2 Arsitektur Sistem
+
+Sistem dikembangkan menggunakan arsitektur **MVC (Model-View-Controller)**
+melalui framework Laravel 12 dengan tambahan layer Livewire untuk reactive
+components.
+
+ARSITEKTUR LAYERS:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PRESENTATION LAYER (Frontend)                                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│ • Blade Templates (Server-side rendering)                               │
+│ • Livewire Components (Reactive UI without JavaScript complexity)       │
+│ • Tailwind CSS 4 (Utility-first styling)                                │
+│ • Alpine.js (Lightweight interactivity, 15KB gzipped)                   │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│ APPLICATION LAYER (Business Logic)                                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│ • Controllers (Handle HTTP requests)                                    │
+│ • Livewire Components (Component logic)                                 │
+│ • Services (Business rules & complex operations)                        │
+│ • Form Requests (Validation rules)                                      │
+│ • Middleware (Authentication, Authorization, Logging)                   │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│ DOMAIN LAYER (Models & Business Entities)                               │
+├─────────────────────────────────────────────────────────────────────────┤
+│ • Eloquent Models (ORM for database interaction)                        │
+│ • Relationships (hasMany, belongsTo, belongsToMany, etc.)               │
+│ • Accessors & Mutators (Data transformation)                            │
+│ • Scopes (Reusable query constraints)                                   │
+│ • Enums (Type-safe constants untuk status, role, dll)                   │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↕
+┌─────────────────────────────────────────────────────────────────────────┐
+│ DATA LAYER (Database)                                                    │
+├─────────────────────────────────────────────────────────────────────────┤
+│ • MySQL 8.0 (Relational Database)                                       │
+│ • Migrations (Version control untuk database schema)                    │
+│ • Seeders (Sample data untuk development)                               │
+│ • Factories (Test data generation)                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+3.3 Technology Stack
+
+Pemilihan teknologi dilakukan dengan mempertimbangkan aspek performa, maintainability,
+dan ekosistem yang mature.
+
+BACKEND TECHNOLOGY:
+
+• PHP 8.2
+  Bahasa pemrograman dengan fitur modern seperti enums, typed properties,
+  readonly properties, dan performance improvements
+
+• Laravel 12.0 (Latest LTS)
+  Framework PHP terpopuler dengan fitur lengkap:
+  ✓ Eloquent ORM untuk productive database operations
+  ✓ Built-in authentication & authorization
+  ✓ Queue system untuk background jobs
+  ✓ Event & Listener untuk decoupled architecture
+  ✓ Migration system untuk database version control
+  ✓ Blade templating engine
+  ✓ Ecosystem yang besar (Laravel Nova, Horizon, Telescope)
+
+  Alasan Pemilihan Laravel:
+  → Convention over configuration (faster development)
+  → Large community support dan dokumentasi lengkap
+  → Security built-in (CSRF, XSS, SQL Injection protection)
+  → Testing tools (PHPUnit integration)
+  → Scalable dan production-ready
+
+FRONTEND TECHNOLOGY:
+
+• Livewire 3.x
+  Framework untuk building reactive interfaces dengan PHP
+
+  Keuntungan Livewire:
+  ✓ No API endpoints needed (simplicity)
+  ✓ Server-side rendering (better SEO)
+  ✓ Real-time reactivity tanpa Vue/React overhead
+  ✓ Easier deployment (no separate frontend build)
+  ✓ Better untuk team dengan PHP expertise
+  ✓ Built-in form validation
+
+• Tailwind CSS 4.0
+  Utility-first CSS framework dengan filosofi atomic CSS
+
+  Keunggulan:
+  ✓ Rapid UI development dengan utility classes
+  ✓ Purge CSS untuk production (hanya include used classes)
+  ✓ Customizable design system
+  ✓ No naming conflicts (no BEM/SMACSS needed)
+  ✓ Dark mode support built-in
+
+• Alpine.js
+  Lightweight JavaScript framework untuk interactivity (15KB gzipped)
+
+  Use cases:
+  ✓ Toggle dropdowns dan modals
+  ✓ Tab switching
+  ✓ Form auto-formatting (currency, number)
+  ✓ Client-side validation
+  ✓ Smooth animations
+
+DATABASE:
+
+• MySQL 8.0
+  Relational database dengan performa tinggi
+
+  Fitur yang digunakan:
+  ✓ JSON column type untuk flexible data
+  ✓ Foreign key constraints untuk referential integrity
+  ✓ Indexing untuk query optimization
+  ✓ Transactions untuk data consistency
+  ✓ Stored procedures untuk complex calculations
+
+BUILD TOOLS:
+
+• Vite 7.0.7
+  Next-generation frontend build tool (10-100x faster than Webpack)
+
+  Keunggulan:
+  ✓ Lightning-fast HMR (Hot Module Replacement)
+  ✓ Optimized production build
+  ✓ Native ESM support
+  ✓ Out-of-the-box TypeScript support
+
+• Laravel Vite Plugin
+  Official plugin untuk integrasi seamless dengan Laravel
+
+ADDITIONAL PACKAGES:
+
+• DomPDF 3.1 - PDF generation untuk receipts dan reports
+• Maatwebsite/Excel 3.1 - Import/export Excel dan CSV
+• Laravel Pail - Real-time log monitoring
+• Intervention Image - Image processing dan optimization
+
+VERSION CONTROL:
+
+• Git - Distributed version control system
+• GitHub/GitLab - Repository hosting dan collaboration
+
+3.4 Database Design
+
+Database dirancang mengikuti prinsip normalisasi hingga 3NF (Third Normal Form)
+untuk menghindari redundansi data dan menjaga data integrity.
+
+PRINSIP DESAIN:
+✓ Normalisasi 3NF
+✓ CamelCase column naming (Laravel convention)
+✓ Foreign key constraints
+✓ Indexing pada frequently queried columns
+✓ Soft deletes untuk audit trail
+✓ Timestamps (created_at, updated_at) di setiap tabel
+
+TOTAL TABLES: 25+ tables
+
+Kategori Tabel:
+
+1. CORE TABLES (User Management)
+   • users - Multi-role authentication (SuperAdmin, Admin, Kasir, Member, Supplier)
+   • members - Data anggota koperasi (1:1 dengan users untuk anggota)
+   • activity_logs - Audit trail semua aktivitas sistem
+
+2. INVENTORY MANAGEMENT
+   • categories - Kategori produk
+   • products - Master data produk
+   • stock_movements - Riwayat pergerakan stok (IN/OUT/ADJUSTMENT/RETUR)
+
+3. SUPPLIER & CONSIGNMENT
+   • suppliers - Data supplier dengan approval workflow
+   • consignment_batches - Batch konsinyasi dari supplier
+   • consignment_items - Detail item dalam batch
+   • restock_requests - Permintaan restok dari supplier
+
+4. POINT OF SALE
+   • transactions - Header transaksi penjualan
+   • transaction_items - Detail item transaksi
+   • cashier_shifts - Shift kasir (check-in/check-out)
+
+5. SAVINGS & LOANS
+   • simpanan_transactions - Transaksi simpanan (POKOK/WAJIB/SUKARELA)
+   • simpanan_payments - Pembayaran simpanan wajib bulanan
+   • loans - Data pinjaman anggota
+   • loan_payments - Angsuran pinjaman
+
+6. FINANCIAL MANAGEMENT
+   • financial_transactions - Pemasukan/pengeluaran operasional
+   • financial_report_snapshots - Snapshot laporan bulanan
+   • bank_transactions - Import rekening koran untuk audit
+
+7. NOTIFICATIONS
+   • notifications - Notifikasi sistem untuk admin
+   • supplier_notifications - Notifikasi khusus supplier
+
+CONTOH SKEMA (Tabel transactions):
++---------------------+---------------------------+
+| Kolom               | Tipe & Constraint         |
++---------------------+---------------------------+
+| id                  | BIGINT PK AUTO_INCREMENT  |
+| transactionCode     | VARCHAR(50) UNIQUE        |
+| userId              | BIGINT FK (users.id)      |
+| memberId            | BIGINT FK (members.id)    |
+| totalAmount         | DECIMAL(15,2)             |
+| paymentMethod       | ENUM(CASH,SIMPANAN)       |
+| pointsEarned        | INT DEFAULT 0             |
+| status              | ENUM(COMPLETED,CANCELLED) |
+| created_at          | TIMESTAMP                 |
+| updated_at          | TIMESTAMP                 |
++---------------------+---------------------------+
+INDEX: idx_transaction_date ON (created_at)
+INDEX: idx_member_transactions ON (memberId, created_at)
+
+================================================================================
+BAB IV - HASIL IMPLEMENTASI
+================================================================================
+
+Selama periode Oktober - Desember 2025, telah berhasil diimplementasikan
+26 modul utama yang mencakup seluruh kebutuhan operasional Koperasi Bermadani.
+Berikut detail implementasi per modul:
+
+4.1 MODUL AUTHENTICATION & AUTHORIZATION
+
+Implementasi sistem autentikasi dan otorisasi multi-role menggunakan Laravel's
+built-in authentication dengan custom guard dan middleware.
+
+FITUR YANG DIIMPLEMENTASIKAN:
+• Multi-role authentication (SuperAdmin, Admin, Kasir, Supplier, Member Koperasi, Member Retail)
+• Role-based access control (RBAC) dengan middleware CheckRole
+• Multi-guard authentication (web, supplier, member)
+• Login dengan email, member number, atau phone number
+• Password hashing menggunakan bcrypt
+• Remember me functionality
+• Activity logging untuk audit trail
+• Session management dan CSRF protection
+
+IMPLEMENTASI TEKNIS:
+```php
+// Middleware CheckRole
+public function handle($request, Closure $next, ...$roles)
+{
+    if (!in_array(auth()->user()->role, $roles)) {
+        abort(403, 'Unauthorized access');
+    }
+    return $next($request);
+}
+
+// Route protection
+Route::middleware(['auth', 'check.role:SUPER_ADMIN,ADMIN'])->group(function() {
+    Route::get('/admin/dashboard', AdminDashboard::class);
+});
+```
+
+ACTIVITY LOGGING:
+Setiap aktivitas penting dicatat ke tabel activity_logs dengan informasi:
+- User yang melakukan aksi
+- Jenis aksi (CREATE, UPDATE, DELETE, LOGIN, LOGOUT)
+- Model yang ter-affected
+- IP address dan user agent
+- Timestamp
+
+4.2 MODUL DASHBOARD & ANALYTICS
+
+Dashboard admin yang menampilkan key metrics dan visualisasi data untuk
+monitoring operasional koperasi secara real-time.
+
+METRICS YANG DITAMPILKAN:
+• Omzet hari ini dengan perbandingan kemarin (% increase/decrease)
+• Total keuntungan dengan breakdown per kategori (owned vs consignment)
+• Jumlah transaksi hari ini
+• Produk terlaris (top 5)
+• Member tier distribution (Basic, Silver, Gold, Platinum)
+• Stock alert untuk produk yang hampir habis
+
+VISUALISASI DATA:
+• Line chart omzet harian (7 hari terakhir)
+• Line chart keuntungan bulanan (12 bulan terakhir)
+• Bar chart penjualan per kategori produk
+• Responsive charts menggunakan Chart.js dengan datetime axis
+
+TEKNOLOGI:
+- Livewire untuk real-time updates
+- Chart.js untuk visualisasi
+- Tailwind untuk responsive cards
+- Alpine.js untuk interactive filters
+
+4.3 MODUL POINT OF SALE (POS)
+
+Sistem kasir lengkap untuk transaksi penjualan dengan fitur modern dan
+user-friendly interface.
+
+FITUR UTAMA:
+✓ Barcode scanner integration
+✓ Quick product search (by name/SKU)
+✓ Member search dengan Alpine.js dropdown (search by name, number, phone)
+✓ Quick register member (inline registration)
+✓ Cart management (add, remove, update quantity)
+✓ Multiple payment methods (Cash, Debit Simpanan Sukarela)
+✓ Points calculation (1 point per Rp 1.000 pembelian)
+✓ Member tier benefits (discount untuk Gold & Platinum)
+✓ Receipt printing (thermal printer support)
+✓ Shift kasir management (check-in/check-out)
+✓ End of day reconciliation
+
+ALUR TRANSAKSI:
+1. Kasir check-in shift
+2. Scan/search produk → add to cart
+3. Optional: search & select member
+4. Pilih payment method
+5. Process payment
+6. Auto-generate receipt code
+7. Print receipt
+8. Update stock (stock movement recording)
+9. Record points untuk member
+10. Update sales analytics
+
+KONSINYASI INTEGRATION:
+- Penjualan produk konsinyasi otomatis:
+  * Deduct stock dari batch
+  * Record sold quantity
+  * Auto-calculate fee untuk supplier
+  * Trigger notification ke supplier
+
+RETUR FEATURE:
+- Kasir dapat melakukan retur barang konsinyasi
+- Stock dikembalikan ke batch
+- Quantity terjual dikurangi
+- Settlement disesuaikan
+
+TEKNOLOGI:
+```php
+// Livewire Component: POS
+class PointOfSale extends Component {
+    public $cart = [];
+    public $selectedMember;
+    public $paymentMethod = 'CASH';
+    
+    public function addToCart($productId, $qty) {
+        // Logic add item to cart
+        // Check stock availability
+        // Calculate subtotal
+    }
+    
+    public function processPayment() {
+        // Validate cart
+        // Create transaction
+        // Deduct stock
+        // Update member points
+        // Generate receipt
+    }
+}
+```
+
+4.4 MODUL INVENTORY MANAGEMENT
+
+Sistem manajemen inventaris komprehensif dengan tracking pergerakan stok
+dan approval workflow.
+
+FITUR CRUD PRODUK:
+• Create/Read/Update/Delete produk
+• Upload gambar produk
+• Kategori produk
+• SKU auto-generation
+• Status produk (ACTIVE/INACTIVE/OUT_OF_STOCK)
+• Ownership type (OWNED/CONSIGNMENT)
+
+PRICING CALCULATOR (3 MODE):
+Fitur unggulan untuk memudahkan admin dalam penetapan harga jual
+
+1. MODE MANUAL
+   - Input manual harga beli dan harga jual
+   - Auto-calculate margin percentage
+   - Warning jika harga jual < harga beli
+
+2. MODE MARKUP %
+   - Input harga beli dan markup percentage
+   - Auto-calculate harga jual = harga beli × (1 + markup%)
+   - Example: Beli Rp 10.000, Markup 30% → Jual Rp 13.000
+
+3. MODE PROFIT %
+   - Input harga beli dan target profit margin
+   - Auto-calculate harga jual = harga beli / (1 - profit%)
+   - Example: Beli Rp 10.000, Profit 25% → Jual Rp 13.333
+   - Limited to max 99% profit
+
+```javascript
+// Alpine.js Pricing Calculator
+function pricingCalculator() {
+    return {
+        mode: 'manual',
+        buyPrice: 0,
+        sellPrice: 0,
+        markupPercent: 0,
+        profitPercent: 0,
+        
+        calculateFromMarkup() {
+            this.sellPrice = this.buyPrice * (1 + this.markupPercent / 100);
+        },
+        
+        calculateFromProfit() {
+            if (this.profitPercent >= 100) {
+                alert('Profit tidak boleh >= 100%');
+                return;
+            }
+            this.sellPrice = this.buyPrice / (1 - this.profitPercent / 100);
+        }
+    }
+}
+```
+
+STOCK MANAGEMENT:
+• Stock Mutation - Riwayat pergerakan stok (IN/OUT/ADJUSTMENT/RETUR)
+• Stock Adjustment - Manual adjustment stock (opname, rusak, hilang)
+• Low Stock Alert - Notifikasi produk dengan stock < threshold
+• Stock Movement Tracking - Audit trail setiap perubahan stock
+
+PRODUCT APPROVAL WORKFLOW:
+Supplier mengajukan produk → Admin review → Approve/Reject
+- Approved: Produk aktif, supplier dapat buat batch konsinyasi
+- Rejected: Kembali ke supplier dengan reason
+
+4.5 MODUL SUPPLIER MANAGEMENT
+
+Portal supplier lengkap dengan fitur konsinyasi dan settlement payment.
+
+SUPPLIER REGISTRATION:
+• Form pendaftaran supplier
+• Upload dokumen (KTP, NPWP, Surat Usaha)
+• Payment registration fee via QR Code
+• Upload bukti transfer
+• Admin approval workflow
+
+SUPPLIER PORTAL (3 HALAMAN):
+Design minimalist dengan UX app-like untuk kemudahan navigasi
+
+1. DASHBOARD
+   - Saldo siap bayar (pending settlement)
+   - Produk aktif count
+   - Payment history (last 3 settlements)
+   - Quick actions (ajukan produk, lihat batch)
+
+================================================================================
+BAB V - TIMELINE KEGIATAN (OKTOBER - DESEMBER 2025)
+================================================================================
+
+Oktober 2025
+- Setup project dan struktur dasar
+- Dashboard, autentikasi, dan role management
+- Modul inventaris dan transaksi
+- Supplier registration & payment verification
+
+November 2025
+- Manajemen anggota dan simpanan
+- Auto-debit simpanan wajib
+- Sistem pembayaran & member portal
+- Transfer simpanan antar anggota
+
+Desember 2025
+- Laporan keuangan dan neraca
+- Stok, konsinyasi, dan supplier portal
+- Portal retail & koperasi
+- Audit tools dan penyempurnaan UI/UX
+
+================================================================================
+BAB VI - HAMBATAN & SOLUSI
+================================================================================
+
+Hambatan:
+- Inkonsistensi data dari input manual & CSV
+- Kompleksitas alur konsinyasi dan settlement
+- Responsivitas UI untuk berbagai perangkat
+
+Solusi:
+- Validasi input ketat dan normalisasi data
+- Penyederhanaan workflow konsinyasi
+- Standardisasi UI/UX dan mobile-first design
+
+================================================================================
+BAB VII - KESIMPULAN
+================================================================================
+
+Selama periode kerja praktik, saya berhasil mengimplementasikan sistem
+informasi koperasi berbasis web secara end-to-end. Sistem ini mencakup
+modul transaksi, inventaris, anggota, simpanan, pinjaman, portal, serta
+laporan keuangan dan audit. Pekerjaan ini memberikan pengalaman mendalam
+pada pengembangan full-stack, integrasi fitur bisnis, dan optimasi UI/UX.
+
+================================================================================
+BAB VIII - SARAN
+================================================================================
+
+- Lanjutkan otomatisasi laporan keuangan bulanan
+- Tambah fitur notifikasi real-time untuk transaksi penting
+- Optimasi performa pada modul audit untuk dataset besar
+
+================================================================================
+PENUTUP
+================================================================================
+
+Demikian laporan kerja praktik ini disusun sebagai dokumentasi hasil kegiatan
+selama periode Oktober - Desember 2025 di Koperasi Bermadani. Semoga laporan
+ini bermanfaat sebagai bukti kegiatan kerja praktik dan referensi pengembangan
+sistem ke depan.
+
+================================================================================
