@@ -310,6 +310,50 @@
         </div>
     </div>
 
+    {{-- Produktivitas Row --}}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        {{-- Durasi Shift --}}
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 flex items-center gap-4">
+            <div class="w-11 h-11 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class='bx bx-timer text-xl text-amber-600 dark:text-amber-400'></i>
+            </div>
+            <div class="min-w-0">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Durasi Shift</p>
+                @php $elapsed = $this->shiftElapsed; @endphp
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">
+                    {{ $elapsed['hours'] > 0 ? $elapsed['hours'].'j ' : '' }}{{ $elapsed['minutes'] }}m
+                </h3>
+                <p class="text-[10px] text-slate-400">Sejak {{ $this->currentShift->check_in_at->format('H:i') }}</p>
+            </div>
+        </div>
+
+        {{-- Jumlah Transaksi --}}
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 flex items-center gap-4">
+            <div class="w-11 h-11 bg-teal-100 dark:bg-teal-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class='bx bx-receipt text-xl text-teal-600 dark:text-teal-400'></i>
+            </div>
+            <div class="min-w-0">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Transaksi</p>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">{{ $this->todayTransactionsCount }} <span class="text-sm font-medium text-slate-400">trx</span></h3>
+                <p class="text-[10px] text-slate-400">Di shift ini</p>
+            </div>
+        </div>
+
+        {{-- Transaksi / Jam --}}
+        <div class="bg-card dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 flex items-center gap-4">
+            <div class="w-11 h-11 bg-rose-100 dark:bg-rose-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                <i class='bx bx-trending-up text-xl text-rose-600 dark:text-rose-400'></i>
+            </div>
+            <div class="min-w-0">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Produktivitas</p>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-tight">{{ $this->transactionsPerHour }} <span class="text-sm font-medium text-slate-400">trx/jam</span></h3>
+                <p class="text-[10px] text-slate-400">{{ $this->transactionsPerHour >= 5 ? '🔥 Lagi on fire!' : ($this->transactionsPerHour >= 2 ? '✅ Produktif' : '⏳ Baru mulai') }}</p>
+            </div>
+        </div>
+
+    </div>
+
     {{-- Main Grid --}}
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         

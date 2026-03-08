@@ -172,6 +172,30 @@ class Dashboard extends Component
         return $shift->opening_cash + $this->cashSales;
     }
 
+    public function getTransactionsPerHourProperty()
+    {
+        $shift = $this->currentShift;
+        if (!$shift) return 0;
+
+        $elapsedMinutes = $shift->check_in_at->diffInMinutes(now());
+        if ($elapsedMinutes < 1) return 0;
+
+        return round($this->todayTransactionsCount / ($elapsedMinutes / 60), 1);
+    }
+
+    public function getShiftElapsedProperty()
+    {
+        $shift = $this->currentShift;
+        if (!$shift) return ['hours' => 0, 'minutes' => 0, 'total_minutes' => 0];
+
+        $totalMinutes = $shift->check_in_at->diffInMinutes(now());
+        return [
+            'hours'         => intdiv($totalMinutes, 60),
+            'minutes'       => $totalMinutes % 60,
+            'total_minutes' => $totalMinutes,
+        ];
+    }
+
     public function getLowStockProductsProperty()
     {
         return Product::active()
