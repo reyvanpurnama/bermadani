@@ -81,12 +81,15 @@ class TerimaBrang extends Component
         DB::transaction(function () use ($batch) {
             $adjustedItems = [];
             $notes         = [];
+            $totalValue    = 0; // dihitung di dalam loop dari data aktual yg diterima
 
             foreach ($this->receiveItems as $ri) {
                 $item         = ConsignmentItem::with('product')->find($ri['itemId']);
                 $requestedQty = (int) $ri['requestedQty'];
                 $receivedQty  = (int) $ri['receivedQty'];
                 $damagedQty   = max(0, $requestedQty - $receivedQty);
+
+                if (!$item) continue; // item hilang dari DB, skip
 
                 // Update item
                 $item->update([
@@ -96,7 +99,10 @@ class TerimaBrang extends Component
                     'damagedQty'   => $damagedQty,
                 ]);
 
-                if ($receivedQty > 0) {
+                // Akumulasi totalValue dari data aktual (bukan dari collection lama)
+                $totalValue += $item->sellPrice * $receivedQty;
+
+                if ($receivedQty > 0 && $item->product) {
                     // Tambah stok produk
                     $item->product->increment('stock', $receivedQty);
 
@@ -113,8 +119,9 @@ class TerimaBrang extends Component
                     ]);
                 }
 
+                $productName = $item->product->name ?? "Item #{$item->id}";
                 if ($receivedQty !== $requestedQty) {
-                    $notes[] = "{$item->product->name}: diminta {$requestedQty}, diterima {$receivedQty}";
+                    $notes[] = "{$productName}: diminta {$requestedQty}, diterima {$receivedQty}";
                 }
 
                 $adjustedItems[] = [
@@ -128,9 +135,6 @@ class TerimaBrang extends Component
             if (!empty($notes)) {
                 $batchNote = (!empty($batchNote) ? $batchNote . "\n\n" : '') . "Penyesuaian Qty:\n" . implode("\n", $notes);
             }
-
-            // Hitung totalValue dari qty yang benar-benar diterima
-            $totalValue = $batch->items->sum(fn ($i) => $i->sellPrice * $i->receivedQty);
 
             $batch->update([
                 'status'     => 'ACTIVE',

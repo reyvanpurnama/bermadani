@@ -37,12 +37,17 @@ class LaporanSupplier extends Component
         if ($items->isEmpty()) return [];
 
         // Group by supplierId
+        // Filter item yang produknya masih ada dan punya supplier
+        $items = $items->filter(fn ($item) => $item->product && $item->product->supplier);
+
+        if ($items->isEmpty()) return [];
+
         $grouped = $items->groupBy(fn ($item) => $item->product->supplierId ?? 0);
 
         $result = [];
         foreach ($grouped as $supplierId => $supplierItems) {
             $supplier = $supplierItems->first()->product->supplier;
-            if (!$supplier) continue;
+            if (!$supplier || !$supplierId) continue;
 
             $products = $supplierItems->groupBy('productId')->map(function ($productItems) {
                 $first = $productItems->first();
