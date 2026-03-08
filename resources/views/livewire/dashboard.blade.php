@@ -262,10 +262,10 @@
                         </div>
                         <p
                             class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-1">
-                            Penjualan Kasir Hari Ini</p>
+                            Laba Bersih Saat Ini</p>
 
                         <h2 class="text-2xl font-bold text-slate-800 dark:text-white tracking-tight relative z-10">
-                            Rp {{ number_format($this->todayCashierSales, 0, ',', '.') }}
+                            Rp {{ number_format($this->netProfit, 0, ',', '.') }}
                         </h2>
 
                         <div class="flex items-center gap-2 mt-2 relative z-10">
