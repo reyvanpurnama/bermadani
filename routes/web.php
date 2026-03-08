@@ -357,6 +357,9 @@ Route::middleware(['auth', 'role:KASIR', 'log.activity'])->prefix('kasir')->grou
     Route::get('/transaksi/{id}', function ($id) {
         return view('admin.transactions.detail', ['transactionId' => $id]);
     })->name('kasir.transaction.detail');
+
+    // My Shift History
+    Route::get('/riwayat-shift', \App\Livewire\Kasir\ShiftHistory::class)->name('kasir.shift-history');
 });
 
 // Keep old /pos route for backward compatibility

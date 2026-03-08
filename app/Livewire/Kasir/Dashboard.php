@@ -123,7 +123,8 @@ class Dashboard extends Component
         $shift = $this->currentShift;
         if (!$shift) return 0;
 
-        return Transaction::where('date', '>=', $shift->check_in_at)
+        return Transaction::where('userId', Auth::id())
+            ->where('date', '>=', $shift->check_in_at)
             ->where('status', 'COMPLETED')
             ->sum('totalAmount');
     }
@@ -133,7 +134,8 @@ class Dashboard extends Component
         $shift = $this->currentShift;
         if (!$shift) return 0;
 
-        return Transaction::where('date', '>=', $shift->check_in_at)
+        return Transaction::where('userId', Auth::id())
+            ->where('date', '>=', $shift->check_in_at)
             ->where('status', 'COMPLETED')
             ->count();
     }
@@ -143,7 +145,8 @@ class Dashboard extends Component
         $shift = $this->currentShift;
         if (!$shift) return 0;
 
-        return Transaction::where('date', '>=', $shift->check_in_at)
+        return Transaction::where('userId', Auth::id())
+            ->where('date', '>=', $shift->check_in_at)
             ->where('status', 'COMPLETED')
             ->where('paymentMethod', 'CASH')
             ->sum('totalAmount');
@@ -154,7 +157,8 @@ class Dashboard extends Component
         $shift = $this->currentShift;
         if (!$shift) return 0;
 
-        return Transaction::where('date', '>=', $shift->check_in_at)
+        return Transaction::where('userId', Auth::id())
+            ->where('date', '>=', $shift->check_in_at)
             ->where('status', 'COMPLETED')
             ->whereIn('paymentMethod', ['DEBIT', 'CREDIT', 'QRIS', 'TRANSFER'])
             ->sum('totalAmount');
@@ -183,6 +187,7 @@ class Dashboard extends Component
         if (!$shift) return collect();
 
         return Transaction::with('member')
+            ->where('userId', Auth::id())
             ->where('date', '>=', $shift->check_in_at)
             ->latest('date')
             ->latest('id')

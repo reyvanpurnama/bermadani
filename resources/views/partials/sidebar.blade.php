@@ -71,6 +71,15 @@
                     class="sidebar-text text-xs {{ request()->routeIs('kasir.transactions*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
                     Transaksi</span>
             </a>
+
+            <a href="{{ route('kasir.shift-history') }}"
+                class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.shift-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <i
+                    class='bx bx-time-five text-sm mr-2 {{ request()->routeIs('kasir.shift-history') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                <span
+                    class="sidebar-text text-xs {{ request()->routeIs('kasir.shift-history') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Riwayat
+                    Shift</span>
+            </a>
         @else
             {{-- ADMIN --}}
 
