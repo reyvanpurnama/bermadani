@@ -219,6 +219,16 @@ class Dashboard extends Component
         return max(0, $totalIncome - $totalOutflow);
     }
 
+    // Penjualan kasir hari ini (sinkron untuk card dashboard)
+    public function getTodayCashierSalesProperty()
+    {
+        return Transaction::where('type', 'SALE')
+            ->where('status', 'COMPLETED')
+            ->where('isProduction', true)
+            ->whereDate('date', today())
+            ->sum('totalAmount') ?? 0;
+    }
+
     public function getProfitGrowthProperty()
     {
         // Get previous period data
