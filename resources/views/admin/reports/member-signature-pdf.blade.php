@@ -111,6 +111,7 @@
         <div class="filters">
             Filter aktif:
             Status {{ $filters['status'] }},
+            Tipe {{ $filters['memberType'] ?: 'Semua' }},
             Tier {{ $filters['tier'] ?: 'Semua' }},
             Unit {{ $filters['unitKerja'] ?: 'Semua' }},
             Tanggal gabung {{ $filters['joinDate'] ?: 'Semua' }},

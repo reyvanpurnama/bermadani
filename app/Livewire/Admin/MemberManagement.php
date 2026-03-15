@@ -107,8 +107,20 @@ class MemberManagement extends Component
 
     public function downloadSignaturePdf()
     {
-        $members = $this->buildMembersQuery()
+        $members = Member::query()
             ->where('status', 'ACTIVE')
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('name', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('email', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('phone', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('unitKerja', 'LIKE', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->filterTier, fn($query) => $query->where('tier', $this->filterTier))
+            ->when($this->filterUnitKerja, fn($query) => $query->where('unitKerja', $this->filterUnitKerja))
+            ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate))
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')
             ->get();
@@ -122,6 +134,7 @@ class MemberManagement extends Component
             'members' => $members,
             'filters' => [
                 'status' => 'ACTIVE',
+                'memberType' => 'Koperasi + Retail',
                 'tier' => $this->filterTier,
                 'unitKerja' => $this->filterUnitKerja,
                 'joinDate' => $this->filterJoinDate,
