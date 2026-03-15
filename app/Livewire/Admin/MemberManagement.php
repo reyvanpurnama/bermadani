@@ -2,8 +2,11 @@
 
 namespace App\Livewire\Admin;
 
+use App\Imports\MemberImport;
 use App\Models\Member;
 use App\Services\MemberService;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
@@ -31,6 +34,7 @@ class MemberManagement extends Component
         'filterStatus' => ['except' => ''],
         'filterTier' => ['except' => ''],
         'filterUnitKerja' => ['except' => ''],
+        'filterJoinDate' => ['except' => ''],
     ];
 
     protected $memberService;
@@ -40,12 +44,103 @@ class MemberManagement extends Component
         $this->memberService = $memberService;
     }
 
-    // ... (rest of methods until getMembersProperty)
+    public function switchTab($tab)
+    {
+        $this->activeTab = $tab;
+        $this->resetPage();
+    }
 
-    public function getMembersProperty()
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterStatus()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterTier()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterUnitKerja()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterJoinDate()
+    {
+        $this->resetPage();
+    }
+
+    public function openImportModal()
+    {
+        $this->showImportModal = true;
+    }
+
+    public function closeImportModal()
+    {
+        $this->showImportModal = false;
+        $this->reset(['importFile']);
+    }
+
+    public function importMembers()
+    {
+        $this->validate([
+            'importFile' => 'required|file|mimes:xlsx,xls|max:10240',
+        ]);
+
+        try {
+            $import = new MemberImport($this->memberService);
+            Excel::import($import, $this->importFile->getRealPath());
+
+            $this->importSummary = $import->getSummary();
+            session()->flash('success', 'Import data anggota selesai diproses.');
+            $this->reset(['importFile']);
+            $this->resetPage();
+        } catch (\Throwable $e) {
+            session()->flash('error', 'Gagal import anggota: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadSignaturePdf()
+    {
+        $members = $this->buildMembersQuery()
+            ->where('status', 'ACTIVE')
+            ->select(['id', 'name'])
+            ->orderBy('name', 'asc')
+            ->get();
+
+        if ($members->isEmpty()) {
+            session()->flash('error', 'Tidak ada data anggota untuk diexport.');
+            return null;
+        }
+
+        $pdf = Pdf::loadView('admin.reports.member-signature-pdf', [
+            'members' => $members,
+            'filters' => [
+                'status' => 'ACTIVE',
+                'tier' => $this->filterTier,
+                'unitKerja' => $this->filterUnitKerja,
+                'joinDate' => $this->filterJoinDate,
+                'search' => $this->search,
+            ],
+            'generatedAt' => now()->format('d-m-Y H:i'),
+        ])->setPaper('a4', 'portrait');
+
+        $fileName = 'Daftar_Tanda_Tangan_Paket_Lebaran_' . now()->format('Ymd_His') . '.pdf';
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $fileName);
+    }
+
+    private function buildMembersQuery()
     {
         return Member::query()
-            ->where('isMemberKoperasi', true) // STRICT: Only Coop Members
+            ->where('isMemberKoperasi', true)
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')
@@ -58,7 +153,12 @@ class MemberManagement extends Component
             ->when($this->filterStatus, fn($query) => $query->where('status', $this->filterStatus))
             ->when($this->filterTier, fn($query) => $query->where('tier', $this->filterTier))
             ->when($this->filterUnitKerja, fn($query) => $query->where('unitKerja', $this->filterUnitKerja))
-            ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate))
+            ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate));
+    }
+
+    public function getMembersProperty()
+    {
+        return $this->buildMembersQuery()
             ->with('user')
             ->orderBy('name', 'asc')
             ->paginate(15);
@@ -82,7 +182,7 @@ class MemberManagement extends Component
         $member = Member::findOrFail($memberId);
         $member->update(['status' => 'SUSPENDED']);
         
-        session()->flash('message', "Member {$member->name} berhasil dibekukan.");
+        session()->flash('success', "Member {$member->name} berhasil dibekukan.");
     }
 
     public function activateMember($memberId)
@@ -90,7 +190,7 @@ class MemberManagement extends Component
         $member = Member::findOrFail($memberId);
         $member->update(['status' => 'ACTIVE']);
         
-        session()->flash('message', "Member {$member->name} berhasil diaktifkan kembali.");
+        session()->flash('success', "Member {$member->name} berhasil diaktifkan kembali.");
     }
 
     public function render()

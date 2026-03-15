@@ -10,9 +10,9 @@
                 class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-emerald-500/20 transition-colors flex items-center gap-2">
                 <i class='bx bx-import text-lg'></i> Import Excel
             </button>
-            <button wire:click="$dispatch('export-csv')"
+            <button wire:click="downloadSignaturePdf"
                 class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[12px] font-bold shadow-sm transition-colors flex items-center gap-2">
-                <i class='bx bx-export'></i> Export CSV
+                <i class='bx bxs-file-pdf'></i> Export PDF TTD
             </button>
             <a href="{{ route('admin.members.create') }}"
                 class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[12px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
