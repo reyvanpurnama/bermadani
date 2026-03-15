@@ -106,17 +106,7 @@
     </div>
 
     <div class="meta">
-        <div>Tanggal cetak: {{ $generatedAt }}</div>
         <div>Total anggota: {{ $members->count() }} orang</div>
-        <div class="filters">
-            Filter aktif:
-            Status {{ $filters['status'] }},
-            Tipe {{ $filters['memberType'] ?: 'Semua' }},
-            Tier {{ $filters['tier'] ?: 'Semua' }},
-            Unit {{ $filters['unitKerja'] ?: 'Semua' }},
-            Tanggal gabung {{ $filters['joinDate'] ?: 'Semua' }},
-            Pencarian {{ $filters['search'] ?: '-' }}
-        </div>
     </div>
 
     <table>
