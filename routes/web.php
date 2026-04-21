@@ -397,3 +397,27 @@ Route::middleware(['auth', 'member.type'])->prefix('membership')->name('membersh
         return redirect()->route('membership.dashboard');
     });
 });
+
+// Emergency Route to fix February 2026 Snapshot
+Route::get('/fix-pembukuan-februari', function () {
+    $report = new \App\Livewire\Admin\MonthlyFinancialReport();
+    $report->selectedMonth = '02';
+    $report->selectedYear = '2026';
+    
+    $method = new \ReflectionMethod(\App\Livewire\Admin\MonthlyFinancialReport::class, 'collectReportData');
+    $method->setAccessible(true);
+    
+    $data = $method->invoke($report);
+
+    \App\Models\FinancialReportSnapshot::updateOrCreate(
+        ['month' => 2, 'year' => 2026],
+        [
+            'data' => $data,
+            'status' => 'EXECUTED',
+            'executed_by' => auth()->id() ?? 1
+        ]
+    );
+
+    return 'Berhasil Bro! Laporan Februari sekarang sudah terkunci dan masuk ke DB pembukuan dengan data terbaru.';
+});
+
