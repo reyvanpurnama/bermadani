@@ -24,6 +24,7 @@ class WorkLogManager extends Component
     // Filters
     public $filterMonth;
     public $filterYear;
+    public $filterPeriod = '';
     public $filterDeveloper = '';
 
     // Modal
@@ -34,6 +35,12 @@ class WorkLogManager extends Component
     public $showImportModal = false;
     public $importFile;
     public $importSummary = null;
+
+    public $latestAvailablePeriodLabel = null;
+
+    protected $queryString = [
+        'filterPeriod' => ['except' => ''],
+    ];
 
     protected $rules = [
         'developerName' => 'required|string|min:2|max:100',
@@ -46,10 +53,96 @@ class WorkLogManager extends Component
 
     public function mount()
     {
-        $this->filterMonth = now()->month;
-        $this->filterYear = now()->year;
+        $latestWorkLog = WorkLog::select('date')
+            ->whereNotNull('date')
+            ->orderByDesc('date')
+            ->first();
+
+        if ($latestWorkLog) {
+            $latestDate = Carbon::parse($latestWorkLog->date);
+            $this->filterMonth = $latestDate->month;
+            $this->filterYear = $latestDate->year;
+            $this->filterPeriod = $latestDate->format('Y-m');
+            $this->latestAvailablePeriodLabel = $latestDate->locale('id')->translatedFormat('F Y');
+        } else {
+            $this->filterMonth = now()->month;
+            $this->filterYear = now()->year;
+            $this->filterPeriod = now()->format('Y-m');
+            $this->latestAvailablePeriodLabel = now()->locale('id')->translatedFormat('F Y');
+        }
+
         $this->date = now()->format('Y-m-d');
         $this->developerName = '';
+    }
+
+    public function setCurrentPeriod()
+    {
+        $current = now();
+        $this->filterMonth = $current->month;
+        $this->filterYear = $current->year;
+        $this->filterPeriod = $current->format('Y-m');
+        $this->resetPage();
+    }
+
+    public function setPreviousMonthPeriod()
+    {
+        $previous = now()->subMonth();
+        $this->filterMonth = $previous->month;
+        $this->filterYear = $previous->year;
+        $this->filterPeriod = $previous->format('Y-m');
+        $this->resetPage();
+    }
+
+    public function setLastThreeMonthsPeriod()
+    {
+        $latestWorkLog = WorkLog::select('date')
+            ->whereNotNull('date')
+            ->orderByDesc('date')
+            ->first();
+
+        $baseDate = $latestWorkLog ? Carbon::parse($latestWorkLog->date) : now();
+        $threeMonthsBack = $baseDate->copy()->subMonthsNoOverflow(2);
+
+        $this->filterMonth = $threeMonthsBack->month;
+        $this->filterYear = $threeMonthsBack->year;
+        $this->filterPeriod = $threeMonthsBack->format('Y-m');
+        $this->resetPage();
+    }
+
+    public function setLatestAvailablePeriod()
+    {
+        $latestWorkLog = WorkLog::select('date')
+            ->whereNotNull('date')
+            ->orderByDesc('date')
+            ->first();
+
+        if (! $latestWorkLog) {
+            return;
+        }
+
+        $latestDate = Carbon::parse($latestWorkLog->date);
+        $this->filterMonth = $latestDate->month;
+        $this->filterYear = $latestDate->year;
+        $this->filterPeriod = $latestDate->format('Y-m');
+        $this->latestAvailablePeriodLabel = $latestDate->locale('id')->translatedFormat('F Y');
+        $this->resetPage();
+    }
+
+    public function updatedFilterPeriod($value)
+    {
+        if (! preg_match('/^\d{4}-\d{2}$/', (string) $value)) {
+            return;
+        }
+
+        [$year, $month] = explode('-', $value);
+        $this->filterYear = (int) $year;
+        $this->filterMonth = (int) $month;
+        $this->resetPage();
+    }
+
+    public function updatedFilterDeveloper()
+    {
+        $this->resetPage();
     }
 
     // ========== Import CSV ==========
@@ -217,9 +310,7 @@ class WorkLogManager extends Component
     // ========== Export PDF ==========
     public function downloadPDF()
     {
-        $logs = WorkLog::whereYear('date', $this->filterYear)
-            ->whereMonth('date', $this->filterMonth)
-            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper))
+        $logs = $this->getFilteredLogsQuery()
             ->orderBy('developerName')
             ->orderBy('date')
             ->get();
@@ -341,11 +432,27 @@ class WorkLogManager extends Component
             ->pluck('developerName');
     }
 
+    public function getAvailablePeriodsProperty()
+    {
+        return WorkLog::selectRaw('YEAR(date) as year, MONTH(date) as month')
+            ->whereNotNull('date')
+            ->distinct()
+            ->orderByDesc('year')
+            ->orderByDesc('month')
+            ->get()
+            ->map(function ($item) {
+                $periodDate = Carbon::createFromDate((int) $item->year, (int) $item->month, 1);
+
+                return [
+                    'value' => $periodDate->format('Y-m'),
+                    'label' => $periodDate->locale('id')->translatedFormat('F Y'),
+                ];
+            });
+    }
+
     public function getLogsProperty()
     {
-        return WorkLog::whereYear('date', $this->filterYear)
-            ->whereMonth('date', $this->filterMonth)
-            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper))
+        return $this->getFilteredLogsQuery()
             ->orderBy('date', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
@@ -353,9 +460,7 @@ class WorkLogManager extends Component
 
     public function getStatsProperty()
     {
-        $query = WorkLog::whereYear('date', $this->filterYear)
-            ->whereMonth('date', $this->filterMonth)
-            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper));
+        $query = $this->getFilteredLogsQuery();
 
         $totalHours = (clone $query)->sum('hoursWorked');
         $totalAmount = (clone $query)->sum('totalAmount');
@@ -372,12 +477,22 @@ class WorkLogManager extends Component
         ];
     }
 
+    private function getFilteredLogsQuery()
+    {
+        return WorkLog::query()
+            ->whereYear('date', $this->filterYear)
+            ->whereMonth('date', $this->filterMonth)
+            ->when($this->filterDeveloper, fn($q) => $q->where('developerName', $this->filterDeveloper));
+    }
+
     public function render()
     {
         return view('livewire.developer.work-log-manager', [
             'logs' => $this->logs,
             'stats' => $this->stats,
             'developerNames' => $this->developerNames,
+            'availablePeriods' => $this->availablePeriods,
+            'activePeriodLabel' => Carbon::createFromDate($this->filterYear, $this->filterMonth, 1)->locale('id')->translatedFormat('F Y'),
         ])->layout('layouts.admin');
     }
 }
