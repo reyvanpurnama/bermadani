@@ -13,6 +13,37 @@
         </div>
     </div>
 
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Periode Aktif</span>
+        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 text-[11px] font-bold border border-indigo-100 dark:border-indigo-500/20">
+            <i class='bx bx-calendar'></i> {{ $activePeriodLabel }}
+        </span>
+        @if($latestAvailablePeriodLabel && $latestAvailablePeriodLabel !== $activePeriodLabel)
+            <span class="text-[10px] text-slate-400">Periode data terbaru: {{ $latestAvailablePeriodLabel }}</span>
+        @endif
+    </div>
+
+    <div class="flex flex-wrap gap-2 mb-5">
+        <button wire:click="setCurrentPeriod"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            Bulan Ini
+        </button>
+        <button wire:click="setLatestAvailablePeriod"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors">
+            Data Terbaru
+        </button>
+        <div class="ml-auto inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 p-1 bg-white dark:bg-darkCard">
+            <button wire:click="setViewMode('cards')"
+                class="px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors {{ $viewMode === 'cards' ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                Card
+            </button>
+            <button wire:click="setViewMode('table')"
+                class="px-3 py-1.5 rounded-md text-[11px] font-bold transition-colors {{ $viewMode === 'table' ? 'bg-indigo-600 text-white' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                Table
+            </button>
+        </div>
+    </div>
+
     {{-- Flash Messages --}}
     @if (session()->has('success'))
         <div
@@ -104,7 +135,7 @@
     </div>
 
     {{-- Developer Summary --}}
-    @if($devSummary->count() > 0)
+    @if($viewMode === 'table' && $devSummary->count() > 0)
         <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-4 mb-6">
             <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                 <i class='bx bx-group'></i> Ringkasan per Developer
@@ -133,25 +164,99 @@
         </div>
     @endif
 
+    @if($viewMode === 'cards')
+        <div class="space-y-4 mb-6">
+            @forelse($developerCards as $card)
+                <details class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden group">
+                    <summary class="list-none cursor-pointer p-4 sm:p-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md shadow-indigo-500/20">
+                                    {{ strtoupper(substr($card['developerName'], 0, 1)) }}
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">{{ $card['developerName'] }}</h3>
+                                    <p class="text-[11px] text-slate-400">{{ number_format($card['totalHours'], 1) }} jam • Rp {{ number_format($card['totalAmount'], 0, ',', '.') }}</p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                @if($card['pendingCount'] > 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20">PENDING {{ $card['pendingCount'] }}</span>
+                                @endif
+                                @if($card['approvedCount'] > 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20">APPROVED {{ $card['approvedCount'] }}</span>
+                                @endif
+                                @if($card['paidCount'] > 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20">PAID {{ $card['paidCount'] }}</span>
+                                @endif
+                                @if($card['rejectedCount'] > 0)
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">REJECTED {{ $card['rejectedCount'] }}</span>
+                                @endif
+                                <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">Detail</span>
+                                <i class='bx bx-chevron-down text-indigo-500 text-lg transition-transform group-open:rotate-180'></i>
+                            </div>
+                        </div>
+                    </summary>
+                    <div class="border-t border-slate-100 dark:border-slate-700">
+                        <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                            @foreach($card['logs'] as $log)
+                                <div class="p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                                    <div class="min-w-0">
+                                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                                            <span class="text-[12px] font-bold text-slate-700 dark:text-slate-200">{{ $log->date->translatedFormat('d M Y') }}</span>
+                                            <span class="text-[11px] text-slate-400">{{ number_format($log->hoursWorked, 1) }} jam</span>
+                                            <span class="text-[11px] font-bold text-primary dark:text-indigo-400">Rp {{ number_format($log->totalAmount, 0, ',', '.') }}</span>
+                                        </div>
+                                        <p class="text-[12px] text-slate-500 dark:text-slate-400 truncate" title="{{ $log->description }}">{{ $log->description }}</p>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold uppercase
+                                            @if($log->status === 'PENDING') bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400 border border-amber-100 dark:border-amber-500/20
+                                            @elseif($log->status === 'APPROVED') bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20
+                                            @elseif($log->status === 'PAID') bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20
+                                            @else bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20
+                                            @endif">
+                                            {{ $log->statusLabel }}
+                                        </span>
+                                        @if($log->status === 'PENDING')
+                                            <button wire:click="approveSingle({{ $log->id }})"
+                                                class="w-7 h-7 flex items-center justify-center rounded bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 hover:bg-emerald-100 hover:text-emerald-700 transition-colors" title="Approve">
+                                                <i class='bx bx-check text-lg'></i>
+                                            </button>
+                                            <button wire:click="rejectLog({{ $log->id }})" wire:confirm="Yakin tolak log ini?"
+                                                class="w-7 h-7 flex items-center justify-center rounded bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 hover:bg-rose-100 hover:text-rose-700 transition-colors" title="Reject">
+                                                <i class='bx bx-x text-lg'></i>
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </details>
+            @empty
+                <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 px-4 py-8 text-center text-slate-500">
+                    <i class='bx bx-calendar-x text-4xl mb-2'></i>
+                    <p class="font-semibold text-slate-700 dark:text-slate-200">Belum ada log kerja untuk {{ $activePeriodLabel }}.</p>
+                    <p class="text-[11px] mt-1 text-slate-400">Coba pindah ke periode data terbaru atau bulan lain yang sudah ada isinya.</p>
+                </div>
+            @endforelse
+        </div>
+    @endif
+
     {{-- Filters --}}
     <div
         class="flex flex-wrap gap-4 mb-6 bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700">
         <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Bulan</label>
-            <select wire:model.live="filterMonth"
+            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Periode</label>
+            <select wire:model.live="filterPeriod"
                 class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
-                @for($m = 1; $m <= 12; $m++)
-                    <option value="{{ $m }}">{{ \Carbon\Carbon::create()->month($m)->translatedFormat('F') }}</option>
-                @endfor
-            </select>
-        </div>
-        <div>
-            <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Tahun</label>
-            <select wire:model.live="filterYear"
-                class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
-                @for($y = date('Y'); $y >= 2024; $y--)
-                    <option value="{{ $y }}">{{ $y }}</option>
-                @endfor
+                @if($filterPeriod && !$availablePeriods->contains(fn($period) => $period['value'] === $filterPeriod))
+                    <option value="{{ $filterPeriod }}">{{ $activePeriodLabel }} (Belum ada data)</option>
+                @endif
+                @foreach($availablePeriods as $period)
+                    <option value="{{ $period['value'] }}">{{ $period['label'] }}</option>
+                @endforeach
             </select>
         </div>
         <div>
@@ -184,7 +289,7 @@
     </div>
 
     {{-- Bulk Actions --}}
-    @if(count($selectedLogs) > 0)
+    @if($viewMode === 'table' && count($selectedLogs) > 0)
         <div
             class="bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30 rounded-xl p-4 mb-4 flex flex-wrap items-center justify-between gap-4 sticky top-4 z-20 shadow-lg shadow-indigo-100 dark:shadow-none backdrop-blur-sm">
             <span class="text-sm font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
@@ -204,6 +309,7 @@
     @endif
 
     {{-- Table --}}
+    @if($viewMode === 'table')
     <div
         class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
@@ -293,7 +399,18 @@
                         <tr>
                             <td colspan="8" class="px-4 py-8 text-center text-slate-500">
                                 <i class='bx bx-calendar-x text-4xl mb-2'></i>
-                                <p>Belum ada log kerja untuk periode ini.</p>
+                                <p class="font-semibold text-slate-700 dark:text-slate-200">Belum ada log kerja untuk {{ $activePeriodLabel }}.</p>
+                                <p class="text-[11px] mt-1 text-slate-400">Coba pindah ke periode data terbaru atau bulan lain yang sudah ada isinya.</p>
+                                <div class="mt-3 flex items-center justify-center gap-2">
+                                    <button wire:click="setLatestAvailablePeriod"
+                                        class="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+                                        Data Terbaru
+                                    </button>
+                                    <button wire:click="setCurrentPeriod"
+                                        class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                                        Bulan Ini
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -307,4 +424,5 @@
             </div>
         @endif
     </div>
+    @endif
 </div>
