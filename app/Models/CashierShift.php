@@ -41,8 +41,15 @@ class CashierShift extends Model
 
     public function transactions()
     {
-        return Transaction::where('date', '>=', $this->check_in_at)
-            ->when($this->check_out_at, fn($q) => $q->where('date', '<=', $this->check_out_at));
+        return Transaction::where(function ($query) {
+            $query->where('cashierShiftId', $this->id)
+                ->orWhere(function ($fallback) {
+                    $fallback->where('userId', $this->user_id)
+                        ->where('date', '>=', $this->check_in_at)
+                        ->when($this->check_out_at, fn ($q) => $q->where('date', '<=', $this->check_out_at))
+                        ->whereNull('cashierShiftId');
+                });
+        });
     }
 
     // Check if shift is currently open
@@ -62,8 +69,7 @@ class CashierShift extends Model
     // Calculate shift summary
     public function calculateSummary()
     {
-        $transactions = Transaction::where('date', '>=', $this->check_in_at)
-            ->when($this->check_out_at, fn($q) => $q->where('date', '<=', $this->check_out_at))
+        $transactions = $this->transactions()
             ->where('status', 'COMPLETED')
             ->get();
 
@@ -72,7 +78,7 @@ class CashierShift extends Model
         $this->total_cash_sales = $transactions->where('paymentMethod', 'CASH')->sum('totalAmount');
         $this->total_non_cash_sales = $transactions->where('paymentMethod', '!=', 'CASH')->sum('totalAmount');
         $this->expected_cash = $this->opening_cash + $this->total_cash_sales;
-        
+
         if ($this->closing_cash !== null) {
             $this->difference = $this->closing_cash - $this->expected_cash;
         }
@@ -90,6 +96,7 @@ class CashierShift extends Model
     public function getDurationAttribute()
     {
         $end = $this->check_out_at ?? now();
+
         return $this->check_in_at->diffForHumans($end, true);
     }
 }

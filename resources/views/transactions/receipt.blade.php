@@ -155,6 +155,7 @@
                 <span>
                     @if($transaction->paymentMethod === 'CASH') 💵 Tunai
                     @elseif($transaction->paymentMethod === 'TRANSFER') 🏦 Transfer
+                    @elseif($transaction->paymentMethod === 'SUKARELA') 👛 Simpanan
                     @else 💳 Kredit
                     @endif
                 </span>

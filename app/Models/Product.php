@@ -105,27 +105,30 @@ class Product extends Model
 
     public function getMarginAttribute()
     {
-        if (!$this->sellPrice || !$this->buyPrice) {
+        if (! $this->sellPrice || ! $this->buyPrice) {
             return 0;
         }
+
         return $this->sellPrice - $this->buyPrice;
     }
 
     // Explicit accessor for Markup % ((Sell - Buy) / Buy)
     public function getMarkupAttribute()
     {
-        if (!$this->buyPrice || $this->buyPrice == 0) {
+        if (! $this->buyPrice || $this->buyPrice == 0) {
             return 0;
         }
+
         return (($this->sellPrice - $this->buyPrice) / $this->buyPrice) * 100;
     }
 
     // Explicit accessor for Gross Margin % ((Sell - Buy) / Sell)
     public function getGrossMarginAttribute()
     {
-        if (!$this->sellPrice || $this->sellPrice == 0) {
+        if (! $this->sellPrice || $this->sellPrice == 0) {
             return 0;
         }
+
         return (($this->sellPrice - $this->buyPrice) / $this->sellPrice) * 100;
     }
 
@@ -169,7 +172,7 @@ class Product extends Model
         return $this;
     }
 
-    public function reduceStock($quantity, $movementType = 'SALE_OUT', $note = null)
+    public function reduceStock($quantity, $movementType = 'SALE_OUT', $note = null, $referenceType = null, $referenceId = null)
     {
         if ($this->stock < $quantity) {
             throw new \Exception('Insufficient stock');
@@ -180,6 +183,8 @@ class Product extends Model
         $this->stockMovements()->create([
             'movementType' => $movementType,
             'quantity' => -$quantity,
+            'referenceType' => $referenceType,
+            'referenceId' => $referenceId,
             'note' => $note,
             'occurredAt' => now(),
         ]);
@@ -199,8 +204,10 @@ class Product extends Model
 
     public function getGrossProfitMarginAttribute()
     {
-        if ($this->sellPrice == 0)
+        if ($this->sellPrice == 0) {
             return 0;
+        }
+
         return ($this->grossProfit / $this->sellPrice) * 100;
     }
 }

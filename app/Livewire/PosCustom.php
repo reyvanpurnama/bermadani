@@ -5,33 +5,46 @@ namespace App\Livewire;
 use App\Models\ActivityLog;
 use App\Models\CashierShift;
 use App\Models\Category;
-use App\Models\ConsignmentBatch;
 use App\Models\Member;
 use App\Models\Product;
-use App\Models\Transaction;
-use App\Models\TransactionItem;
+use App\Services\POSCheckoutService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
+use Throwable;
 
 class PosCustom extends Component
 {
     public $search = '';
+
     public $categoryFilter = '';
+
     public $cart = [];
+
     public $selectedMember = null;
+
     public $members = []; // All active members for client-side search
 
     public $showPaymentModal = false;
+
     public $paymentMethod = 'CASH';
+
     public $cashReceived = 0;
+
     public $note = '';
+
+    public $checkoutToken = null;
 
     public $lastInvoice = null;
 
     public $showNewMemberModal = false;
+
     public $newMemberName = '';
+
     public $newMemberPhone = '';
+
     public $newMemberGender = 'MALE'; // Default
+
     public $newMemberUnit = '';
 
     public function mount()
@@ -39,8 +52,9 @@ class PosCustom extends Component
         // Block kasir yang belum check-in
         if (auth()->user()->isKasir()) {
             $hasActiveShift = CashierShift::getOpenShift(auth()->id());
-            if (!$hasActiveShift) {
+            if (! $hasActiveShift) {
                 session()->flash('error', 'Kamu harus check-in terlebih dahulu sebelum melakukan transaksi');
+
                 return redirect()->route('kasir.dashboard');
             }
         }
@@ -54,6 +68,7 @@ class PosCustom extends Component
         $this->members = Member::select('id', 'name', 'nomorAnggota', 'phone', 'unitKerja', 'tier', 'points')
             ->where('status', 'ACTIVE')
             ->orderBy('name')
+            ->limit(300)
             ->get()
             ->toArray();
     }
@@ -80,15 +95,15 @@ class PosCustom extends Component
             $phone = preg_replace('/\D/', '', $phone);
             // If starts with 62 (country code), replace with 0
             if (str_starts_with($phone, '62')) {
-                $phone = '0' . substr($phone, 2);
+                $phone = '0'.substr($phone, 2);
             }
             // If starts with 8 (without leading 0), prepend 0
             if (str_starts_with($phone, '8')) {
-                $phone = '0' . $phone;
+                $phone = '0'.$phone;
             }
 
             // 1. Create User Account
-            $dummyEmail = $phone . '@bermadani.id';
+            $dummyEmail = $phone.'@bermadani.id';
 
             // Check if user exists (by email/phone logic - simplified)
             if (\App\Models\User::where('email', $dummyEmail)->exists()) {
@@ -119,8 +134,8 @@ class PosCustom extends Component
             // 3. Create Member Minimarket (for loyalty program)
             \App\Models\MemberMinimarket::create([
                 'userId' => $user->id,
-                'memberNumber' => 'MM-' . date('y') . '-' . str_pad(\App\Models\MemberMinimarket::whereYear('created_at', date('Y'))->count() + 1, 5, '0', STR_PAD_LEFT),
-                'cardNumber' => 'BC' . date('y') . str_pad(mt_rand(1, 9999999), 7, '0', STR_PAD_LEFT),
+                'memberNumber' => 'MM-'.date('y').'-'.str_pad(\App\Models\MemberMinimarket::whereYear('created_at', date('Y'))->count() + 1, 5, '0', STR_PAD_LEFT),
+                'cardNumber' => 'BC'.date('y').str_pad(mt_rand(1, 9999999), 7, '0', STR_PAD_LEFT),
                 'points' => 0,
                 'totalSpent' => 0,
                 'status' => 'ACTIVE',
@@ -138,21 +153,31 @@ class PosCustom extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal membuat member: ' . $e->getMessage()]);
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal membuat member: '.$e->getMessage()]);
         }
     }
 
     public function addToCart($productId)
     {
-        $product = Product::find($productId);
+        $product = Product::query()
+            ->select('id', 'name', 'sku', 'sellPrice', 'stock', 'isActive', 'status', 'approvalStatus')
+            ->find($productId);
 
-        if (!$product || !$product->isActive) {
+        if (! $product || ! $product->isActive || $product->status !== 'ACTIVE') {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Produk tidak tersedia']);
+
+            return;
+        }
+
+        if ($product->approvalStatus && $product->approvalStatus !== 'APPROVED') {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Produk belum disetujui']);
+
             return;
         }
 
         if ($product->stock < 1) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Stok produk habis']);
+
             return;
         }
 
@@ -183,18 +208,66 @@ class PosCustom extends Component
         }
     }
 
+    public function addSearchResultToCart()
+    {
+        $term = trim($this->search);
+
+        if ($term === '') {
+            return;
+        }
+
+        $baseQuery = Product::query()
+            ->where('isActive', true)
+            ->where('status', 'ACTIVE')
+            ->where('stock', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('approvalStatus')
+                    ->orWhere('approvalStatus', 'APPROVED');
+            });
+
+        $product = (clone $baseQuery)
+            ->where('sku', $term)
+            ->first();
+
+        if (! $product) {
+            $matches = (clone $baseQuery)
+                ->where(function ($query) use ($term) {
+                    $query->where('name', 'like', '%'.$term.'%')
+                        ->orWhere('sku', 'like', '%'.$term.'%');
+                })
+                ->limit(2)
+                ->get();
+
+            if ($matches->count() === 1) {
+                $product = $matches->first();
+            }
+        }
+
+        if (! $product) {
+            $this->dispatch('notify', ['type' => 'warning', 'message' => 'Produk belum spesifik. Pilih dari daftar.']);
+
+            return;
+        }
+
+        $this->addToCart($product->id);
+        $this->search = '';
+    }
+
     public function updateQuantity($index, $newQuantity)
     {
-        if (!isset($this->cart[$index]))
+        if (! isset($this->cart[$index])) {
             return;
+        }
 
         if ($newQuantity < 1) {
             $this->removeFromCart($index);
+
             return;
         }
 
         if ($newQuantity > $this->cart[$index]['stock']) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Stok tidak cukup']);
+
             return;
         }
 
@@ -212,6 +285,10 @@ class PosCustom extends Component
     {
         $this->cart = [];
         $this->selectedMember = null;
+        $this->checkoutToken = null;
+        $this->paymentMethod = 'CASH';
+        $this->cashReceived = 0;
+        $this->note = '';
     }
 
     public function selectMember($memberId)
@@ -238,9 +315,11 @@ class PosCustom extends Component
     {
         if (empty($this->cart)) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Keranjang kosong']);
+
             return;
         }
         $this->showPaymentModal = true;
+        $this->checkoutToken ??= (string) Str::uuid();
         $this->cashReceived = $this->getCartTotalProperty();
     }
 
@@ -253,112 +332,65 @@ class PosCustom extends Component
 
     public function processPayment()
     {
+        if (empty($this->cart)) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Keranjang kosong']);
+
+            return;
+        }
+
         // Validate cash payment
         if ($this->paymentMethod === 'CASH' && $this->cashReceived < $this->getCartTotalProperty()) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Uang tidak cukup']);
+
             return;
         }
 
         // Validate SUKARELA payment - must have member and sufficient balance
         if ($this->paymentMethod === 'SUKARELA') {
-            if (!$this->selectedMember) {
+            if (! $this->selectedMember) {
                 $this->dispatch('notify', ['type' => 'error', 'message' => 'Pilih member terlebih dahulu']);
+
                 return;
             }
             $member = Member::find($this->selectedMember['id']);
-            if (!$member || $member->simpananSukarela < $this->getCartTotalProperty()) {
+            if (! $member || $member->simpananSukarela < $this->getCartTotalProperty()) {
                 $this->dispatch('notify', ['type' => 'error', 'message' => 'Saldo Simpanan Sukarela tidak mencukupi']);
+
                 return;
             }
         }
 
-        DB::beginTransaction();
+        $this->checkoutToken ??= (string) Str::uuid();
+
         try {
-            // Buat transaksi dulu tanpa invoice number — ID auto-increment jadi patokan unik
-            $transaction = Transaction::create([
-                'invoiceNumber' => 'PENDING-' . uniqid(),   // sementara, dijamin unik
-                'memberId' => $this->selectedMember['id'] ?? null,
-                'userId' => auth()->id(),
-                'type' => 'SALE',
-                'totalAmount' => $this->getCartTotalProperty(),
-                'paymentMethod' => $this->paymentMethod,
-                'status' => 'COMPLETED',
-                'note' => $this->note,
-                'date' => now(),
-            ]);
-
-            // Invoice number pakai ID auto-increment — dijamin tidak pernah duplikat
-            $invoiceNumber = 'INV-' . date('Ymd') . '-' . str_pad($transaction->id, 4, '0', STR_PAD_LEFT);
-            $transaction->update(['invoiceNumber' => $invoiceNumber]);
-
-            foreach ($this->cart as $item) {
-                // lockForUpdate() → SELECT ... FOR UPDATE
-                // Row di-lock sampai transaksi commit; kasir lain yang akses produk sama akan WAIT
-                // Ini mencegah stock negatif akibat race condition TOCTOU
-                $product = Product::lockForUpdate()->find($item['productId']);
-
-                if (!$product || $product->stock < $item['quantity']) {
-                    throw new \Exception('Stok ' . ($product->name ?? 'produk') . ' tidak mencukupi (sisa: ' . ($product->stock ?? 0) . ')');
-                }
-
-                TransactionItem::create([
-                    'transactionId' => $transaction->id,
-                    'productId' => $product->id,
-                    'quantity' => $item['quantity'],
-                    'unitPrice' => $item['price'],
-                    'totalPrice' => $item['subtotal'],
-                    'cogsPerUnit' => $product->buyPrice ?? 0,
-                    'totalCogs' => ($product->buyPrice ?? 0) * $item['quantity'],
-                    'grossProfit' => $item['subtotal'] - (($product->buyPrice ?? 0) * $item['quantity']),
-                ]);
-
-                $product->reduceStock($item['quantity']);
-
-                // Update consignment batch if this is a consignment product
-                if ($product->isConsignment) {
-                    $this->updateConsignmentSale($product->id, $item['quantity']);
-                }
-            }
-
-            if ($this->selectedMember) {
-                $member = Member::find($this->selectedMember['id']);
-
-                // Deduct Simpanan Sukarela if paying with it
-                if ($this->paymentMethod === 'SUKARELA') {
-                    $member->payWithSukarela(
-                        $this->getCartTotalProperty(),
-                        'Belanja ' . $invoiceNumber
-                    );
-                }
-
-                // Award points (1 point per Rp1.000)
-                $pointsEarned = floor($this->getCartTotalProperty() / 1000);
-                if ($pointsEarned > 0) {
-                    $member->addPoints($pointsEarned, 'Belanja ' . $invoiceNumber, $transaction->id);
-                }
-
-                // Record purchase in member history
-                $member->recordPurchase($this->getCartTotalProperty());
-            }
-
-            DB::commit();
-
-            // Log activity for POS transaction
-            ActivityLog::log(
-                'CREATE',
-                'Transaction',
-                "Transaksi POS {$invoiceNumber} sebesar Rp " . number_format($transaction->totalAmount, 0, ',', '.'),
-                $transaction,
-                null,
-                [
-                    'invoiceNumber' => $invoiceNumber,
-                    'totalAmount' => $transaction->totalAmount,
-                    'paymentMethod' => $transaction->paymentMethod,
-                    'itemCount' => count($this->cart),
-                ]
+            $transaction = app(POSCheckoutService::class)->checkout(
+                cart: $this->cart,
+                memberId: $this->selectedMember['id'] ?? null,
+                userId: auth()->id(),
+                paymentMethod: $this->paymentMethod,
+                cashReceived: $this->cashReceived,
+                note: $this->note,
+                checkoutToken: $this->checkoutToken,
             );
 
-            $this->lastInvoice = $invoiceNumber;
+            // Log activity for POS transaction
+            if ($transaction->wasRecentlyCreated) {
+                ActivityLog::log(
+                    'CREATE',
+                    'Transaction',
+                    "Transaksi POS {$transaction->invoiceNumber} sebesar Rp ".number_format($transaction->totalAmount, 0, ',', '.'),
+                    $transaction,
+                    null,
+                    [
+                        'invoiceNumber' => $transaction->invoiceNumber,
+                        'totalAmount' => $transaction->totalAmount,
+                        'paymentMethod' => $transaction->paymentMethod,
+                        'itemCount' => count($this->cart),
+                    ]
+                );
+            }
+
+            $this->lastInvoice = $transaction->invoiceNumber;
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Transaksi berhasil!']);
 
             $this->clearCart();
@@ -366,9 +398,8 @@ class PosCustom extends Component
 
             $this->dispatch('open-receipt', ['transactionId' => $transaction->id]);
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal memproses transaksi: ' . $e->getMessage()]);
+        } catch (Throwable $e) {
+            $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal memproses transaksi: '.$e->getMessage()]);
         }
     }
 
@@ -389,46 +420,29 @@ class PosCustom extends Component
 
     public function getProductsProperty()
     {
-        return Product::with('category')
+        return Product::query()
+            ->select('id', 'name', 'sku', 'categoryId', 'sellPrice', 'stock', 'image', 'isConsignment', 'isActive', 'status', 'approvalStatus')
+            ->with('category:id,name,icon')
             ->where('isActive', true)
-            ->when($this->search, fn($q) => $q->where(function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('sku', 'like', '%' . $this->search . '%');
+            ->where('status', 'ACTIVE')
+            ->where('stock', '>', 0)
+            ->where(function ($query) {
+                $query->whereNull('approvalStatus')
+                    ->orWhere('approvalStatus', 'APPROVED');
+            })
+            ->when($this->search, fn ($q) => $q->where(function ($q) {
+                $q->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('sku', 'like', '%'.$this->search.'%');
             }))
-            ->when($this->categoryFilter, fn($q) => $q->where('categoryId', $this->categoryFilter))
+            ->when($this->categoryFilter, fn ($q) => $q->where('categoryId', $this->categoryFilter))
             ->orderBy('name')
+            ->limit(120)
             ->get();
     }
 
     public function getCategoriesProperty()
     {
         return Category::where('isActive', true)->orderBy('order')->get();
-    }
-
-    /**
-     * Update consignment batch when a consignment product is sold
-     * Uses FIFO to determine which batch to deduct from
-     */
-    private function updateConsignmentSale(int $productId, int $quantity): void
-    {
-        $remainingQty = $quantity;
-
-        while ($remainingQty > 0) {
-            $consignmentItem = ConsignmentBatch::findActiveItemForProduct($productId);
-
-            if (!$consignmentItem) {
-                // No active consignment batch found, skip
-                break;
-            }
-
-            // Determine how much to deduct from this batch
-            $deductQty = min($remainingQty, $consignmentItem->remainingQty);
-
-            // Record the sale
-            $consignmentItem->recordSale($deductQty);
-
-            $remainingQty -= $deductQty;
-        }
     }
 
     public function render()
