@@ -330,8 +330,8 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     // Balance Sheet (Neraca)
     Route::get('/reports/balance-sheet', \App\Livewire\Admin\Reports\BalanceSheet::class)->name('admin.reports.balance-sheet');
 
-    // Developer Payroll (Admin/SuperAdmin only)
-    Route::middleware(['role:SUPER_ADMIN,ADMIN'])->get('/developer-payroll', \App\Livewire\Admin\DeveloperPayroll::class)->name('admin.developer-payroll');
+    // Developer Payroll (Super Admin, Admin, Developer)
+    Route::middleware(['role:SUPER_ADMIN,ADMIN,DEVELOPER'])->get('/developer-payroll', \App\Livewire\Admin\DeveloperPayroll::class)->name('admin.developer-payroll');
 
     // Developer Work Logs (Developer only)
     Route::middleware(['role:DEVELOPER'])->get('/work-logs', \App\Livewire\Developer\WorkLogManager::class)->name('developer.work-logs');
