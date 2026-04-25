@@ -236,6 +236,39 @@ class DeveloperPayroll extends Component
         }
     }
 
+    public function approveDeveloperPending($developerName)
+    {
+        $pendingLogs = $this->getFilteredLogsQuery()
+            ->where('developerName', $developerName)
+            ->where('status', 'PENDING')
+            ->get();
+
+        if ($pendingLogs->isEmpty()) {
+            session()->flash('error', 'Tidak ada log pending untuk developer ini.');
+            return;
+        }
+
+        DB::beginTransaction();
+        try {
+            WorkLog::whereIn('id', $pendingLogs->pluck('id'))
+                ->update([
+                    'status' => 'APPROVED',
+                    'approvedBy' => auth()->id(),
+                    'approvedAt' => now(),
+                ]);
+
+            DB::commit();
+            $count = $pendingLogs->count();
+            session()->flash('success', "Berhasil approve {$count} log pending untuk {$developerName}.");
+            $this->selectedLogs = [];
+            $this->selectAll = false;
+            $this->resetPage();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Gagal approve developer: ' . $e->getMessage());
+        }
+    }
+
     public function getLogsProperty()
     {
         return $this->getFilteredLogsQuery()

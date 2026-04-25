@@ -192,6 +192,13 @@
                                 @if($card['rejectedCount'] > 0)
                                     <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400 border border-rose-100 dark:border-rose-500/20">REJECTED {{ $card['rejectedCount'] }}</span>
                                 @endif
+                                @if($card['pendingCount'] > 0)
+                                    <button wire:click.stop="approveDeveloperPending(@js($card['developerName']))"
+                                        wire:confirm="Approve semua log pending untuk {{ $card['developerName'] }}?"
+                                        class="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors">
+                                        Approve Pending
+                                    </button>
+                                @endif
                                 <span class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400">Detail</span>
                                 <i class='bx bx-chevron-down text-indigo-500 text-lg transition-transform group-open:rotate-180'></i>
                             </div>
