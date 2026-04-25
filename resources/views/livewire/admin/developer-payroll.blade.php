@@ -28,6 +28,14 @@
             class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             Bulan Ini
         </button>
+        <button wire:click="setPreviousMonthPeriod"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            Bulan Lalu
+        </button>
+        <button wire:click="setLastThreeMonthsPeriod"
+            class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            3 Bulan Terakhir
+        </button>
         <button wire:click="setLatestAvailablePeriod"
             class="px-3 py-1.5 rounded-lg text-[11px] font-bold border border-indigo-200 dark:border-indigo-500/30 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors">
             Data Terbaru

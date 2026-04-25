@@ -27,6 +27,10 @@ class DeveloperPayroll extends Component
 
     public $latestAvailablePeriodLabel = null;
 
+    protected $queryString = [
+        'viewMode' => ['except' => 'cards'],
+    ];
+
     public function mount()
     {
         $latestWorkLog = WorkLog::select('date')
@@ -53,6 +57,31 @@ class DeveloperPayroll extends Component
         $this->filterMonth = now()->month;
         $this->filterYear = now()->year;
         $this->filterPeriod = now()->format('Y-m');
+        $this->resetPage();
+    }
+
+    public function setPreviousMonthPeriod()
+    {
+        $previousMonth = now()->subMonth();
+        $this->filterMonth = $previousMonth->month;
+        $this->filterYear = $previousMonth->year;
+        $this->filterPeriod = $previousMonth->format('Y-m');
+        $this->resetPage();
+    }
+
+    public function setLastThreeMonthsPeriod()
+    {
+        $latestWorkLog = WorkLog::select('date')
+            ->whereNotNull('date')
+            ->orderByDesc('date')
+            ->first();
+
+        $baseDate = $latestWorkLog ? Carbon::parse($latestWorkLog->date) : now();
+        $threeMonthsBack = $baseDate->copy()->subMonthsNoOverflow(2);
+
+        $this->filterMonth = $threeMonthsBack->month;
+        $this->filterYear = $threeMonthsBack->year;
+        $this->filterPeriod = $threeMonthsBack->format('Y-m');
         $this->resetPage();
     }
 
