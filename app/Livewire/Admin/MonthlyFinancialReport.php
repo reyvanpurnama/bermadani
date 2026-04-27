@@ -152,6 +152,11 @@ class MonthlyFinancialReport extends Component
                         $transactionDate
                     );
                     $loan->increment('paid_installments');
+
+                    // Check if loan is finished based on tenor 
+                    if ($loan->paid_installments >= $loan->tenor) {
+                        $loan->update(['status' => 'COMPLETED']);
+                    }
                 }
             }
             DB::commit();
@@ -253,11 +258,13 @@ class MonthlyFinancialReport extends Component
         $membersWithLoans = Member::where('status', 'ACTIVE') // Exclude frozen/suspended members
             ->whereHas('loans', function ($query) use ($endDate) {
                 $query->where('status', 'ACTIVE')
+                    ->whereColumn('paid_installments', '<', 'tenor')
                     ->where('startDate', '<=', $endDate);
             })
             ->with([
                 'loans' => function ($query) use ($endDate) {
                     $query->where('status', 'ACTIVE')
+                        ->whereColumn('paid_installments', '<', 'tenor')
                         ->where('startDate', '<=', $endDate)
                         ->orderBy('startDate', 'asc'); // Order by start date untuk BMT ITQAN 1 & 2
                 }
