@@ -30,27 +30,27 @@
                 <!-- Member Search -->
                 <div class="col-span-1 md:col-span-2 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cari Anggota (Nama/No.Anggota) *</label>
-                    <input type="text" wire:model.live.debounce.300ms="search" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500" placeholder="Ketik nama anggota..." {{ \ ? 'disabled' : '' }}>
-                    @error('member_id') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    <input type="text" wire:model.live.debounce.300ms="search" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500" placeholder="Ketik nama anggota..." {{ $member_id ? 'disabled' : '' }}>
+                    @error('member_id') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     
-                    @if(count(\) > 0)
+                    @if(count($members) > 0)
                         <div class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg">
                             <ul class="max-h-60 overflow-y-auto">
-                                @foreach(\ as \)
-                                    <li wire:click="selectMember({{ \->id }})" class="px-4 py-3 hover:bg-green-50 dark:hover:bg-gray-600 cursor-pointer border-b border-gray-100 dark:border-gray-600 last:border-0">
-                                        <div class="font-medium text-gray-800 dark:text-gray-200">{{ \->name }}</div>
-                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ \->nomorAnggota }} - {{ \->position ?? 'Jabatan -' }}</div>
+                                @foreach($members as $m)
+                                    <li wire:click="selectMember({{ $m->id }})" class="px-4 py-3 hover:bg-green-50 dark:hover:bg-gray-600 cursor-pointer border-b border-gray-100 dark:border-gray-600 last:border-0">
+                                        <div class="font-medium text-gray-800 dark:text-gray-200">{{ $m->name }}</div>
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">{{ $m->nomorAnggota }} - {{ $m->position ?? 'Jabatan -' }}</div>
                                     </li>
                                 @endforeach
                             </ul>
                         </div>
                     @endif
 
-                    @if(\)
+                    @if($member_id)
                         <div class="mt-2 text-sm text-green-600 font-medium flex items-center space-x-2">
                             <i class='bx bx-check-circle text-lg'></i>
                             <span>Anggota terpilih.</span>
-                            <button type="button" wire:click="\('member_id', null); \('search', '')" class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 ml-2">Ganti Anggota</button>
+                            <button type="button" wire:click="$set('member_id', null); $set('search', '')" class="text-xs bg-red-100 text-red-600 px-2 py-1 rounded hover:bg-red-200 ml-2">Ganti Anggota</button>
                         </div>
                     @endif
                 </div>
@@ -62,21 +62,21 @@
                         <option value="BERMADANI">Koperasi Bermadani (Internal)</option>
                         <option value="BMT_ITQAN">BMT ITQAN (Eksternal)</option>
                     </select>
-                    @error('loanSource') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    @error('loanSource') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Amount -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Plafon / Jumlah Pinjaman (Rp) *</label>
                     <input type="number" step="1000" wire:model.live.debounce.500ms="amount" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500" placeholder="1000000">
-                    @error('amount') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    @error('amount') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Tenor -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tenor (Bulan) *</label>
                     <input type="number" wire:model.live.debounce.500ms="tenor" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500" placeholder="10">
-                    @error('tenor') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    @error('tenor') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Interest Rate -->
@@ -86,7 +86,7 @@
                     <p class="text-xs text-gray-500 mt-1">Isi 0 jika tidak ada margin.</p>
                 </div>
 
-                @if(\ === 'BMT_ITQAN')
+                @if($loanSource === 'BMT_ITQAN')
                 <!-- Simwa (BMT Only) -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Titipan Simpanan Wajib Tipe BMT (Rp)</label>
@@ -99,14 +99,14 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Angsuran per Bulan (Rp) *</label>
                     <input type="number" wire:model="monthlyPayment" class="w-full rounded-lg border-gray-300 dark:border-indigo-600 dark:bg-indigo-900/30 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 bg-indigo-50 font-bold text-indigo-700">
                     <p class="text-xs text-indigo-600 dark:text-indigo-400 mt-1">Dihitung otomatis, tapi Anda bisa mengubahnya manual jika ada penyesuaian khusus.</p>
-                    @error('monthlyPayment') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    @error('monthlyPayment') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Start Date -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai Potong Gaji *</label>
                     <input type="date" wire:model="startDate" class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white shadow-sm focus:border-green-500 focus:ring-green-500">
-                    @error('startDate') <span class="text-red-500 text-xs mt-1">{{ \ }}</span> @enderror
+                    @error('startDate') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Purpose -->

@@ -12,55 +12,55 @@ use Illuminate\Support\Facades\DB;
 #[Layout('layouts.admin')]
 class LoanCreate extends Component
 {
-    public \ = '';
-    public \;
-    public \ = 'BERMADANI';
-    public \;
-    public \;
-    public \;
-    public \ = 0;
-    public \ = 0;
+    public $search = '';
+    public $member_id;
+    public $loanSource = 'BERMADANI';
+    public $amount;
+    public $tenor;
+    public $monthlyPayment;
+    public $interestRate = 0;
+    public $simwa_amount = 0;
     
-    public \;
-    public \;
-    public \;
+    public $startDate;
+    public $purpose;
+    public $description;
 
     public function mount()
     {
         // Default start date is next month's 1st day (typical payroll cut off)
-        \->startDate = now()->addMonth()->startOfMonth()->format('Y-m-d');
+        $this->startDate = now()->addMonth()->startOfMonth()->format('Y-m-d');
     }
 
     public function calculateMonthly()
     {
-        if (!empty(\->amount) && !empty(\->tenor) && \->tenor > 0) {
-            \ = floatval(str_replace(['.', ','], ['', '.'], \->amount));
-            \ = floatval(\->interestRate ?? 0);
+        if (!empty($this->amount) && !empty($this->tenor) && $this->tenor > 0) {
+            $baseAmount = floatval(str_replace(['.', ','], ['', '.'], $this->amount));
+            $interest = floatval($this->interestRate ?? 0);
             
-            \ = \ + (\ * (\ / 100));
-            \ = \ / \->tenor;
+            $totalAmount = $baseAmount + ($baseAmount * ($interest / 100));
+            $monthly = $totalAmount / $this->tenor;
             
             // Add BMT ITQAN simwa if applicable
-            \ = floatval(str_replace(['.', ','], ['', '.'], \->simwa_amount ?? 0));
+            $simwa = floatval(str_replace(['.', ','], ['', '.'], $this->simwa_amount ?? 0));
             
-            \->monthlyPayment = round(\ + \);
+            $this->monthlyPayment = round($monthly + $simwa);
         }
     }
 
-    public function updatedAmount() { \->calculateMonthly(); }
-    public function updatedTenor() { \->calculateMonthly(); }
-    public function updatedInterestRate() { \->calculateMonthly(); }
-    public function updatedSimwaAmount() { \->calculateMonthly(); }
+    public function updatedAmount() { $this->calculateMonthly(); }
+    public function updatedTenor() { $this->calculateMonthly(); }
+    public function updatedInterestRate() { $this->calculateMonthly(); }
+    public function updatedSimwaAmount() { $this->calculateMonthly(); }
 
-    public function selectMember(\)
+    public function selectMember($id)
     {
-        \->member_id = \;
-        \->search = Member::find(\)->name;
+        $this->member_id = $id;
+        $this->search = Member::find($id)->name;
     }
 
     public function createLoan()
     {
-        \->validate([
+        $this->validate([
             'member_id' => 'required|exists:members,id',
             'loanSource' => 'required|in:BERMADANI,BMT_ITQAN',
             'amount' => 'required|numeric|min:1',
@@ -73,28 +73,28 @@ class LoanCreate extends Component
         DB::beginTransaction();
         try {
             // Bersihkan format titik/koma jika ada
-            \ = floatval(str_replace(['.', ','], ['', '.'], \->amount));
-            \ = floatval(str_replace(['.', ','], ['', '.'], \->monthlyPayment));
-            \ = floatval(str_replace(['.', ','], ['', '.'], \->simwa_amount ?? 0));
-            \ = floatval(\->interestRate ?? 0);
+            $cleanAmount = floatval(str_replace(['.', ','], ['', '.'], $this->amount));
+            $cleanMonthly = floatval(str_replace(['.', ','], ['', '.'], $this->monthlyPayment));
+            $cleanSimwa = floatval(str_replace(['.', ','], ['', '.'], $this->simwa_amount ?? 0));
+            $cleanInterest = floatval($this->interestRate ?? 0);
 
             // Total hutang yg hrs dibayar (pokok + bunga)
-            \ = \ + (\ * (\ / 100));
+            $totalDebt = $cleanAmount + ($cleanAmount * ($cleanInterest / 100));
 
-            \ = Loan::create([
-                'member_id' => \->member_id,
-                'amount' => \,
-                'interestRate' => \,
-                'tenor' => \->tenor,
-                'monthlyPayment' => \,
-                'simwa_amount' => \,
-                'remainingAmount' => \, // Sisa hutang dicatat termasuk margin admin
+            $loan = Loan::create([
+                'member_id' => $this->member_id,
+                'amount' => $cleanAmount,
+                'interestRate' => $cleanInterest,
+                'tenor' => $this->tenor,
+                'monthlyPayment' => $cleanMonthly,
+                'simwa_amount' => $cleanSimwa,
+                'remainingAmount' => $totalDebt, // Sisa hutang dicatat termasuk margin admin
                 'status' => 'ACTIVE',
-                'loanSource' => \->loanSource,
-                'purpose' => \->purpose,
-                'description' => \->description,
-                'startDate' => \->startDate,
-                'endDate' => Carbon::parse(\->startDate)->addMonths(\->tenor)->format('Y-m-d'),
+                'loanSource' => $this->loanSource,
+                'purpose' => $this->purpose,
+                'description' => $this->description,
+                'startDate' => $this->startDate,
+                'endDate' => Carbon::parse($this->startDate)->addMonths($this->tenor)->format('Y-m-d'),
                 'approvedAt' => now(),
                 'approvedBy' => auth()->id(),
                 'paid_installments' => 0,
@@ -102,28 +102,28 @@ class LoanCreate extends Component
 
             DB::commit();
 
-            session()->flash('success', 'Pinjaman ' . \->loanSource . ' berhasil ditambahkan dan langsung aktif!');
+            session()->flash('success', 'Pinjaman ' . $this->loanSource . ' berhasil ditambahkan dan langsung aktif!');
             return redirect()->route('admin.loans');
 
-        } catch (\Exception \) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            session()->flash('error', 'Gagal membuat pinjaman: ' . \->getMessage());
+            session()->flash('error', 'Gagal membuat pinjaman: ' . $e->getMessage());
         }
     }
 
     public function render()
     {
-        \ = collect();
-        if (strlen(\->search) >= 2 && empty(\->member_id)) {
-            \ = Member::where('status', 'ACTIVE')
-                ->where(function(\) {
-                    \->where('name', 'like', '%' . \->search . '%')
-                      ->orWhere('nomorAnggota', 'like', '%' . \->search . '%');
+        $members = collect();
+        if (strlen($this->search) >= 2 && empty($this->member_id)) {
+            $members = Member::where('status', 'ACTIVE')
+                ->where(function($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                      ->orWhere('nomorAnggota', 'like', '%' . $this->search . '%');
                 })->take(5)->get();
         }
 
         return view('livewire.admin.loan-create', [
-            'members' => \
+            'members' => $members
         ]);
     }
 }
