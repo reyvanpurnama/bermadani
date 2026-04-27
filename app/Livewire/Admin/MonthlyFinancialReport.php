@@ -314,9 +314,14 @@ class MonthlyFinancialReport extends Component
                         $tenorBmtItqan2 = $loan->tenor;
                     }
                 } else {
-                    $angsuranBermadani = $monthlyPayment;
-                    $angsuranKeBermadani = $angsuranKe;
-                    $tenorBermadani = $loan->tenor;
+                    $angsuranBermadani += $monthlyPayment;
+                    if ($angsuranKeBermadani === 0) {
+                        $angsuranKeBermadani = $angsuranKe;
+                        $tenorBermadani = $loan->tenor;
+                    } else {
+                        $angsuranKeBermadani = $angsuranKeBermadani . ' & ' . $angsuranKe;
+                        $tenorBermadani = $tenorBermadani . ' & ' . $loan->tenor;
+                    }
                 }
             }
 
