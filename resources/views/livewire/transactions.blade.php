@@ -117,7 +117,8 @@
                 <option value="">Semua Pembayaran</option>
                 <option value="CASH">Cash (Tunai)</option>
                 <option value="TRANSFER">Transfer</option>
-                <option value="CREDIT">Simpanan Anggota</option>
+                <option value="CREDIT">Kredit</option>
+                <option value="SUKARELA">Simpanan Sukarela</option>
             </select>
         </div>
 
@@ -182,6 +183,10 @@
                                     @elseif($transaction->paymentMethod === 'TRANSFER')
                                         <span class="inline-flex items-center gap-1 px-2 py-1 rounded border border-indigo-200 dark:border-indigo-900 text-xs font-medium text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-900/20">
                                             <i class='bx bx-transfer'></i> Transfer
+                                        </span>
+                                    @elseif($transaction->paymentMethod === 'SUKARELA')
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded border border-emerald-200 dark:border-emerald-900 text-xs font-medium text-emerald-600 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20">
+                                            <i class='bx bx-wallet'></i> Simpanan
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-2 py-1 rounded border border-amber-200 dark:border-amber-900 text-xs font-medium text-amber-600 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20">

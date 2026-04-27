@@ -12,7 +12,8 @@
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
                         <i class='bx bx-search text-lg'></i>
                     </span>
-                    <input type="text" wire:model.live.debounce.300ms="search"
+                    <input id="pos-search-input" type="text" wire:model.live.debounce.300ms="search"
+                        wire:keydown.enter.prevent="addSearchResultToCart"
                         class="w-full bg-slate-100 dark:bg-slate-700/50 border-none text-[11px] font-semibold rounded-lg pl-9 py-2 focus:ring-1 focus:ring-primary text-slate-800 dark:text-white placeholder-slate-400"
                         placeholder="Scan barcode atau cari produk...">
                     <span
@@ -339,7 +340,7 @@
                     @if(empty($cart)) disabled @endif>
                     <i class='bx bx-trash text-xl'></i>
                 </button>
-                <button wire:click="openPaymentModal"
+                <button id="pos-pay-btn" wire:click="openPaymentModal"
                     class="col-span-3 py-3 rounded-xl bg-primary hover:bg-indigo-700 disabled:bg-slate-200 disabled:dark:bg-slate-700 disabled:text-slate-400 disabled:dark:text-slate-500 disabled:cursor-not-allowed disabled:shadow-none text-white font-bold text-[14px] shadow-lg shadow-indigo-500/30 transition-all flex items-center justify-center gap-2"
                     @if(empty($cart)) disabled @endif>
                     Bayar <i class='bx bx-right-arrow-alt'></i>
@@ -446,7 +447,7 @@
 
                 {{-- Actions --}}
                 <div class="flex gap-3 pt-4">
-                    <button wire:click="closePaymentModal"
+                    <button id="pos-cancel-payment-btn" wire:click="closePaymentModal"
                         class="flex-1 py-3 border border-slate-300 dark:border-slate-600 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 font-semibold text-slate-600 dark:text-slate-300">
                         Batal
                     </button>

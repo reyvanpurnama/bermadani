@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\SupplierController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\TransactionController;
 use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // Landing Page
 Route::get('/', function () {
@@ -32,7 +32,7 @@ Route::middleware('guest')->group(function () {
         $email = $loginInput;
 
         // If input doesn't contain @, try to resolve it as member number OR phone number
-        if (!str_contains($loginInput, '@')) {
+        if (! str_contains($loginInput, '@')) {
             // First, try to find member by nomorAnggota
             $member = \App\Models\Member::where('nomorAnggota', $loginInput)->first();
 
@@ -43,10 +43,10 @@ Route::middleware('guest')->group(function () {
                 // Normalize phone to 08... format
                 $phone = preg_replace('/\D/', '', $loginInput);
                 if (str_starts_with($phone, '62')) {
-                    $phone = '0' . substr($phone, 2);
+                    $phone = '0'.substr($phone, 2);
                 }
                 if (str_starts_with($phone, '8')) {
-                    $phone = '0' . $phone;
+                    $phone = '0'.$phone;
                 }
 
                 // Try to find member by phone number
@@ -107,7 +107,7 @@ Route::middleware('guest')->group(function () {
             ActivityLog::log(
                 'login',
                 'Supplier Login',
-                'Supplier ' . $supplier->businessName . ' logged in',
+                'Supplier '.$supplier->businessName.' logged in',
                 $supplier
             );
 
@@ -136,6 +136,7 @@ Route::post('/logout', function () {
 
     request()->session()->invalidate();
     request()->session()->regenerateToken();
+
     return redirect()->route('home');
 })->name('logout');
 
@@ -189,7 +190,6 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/inventaris/tambah', function () {
         return view('admin.products.create');
     })->name('admin.products.create');
-
 
     Route::get('/restock-requests', function () {
         return redirect()->route('admin.consignment-batches');
@@ -247,16 +247,19 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
         Route::get('/{member}', function ($member) {
             $member = \App\Models\Member::findOrFail($member);
+
             return view('admin.members.show', compact('member'));
         })->name('show');
 
         Route::get('/{member}/edit', function ($member) {
             $member = \App\Models\Member::findOrFail($member);
+
             return view('admin.members.edit', compact('member'));
         })->name('edit');
 
         Route::get('/{member}/simpanan', function ($member) {
             $member = \App\Models\Member::findOrFail($member);
+
             return view('admin.members.simpanan', compact('member'));
         })->name('simpanan');
     });
@@ -291,7 +294,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.users.index');
     })->name('admin.users');
 
-    // Suppliers Management 
+    // Suppliers Management
     Route::get('/suppliers', function () {
         return view('admin.suppliers.index');
     })->name('admin.suppliers');
@@ -327,12 +330,11 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     // Balance Sheet (Neraca)
     Route::get('/reports/balance-sheet', \App\Livewire\Admin\Reports\BalanceSheet::class)->name('admin.reports.balance-sheet');
 
-    // Developer Payroll (Admin/SuperAdmin only)
-    Route::middleware(['role:SUPER_ADMIN,ADMIN'])->get('/developer-payroll', \App\Livewire\Admin\DeveloperPayroll::class)->name('admin.developer-payroll');
+    // Developer Payroll (Super Admin, Admin, Developer)
+    Route::middleware(['role:SUPER_ADMIN,ADMIN,DEVELOPER'])->get('/developer-payroll', \App\Livewire\Admin\DeveloperPayroll::class)->name('admin.developer-payroll');
 
     // Developer Work Logs (Developer only)
     Route::middleware(['role:DEVELOPER'])->get('/work-logs', \App\Livewire\Developer\WorkLogManager::class)->name('developer.work-logs');
-
 
     // Receipt
     Route::get('/transaction/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('transaction.receipt');
@@ -359,6 +361,8 @@ Route::middleware(['auth', 'role:KASIR', 'log.activity'])->prefix('kasir')->grou
     Route::get('/transaksi/{id}', function ($id) {
         return view('admin.transactions.detail', ['transactionId' => $id]);
     })->name('kasir.transaction.detail');
+
+    Route::get('/transaction/{transaction}/receipt', [TransactionController::class, 'receipt'])->name('kasir.transaction.receipt');
 
     // My Shift History
     Route::get('/riwayat-shift', \App\Livewire\Kasir\ShiftHistory::class)->name('kasir.shift-history');

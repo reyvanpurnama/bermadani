@@ -13,8 +13,8 @@ class StoreTransactionRequest extends FormRequest
     {
         // Admin and Kasir can create transactions
         return $this->user() && (
-            $this->user()->isAdmin() || 
-            $this->user()->isKasir() || 
+            $this->user()->isAdmin() ||
+            $this->user()->isKasir() ||
             $this->user()->isSuperAdmin()
         );
     }
@@ -32,7 +32,7 @@ class StoreTransactionRequest extends FormRequest
             'items.*.productId' => ['required', 'uuid', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.sellPrice' => ['required', 'numeric', 'min:0'],
-            'paymentMethod' => ['required', 'string', 'in:CASH,DEBIT,CREDIT,QRIS,TRANSFER'],
+            'paymentMethod' => ['required', 'string', 'in:CASH,DEBIT,CREDIT,QRIS,TRANSFER,SUKARELA'],
             'paymentAmount' => ['required', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'tax' => ['nullable', 'numeric', 'min:0', 'max:100'],

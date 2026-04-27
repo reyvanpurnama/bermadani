@@ -134,8 +134,10 @@
                                 <i class='bx bx-money text-emerald-500 text-lg'></i> Tunai (Cash)
                             @elseif($transaction->paymentMethod === 'TRANSFER')
                                 <i class='bx bx-transfer text-indigo-500 text-lg'></i> Transfer
+                            @elseif($transaction->paymentMethod === 'SUKARELA')
+                                <i class='bx bx-wallet text-emerald-500 text-lg'></i> Simpanan Sukarela
                             @else
-                                <i class='bx bx-wallet text-amber-500 text-lg'></i> Simpanan Anggota
+                                <i class='bx bx-wallet text-amber-500 text-lg'></i> Kredit
                             @endif
                         </span>
                     </div>

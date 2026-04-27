@@ -210,6 +210,20 @@
                         System
                     </p>
 
+                    @if(auth()->user()->isDeveloper())
+                        <a href="{{ route('developer.work-logs') }}"
+                            class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('developer.work-logs') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-task text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Log Jam Kerja</span>
+                        </a>
+                    @endif
+
+                    <a href="{{ route('admin.developer-payroll') }}"
+                        class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.developer-payroll') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <i class='bx bx-time-five text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Payroll Developer</span>
+                    </a>
+
                     <a href="{{ route('admin.users') }}"
                         class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.users*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                         <i class='bx bx-bg-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>

@@ -8,8 +8,10 @@ class Transaction extends Model
 {
     protected $fillable = [
         'invoiceNumber',
+        'checkoutToken',
         'memberId',
         'userId',
+        'cashierShiftId',
         'type',
         'totalAmount',
         'paymentMethod',
@@ -34,10 +36,15 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionItem::class, 'transactionId');
     }
-    
+
     public function user()
     {
         return $this->belongsTo(User::class, 'userId');
+    }
+
+    public function cashierShift()
+    {
+        return $this->belongsTo(CashierShift::class, 'cashierShiftId');
     }
 
     public function scopeCompleted($query)
@@ -63,13 +70,14 @@ class Transaction extends Model
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('date', now()->month)
-                     ->whereYear('date', now()->year);
+            ->whereYear('date', now()->year);
     }
 
     public function calculateTotal()
     {
         $total = $this->items()->sum('totalPrice');
         $this->update(['totalAmount' => $total]);
+
         return $total;
     }
 
