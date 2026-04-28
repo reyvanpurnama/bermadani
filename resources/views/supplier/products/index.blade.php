@@ -112,6 +112,7 @@
         {{-- Mobile Card View --}}
         <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
             @forelse($products as $product)
+                @php($canModify = in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true))
                 <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div class="flex items-start gap-3">
                         @if($product->image)
@@ -131,19 +132,25 @@
                                         {{ $product->category->name ?? '-' }}</p>
                                 </div>
                                 <div class="flex gap-1 flex-shrink-0">
-                                    <a href="{{ route('supplier.products.edit', $product->id) }}"
-                                        class="p-1.5 text-slate-400 hover:text-primary transition-colors">
-                                        <i class='bx bx-edit text-lg'></i>
-                                    </a>
-                                    <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST"
-                                        class="inline" onsubmit="return confirm('Hapus produk ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors">
-                                            <i class='bx bx-trash text-lg'></i>
-                                        </button>
-                                    </form>
+                                    @if($canModify)
+                                        <a href="{{ route('supplier.products.edit', $product->id) }}"
+                                            class="p-1.5 text-slate-400 hover:text-primary transition-colors">
+                                            <i class='bx bx-edit text-lg'></i>
+                                        </a>
+                                        <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST"
+                                            class="inline" onsubmit="return confirm('Hapus produk ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="p-1.5 text-slate-400 hover:text-rose-500 transition-colors">
+                                                <i class='bx bx-trash text-lg'></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="p-1.5 text-slate-300 dark:text-slate-600" title="Produk sudah disetujui, tidak bisa diedit dari portal supplier">
+                                            <i class='bx bx-lock text-lg'></i>
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="flex items-center justify-between mt-2">
@@ -203,6 +210,7 @@
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @forelse($products as $product)
                         @php
+                            $canModify = in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
                             // Calculate consignment stats for this product
                             $consignmentItems = \App\Models\ConsignmentItem::where('productId', $product->id)
                                 ->with('batch')
@@ -307,19 +315,25 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex justify-end gap-2">
-                                    <a href="{{ route('supplier.products.edit', $product->id) }}"
-                                        class="p-1 text-slate-400 hover:text-primary transition-colors">
-                                        <i class='bx bx-edit text-lg'></i>
-                                    </a>
-                                    <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST"
-                                        class="inline"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-1 text-slate-400 hover:text-rose-500 transition-colors">
-                                            <i class='bx bx-trash text-lg'></i>
-                                        </button>
-                                    </form>
+                                    @if($canModify)
+                                        <a href="{{ route('supplier.products.edit', $product->id) }}"
+                                            class="p-1 text-slate-400 hover:text-primary transition-colors">
+                                            <i class='bx bx-edit text-lg'></i>
+                                        </a>
+                                        <form action="{{ route('supplier.products.destroy', $product->id) }}" method="POST"
+                                            class="inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-1 text-slate-400 hover:text-rose-500 transition-colors">
+                                                <i class='bx bx-trash text-lg'></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <span class="p-1 text-slate-300 dark:text-slate-600" title="Produk sudah disetujui, tidak bisa diedit dari portal supplier">
+                                            <i class='bx bx-lock text-lg'></i>
+                                        </span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

@@ -63,6 +63,12 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         $product = Product::findOrFail($id);
+        $isSupplierOwnedPending = $product->supplierId && in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
+
+        if ($isSupplierOwnedPending) {
+            return redirect()->route('admin.products')
+                ->with('error', 'Produk supplier yang masih pending/ditolak tidak dapat diedit admin. Supplier harus revisi dari portal supplier.');
+        }
 
         $validated = $request->validated();
 

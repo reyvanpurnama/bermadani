@@ -374,10 +374,17 @@
                                             </button>
                                         @endif
                                     @endif
-                                    <a href="{{ route('admin.products.edit', $product->id) }}"
-                                        class="text-slate-400 hover:text-primary transition-colors text-lg">
-                                        <i class='bx bx-edit-alt'></i>
-                                    </a>
+                                    @if($product->supplierId && in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true))
+                                        <span class="text-slate-300 dark:text-slate-600 text-lg cursor-help"
+                                            title="Produk supplier pending/ditolak direvisi oleh supplier dari portal supplier">
+                                            <i class='bx bx-lock-alt'></i>
+                                        </span>
+                                    @else
+                                        <a href="{{ route('admin.products.edit', $product->id) }}"
+                                            class="text-slate-400 hover:text-primary transition-colors text-lg">
+                                            <i class='bx bx-edit-alt'></i>
+                                        </a>
+                                    @endif
                                     <button wire:click="deleteProduct({{ $product->id }})"
                                         wire:confirm="Yakin ingin menghapus produk ini?"
                                         class="text-slate-400 hover:text-rose-500 transition-colors text-lg">

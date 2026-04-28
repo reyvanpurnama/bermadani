@@ -11,6 +11,11 @@ use Illuminate\Support\Str;
 
 class SupplierProductController extends Controller
 {
+    private function canSupplierModify(Product $product): bool
+    {
+        return in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
+    }
+
     public function index()
     {
         $supplier = Auth::guard('supplier')->user();
@@ -83,6 +88,10 @@ class SupplierProductController extends Controller
         if ($product->supplierId !== Auth::guard('supplier')->id()) {
             abort(403);
         }
+        if (! $this->canSupplierModify($product)) {
+            return redirect()->route('supplier.products.index')
+                ->with('error', 'Produk yang sudah disetujui tidak dapat diedit dari portal supplier.');
+        }
 
         $categories = Category::all();
         return view('supplier.products.edit', compact('product', 'categories'));
@@ -93,6 +102,10 @@ class SupplierProductController extends Controller
         // Ensure ownership
         if ($product->supplierId !== Auth::guard('supplier')->id()) {
             abort(403);
+        }
+        if (! $this->canSupplierModify($product)) {
+            return redirect()->route('supplier.products.index')
+                ->with('error', 'Produk yang sudah disetujui tidak dapat diperbarui dari portal supplier.');
         }
 
         $validated = $request->validate([
@@ -125,6 +138,10 @@ class SupplierProductController extends Controller
         // Ensure ownership
         if ($product->supplierId !== Auth::guard('supplier')->id()) {
             abort(403);
+        }
+        if (! $this->canSupplierModify($product)) {
+            return redirect()->route('supplier.products.index')
+                ->with('error', 'Produk yang sudah disetujui tidak dapat dihapus dari portal supplier.');
         }
 
         $supplier = Auth::guard('supplier')->user();
