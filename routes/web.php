@@ -287,6 +287,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/loans', function () {
         return view('admin.placeholder', ['title' => 'Pinjaman']);
     })->name('admin.loans');
+    Route::get('/loans/create', \App\Livewire\Admin\LoanCreate::class)->name('admin.loans.create');
     Route::get('/loans/import', \App\Livewire\Admin\LoanImport::class)->name('admin.loans.import');
 
     // Users Management (Super Admin & Developer only for CRUD, Admin read-only)
