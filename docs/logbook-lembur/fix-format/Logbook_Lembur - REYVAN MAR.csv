@@ -1,0 +1,23 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,M. REYVAN PURNAMA,,,,
+NIM,220102043,,,,
+PERIODE,01 MARET - 16 MARET 2026,,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Minggu, 01 Maret 2026",18:00,0:00,6,Pengembangan fitur tanda tangan paket lebaran anggota
+"Senin, 02 Maret 2026",18:00,0:00,6,Penyesuaian filter export agar mencakup member retail aktif
+"Selasa, 03 Maret 2026",18:00,0:00,6,Perapihan layout PDF dan metadata laporan tanda tangan
+"Rabu, 04 Maret 2026",18:00,0:00,6,Implementasi monitoring kasir dan performa transaksi
+"Kamis, 05 Maret 2026",18:00,0:00,6,Perbaikan konsistensi data supplier dan settlement
+"Jumat, 06 Maret 2026",18:00,0:00,6,Enhancement flow supply chain kasir dan riwayat shift
+"Sabtu, 07 Maret 2026",18:00,0:00,6,Optimasi locking stok pada proses transaksi POS
+"Minggu, 08 Maret 2026",18:00,0:00,6,Refactor dashboard chart dan sinkronisasi financial data
+"Senin, 09 Maret 2026",18:00,0:00,6,Bugfix null safety pada alur supplier kasir
+"Selasa, 10 Maret 2026",18:00,0:00,6,Uji integrasi fitur admin members dan payroll developer
+"Rabu, 11 Maret 2026",18:00,0:00,6,Pengembangan fitur tanda tangan paket lebaran anggota
+"Kamis, 12 Maret 2026",18:00,0:00,6,Penyesuaian filter export agar mencakup member retail aktif
+"Jumat, 13 Maret 2026",18:00,0:00,6,Perapihan layout PDF dan metadata laporan tanda tangan
+"Sabtu, 14 Maret 2026",18:00,0:00,6,Implementasi monitoring kasir dan performa transaksi
+"Minggu, 15 Maret 2026",18:00,0:00,6,Perbaikan konsistensi data supplier dan settlement
+"Senin, 16 Maret 2026",18:00,0:00,6,Enhancement flow supply chain kasir dan riwayat shift

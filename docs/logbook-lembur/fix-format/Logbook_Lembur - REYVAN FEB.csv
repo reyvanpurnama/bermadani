@@ -1,0 +1,32 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,M. REYVAN PURNAMA,,,
+NIM,220102043,,,
+PERIODE,01 FEBRUARI - 28 FEBRUARI 2026,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Minggu, 01 Februari 2026",18:00,0:00,6,Pengembangan fitur payroll execution dan approval workflow
+"Senin, 02 Februari 2026",18:00,0:00,6,Implementasi halaman pinjaman member dan peningkatan UX
+"Selasa, 03 Februari 2026",18:00,0:00,6,Perbaikan logic mapping nama pada tabel rekonsiliasi
+"Rabu, 04 Februari 2026",18:00,0:00,6,Enhancement import CSV detail row untuk audit bank dan simwa
+"Kamis, 05 Februari 2026",18:00,0:00,6,Debugging split nominal Simpok Simwa dan Sukarela
+"Jumat, 06 Februari 2026",18:00,0:00,6,Perbaikan race condition pada proses rebuild history
+"Sabtu, 07 Februari 2026",18:00,0:00,6,Penyempurnaan filtering laporan agar tidak stale
+"Minggu, 08 Februari 2026",18:00,0:00,6,Refactor komponen laporan keuangan bulanan
+"Senin, 09 Februari 2026",18:00,0:00,6,Uji regresi fitur audit dan payroll snapshot
+"Selasa, 10 Februari 2026",18:00,0:00,6,Finalisasi perbaikan query dan stabilisasi modul member
+"Rabu, 11 Februari 2026",18:00,0:00,6,Pengembangan fitur payroll execution dan approval workflow
+"Kamis, 12 Februari 2026",18:00,0:00,6,Implementasi halaman pinjaman member dan peningkatan UX
+"Jumat, 13 Februari 2026",18:00,0:00,6,Perbaikan logic mapping nama pada tabel rekonsiliasi
+"Sabtu, 14 Februari 2026",18:00,0:00,6,Enhancement import CSV detail row untuk audit bank dan simwa
+"Minggu, 15 Februari 2026",18:00,0:00,6,Debugging split nominal Simpok Simwa dan Sukarela
+"Senin, 16 Februari 2026",18:00,0:00,6,Perbaikan race condition pada proses rebuild history
+"Selasa, 17 Februari 2026",18:00,0:00,6,Penyempurnaan filtering laporan agar tidak stale
+"Rabu, 18 Februari 2026",18:00,0:00,6,Refactor komponen laporan keuangan bulanan
+"Kamis, 19 Februari 2026",18:00,0:00,6,Uji regresi fitur audit dan payroll snapshot
+"Jumat, 20 Februari 2026",18:00,0:00,6,Finalisasi perbaikan query dan stabilisasi modul member
+"Sabtu, 21 Februari 2026",18:00,0:00,6,Pengembangan fitur payroll execution dan approval workflow
+"Minggu, 22 Februari 2026",18:00,0:00,6,Implementasi halaman pinjaman member dan peningkatan UX
+"Senin, 23 Februari 2026",18:00,0:00,6,Perbaikan logic mapping nama pada tabel rekonsiliasi
+"Selasa, 24 Februari 2026",18:00,0:00,6,Enhancement import CSV detail row untuk audit bank dan simwa
+"Rabu, 25 Februari 2026",18:00,0:00,6,Debugging split nominal Simpok Simwa dan Sukarela

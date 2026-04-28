@@ -1,0 +1,32 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,
+NIM,220102007,,,
+PERIODE,01 FEBRUARI - 28 FEBRUARI 2026,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Minggu, 01 Februari 2026",18:00,0:00,6,Peningkatan format PDF laporan keuangan bulanan
+"Senin, 02 Februari 2026",18:00,0:00,6,Perbaikan urutan member pada laporan berdasarkan pinjaman
+"Selasa, 03 Februari 2026",18:00,0:00,6,Penyesuaian kolom simpanan wajib pinjaman dan sukarela
+"Rabu, 04 Februari 2026",18:00,0:00,6,Implementasi form supplier untuk pembuatan akun otomatis
+"Kamis, 05 Februari 2026",18:00,0:00,6,Debugging workflow approval supplier dan validasi input
+"Jumat, 06 Februari 2026",18:00,0:00,6,Perbaikan integrasi route setelah merge branch
+"Sabtu, 07 Februari 2026",18:00,0:00,6,Code cleanup pasca merge untuk stabilisasi modul admin
+"Minggu, 08 Februari 2026",18:00,0:00,6,Pengujian laporan payroll dan output PDF
+"Senin, 09 Februari 2026",18:00,0:00,6,Refinement UX halaman laporan untuk readability
+"Selasa, 10 Februari 2026",18:00,0:00,6,Verifikasi data transaksi terhadap laporan keuangan
+"Rabu, 11 Februari 2026",18:00,0:00,6,Peningkatan format PDF laporan keuangan bulanan
+"Kamis, 12 Februari 2026",18:00,0:00,6,Perbaikan urutan member pada laporan berdasarkan pinjaman
+"Jumat, 13 Februari 2026",18:00,0:00,6,Penyesuaian kolom simpanan wajib pinjaman dan sukarela
+"Sabtu, 14 Februari 2026",18:00,0:00,6,Implementasi form supplier untuk pembuatan akun otomatis
+"Minggu, 15 Februari 2026",18:00,0:00,6,Debugging workflow approval supplier dan validasi input
+"Senin, 16 Februari 2026",18:00,0:00,6,Perbaikan integrasi route setelah merge branch
+"Selasa, 17 Februari 2026",18:00,0:00,6,Code cleanup pasca merge untuk stabilisasi modul admin
+"Rabu, 18 Februari 2026",18:00,0:00,6,Pengujian laporan payroll dan output PDF
+"Kamis, 19 Februari 2026",18:00,0:00,6,Refinement UX halaman laporan untuk readability
+"Jumat, 20 Februari 2026",18:00,0:00,6,Verifikasi data transaksi terhadap laporan keuangan
+"Sabtu, 21 Februari 2026",18:00,0:00,6,Peningkatan format PDF laporan keuangan bulanan
+"Minggu, 22 Februari 2026",18:00,0:00,6,Perbaikan urutan member pada laporan berdasarkan pinjaman
+"Senin, 23 Februari 2026",18:00,0:00,6,Penyesuaian kolom simpanan wajib pinjaman dan sukarela
+"Selasa, 24 Februari 2026",18:00,0:00,6,Implementasi form supplier untuk pembuatan akun otomatis
+"Rabu, 25 Februari 2026",18:00,0:00,6,Debugging workflow approval supplier dan validasi input

@@ -1,0 +1,23 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,,
+NIM,220102007,,,,
+PERIODE,01 MARET - 16 MARET 2026,,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Minggu, 01 Maret 2026",18:00,0:00,6,Support implementasi export PDF daftar tanda tangan anggota
+"Senin, 02 Maret 2026",18:00,0:00,6,Sinkronisasi menu admin members dengan kebutuhan operasional
+"Selasa, 03 Maret 2026",18:00,0:00,6,Perbaikan akses role pada route payroll developer
+"Rabu, 04 Maret 2026",18:00,0:00,6,Validasi data member retail agar terhitung di export
+"Kamis, 05 Maret 2026",18:00,0:00,6,Refinement komponen sidebar dan navigasi developer
+"Jumat, 06 Maret 2026",18:00,0:00,6,Uji regresi alur import export pada modul work logs
+"Sabtu, 07 Maret 2026",18:00,0:00,6,Perbaikan style dan konsistensi komponen admin
+"Minggu, 08 Maret 2026",18:00,0:00,6,Review mapping data anggota untuk kebutuhan laporan
+"Senin, 09 Maret 2026",18:00,0:00,6,Pembersihan issue kecil pasca deployment update Maret
+"Selasa, 10 Maret 2026",18:00,0:00,6,Koordinasi final testing fitur payroll dan member
+"Rabu, 11 Maret 2026",18:00,0:00,6,Support implementasi export PDF daftar tanda tangan anggota
+"Kamis, 12 Maret 2026",18:00,0:00,6,Sinkronisasi menu admin members dengan kebutuhan operasional
+"Jumat, 13 Maret 2026",18:00,0:00,6,Perbaikan akses role pada route payroll developer
+"Sabtu, 14 Maret 2026",18:00,0:00,6,Validasi data member retail agar terhitung di export
+"Minggu, 15 Maret 2026",18:00,0:00,6,Refinement komponen sidebar dan navigasi developer
+"Senin, 16 Maret 2026",18:00,0:00,6,Uji regresi alur import export pada modul work logs

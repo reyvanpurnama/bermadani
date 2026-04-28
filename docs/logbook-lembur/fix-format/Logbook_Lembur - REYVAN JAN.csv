@@ -1,0 +1,32 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,M. REYVAN PURNAMA,,,
+NIM,220102043,,,
+PERIODE,01 JANUARI - 31 JANUARI 2026,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Kamis, 01 Januari 2026",18:00,0:00,6,Pengembangan Simwa Audit Tool dan rekonsiliasi data
+"Jumat, 02 Januari 2026",18:00,0:00,6,Refactor profile member dan konsistensi konfigurasi simpanan
+"Sabtu, 03 Januari 2026",18:00,0:00,6,Perbaikan validasi input rupiah pada form financial
+"Minggu, 04 Januari 2026",18:00,0:00,6,Debugging modal profile dan peningkatan responsivitas mobile
+"Senin, 05 Januari 2026",18:00,0:00,6,Sinkronisasi logika payroll snapshot dengan laporan bulanan
+"Selasa, 06 Januari 2026",18:00,0:00,6,Integrasi data retail portal dengan member profile
+"Rabu, 07 Januari 2026",18:00,0:00,6,Perbaikan bug transfer status dan history pada member dashboard
+"Kamis, 08 Januari 2026",18:00,0:00,6,Code review dan penyesuaian query untuk akurasi audit
+"Jumat, 09 Januari 2026",18:00,0:00,6,Penyempurnaan dokumentasi teknis modul simpanan
+"Sabtu, 10 Januari 2026",18:00,0:00,6,Pengujian end to end alur audit dan koreksi edge case
+"Minggu, 11 Januari 2026",18:00,0:00,6,Pengembangan Simwa Audit Tool dan rekonsiliasi data
+"Senin, 12 Januari 2026",18:00,0:00,6,Refactor profile member dan konsistensi konfigurasi simpanan
+"Selasa, 13 Januari 2026",18:00,0:00,6,Perbaikan validasi input rupiah pada form financial
+"Rabu, 14 Januari 2026",18:00,0:00,6,Debugging modal profile dan peningkatan responsivitas mobile
+"Kamis, 15 Januari 2026",18:00,0:00,6,Sinkronisasi logika payroll snapshot dengan laporan bulanan
+"Jumat, 16 Januari 2026",18:00,0:00,6,Integrasi data retail portal dengan member profile
+"Sabtu, 17 Januari 2026",18:00,0:00,6,Perbaikan bug transfer status dan history pada member dashboard
+"Minggu, 18 Januari 2026",18:00,0:00,6,Code review dan penyesuaian query untuk akurasi audit
+"Senin, 19 Januari 2026",18:00,0:00,6,Penyempurnaan dokumentasi teknis modul simpanan
+"Selasa, 20 Januari 2026",18:00,0:00,6,Pengujian end to end alur audit dan koreksi edge case
+"Rabu, 21 Januari 2026",18:00,0:00,6,Pengembangan Simwa Audit Tool dan rekonsiliasi data
+"Kamis, 22 Januari 2026",18:00,0:00,6,Refactor profile member dan konsistensi konfigurasi simpanan
+"Jumat, 23 Januari 2026",18:00,0:00,6,Perbaikan validasi input rupiah pada form financial
+"Sabtu, 24 Januari 2026",18:00,0:00,6,Debugging modal profile dan peningkatan responsivitas mobile
+"Minggu, 25 Januari 2026",18:00,0:00,6,Sinkronisasi logika payroll snapshot dengan laporan bulanan

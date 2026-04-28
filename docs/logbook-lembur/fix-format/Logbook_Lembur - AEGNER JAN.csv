@@ -1,0 +1,32 @@
+REKAPITULASI ABSENSI KERJA LEMBUR KOPERASI BERMADANI,,,,
+NAMA,AEGNER BILLIK,,,
+NIM,220102007,,,
+PERIODE,01 JANUARI - 31 JANUARI 2026,,,
+JAM KERJA,6 Jam/ Hari (18.00 s.d 00.00 WIB),,,
+,,,,
+Tanggal,Jam Mulai,Jam Selesai,Durasi (Jam),Uraian Kegiatan
+"Kamis, 01 Januari 2026",18:00,0:00,6,Implementasi sistem supplier consignment dan approval produk
+"Jumat, 02 Januari 2026",18:00,0:00,6,Pengembangan kasir history serta ringkasan performa kasir
+"Sabtu, 03 Januari 2026",18:00,0:00,6,Perapihan kategori produk melalui modal pada halaman inventaris
+"Minggu, 04 Januari 2026",18:00,0:00,6,Perbaikan dashboard chart agar lebih informatif
+"Senin, 05 Januari 2026",18:00,0:00,6,Implementasi loyalty member minimarket dan auto create
+"Selasa, 06 Januari 2026",18:00,0:00,6,Refactor laporan keuangan untuk pemisahan sumber pinjaman
+"Rabu, 07 Januari 2026",18:00,0:00,6,Perbaikan typo dan duplikasi kode pada laporan bulanan
+"Kamis, 08 Januari 2026",18:00,0:00,6,Penguatan alur create member agar tidak membingungkan user
+"Jumat, 09 Januari 2026",18:00,0:00,6,Update status member suspend activate sesuai enum database
+"Sabtu, 10 Januari 2026",18:00,0:00,6,Penyelarasan struktur data BMT ITQAN pada laporan
+"Minggu, 11 Januari 2026",18:00,0:00,6,Implementasi sistem supplier consignment dan approval produk
+"Senin, 12 Januari 2026",18:00,0:00,6,Pengembangan kasir history serta ringkasan performa kasir
+"Selasa, 13 Januari 2026",18:00,0:00,6,Perapihan kategori produk melalui modal pada halaman inventaris
+"Rabu, 14 Januari 2026",18:00,0:00,6,Perbaikan dashboard chart agar lebih informatif
+"Kamis, 15 Januari 2026",18:00,0:00,6,Implementasi loyalty member minimarket dan auto create
+"Jumat, 16 Januari 2026",18:00,0:00,6,Refactor laporan keuangan untuk pemisahan sumber pinjaman
+"Sabtu, 17 Januari 2026",18:00,0:00,6,Perbaikan typo dan duplikasi kode pada laporan bulanan
+"Minggu, 18 Januari 2026",18:00,0:00,6,Penguatan alur create member agar tidak membingungkan user
+"Senin, 19 Januari 2026",18:00,0:00,6,Update status member suspend activate sesuai enum database
+"Selasa, 20 Januari 2026",18:00,0:00,6,Penyelarasan struktur data BMT ITQAN pada laporan
+"Rabu, 21 Januari 2026",18:00,0:00,6,Implementasi sistem supplier consignment dan approval produk
+"Kamis, 22 Januari 2026",18:00,0:00,6,Pengembangan kasir history serta ringkasan performa kasir
+"Jumat, 23 Januari 2026",18:00,0:00,6,Perapihan kategori produk melalui modal pada halaman inventaris
+"Sabtu, 24 Januari 2026",18:00,0:00,6,Perbaikan dashboard chart agar lebih informatif
+"Minggu, 25 Januari 2026",18:00,0:00,6,Implementasi loyalty member minimarket dan auto create
