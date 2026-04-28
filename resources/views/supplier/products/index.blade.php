@@ -112,7 +112,9 @@
         {{-- Mobile Card View --}}
         <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
             @forelse($products as $product)
-                @php($canModify = in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true))
+                @php
+                    $canModify = in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
+                @endphp
                 <div class="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                     <div class="flex items-start gap-3">
                         @if($product->image)
