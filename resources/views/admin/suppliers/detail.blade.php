@@ -111,84 +111,23 @@
             suspendSupplierOpen: false,
         }"
         class="space-y-6">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div class="flex items-start gap-4">
-                <a href="{{ route('admin.suppliers') }}"
-                    class="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-500 shadow-sm border border-slate-100 hover:text-primary hover:border-indigo-200 dark:bg-darkCard dark:border-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors">
-                    <i class='bx bx-arrow-back text-xl'></i>
-                </a>
-                <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ring-1 {{ $statusConfig['badge'] }} {{ $statusConfig['ring'] }}">
-                            <i class='bx {{ $statusConfig['icon'] }} text-sm'></i>
-                            {{ $statusConfig['label'] }}
-                        </span>
-                        <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider {{ $paymentConfig['badge'] }}">
-                            <i class='bx {{ $paymentConfig['icon'] }} text-sm'></i>
-                            {{ $paymentConfig['short'] }}
-                        </span>
-                    </div>
-                    <h1 class="mt-2 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-3xl">
-                        {{ $supplier->businessName }}
-                    </h1>
-                    <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                        <span class="inline-flex items-center gap-1 font-mono font-semibold text-slate-600 dark:text-slate-300">
-                            <i class='bx bx-barcode'></i>
-                            {{ $supplier->code }}
-                        </span>
-                        <span class="hidden h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600 sm:inline-block"></span>
-                        <span class="inline-flex items-center gap-1">
-                            <i class='bx bx-calendar'></i>
-                            Bergabung {{ optional($supplier->created_at)->format('d M Y, H:i') ?? '-' }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+        <div class="flex items-center justify-between gap-3">
+            <a href="{{ route('admin.suppliers') }}"
+                class="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-500 shadow-sm border border-slate-100 hover:text-primary hover:border-indigo-200 dark:bg-darkCard dark:border-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors">
+                <i class='bx bx-arrow-back text-lg'></i>
+                <span>Kembali</span>
+                <span class="hidden sm:inline text-slate-400">ke daftar supplier</span>
+            </a>
 
-            <div class="flex flex-wrap gap-2">
-                @if($supplier->registrationPaymentStatus === 'PENDING_VERIFICATION')
-                    <button type="button" @click="verifyPaymentOpen = true"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-colors">
-                        <i class='bx bx-check-shield text-lg'></i>
-                        Verifikasi Pembayaran
-                    </button>
-                    <button type="button" @click="rejectPaymentOpen = true"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-rose-600 shadow-sm border border-rose-200 hover:bg-rose-50 dark:bg-darkCard dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-500/10 transition-colors">
-                        <i class='bx bx-x-circle text-lg'></i>
-                        Tolak Pembayaran
-                    </button>
-                @endif
-
-                @if($supplier->status === 'PENDING')
-                    <form method="POST" action="{{ route('admin.suppliers.approve', $supplier->id) }}">
-                        @csrf
-                        <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-colors">
-                            <i class='bx bx-check-circle text-lg'></i>
-                            Approve Supplier
-                        </button>
-                    </form>
-                    <button type="button" @click="rejectSupplierOpen = true"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-rose-600 shadow-sm border border-rose-200 hover:bg-rose-50 dark:bg-darkCard dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-500/10 transition-colors">
-                        <i class='bx bx-x text-lg'></i>
-                        Reject
-                    </button>
-                @elseif($supplier->status === 'ACTIVE')
-                    <button type="button" @click="suspendSupplierOpen = true"
-                        class="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-amber-600 shadow-sm border border-amber-200 hover:bg-amber-50 dark:bg-darkCard dark:border-amber-900/50 dark:text-amber-400 dark:hover:bg-amber-500/10 transition-colors">
-                        <i class='bx bx-pause-circle text-lg'></i>
-                        Suspend
-                    </button>
-                @elseif($supplier->status === 'SUSPENDED')
-                    <form method="POST" action="{{ route('admin.suppliers.activate', $supplier->id) }}">
-                        @csrf
-                        <button type="submit"
-                            class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-colors">
-                            <i class='bx bx-refresh text-lg'></i>
-                            Aktifkan Kembali
-                        </button>
-                    </form>
-                @endif
+            <div class="hidden md:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 font-mono font-semibold text-slate-600 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700 dark:text-slate-300">
+                    <i class='bx bx-barcode'></i>
+                    {{ $supplier->code }}
+                </span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
+                    <i class='bx bx-calendar'></i>
+                    {{ optional($supplier->created_at)->format('d M Y, H:i') ?? '-' }}
+                </span>
             </div>
         </div>
 
@@ -206,37 +145,154 @@
             </div>
         @endif
 
-        <section class="relative overflow-hidden rounded-3xl bg-slate-950 shadow-xl shadow-slate-900/10 dark:shadow-black/20">
-            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(79,70,229,0.35),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.22),_transparent_32%)]"></div>
-            <div class="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-2xl"></div>
-            <div class="relative grid gap-6 p-6 lg:grid-cols-[1fr_320px] lg:p-7">
-                <div class="flex flex-col gap-5 sm:flex-row sm:items-center">
-                    <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-3xl bg-white/10 text-4xl font-black text-white ring-1 ring-white/15 shadow-2xl">
-                        {{ $initial }}
+        <section class="relative overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
+            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-sky-400 to-emerald-400"></div>
+            <div class="absolute -right-16 -top-20 h-44 w-44 rounded-full bg-indigo-500/10 blur-3xl"></div>
+            <div class="absolute -bottom-20 left-10 h-44 w-44 rounded-full bg-emerald-500/10 blur-3xl"></div>
+
+            <div class="relative p-4 sm:p-5 lg:p-6">
+                <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-2xl font-black text-white shadow-lg shadow-slate-900/10 dark:bg-slate-800 sm:h-16 sm:w-16 sm:text-3xl">
+                            {{ $initial }}
+                        </div>
+
+                        <div class="min-w-0">
+                            <p class="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Profil Mitra Supplier</p>
+                            <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-3xl lg:text-4xl">
+                                {{ $supplier->businessName }}
+                            </h1>
+
+                            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+                                <span class="inline-flex items-center gap-1 font-mono font-semibold text-slate-700 dark:text-slate-300 md:hidden">
+                                    <i class='bx bx-barcode'></i>
+                                    {{ $supplier->code }}
+                                </span>
+                                <span class="inline-flex items-center gap-1">
+                                    <i class='bx bx-user'></i>
+                                    {{ $supplier->ownerName }}
+                                </span>
+                                <span class="hidden h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600 sm:inline-block"></span>
+                                <span class="inline-flex items-center gap-1">
+                                    <i class='bx bx-purchase-tag'></i>
+                                    {{ $supplier->productCategory ?: 'Tanpa kategori' }}
+                                </span>
+                            </div>
+
+                            <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+                                {{ $supplier->description ?: 'Belum ada deskripsi bisnis. Lengkapi data ini jika supplier membutuhkan konteks tambahan untuk audit atau review produk.' }}
+                            </p>
+
+                            <div class="mt-4 flex flex-wrap gap-2 lg:hidden">
+                                <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider ring-1 {{ $statusConfig['badge'] }} {{ $statusConfig['ring'] }}">
+                                    <i class='bx {{ $statusConfig['icon'] }} text-sm'></i>
+                                    {{ $statusConfig['label'] }}
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $paymentConfig['badge'] }}">
+                                    <i class='bx {{ $paymentConfig['icon'] }} text-sm'></i>
+                                    {{ $paymentConfig['short'] }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-xs font-bold uppercase tracking-[0.25em] text-indigo-200">Profil Mitra Supplier</p>
-                        <h2 class="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">{{ $supplier->businessName }}</h2>
-                        <p class="mt-2 max-w-3xl text-sm leading-6 text-slate-300">
-                            {{ $supplier->description ?: 'Belum ada deskripsi bisnis. Lengkapi data ini jika supplier membutuhkan konteks tambahan untuk audit atau review produk.' }}
-                        </p>
+
+                    <div class="hidden shrink-0 flex-col items-end gap-2 lg:flex">
+                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider ring-1 {{ $statusConfig['badge'] }} {{ $statusConfig['ring'] }}">
+                            <i class='bx {{ $statusConfig['icon'] }} text-sm'></i>
+                            {{ $statusConfig['label'] }}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $paymentConfig['badge'] }}">
+                            <i class='bx {{ $paymentConfig['icon'] }} text-sm'></i>
+                            {{ $paymentConfig['short'] }}
+                        </span>
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10 backdrop-blur">
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Kapasitas Produk</p>
-                            <p class="mt-1 text-2xl font-black text-white">{{ $currentActiveProducts }} / {{ $supplier->maxActiveProducts ?? 0 }}</p>
+                <div class="mt-5 grid gap-3 sm:grid-cols-3">
+                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Produk Aktif</p>
+                        <div class="mt-2 flex items-end justify-between gap-3">
+                            <p class="text-lg font-black text-slate-900 dark:text-white">{{ $currentActiveProducts }} / {{ $supplier->maxActiveProducts ?? 0 }}</p>
+                            <p class="text-[11px] font-bold text-primary">{{ $usagePercent }}%</p>
                         </div>
-                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-indigo-100">
-                            <i class='bx bx-package text-2xl'></i>
+                        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                            <div class="h-full rounded-full bg-primary" style="width: {{ $usagePercent }}%"></div>
                         </div>
                     </div>
-                    <div class="mt-4 h-2 rounded-full bg-white/10 overflow-hidden">
-                        <div class="h-full rounded-full bg-gradient-to-r from-indigo-300 to-emerald-300" style="width: {{ $usagePercent }}%"></div>
+
+                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Kontak Utama</p>
+                        <p class="mt-2 truncate text-sm font-black text-slate-900 dark:text-white">{{ $supplier->phone }}</p>
+                        <p class="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400">{{ $supplier->email }}</p>
                     </div>
-                    <p class="mt-2 text-[11px] text-slate-300">{{ $usagePercent }}% dari limit produk aktif saat ini.</p>
+
+                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Bergabung</p>
+                        <p class="mt-2 text-sm font-black text-slate-900 dark:text-white">{{ optional($supplier->created_at)->format('d M Y') ?? '-' }}</p>
+                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{{ optional($supplier->created_at)->format('H:i') ?? '-' }} WIB</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Aksi Cepat</p>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Gunakan aksi yang tersedia sesuai status supplier saat ini.</p>
+                </div>
+
+                <div class="grid gap-2 sm:flex sm:flex-wrap sm:justify-end">
+                    @if($supplier->registrationPaymentStatus === 'PENDING_VERIFICATION')
+                        <button type="button" @click="verifyPaymentOpen = true"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-colors sm:w-auto">
+                            <i class='bx bx-check-shield text-lg'></i>
+                            Verifikasi Pembayaran
+                        </button>
+                        <button type="button" @click="rejectPaymentOpen = true"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-600 border border-rose-100 hover:bg-rose-100 dark:bg-rose-500/10 dark:border-rose-500/20 dark:text-rose-400 dark:hover:bg-rose-500/15 transition-colors sm:w-auto">
+                            <i class='bx bx-x-circle text-lg'></i>
+                            Tolak Pembayaran
+                        </button>
+                    @endif
+
+                    @if($supplier->status === 'PENDING')
+                        <form method="POST" action="{{ route('admin.suppliers.approve', $supplier->id) }}" class="w-full sm:w-auto">
+                            @csrf
+                            <button type="submit"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-500/20 hover:bg-indigo-700 transition-colors sm:w-auto">
+                                <i class='bx bx-check-circle text-lg'></i>
+                                Approve Supplier
+                            </button>
+                        </form>
+                        <button type="button" @click="rejectSupplierOpen = true"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-rose-600 border border-rose-200 hover:bg-rose-50 dark:bg-slate-800 dark:border-rose-900/50 dark:text-rose-400 dark:hover:bg-rose-500/10 transition-colors sm:w-auto">
+                            <i class='bx bx-x text-lg'></i>
+                            Reject
+                        </button>
+                    @elseif($supplier->status === 'ACTIVE')
+                        <button type="button" @click="suspendSupplierOpen = true"
+                            class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-bold text-amber-600 border border-amber-100 hover:bg-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-400 dark:hover:bg-amber-500/15 transition-colors sm:w-auto">
+                            <i class='bx bx-pause-circle text-lg'></i>
+                            Suspend Supplier
+                        </button>
+                    @elseif($supplier->status === 'SUSPENDED')
+                        <form method="POST" action="{{ route('admin.suppliers.activate', $supplier->id) }}" class="w-full sm:w-auto">
+                            @csrf
+                            <button type="submit"
+                                class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-emerald-500/20 hover:bg-emerald-700 transition-colors sm:w-auto">
+                                <i class='bx bx-refresh text-lg'></i>
+                                Aktifkan Kembali
+                            </button>
+                        </form>
+                    @endif
+
+                    @if($supplier->registrationPaymentStatus !== 'PENDING_VERIFICATION' && !in_array($supplier->status, ['PENDING', 'ACTIVE', 'SUSPENDED']))
+                        <div class="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                            <i class='bx bx-info-circle text-lg'></i>
+                            Tidak ada aksi tersedia
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
@@ -244,16 +300,7 @@
         <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                 <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Status Akun</p>
-                    <i class='bx {{ $statusConfig['icon'] }} text-xl text-primary'></i>
-                </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ $statusConfig['label'] }}</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">isActive: {{ $supplier->isActive ? 'Ya' : 'Tidak' }}</p>
-            </div>
-
-            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Registrasi</p>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Biaya Registrasi</p>
                     <i class='bx bx-receipt text-xl text-emerald-500'></i>
                 </div>
                 <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">Rp {{ number_format((float) ($supplier->registrationFee ?? 0), 0, ',', '.') }}</p>
@@ -262,20 +309,29 @@
 
             <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                 <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Produk</p>
-                    <i class='bx bx-box text-xl text-amber-500'></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Produk Approved</p>
+                    <i class='bx bx-badge-check text-xl text-blue-500'></i>
                 </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ $products->count() }} SKU</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $products->where('approvalStatus', 'APPROVED')->count() }} produk approved</p>
+                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ $products->where('approvalStatus', 'APPROVED')->count() }} / {{ $products->count() }}</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Produk lolos review admin</p>
             </div>
 
             <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                 <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Kontak</p>
-                    <i class='bx bx-phone-call text-xl text-sky-500'></i>
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sisa Slot Produk</p>
+                    <i class='bx bx-box text-xl text-amber-500'></i>
                 </div>
-                <p class="mt-3 truncate text-lg font-black text-slate-900 dark:text-white">{{ $supplier->phone }}</p>
-                <p class="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">{{ $supplier->email }}</p>
+                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ max(($supplier->maxActiveProducts ?? 0) - $currentActiveProducts, 0) }} slot</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $currentActiveProducts }} aktif dari {{ $supplier->maxActiveProducts ?? 0 }} limit</p>
+            </div>
+
+            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
+                <div class="flex items-center justify-between gap-3">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Iuran Bulanan</p>
+                    <i class='bx bx-calendar-check text-xl text-sky-500'></i>
+                </div>
+                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">Rp {{ number_format((float) ($supplier->monthlyFee ?? 0), 0, ',', '.') }}</p>
+                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $supplier->isPaymentActive ? 'Pembayaran aktif' : 'Belum aktif' }}</p>
             </div>
         </section>
 
@@ -388,7 +444,64 @@
                     </div>
 
                     @if($products->count() > 0)
-                        <div class="overflow-x-auto">
+                        <div class="divide-y divide-slate-100 dark:divide-slate-700 md:hidden">
+                            @foreach($products as $product)
+                                @php
+                                    $productStatusClass = $product->status === 'ACTIVE'
+                                        ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400'
+                                        : 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300';
+
+                                    $approvalClass = match($product->approvalStatus) {
+                                        'APPROVED' => 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400',
+                                        'PENDING' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400',
+                                        'REJECTED' => 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-400',
+                                        default => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
+                                    };
+                                @endphp
+
+                                <article class="p-4">
+                                    <div class="flex items-start gap-3">
+                                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+                                            <i class='bx bx-cube text-xl'></i>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="min-w-0">
+                                                    <h4 class="truncate text-sm font-black text-slate-900 dark:text-white">{{ $product->name }}</h4>
+                                                    <p class="mt-0.5 text-[11px] text-slate-400">SKU: {{ $product->sku ?: '-' }}</p>
+                                                </div>
+                                                <span class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide {{ $productStatusClass }}">{{ $product->status ?? '-' }}</span>
+                                            </div>
+
+                                            <div class="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/60">
+                                                <div>
+                                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Kategori</p>
+                                                    <p class="mt-1 truncate text-xs font-semibold text-slate-700 dark:text-slate-300">{{ $product->category->name ?? '-' }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Stok</p>
+                                                    <p class="mt-1 text-xs font-black text-slate-900 dark:text-white">{{ $product->stock }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Harga Jual</p>
+                                                    <p class="mt-1 text-xs font-black text-slate-900 dark:text-white">Rp {{ number_format((float) $product->sellPrice, 0, ',', '.') }}</p>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Margin</p>
+                                                    <p class="mt-1 text-xs font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format((float) $product->margin, 0, ',', '.') }}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="mt-3 flex flex-wrap gap-2">
+                                                <span class="rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide {{ $approvalClass }}">{{ $product->approvalStatus ?? 'N/A' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
+
+                        <div class="hidden overflow-x-auto md:block">
                             <table class="w-full min-w-[760px] text-left text-sm text-slate-600 dark:text-slate-400">
                                 <thead class="bg-slate-50 text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:bg-slate-800/60 dark:text-slate-500">
                                     <tr>
@@ -499,60 +612,34 @@
                     </div>
 
                     @if($supplier->registrationPaymentStatus === 'PENDING_VERIFICATION')
-                        <div class="mt-5 grid gap-2">
-                            <button type="button" @click="verifyPaymentOpen = true"
-                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-700 transition-colors">
-                                <i class='bx bx-check-shield text-lg'></i>
-                                Verifikasi Pembayaran
-                            </button>
-                            <button type="button" @click="rejectPaymentOpen = true"
-                                class="inline-flex items-center justify-center gap-2 rounded-xl bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/15 transition-colors">
-                                <i class='bx bx-x-circle text-lg'></i>
-                                Tolak Pembayaran
-                            </button>
+                        <div class="mt-5 rounded-xl bg-amber-50 p-3 text-xs leading-5 text-amber-700 border border-amber-100 dark:bg-amber-500/10 dark:border-amber-500/20 dark:text-amber-300">
+                            Pembayaran masih menunggu review. Aksi verifikasi tersedia di panel "Aksi Cepat" bagian atas.
                         </div>
                     @endif
                 </div>
 
                 <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                     <div class="mb-5 border-b border-slate-100 pb-4 dark:border-slate-700">
-                        <h3 class="text-sm font-black text-slate-900 dark:text-white">Panel Aksi</h3>
-                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Aksi administratif mengikuti status supplier saat ini.</p>
+                        <h3 class="text-sm font-black text-slate-900 dark:text-white">Ringkasan Operasional</h3>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Snapshot status tanpa aksi duplikat.</p>
                     </div>
 
-                    <div class="space-y-3">
-                        @if($supplier->status === 'PENDING')
-                            <form method="POST" action="{{ route('admin.suppliers.approve', $supplier->id) }}">
-                                @csrf
-                                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white hover:bg-indigo-700 transition-colors">
-                                    <i class='bx bx-check-circle text-lg'></i>
-                                    Approve Supplier
-                                </button>
-                            </form>
-                            <button type="button" @click="rejectSupplierOpen = true" class="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-50 px-4 py-3 text-sm font-bold text-rose-600 hover:bg-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-500/15 transition-colors">
-                                <i class='bx bx-x-circle text-lg'></i>
-                                Reject Supplier
-                            </button>
-                        @elseif($supplier->status === 'ACTIVE')
-                            <button type="button" @click="suspendSupplierOpen = true" class="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-3 text-sm font-bold text-amber-600 hover:bg-amber-100 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/15 transition-colors">
-                                <i class='bx bx-pause-circle text-lg'></i>
-                                Suspend Supplier
-                            </button>
-                        @elseif($supplier->status === 'SUSPENDED')
-                            <form method="POST" action="{{ route('admin.suppliers.activate', $supplier->id) }}">
-                                @csrf
-                                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-bold text-white hover:bg-emerald-700 transition-colors">
-                                    <i class='bx bx-refresh text-lg'></i>
-                                    Aktifkan Kembali
-                                </button>
-                            </form>
-                        @else
-                            <div class="rounded-xl bg-slate-50 p-4 text-center dark:bg-slate-800/70">
-                                <i class='bx bx-info-circle text-2xl text-slate-400'></i>
-                                <p class="mt-1 text-sm font-bold text-slate-700 dark:text-slate-300">Tidak ada aksi tersedia</p>
-                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Status saat ini tidak membutuhkan aksi lanjutan.</p>
-                            </div>
-                        @endif
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Status Akun</span>
+                            <span class="text-xs font-black text-slate-800 dark:text-white">{{ $statusConfig['label'] }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Akun Aktif</span>
+                            <span class="text-xs font-black {{ $supplier->isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">{{ $supplier->isActive ? 'Ya' : 'Tidak' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Produk Approved</span>
+                            <span class="text-xs font-black text-slate-800 dark:text-white">{{ $products->where('approvalStatus', 'APPROVED')->count() }} / {{ $products->count() }}</span>
+                        </div>
+                        <div class="rounded-xl bg-indigo-50 p-3 text-xs leading-5 text-indigo-700 border border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-300">
+                            Semua aksi administratif utama tersedia di panel "Aksi Cepat" agar alurnya tidak tersebar.
+                        </div>
                     </div>
                 </div>
             </aside>
