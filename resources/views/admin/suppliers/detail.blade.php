@@ -111,24 +111,13 @@
             suspendSupplierOpen: false,
         }"
         class="space-y-6">
-        <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center">
             <a href="{{ route('admin.suppliers') }}"
                 class="inline-flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-sm font-semibold text-slate-500 shadow-sm border border-slate-100 hover:text-primary hover:border-indigo-200 dark:bg-darkCard dark:border-slate-700 dark:text-slate-400 dark:hover:text-white transition-colors">
                 <i class='bx bx-arrow-back text-lg'></i>
                 <span>Kembali</span>
                 <span class="hidden sm:inline text-slate-400">ke daftar supplier</span>
             </a>
-
-            <div class="hidden md:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 font-mono font-semibold text-slate-600 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700 dark:text-slate-300">
-                    <i class='bx bx-barcode'></i>
-                    {{ $supplier->code }}
-                </span>
-                <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                    <i class='bx bx-calendar'></i>
-                    {{ optional($supplier->created_at)->format('d M Y, H:i') ?? '-' }}
-                </span>
-            </div>
         </div>
 
         @if (session()->has('success'))
@@ -145,50 +134,30 @@
             </div>
         @endif
 
-        <section class="relative overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-            <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-sky-400 to-emerald-400"></div>
-            <div class="absolute -right-16 -top-20 h-44 w-44 rounded-full bg-indigo-500/10 blur-3xl"></div>
-            <div class="absolute -bottom-20 left-10 h-44 w-44 rounded-full bg-emerald-500/10 blur-3xl"></div>
+        <section class="relative overflow-hidden rounded-3xl bg-slate-950 shadow-xl shadow-slate-900/10 dark:shadow-black/20">
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(79,70,229,0.38),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(16,185,129,0.22),_transparent_32%)]"></div>
+            <div class="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/10 blur-3xl"></div>
+            <div class="absolute -bottom-24 left-12 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl"></div>
 
-            <div class="relative p-4 sm:p-5 lg:p-6">
-                <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                    <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center">
-                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-2xl font-black text-white shadow-lg shadow-slate-900/10 dark:bg-slate-800 sm:h-16 sm:w-16 sm:text-3xl">
+            <div class="relative grid gap-5 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:p-7">
+                <div class="min-w-0">
+                    <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+                        <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-white/10 text-3xl font-black text-white ring-1 ring-white/15 shadow-2xl sm:h-20 sm:w-20 sm:text-4xl">
                             {{ $initial }}
                         </div>
 
                         <div class="min-w-0">
-                            <p class="text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">Profil Mitra Supplier</p>
-                            <h1 class="mt-1 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-3xl lg:text-4xl">
+                            <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-indigo-200">Profil Mitra Supplier</p>
+                            <h1 class="mt-2 text-3xl font-black tracking-tight text-white sm:text-4xl">
                                 {{ $supplier->businessName }}
                             </h1>
 
-                            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                                <span class="inline-flex items-center gap-1 font-mono font-semibold text-slate-700 dark:text-slate-300 md:hidden">
-                                    <i class='bx bx-barcode'></i>
-                                    {{ $supplier->code }}
-                                </span>
-                                <span class="inline-flex items-center gap-1">
-                                    <i class='bx bx-user'></i>
-                                    {{ $supplier->ownerName }}
-                                </span>
-                                <span class="hidden h-1 w-1 rounded-full bg-slate-300 dark:bg-slate-600 sm:inline-block"></span>
-                                <span class="inline-flex items-center gap-1">
-                                    <i class='bx bx-purchase-tag'></i>
-                                    {{ $supplier->productCategory ?: 'Tanpa kategori' }}
-                                </span>
-                            </div>
-
-                            <p class="mt-3 max-w-3xl text-sm leading-6 text-slate-600 dark:text-slate-300">
-                                {{ $supplier->description ?: 'Belum ada deskripsi bisnis. Lengkapi data ini jika supplier membutuhkan konteks tambahan untuk audit atau review produk.' }}
-                            </p>
-
-                            <div class="mt-4 flex flex-wrap gap-2 lg:hidden">
-                                <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider ring-1 {{ $statusConfig['badge'] }} {{ $statusConfig['ring'] }}">
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white ring-1 ring-white/15 backdrop-blur">
                                     <i class='bx {{ $statusConfig['icon'] }} text-sm'></i>
                                     {{ $statusConfig['label'] }}
                                 </span>
-                                <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $paymentConfig['badge'] }}">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white ring-1 ring-white/15 backdrop-blur">
                                     <i class='bx {{ $paymentConfig['icon'] }} text-sm'></i>
                                     {{ $paymentConfig['short'] }}
                                 </span>
@@ -196,41 +165,44 @@
                         </div>
                     </div>
 
-                    <div class="hidden shrink-0 flex-col items-end gap-2 lg:flex">
-                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider ring-1 {{ $statusConfig['badge'] }} {{ $statusConfig['ring'] }}">
-                            <i class='bx {{ $statusConfig['icon'] }} text-sm'></i>
-                            {{ $statusConfig['label'] }}
+                    <p class="mt-5 max-w-3xl text-sm leading-6 text-slate-300">
+                        {{ $supplier->description ?: 'Belum ada deskripsi bisnis. Lengkapi data ini jika supplier membutuhkan konteks tambahan untuk audit atau review produk.' }}
+                    </p>
+
+                    <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-300">
+                        <span class="inline-flex items-center gap-1.5 font-mono font-semibold text-white">
+                            <i class='bx bx-barcode'></i>
+                            {{ $supplier->code }}
                         </span>
-                        <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $paymentConfig['badge'] }}">
-                            <i class='bx {{ $paymentConfig['icon'] }} text-sm'></i>
-                            {{ $paymentConfig['short'] }}
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class='bx bx-user'></i>
+                            {{ $supplier->ownerName }}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class='bx bx-purchase-tag'></i>
+                            {{ $supplier->productCategory ?: 'Tanpa kategori' }}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class='bx bx-calendar'></i>
+                            {{ optional($supplier->created_at)->format('d M Y') ?? '-' }}
                         </span>
                     </div>
                 </div>
 
-                <div class="mt-5 grid gap-3 sm:grid-cols-3">
-                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Produk Aktif</p>
-                        <div class="mt-2 flex items-end justify-between gap-3">
-                            <p class="text-lg font-black text-slate-900 dark:text-white">{{ $currentActiveProducts }} / {{ $supplier->maxActiveProducts ?? 0 }}</p>
-                            <p class="text-[11px] font-bold text-primary">{{ $usagePercent }}%</p>
+                <div class="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10 backdrop-blur">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-300">Kapasitas Produk</p>
+                            <p class="mt-1 text-2xl font-black text-white">{{ $currentActiveProducts }} / {{ $supplier->maxActiveProducts ?? 0 }}</p>
                         </div>
-                        <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                            <div class="h-full rounded-full bg-primary" style="width: {{ $usagePercent }}%"></div>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-indigo-100">
+                            <i class='bx bx-package text-2xl'></i>
                         </div>
                     </div>
-
-                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Kontak Utama</p>
-                        <p class="mt-2 truncate text-sm font-black text-slate-900 dark:text-white">{{ $supplier->phone }}</p>
-                        <p class="mt-1 truncate text-[11px] text-slate-500 dark:text-slate-400">{{ $supplier->email }}</p>
+                    <div class="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
+                        <div class="h-full rounded-full bg-gradient-to-r from-indigo-300 to-emerald-300" style="width: {{ $usagePercent }}%"></div>
                     </div>
-
-                    <div class="rounded-xl bg-slate-50 p-3 dark:bg-slate-800/70">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Bergabung</p>
-                        <p class="mt-2 text-sm font-black text-slate-900 dark:text-white">{{ optional($supplier->created_at)->format('d M Y') ?? '-' }}</p>
-                        <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">{{ optional($supplier->created_at)->format('H:i') ?? '-' }} WIB</p>
-                    </div>
+                    <p class="mt-2 text-[11px] text-slate-300">{{ $usagePercent }}% dari limit produk aktif saat ini.</p>
                 </div>
             </div>
         </section>
@@ -297,67 +269,21 @@
             </div>
         </section>
 
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Biaya Registrasi</p>
-                    <i class='bx bx-receipt text-xl text-emerald-500'></i>
-                </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">Rp {{ number_format((float) ($supplier->registrationFee ?? 0), 0, ',', '.') }}</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $paymentConfig['label'] }}</p>
-            </div>
-
-            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Produk Approved</p>
-                    <i class='bx bx-badge-check text-xl text-blue-500'></i>
-                </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ $products->where('approvalStatus', 'APPROVED')->count() }} / {{ $products->count() }}</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Produk lolos review admin</p>
-            </div>
-
-            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sisa Slot Produk</p>
-                    <i class='bx bx-box text-xl text-amber-500'></i>
-                </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">{{ max(($supplier->maxActiveProducts ?? 0) - $currentActiveProducts, 0) }} slot</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $currentActiveProducts }} aktif dari {{ $supplier->maxActiveProducts ?? 0 }} limit</p>
-            </div>
-
-            <div class="rounded-2xl bg-white p-4 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
-                <div class="flex items-center justify-between gap-3">
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Iuran Bulanan</p>
-                    <i class='bx bx-calendar-check text-xl text-sky-500'></i>
-                </div>
-                <p class="mt-3 text-lg font-black text-slate-900 dark:text-white">Rp {{ number_format((float) ($supplier->monthlyFee ?? 0), 0, ',', '.') }}</p>
-                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">{{ $supplier->isPaymentActive ? 'Pembayaran aktif' : 'Belum aktif' }}</p>
-            </div>
-        </section>
-
         <section class="grid gap-6 xl:grid-cols-[1fr_380px]">
             <div class="space-y-6">
                 <div class="grid gap-6 lg:grid-cols-2">
                     <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                         <div class="mb-5 flex items-center justify-between gap-3 border-b border-slate-100 pb-4 dark:border-slate-700">
                             <div>
-                                <h3 class="text-sm font-black text-slate-900 dark:text-white">Informasi Bisnis</h3>
-                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Identitas toko dan kategori produk.</p>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white">Alamat Supplier</h3>
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Lokasi operasional atau alamat pengiriman.</p>
                             </div>
                             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-primary dark:bg-indigo-500/10">
-                                <i class='bx bx-store text-xl'></i>
+                                <i class='bx bx-map text-xl'></i>
                             </div>
                         </div>
 
                         <div class="space-y-4">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Nama Bisnis</p>
-                                <p class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ $supplier->businessName }}</p>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Kategori Produk</p>
-                                <p class="mt-1 text-sm text-slate-700 dark:text-slate-300">{{ $supplier->productCategory ?: '-' }}</p>
-                            </div>
                             <div>
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Alamat</p>
                                 <p class="mt-1 text-sm leading-6 text-slate-700 dark:text-slate-300">{{ $supplier->address ?: '-' }}</p>
@@ -368,8 +294,8 @@
                     <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                         <div class="mb-5 flex items-center justify-between gap-3 border-b border-slate-100 pb-4 dark:border-slate-700">
                             <div>
-                                <h3 class="text-sm font-black text-slate-900 dark:text-white">Pemilik & Kontak</h3>
-                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Data PIC supplier untuk follow-up.</p>
+                                <h3 class="text-sm font-black text-slate-900 dark:text-white">Kontak Supplier</h3>
+                                <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Channel follow-up admin ke supplier.</p>
                             </div>
                             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400">
                                 <i class='bx bx-user-voice text-xl'></i>
@@ -377,10 +303,6 @@
                         </div>
 
                         <div class="space-y-4">
-                            <div>
-                                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Nama Pemilik</p>
-                                <p class="mt-1 text-sm font-bold text-slate-900 dark:text-white">{{ $supplier->ownerName }}</p>
-                            </div>
                             <div>
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Email</p>
                                 <a href="mailto:{{ $supplier->email }}" class="mt-1 inline-flex max-w-full items-center gap-2 text-sm font-semibold text-primary hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300">
@@ -602,10 +524,6 @@
                             <span class="text-sm font-black text-slate-900 dark:text-white">Rp {{ number_format((float) ($supplier->registrationFee ?? 0), 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Status</span>
-                            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ $paymentConfig['label'] }}</span>
-                        </div>
-                        <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
                             <span class="text-xs text-slate-500 dark:text-slate-400">Diverifikasi</span>
                             <span class="text-xs font-bold text-slate-700 dark:text-slate-300">{{ optional($supplier->registrationPaymentVerifiedAt)->format('d M Y, H:i') ?? '-' }}</span>
                         </div>
@@ -621,21 +539,21 @@
                 <div class="rounded-2xl bg-white p-5 shadow-sm border border-slate-100 dark:bg-darkCard dark:border-slate-700">
                     <div class="mb-5 border-b border-slate-100 pb-4 dark:border-slate-700">
                         <h3 class="text-sm font-black text-slate-900 dark:text-white">Ringkasan Operasional</h3>
-                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Snapshot status tanpa aksi duplikat.</p>
+                        <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Info administratif yang tidak ditampilkan di hero.</p>
                     </div>
 
                     <div class="space-y-3 text-sm">
                         <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Status Akun</span>
-                            <span class="text-xs font-black text-slate-800 dark:text-white">{{ $statusConfig['label'] }}</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Iuran Bulanan</span>
+                            <span class="text-xs font-black text-slate-800 dark:text-white">Rp {{ number_format((float) ($supplier->monthlyFee ?? 0), 0, ',', '.') }}</span>
                         </div>
                         <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Akun Aktif</span>
-                            <span class="text-xs font-black {{ $supplier->isActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">{{ $supplier->isActive ? 'Ya' : 'Tidak' }}</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Pembayaran Rutin</span>
+                            <span class="text-xs font-black {{ $supplier->isPaymentActive ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500 dark:text-slate-400' }}">{{ $supplier->isPaymentActive ? 'Aktif' : 'Belum aktif' }}</span>
                         </div>
                         <div class="flex items-center justify-between gap-4 rounded-xl bg-slate-50 px-3 py-2.5 dark:bg-slate-800/70">
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Produk Approved</span>
-                            <span class="text-xs font-black text-slate-800 dark:text-white">{{ $products->where('approvalStatus', 'APPROVED')->count() }} / {{ $products->count() }}</span>
+                            <span class="text-xs text-slate-500 dark:text-slate-400">Grace Period</span>
+                            <span class="text-xs font-black text-slate-800 dark:text-white">{{ $supplier->paymentGraceDays ?? 0 }} hari</span>
                         </div>
                         <div class="rounded-xl bg-indigo-50 p-3 text-xs leading-5 text-indigo-700 border border-indigo-100 dark:bg-indigo-500/10 dark:border-indigo-500/20 dark:text-indigo-300">
                             Semua aksi administratif utama tersedia di panel "Aksi Cepat" agar alurnya tidak tersebar.
