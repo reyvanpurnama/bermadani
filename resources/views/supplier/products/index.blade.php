@@ -211,14 +211,8 @@
                     @forelse($products as $product)
                         @php
                             $canModify = in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
-                            // Calculate consignment stats for this product
-                            $consignmentItems = \App\Models\ConsignmentItem::where('productId', $product->id)
-                                ->with('batch')
-                                ->get();
-                            $totalSold = $consignmentItems->sum('soldQty');
-                            $totalReturned = $consignmentItems->sum('returnedQty');
-                            $totalSold = $totalSold ?? 0;
-                            $totalReturned = $totalReturned ?? 0;
+                            $totalSold = (int) ($product->total_sold_qty ?? 0);
+                            $totalReturned = (int) ($product->total_returned_qty ?? 0);
                         @endphp
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                             <td class="px-6 py-4">

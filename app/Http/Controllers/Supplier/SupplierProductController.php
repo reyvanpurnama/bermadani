@@ -20,6 +20,9 @@ class SupplierProductController extends Controller
     {
         $supplier = Auth::guard('supplier')->user();
         $products = Product::where('supplierId', $supplier->id)
+            ->with('category')
+            ->withSum('consignmentItems as total_sold_qty', 'soldQty')
+            ->withSum('consignmentItems as total_returned_qty', 'returnedQty')
             ->latest()
             ->paginate(10);
             
