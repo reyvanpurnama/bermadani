@@ -217,7 +217,8 @@
                                 ->get();
                             $totalSold = $consignmentItems->sum('soldQty');
                             $totalReturned = $consignmentItems->sum('returnedQty');
-                            $activeBatches = $consignmentItems->where('batch.status', 'ACTIVE');
+                            $totalSold = $totalSold ?? 0;
+                            $totalReturned = $totalReturned ?? 0;
                         @endphp
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                             <td class="px-6 py-4">
