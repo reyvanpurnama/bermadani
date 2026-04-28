@@ -299,7 +299,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.suppliers.index');
     })->name('admin.suppliers');
     Route::get('/suppliers/{id}', function ($id) {
-        return view('admin.suppliers.detail', ['supplierId' => $id]);
+        $supplier = \App\Models\Supplier::with(['products.category'])->find($id);
+
+        return view('admin.suppliers.detail', compact('supplier'));
     })->name('admin.suppliers.detail');
     // Payment verification routes
     Route::post('/suppliers/{id}/verify-payment', [SupplierController::class, 'verifyPayment'])->name('admin.suppliers.verifyPayment');
@@ -424,4 +426,3 @@ Route::get('/fix-pembukuan-februari', function () {
 
     return 'Berhasil Bro! Laporan Februari sekarang sudah terkunci dan masuk ke DB pembukuan dengan data terbaru.';
 });
-
