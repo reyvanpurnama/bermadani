@@ -17,7 +17,7 @@
             </div>
             <a href="{{ route('supplier.restock.create') }}"
                 class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-emerald-500/20">
-                <i class='bx bx-package text-lg'></i> Kirim Barang Hari Ini
+                <i class='bx bx-package text-lg'></i> Buat Request Pengiriman
             </a>
         </div>
 
@@ -25,6 +25,13 @@
         <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-3">
             <i class='bx bx-check-circle text-xl'></i>
             <span class="text-sm font-medium">{{ session('success') }}</span>
+        </div>
+        @endif
+
+        @if(session('error'))
+        <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3">
+            <i class='bx bx-error-circle text-xl'></i>
+            <span class="text-sm font-medium">{{ session('error') }}</span>
         </div>
         @endif
 
