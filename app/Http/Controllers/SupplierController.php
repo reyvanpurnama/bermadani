@@ -32,7 +32,7 @@ class SupplierController extends Controller
         $supplier = auth('supplier')->user();
         
         if (!$supplier instanceof \App\Models\Supplier) {
-            return redirect()->route('supplier.login')
+            return redirect()->route('login')
                 ->with('error', 'Akses ditolak. Silakan login sebagai supplier.');
         }
 
@@ -63,7 +63,7 @@ class SupplierController extends Controller
             if ($request->hasFile('registrationPaymentProof')) {
                 $file = $request->file('registrationPaymentProof');
                 $filename = 'payment_proof_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('payment-pr oofs', $filename, 'public');
+                $path = $file->storeAs('payment-proofs', $filename, 'public');
                 $data['registrationPaymentProof'] = $path;
                 $data['registrationPaymentStatus'] = 'PENDING_VERIFICATION';
             } else {

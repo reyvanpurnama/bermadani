@@ -38,6 +38,9 @@ class Product extends Model
     protected $appends = ['margin', 'marginPercentage'];
 
     protected $casts = [
+        'id' => 'integer',
+        'categoryId' => 'integer',
+        'supplierId' => 'integer',
         'buyPrice' => 'decimal:2',
         'sellPrice' => 'decimal:2',
         'avgCost' => 'decimal:2',

@@ -7,10 +7,41 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class SupplierProductController extends Controller
 {
+    private function isOwnedByCurrentSupplier(Product $product): bool
+    {
+        $supplierId = Auth::guard('supplier')->id();
+
+        if ($supplierId === null || $product->supplierId === null) {
+            Log::warning('Supplier product ownership check failed (null id)', [
+                'productId' => $product->id,
+                'productSupplierId' => $product->supplierId,
+                'currentSupplierId' => $supplierId,
+                'approvalStatus' => $product->approvalStatus,
+            ]);
+            return false;
+        }
+
+        $isOwner = (int) $product->supplierId === (int) $supplierId;
+
+        if (! $isOwner) {
+            Log::warning('Supplier product ownership check failed (id mismatch)', [
+                'productId' => $product->id,
+                'productSupplierId' => $product->supplierId,
+                'productSupplierIdType' => gettype($product->supplierId),
+                'currentSupplierId' => $supplierId,
+                'currentSupplierIdType' => gettype($supplierId),
+                'approvalStatus' => $product->approvalStatus,
+            ]);
+        }
+
+        return $isOwner;
+    }
+
     private function canSupplierModify(Product $product): bool
     {
         return in_array($product->approvalStatus, ['PENDING', 'REJECTED'], true);
@@ -88,7 +119,7 @@ class SupplierProductController extends Controller
     public function edit(Product $product)
     {
         // Ensure ownership
-        if ($product->supplierId !== Auth::guard('supplier')->id()) {
+        if (! $this->isOwnedByCurrentSupplier($product)) {
             abort(403);
         }
         if (! $this->canSupplierModify($product)) {
@@ -103,7 +134,7 @@ class SupplierProductController extends Controller
     public function update(Request $request, Product $product)
     {
         // Ensure ownership
-        if ($product->supplierId !== Auth::guard('supplier')->id()) {
+        if (! $this->isOwnedByCurrentSupplier($product)) {
             abort(403);
         }
         if (! $this->canSupplierModify($product)) {
@@ -139,7 +170,7 @@ class SupplierProductController extends Controller
     public function destroy(Product $product)
     {
         // Ensure ownership
-        if ($product->supplierId !== Auth::guard('supplier')->id()) {
+        if (! $this->isOwnedByCurrentSupplier($product)) {
             abort(403);
         }
         if (! $this->canSupplierModify($product)) {
