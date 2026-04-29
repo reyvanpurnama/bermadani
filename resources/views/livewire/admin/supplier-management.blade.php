@@ -1,10 +1,11 @@
 <div>
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+    <div class="flex flex-col gap-4 mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
         <div>
             <h1 class="text-xl font-bold text-slate-900 dark:text-white">Manajemen Supplier</h1>
             <p class="text-[11px] text-slate-500 mt-0.5">Kelola pendaftaran dan status supplier.</p>
         </div>
-        <div class="flex gap-2">
+        <div class="hidden sm:flex gap-2">
             @php
                 $actionableBatches = \App\Models\ConsignmentBatch::whereIn('status', ['REQUESTED', 'PENDING_SETTLEMENT'])->count();
             @endphp
@@ -18,6 +19,24 @@
                 <i class='bx bx-file'></i> Laporan
             </a>
             <button wire:click="openCreateModal" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-[13px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center gap-2">
+                <i class='bx bx-plus text-lg'></i> Tambah Supplier
+            </button>
+        </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:hidden gap-2">
+            <a href="{{ route('admin.consignment-batches') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2.5 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center justify-between gap-2 relative">
+                <span class="flex items-center gap-2">
+                    <i class='bx bx-notepad'></i> Batch Konsinyasi
+                </span>
+                @if($actionableBatches > 0)
+                    <span class="inline-flex items-center justify-center h-5 min-w-[20px] px-1.5 rounded-full bg-rose-500 text-white text-[10px] font-bold">{{ $actionableBatches }}</span>
+                @endif
+            </a>
+            <a href="{{ route('admin.consignment-report') }}" class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2.5 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-file'></i> Laporan
+            </a>
+            <button wire:click="openCreateModal" class="bg-primary hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-[13px] font-bold shadow-md shadow-indigo-500/20 transition-colors flex items-center justify-center gap-2">
                 <i class='bx bx-plus text-lg'></i> Tambah Supplier
             </button>
         </div>
@@ -83,9 +102,103 @@
         </div>
     @endif
 
-    <!-- Table -->
+    <!-- List -->
     <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-        <div class="overflow-x-auto">
+        <div class="divide-y divide-slate-100 dark:divide-slate-700 md:hidden">
+            @forelse($suppliers as $supplier)
+                @php
+                    $statusClass = match($supplier->status) {
+                        'ACTIVE' => 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400',
+                        'PENDING' => 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
+                        'SUSPENDED' => 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400',
+                        'REJECTED' => 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-400',
+                        default => 'bg-slate-100 text-slate-700',
+                    };
+                    $statusLabel = match($supplier->status) {
+                        'ACTIVE' => 'Aktif',
+                        'PENDING' => 'Menunggu',
+                        'APPROVED' => 'Disetujui',
+                        'SUSPENDED' => 'Suspended',
+                        'REJECTED' => 'Ditolak',
+                        default => $supplier->status,
+                    };
+                @endphp
+
+                <article class="p-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-lg font-bold text-primary shrink-0">
+                            {{ substr($supplier->businessName, 0, 1) }}
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="min-w-0">
+                                    <h6 class="font-semibold text-slate-800 dark:text-white truncate">{{ $supplier->businessName }}</h6>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">{{ $supplier->code }}</p>
+                                </div>
+                                <span class="{{ $statusClass }} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide shrink-0">
+                                    {{ $statusLabel }}
+                                </span>
+                            </div>
+
+                            <div class="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                                <div class="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-2.5 py-2">
+                                    <p class="text-slate-400 uppercase tracking-wide font-bold text-[9px]">Pemilik</p>
+                                    <p class="mt-0.5 text-slate-700 dark:text-slate-200 truncate">{{ $supplier->ownerName }}</p>
+                                </div>
+                                <div class="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-2.5 py-2">
+                                    <p class="text-slate-400 uppercase tracking-wide font-bold text-[9px]">Kategori</p>
+                                    <p class="mt-0.5 text-slate-700 dark:text-slate-200 truncate">{{ $supplier->productCategory ?? '-' }}</p>
+                                </div>
+                                <div class="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-2.5 py-2">
+                                    <p class="text-slate-400 uppercase tracking-wide font-bold text-[9px]">Kontak</p>
+                                    <p class="mt-0.5 text-slate-700 dark:text-slate-200 truncate">{{ $supplier->phone }}</p>
+                                </div>
+                                <div class="rounded-lg bg-slate-50 dark:bg-slate-800/60 px-2.5 py-2">
+                                    <p class="text-slate-400 uppercase tracking-wide font-bold text-[9px]">Produk</p>
+                                    <p class="mt-0.5 text-slate-700 dark:text-slate-200">{{ $supplier->currentActiveProducts }} / {{ $supplier->maxActiveProducts }}</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 flex flex-wrap gap-2">
+                                <button wire:click="openDetailModal({{ $supplier->id }})" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 text-[11px] font-semibold flex items-center gap-1">
+                                    <i class='bx bx-show'></i> Detail
+                                </button>
+
+                                @if($supplier->status === 'PENDING')
+                                    <button wire:click="approve({{ $supplier->id }})" class="px-2.5 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold flex items-center gap-1">
+                                        <i class='bx bx-check-circle'></i> Approve
+                                    </button>
+                                    <button wire:click="openRejectModal({{ $supplier->id }})" class="px-2.5 py-1.5 rounded-lg bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 text-[11px] font-semibold flex items-center gap-1">
+                                        <i class='bx bx-x-circle'></i> Reject
+                                    </button>
+                                @endif
+
+                                @if($supplier->status === 'ACTIVE')
+                                    <button wire:click="openSuspendModal({{ $supplier->id }})" class="px-2.5 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 text-[11px] font-semibold flex items-center gap-1">
+                                        <i class='bx bx-block'></i> Suspend
+                                    </button>
+                                @endif
+
+                                @if($supplier->status === 'SUSPENDED')
+                                    <button wire:click="activate({{ $supplier->id }})" class="px-2.5 py-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold flex items-center gap-1">
+                                        <i class='bx bx-refresh'></i> Activate
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            @empty
+                <div class="px-5 py-10 text-center text-slate-500">
+                    <div class="flex flex-col items-center justify-center">
+                        <i class='bx bx-search-alt text-4xl mb-2 text-slate-300'></i>
+                        <p>Tidak ada supplier ditemukan.</p>
+                    </div>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
                     <tr>
