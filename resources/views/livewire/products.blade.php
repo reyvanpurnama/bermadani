@@ -28,6 +28,10 @@
                 class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
                 <i class='bx bx-category'></i> Kategori
             </button>
+            <a href="{{ route('admin.products.import-minimarket') }}"
+                class="bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2">
+                <i class='bx bx-import'></i> Import Minimarket
+            </a>
             <a href="{{ route('admin.product-review') }}"
                 class="bg-white dark:bg-darkCard border border-amber-200 dark:border-amber-800 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 px-4 py-2 rounded-lg text-[13px] font-medium shadow-sm transition-colors flex items-center gap-2 relative">
                 @if($pendingApprovalCount > 0)

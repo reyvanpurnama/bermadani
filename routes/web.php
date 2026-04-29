@@ -187,6 +187,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/inventaris', function () {
         return view('admin.products.index');
     })->name('admin.products');
+    Route::get('/inventaris/import-minimarket', \App\Livewire\Admin\MinimarketProductImport::class)->name('admin.products.import-minimarket');
     Route::get('/inventaris/tambah', function () {
         return view('admin.products.create');
     })->name('admin.products.create');
