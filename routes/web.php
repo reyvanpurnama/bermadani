@@ -272,14 +272,16 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
     // Savings
     Route::get('/savings', function () {
-        return redirect()->route('admin.payments.create');
+        return redirect()->route('admin.members.index');
     })->name('admin.savings');
     Route::get('/audit/simwa', \App\Livewire\Admin\SimwaAuditTool::class)->name('admin.audit.simwa');
     Route::get('/audit/bank', \App\Livewire\Admin\BankAuditTool::class)->name('admin.audit.bank');
 
     // Payments - Pembayaran Simpanan
     Route::prefix('payments')->name('admin.payments.')->group(function () {
-        Route::get('/create', \App\Livewire\Admin\PaymentForm::class)->name('create');
+        Route::get('/create', function () {
+            return redirect()->route('admin.savings');
+        })->name('create');
         Route::get('/receipt/{receiptNumber}', \App\Livewire\Admin\PaymentReceipt::class)->name('receipt');
     });
 

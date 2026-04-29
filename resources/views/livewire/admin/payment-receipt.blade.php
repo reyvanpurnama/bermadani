@@ -29,7 +29,7 @@
             <button onclick="window.print()" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors shadow-sm">
                 <i class='bx bx-printer'></i> Print
             </button>
-            <a href="{{ route('admin.payments.create') }}" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
+            <a href="{{ route('admin.members.simpanan', $member->id) }}" class="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-colors">
                 <i class='bx bx-plus'></i> Input Lagi
             </a>
         </div>

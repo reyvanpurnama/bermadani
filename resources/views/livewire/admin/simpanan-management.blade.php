@@ -56,6 +56,148 @@
         </div>
     </div>
 
+    <!-- Pelunasan Tagihan Bulanan (Migrasi dari payments/create) -->
+    <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden mb-6">
+        <div class="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-700">
+            <div class="flex items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-sm font-bold text-slate-900 dark:text-white">Pelunasan Tagihan Simpanan</h3>
+                    <p class="text-xs text-slate-500 mt-1">Pilih tagihan bulanan yang belum lunas, lalu catat pembayarannya.</p>
+                </div>
+                <span class="text-[10px] bg-amber-50 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300 px-2 py-1 rounded border border-amber-100 dark:border-amber-800 font-bold uppercase">
+                    {{ count($unpaidBills) }} Tagihan
+                </span>
+            </div>
+        </div>
+
+        @if(count($unpaidBills) > 0)
+            <div class="p-4 sm:p-5 space-y-5">
+                <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 dark:bg-slate-800/60 text-[10px] uppercase font-bold text-slate-500 tracking-wider">
+                            <tr>
+                                <th class="px-4 py-3 w-10">
+                                    <input type="checkbox"
+                                        wire:click="toggleAllPaymentBills"
+                                        {{ count($selectedBills) === count($unpaidBills) ? 'checked' : '' }}
+                                        class="rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer">
+                                </th>
+                                <th class="px-4 py-3">Periode</th>
+                                <th class="px-4 py-3">Jenis</th>
+                                <th class="px-4 py-3 text-right">Nominal</th>
+                                <th class="px-4 py-3 text-right">Sisa</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700 text-[13px]">
+                            @foreach($unpaidBills as $bill)
+                                <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 {{ in_array($bill['id'], $selectedBills) ? 'bg-indigo-50 dark:bg-indigo-900/20' : '' }}">
+                                    <td class="px-4 py-3">
+                                        <input type="checkbox"
+                                            value="{{ $bill['id'] }}"
+                                            wire:model.live="selectedBills"
+                                            class="rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer">
+                                    </td>
+                                    <td class="px-4 py-3 font-medium text-slate-800 dark:text-white">{{ $bill['billingMonthFormatted'] }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-0.5 text-[10px] font-bold rounded border
+                                            {{ $bill['type'] === 'WAJIB' ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-100 dark:border-blue-800' : '' }}
+                                            {{ $bill['type'] === 'POKOK' ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 border-indigo-100 dark:border-indigo-800' : '' }}
+                                            {{ $bill['type'] === 'SUKARELA' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-100 dark:border-emerald-800' : '' }}">
+                                            {{ $bill['typeLabel'] }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-right text-slate-500">Rp {{ number_format($bill['amount'], 0, ',', '.') }}</td>
+                                    <td class="px-4 py-3 text-right font-bold text-rose-600 dark:text-rose-400">Rp {{ number_format($bill['remainingAmount'], 0, ',', '.') }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @error('selectedBills') <p class="text-xs text-rose-500 -mt-2">{{ $message }}</p> @enderror
+
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
+                    <div class="xl:col-span-2 space-y-4">
+                        <div class="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Metode Pembayaran</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <label class="cursor-pointer">
+                                    <input type="radio" wire:model.live="paymentMethod" value="CASH" class="peer sr-only">
+                                    <div class="px-3 py-2.5 rounded-lg text-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 peer-checked:border-primary peer-checked:text-primary dark:peer-checked:text-indigo-300">
+                                        Tunai
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" wire:model.live="paymentMethod" value="TRANSFER" class="peer sr-only">
+                                    <div class="px-3 py-2.5 rounded-lg text-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 peer-checked:border-primary peer-checked:text-primary dark:peer-checked:text-indigo-300">
+                                        Transfer
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" wire:model.live="paymentMethod" value="AUTO_DEBIT" class="peer sr-only">
+                                    <div class="px-3 py-2.5 rounded-lg text-center border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-slate-600 dark:text-slate-300 peer-checked:border-primary peer-checked:text-primary dark:peer-checked:text-indigo-300">
+                                        Potong Gaji
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Tanggal Bayar</label>
+                                <input type="date" wire:model="paymentDate"
+                                    class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+                                @error('paymentDate') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                            </div>
+
+                            @if($paymentMethod === 'TRANSFER')
+                                <div>
+                                    <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Nomor Referensi</label>
+                                    <input type="text" wire:model="referenceNumber" placeholder="TRF-12345"
+                                        class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none">
+                                    @error('referenceNumber') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                                </div>
+
+                                <div class="sm:col-span-2">
+                                    <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Bukti Transfer</label>
+                                    <input type="file" wire:model="paymentProofAttachment"
+                                        class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-indigo-700">
+                                    @error('paymentProofAttachment') <p class="text-xs text-rose-500 mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            @endif
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Catatan (Opsional)</label>
+                            <textarea wire:model="paymentNotes" rows="2"
+                                class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="bg-primary text-white rounded-xl p-4 flex flex-col justify-between">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-indigo-100">Total Pelunasan</p>
+                            <p class="text-2xl font-black mt-1">Rp {{ number_format($paymentTotalAmount, 0, ',', '.') }}</p>
+                            <p class="text-xs text-indigo-100 mt-1">{{ $paymentItemsCount }} tagihan dipilih</p>
+                        </div>
+                        <button wire:click="processBillPayment"
+                            wire:loading.attr="disabled"
+                            {{ count($selectedBills) === 0 ? 'disabled' : '' }}
+                            class="mt-4 w-full py-2.5 bg-white text-primary font-bold rounded-lg hover:bg-indigo-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            <span wire:loading.remove wire:target="processBillPayment">Catat Pembayaran</span>
+                            <span wire:loading wire:target="processBillPayment">Menyimpan...</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @else
+            <div class="p-10 text-center text-slate-400">
+                <i class='bx bx-check-circle text-4xl mb-2 text-emerald-500'></i>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300">Semua tagihan simpanan sudah lunas.</p>
+                <p class="text-xs mt-1">Tidak ada pembayaran tagihan yang perlu dicatat.</p>
+            </div>
+        @endif
+    </div>
+
     <!-- Tabs -->
     <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden min-h-[400px]">
         <div class="flex border-b border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/20">
