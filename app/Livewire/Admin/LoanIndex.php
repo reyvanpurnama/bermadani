@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Loan;
+use App\Models\Member;
 use Carbon\Carbon;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -14,11 +15,15 @@ class LoanIndex extends Component
     public $search = '';
     public $filterStatus = 'ACTIVE';
     public $filterSource = '';
+    public $sortBy = 'priority';
+    public $sortDirection = 'desc';
 
     protected $queryString = [
         'search' => ['except' => ''],
         'filterStatus' => ['except' => 'ACTIVE'],
         'filterSource' => ['except' => ''],
+        'sortBy' => ['except' => 'priority'],
+        'sortDirection' => ['except' => 'desc'],
     ];
 
     public function updatingSearch(): void
@@ -36,12 +41,29 @@ class LoanIndex extends Component
         $this->resetPage();
     }
 
+    public function updatingSortBy(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSortDirection(): void
+    {
+        $this->resetPage();
+    }
+
     public function clearFilters(): void
     {
         $this->search = '';
         $this->filterStatus = 'ACTIVE';
         $this->filterSource = '';
+        $this->sortBy = 'priority';
+        $this->sortDirection = 'desc';
         $this->resetPage();
+    }
+
+    public function toggleSortDirection(): void
+    {
+        $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
     }
 
     private function loansQuery()
@@ -60,11 +82,68 @@ class LoanIndex extends Component
 
     public function getLoansProperty()
     {
-        return $this->loansQuery()
-            ->orderByRaw("CASE WHEN status = 'OVERDUE' THEN 0 ELSE 1 END")
-            ->orderByDesc('startDate')
-            ->orderByDesc('id')
-            ->paginate(12);
+        return $this->applySorting($this->loansQuery())->paginate(12);
+    }
+
+    private function applySorting($query)
+    {
+        $direction = $this->sortDirection === 'asc' ? 'asc' : 'desc';
+
+        return match ($this->sortBy) {
+            'member_name' => $query
+                ->orderBy(
+                    Member::select('name')
+                        ->whereColumn('members.id', 'loans.member_id')
+                        ->limit(1),
+                    $direction
+                )
+                ->orderBy('startDate', 'desc'),
+            'member_number' => $query
+                ->orderBy(
+                    Member::select('nomorAnggota')
+                        ->whereColumn('members.id', 'loans.member_id')
+                        ->limit(1),
+                    $direction
+                )
+                ->orderBy('startDate', 'desc'),
+            'amount' => $query->orderBy('amount', $direction)->orderBy('startDate', 'desc'),
+            'monthly_payment' => $query->orderBy('monthlyPayment', $direction)->orderBy('startDate', 'desc'),
+            'remaining_amount' => $query->orderBy('remainingAmount', $direction)->orderBy('startDate', 'desc'),
+            'tenor' => $query->orderBy('tenor', $direction)->orderBy('startDate', 'desc'),
+            'progress' => $query
+                ->orderByRaw('COALESCE((paid_installments / NULLIF(tenor, 0)), 0) ' . $direction)
+                ->orderBy('startDate', 'desc'),
+            'status' => $query
+                ->orderByRaw(
+                    "CASE status
+                        WHEN 'OVERDUE' THEN 1
+                        WHEN 'ACTIVE' THEN 2
+                        WHEN 'PENDING' THEN 3
+                        WHEN 'COMPLETED' THEN 4
+                        WHEN 'REJECTED' THEN 5
+                        ELSE 6
+                     END " . $direction
+                )
+                ->orderBy('startDate', 'desc'),
+            'source' => $query
+                ->orderByRaw(
+                    "CASE loanSource
+                        WHEN 'BERMADANI' THEN 1
+                        WHEN 'BMT_ITQAN' THEN 2
+                        ELSE 3
+                     END " . $direction
+                )
+                ->orderBy('startDate', 'desc'),
+            'start_date' => $query->orderBy('startDate', $direction)->orderByDesc('id'),
+            'end_date' => $query
+                ->orderByRaw('CASE WHEN endDate IS NULL THEN 1 ELSE 0 END')
+                ->orderBy('endDate', $direction)
+                ->orderBy('startDate', 'desc'),
+            default => $query
+                ->orderByRaw("CASE WHEN status = 'OVERDUE' THEN 0 ELSE 1 END")
+                ->orderByDesc('startDate')
+                ->orderByDesc('id'),
+        };
     }
 
     public function getStatsProperty(): array

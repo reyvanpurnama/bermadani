@@ -51,7 +51,7 @@
 
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-3 sm:p-4">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-3">
-            <div class="relative md:col-span-2 xl:col-span-5">
+            <div class="relative md:col-span-2 xl:col-span-4">
                 <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
                     <i class='bx bx-search text-lg'></i>
                 </div>
@@ -59,7 +59,7 @@
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white placeholder-slate-400">
             </div>
 
-            <div class="relative xl:col-span-3">
+            <div class="relative xl:col-span-2">
                 <select wire:model.live="filterStatus"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
                     <option value="ACTIVE">Status: Active</option>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="relative xl:col-span-3">
+            <div class="relative xl:col-span-2">
                 <select wire:model.live="filterSource"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
                     <option value="">Semua Sumber</option>
@@ -86,9 +86,34 @@
                 </div>
             </div>
 
-            <div class="xl:col-span-1">
+            <div class="relative xl:col-span-3">
+                <select wire:model.live="sortBy"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
+                    <option value="priority">Sort: Prioritas Sistem</option>
+                    <option value="start_date">Sort: Tanggal Mulai</option>
+                    <option value="end_date">Sort: Tanggal Akhir</option>
+                    <option value="member_name">Sort: Nama Anggota</option>
+                    <option value="member_number">Sort: No. Anggota</option>
+                    <option value="amount">Sort: Pokok Pinjaman</option>
+                    <option value="monthly_payment">Sort: Angsuran/Bulan</option>
+                    <option value="remaining_amount">Sort: Sisa Hutang</option>
+                    <option value="tenor">Sort: Tenor</option>
+                    <option value="progress">Sort: Progress Cicilan</option>
+                    <option value="status">Sort: Status</option>
+                    <option value="source">Sort: Sumber</option>
+                </select>
+                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <i class='bx bx-chevron-down text-slate-400'></i>
+                </div>
+            </div>
+
+            <div class="xl:col-span-1 grid grid-cols-2 gap-2">
+                <button wire:click="toggleSortDirection"
+                    class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
+                    {{ $sortDirection === 'asc' ? 'ASC' : 'DESC' }}
+                </button>
                 <button wire:click="clearFilters"
-                    class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold transition-colors">
+                    class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
                     Reset
                 </button>
             </div>
