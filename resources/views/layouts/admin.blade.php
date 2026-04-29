@@ -216,7 +216,7 @@
         }
 
         function toggleCollapse() {
-            const isCollapsed = sidebar?.classList.contains('w-20');
+            const isCollapsed = sidebar?.classList.contains('sidebar-collapsed');
             const header = document.getElementById('sidebar-header');
             const navItems = document.querySelectorAll('.nav-item');
             const collapseContainer = document.getElementById('sidebar-collapse-desktop');
