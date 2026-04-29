@@ -81,15 +81,18 @@
 
         #main-sidebar.sidebar-collapsed .workspace-switcher {
             flex-direction: column;
-            gap: 0.25rem;
-            width: 2.75rem;
-            margin-inline: auto;
-            padding: 0.25rem;
+            gap: 0.125rem;
+            width: 100%;
+            margin-inline: 0;
+            padding: 0;
+            background: transparent;
         }
 
         #main-sidebar.sidebar-collapsed .workspace-switch-btn {
             width: 100%;
             flex: none;
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
         }
     </style>
 
