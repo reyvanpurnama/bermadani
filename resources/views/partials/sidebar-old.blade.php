@@ -45,10 +45,6 @@
         </a>
 
         <p class="sidebar-text px-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 mt-4 opacity-80 whitespace-nowrap transition-opacity duration-300">Keuangan</p>
-        <a href="{{ route('admin.savings') }}" class="nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.savings*') ? 'bg-slate-50 dark:bg-slate-700/40 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-            <i class='bx bx-wallet text-sm {{ request()->routeIs('admin.savings*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
-            <span class="sidebar-text text-xs {{ request()->routeIs('admin.savings*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Simpanan</span>
-        </a>
         <a href="{{ route('admin.loans') }}" class="nav-item flex items-center gap-3 px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-slate-50 dark:bg-slate-700/40 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
             <i class='bx bx-money text-sm {{ request()->routeIs('admin.loans*') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i> 
             <span class="sidebar-text text-xs {{ request()->routeIs('admin.loans*') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Pinjaman</span>
