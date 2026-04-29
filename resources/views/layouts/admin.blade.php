@@ -98,8 +98,8 @@
         }
 
         #main-sidebar.sidebar-collapsed .nav-item {
-            width: 2.5rem;
-            min-height: 2rem;
+            width: 2rem;
+            min-height: 1.75rem;
             margin-inline: auto;
             justify-content: center !important;
             padding-left: 0 !important;
@@ -224,13 +224,13 @@
             const bottomBar = document.getElementById('pos-bottom-bar');
 
             if (isCollapsed) {
-                sidebar?.classList.remove('w-20');
+                sidebar?.classList.remove('w-16');
                 sidebar?.classList.remove('sidebar-collapsed');
                 sidebar?.classList.add('w-[180px]');
-                mainContent?.classList.remove('md:ml-20');
+                mainContent?.classList.remove('md:ml-16');
                 mainContent?.classList.add('md:ml-[180px]');
                 if (bottomBar) {
-                    bottomBar.classList.remove('md:ml-20');
+                    bottomBar.classList.remove('md:ml-16');
                     bottomBar.classList.add('md:ml-[180px]');
                 }
 
@@ -242,13 +242,13 @@
                 localStorage.setItem('sidebar-collapsed', 'false');
             } else {
                 sidebar?.classList.remove('w-[180px]');
-                sidebar?.classList.add('w-20');
+                sidebar?.classList.add('w-16');
                 sidebar?.classList.add('sidebar-collapsed');
                 mainContent?.classList.remove('md:ml-[180px]');
-                mainContent?.classList.add('md:ml-20');
+                mainContent?.classList.add('md:ml-16');
                 if (bottomBar) {
                     bottomBar.classList.remove('md:ml-[180px]');
-                    bottomBar.classList.add('md:ml-20');
+                    bottomBar.classList.add('md:ml-16');
                 }
 
                 sidebarTexts.forEach(el => {
@@ -265,14 +265,14 @@
         const savedState = localStorage.getItem('sidebar-collapsed');
         if (savedState === 'true') {
             sidebar?.classList.remove('w-[180px]');
-            sidebar?.classList.add('w-20');
+            sidebar?.classList.add('w-16');
             sidebar?.classList.add('sidebar-collapsed');
             mainContent?.classList.remove('md:ml-[180px]');
-            mainContent?.classList.add('md:ml-20');
+            mainContent?.classList.add('md:ml-16');
             const bottomBar = document.getElementById('pos-bottom-bar');
             if (bottomBar) {
                 bottomBar.classList.remove('md:ml-[180px]');
-                bottomBar.classList.add('md:ml-20');
+                bottomBar.classList.add('md:ml-16');
             }
 
             sidebarTexts.forEach(el => {
