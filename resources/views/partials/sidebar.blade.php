@@ -24,16 +24,16 @@
 
     {{-- Workspace Switcher (Admin Only) --}}
     @if(!auth()->user()->isKasir())
-        <div class="px-2.5 pt-3 pb-1">
-            <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex text-[10px] font-bold relative">
+        <div class="workspace-switcher-wrapper px-2.5 pt-3 pb-1">
+            <div class="workspace-switcher bg-slate-100 dark:bg-slate-800 p-1 rounded-lg flex text-[10px] font-bold relative">
                 <button @click="setWorkspace('retail')"
                     :class="workspace === 'retail' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                    class="flex-1 py-1.5 rounded-md transition-all flex items-center justify-center gap-1.5 z-10 text-center">
+                    class="workspace-switch-btn flex-1 py-1.5 rounded-md transition-all flex items-center justify-center gap-1.5 z-10 text-center">
                     <i class='bx bx-shopping-bag'></i> <span class="sidebar-text truncate">Retail</span>
                 </button>
                 <button @click="setWorkspace('core')"
                     :class="workspace === 'core' ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'"
-                    class="flex-1 py-1.5 rounded-md transition-all flex items-center justify-center gap-1.5 z-10 text-center">
+                    class="workspace-switch-btn flex-1 py-1.5 rounded-md transition-all flex items-center justify-center gap-1.5 z-10 text-center">
                     <i class='bx bx-building-house'></i> <span class="sidebar-text truncate">Koperasi</span>
                 </button>
             </div>
@@ -273,4 +273,3 @@
         </div>
     </div>
 </aside>
-
