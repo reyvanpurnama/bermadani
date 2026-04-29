@@ -1,13 +1,13 @@
 <div class="space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800 dark:text-white">Input Pinjaman Baru</h1>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Input Pinjaman Baru</h1>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catat pinjaman anggota dengan simulasi angsuran real-time.</p>
         </div>
         <a href="{{ route('admin.loans') }}"
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full sm:w-auto">
             <i class='bx bx-arrow-back text-base'></i>
-            Kembali
+            Kembali ke Daftar
         </a>
     </div>
 
@@ -28,26 +28,27 @@
     @endif
 
     @if (session()->has('success'))
-        <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-xl flex items-center gap-3">
-            <i class='bx bxs-check-circle text-xl'></i>
-            <p class="text-sm font-medium">{{ session('success') }}</p>
+        <div class="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 rounded-xl flex items-start gap-3">
+            <i class='bx bxs-check-circle text-xl mt-0.5'></i>
+            <p class="text-sm font-semibold leading-relaxed">{{ session('success') }}</p>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 rounded-xl flex items-center gap-3">
-            <i class='bx bxs-error-circle text-xl'></i>
-            <p class="text-sm font-medium">{{ session('error') }}</p>
+        <div class="p-4 bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 rounded-xl flex items-start gap-3">
+            <i class='bx bxs-error-circle text-xl mt-0.5'></i>
+            <p class="text-sm font-semibold leading-relaxed">{{ session('error') }}</p>
         </div>
     @endif
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 space-y-6">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+        <div class="xl:col-span-8 space-y-6">
             <form wire:submit.prevent="createLoan" class="space-y-6">
-                <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
-                    <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">
-                        Pilih Anggota
-                    </label>
+                <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
+                    <div class="flex items-center justify-between gap-2 mb-4">
+                        <h2 class="text-sm font-bold text-slate-800 dark:text-white">Pilih Anggota</h2>
+                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">Wajib diisi</span>
+                    </div>
 
                     @if(!$member_id)
                         <div class="relative">
@@ -55,7 +56,7 @@
                                 <i class='bx bx-search text-lg'></i>
                             </div>
                             <input type="text" wire:model.live.debounce.300ms="search"
-                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
                                 placeholder="Ketik nama atau nomor anggota...">
 
                             @if(count($members) > 0)
@@ -79,7 +80,7 @@
                                 <p class="text-xs text-slate-500">{{ $selectedMember?->nomorAnggota }}{{ $selectedMember?->unitKerja ? ' • ' . $selectedMember->unitKerja : '' }}</p>
                             </div>
                             <button type="button" wire:click="$set('member_id', null); $set('search', '')"
-                                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                class="inline-flex items-center justify-center gap-1 px-3 py-2 text-xs font-semibold rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">
                                 <i class='bx bx-refresh'></i>
                                 Ganti Anggota
                             </button>
@@ -91,10 +92,10 @@
                     @enderror
                 </div>
 
-                <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+                <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-6">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Detail Pinjaman</h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                         <div class="md:col-span-2">
                             <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Sumber Pinjaman</label>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -157,7 +158,7 @@
                             <div class="flex items-center justify-between mb-1.5 gap-2">
                                 <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Angsuran per Bulan (Rp)</label>
                                 @if($monthlyPaymentOverridden)
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Manual Override</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Manual</span>
                                 @else
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300">Auto</span>
                                 @endif
@@ -206,13 +207,13 @@
                         </div>
                     </div>
 
-                    <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex justify-end gap-3">
+                    <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 sm:justify-end">
                         <a href="{{ route('admin.loans') }}"
-                            class="px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full">
                             Batal
                         </a>
                         <button type="submit" wire:loading.attr="disabled"
-                            class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-sm inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed transition-colors">
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-sm disabled:opacity-60 disabled:cursor-not-allowed transition-colors w-full">
                             <i class='bx bx-save text-base' wire:loading.remove></i>
                             <span wire:loading.remove>Simpan & Aktifkan</span>
                             <span wire:loading>Menyimpan...</span>
@@ -222,8 +223,8 @@
             </form>
         </div>
 
-        <div class="space-y-4">
-            <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-5 lg:sticky lg:top-6">
+        <div class="xl:col-span-4 space-y-4">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-5 xl:sticky xl:top-6">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Ringkasan Simulasi</h3>
 
                 <div class="mb-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">
@@ -289,7 +290,7 @@
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-4">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-5">
                 <h4 class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Catatan Operasional</h4>
                 <ul class="space-y-1.5 text-xs text-slate-500">
                     <li>Pastikan anggota yang dipilih sudah benar sebelum submit.</li>
