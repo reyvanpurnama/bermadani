@@ -284,9 +284,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     });
 
     // Loans
-    Route::get('/loans', function () {
-        return view('admin.placeholder', ['title' => 'Pinjaman']);
-    })->name('admin.loans');
+    Route::get('/loans', \App\Livewire\Admin\LoanIndex::class)->name('admin.loans');
     Route::get('/loans/create', \App\Livewire\Admin\LoanCreate::class)->name('admin.loans.create');
     Route::get('/loans/import', \App\Livewire\Admin\LoanImport::class)->name('admin.loans.import');
 
