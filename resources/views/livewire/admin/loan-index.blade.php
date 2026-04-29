@@ -51,7 +51,7 @@
 
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-3 sm:p-4">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-3">
-            <div class="relative md:col-span-2 xl:col-span-4">
+            <div class="relative md:col-span-2 xl:col-span-3">
                 <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Cari Anggota</label>
                 <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
                     <i class='bx bx-search text-lg'></i>
@@ -111,13 +111,13 @@
                 </div>
             </div>
 
-            <div class="xl:col-span-1 grid grid-cols-2 gap-2">
+            <div class="xl:col-span-2 grid grid-cols-2 gap-2">
                 <button wire:click="toggleSortDirection"
-                    class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
-                    {{ $sortDirection === 'asc' ? 'Naik' : 'Turun' }}
+                    class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold transition-colors">
+                    {{ $sortDirection === 'asc' ? 'ASC' : 'DESC' }}
                 </button>
                 <button wire:click="clearFilters"
-                    class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
+                    class="w-full px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold transition-colors">
                     Reset
                 </button>
             </div>
