@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <div class="md:hidden space-y-3">
+    <div class="xl:hidden grid grid-cols-1 lg:grid-cols-2 gap-3">
         @forelse($loans as $loan)
             @php
                 $progress = $this->getProgressPercentage($loan);
@@ -103,17 +103,17 @@
                 $tenor = (int) ($loan->tenor ?? 0);
                 $isOverdueWarning = $this->isOverdueWarning($loan);
             @endphp
-            <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-4 space-y-4">
+            <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-4 space-y-4 h-full">
                 <div class="flex items-start justify-between gap-3">
                     <div>
                         <p class="text-sm font-bold text-slate-900 dark:text-white">{{ $loan->member?->name ?? '-' }}</p>
                         <p class="text-xs text-slate-500 mt-0.5">{{ $loan->member?->nomorAnggota ?? '-' }}</p>
                     </div>
                     <div class="text-right space-y-1.5">
-                        <span class="inline-flex px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $this->sourceBadgeClass($loan->loanSource) }}">
+                        <span class="inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full border {{ $this->sourceBadgeClass($loan->loanSource) }}">
                             {{ $this->formatLoanSource($loan->loanSource) }}
                         </span>
-                        <span class="inline-flex px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $this->statusBadgeClass($loan->status) }}">
+                        <span class="inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full border {{ $this->statusBadgeClass($loan->status) }}">
                             {{ $loan->status }}
                         </span>
                     </div>
@@ -122,16 +122,17 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
                         <p class="text-slate-500">Pokok</p>
-                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5">Rp {{ number_format($loan->amount, 0, ',', '.') }}</p>
+                        <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" title="Rp {{ number_format($loan->amount, 0, ',', '.') }}">{{ $this->formatCompactCurrency($loan->amount) }}</p>
                     </div>
                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
                         <p class="text-slate-500">Angsuran/Bulan</p>
-                        <p class="font-bold text-primary dark:text-indigo-400 mt-0.5">Rp {{ number_format($loan->monthlyPayment, 0, ',', '.') }}</p>
+                        <p class="font-bold text-primary dark:text-indigo-400 mt-0.5" title="Rp {{ number_format($loan->monthlyPayment, 0, ',', '.') }}">{{ $this->formatCompactCurrency($loan->monthlyPayment) }}</p>
                     </div>
                     <div class="col-span-2 rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
                         <p class="text-slate-500">Sisa Hutang</p>
-                        <p class="font-bold mt-0.5 {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }}">
-                            Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}
+                        <p class="font-bold mt-0.5 {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }}"
+                            title="Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}">
+                            {{ $this->formatCompactCurrency($loan->remainingAmount) }}
                         </p>
                     </div>
                 </div>
@@ -147,8 +148,7 @@
                 </div>
 
                 <div class="text-[11px] text-slate-500 space-y-1">
-                    <div>Mulai: {{ $loan->startDate ? $loan->startDate->format('d M Y') : '-' }}</div>
-                    <div>Akhir: {{ $loan->endDate ? $loan->endDate->format('d M Y') : '-' }}</div>
+                    <div>{{ $this->formatDateRangeShort($loan->startDate, $loan->endDate) }}</div>
                     @if($isOverdueWarning)
                         <div class="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 font-semibold">
                             <i class='bx bx-error-circle'></i>
@@ -170,7 +170,7 @@
                 </div>
             </div>
         @empty
-            <div class="bg-white dark:bg-darkCard rounded-2xl border border-slate-100 dark:border-slate-700 p-10 text-center">
+            <div class="lg:col-span-2 bg-white dark:bg-darkCard rounded-2xl border border-slate-100 dark:border-slate-700 p-10 text-center">
                 <div class="flex flex-col items-center justify-center text-slate-400">
                     <div class="w-14 h-14 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i class='bx bx-search-alt text-2xl opacity-60'></i>
@@ -182,20 +182,19 @@
         @endforelse
     </div>
 
-    <div class="hidden md:block bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="hidden xl:block bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+            <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
                 <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700">
                     <tr>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">Anggota</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">Sumber</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400 text-right">Pokok</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400 text-right">Angsuran/Bulan</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400 text-right">Sisa Hutang</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">Progress Tenor</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">Status</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">Mulai/Akhir</th>
-                        <th class="px-6 py-3 text-[10px] uppercase font-bold tracking-wider text-slate-400 text-center">Aksi</th>
+                        <th class="px-4 py-2.5 uppercase font-bold tracking-wider text-slate-400">Anggota</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Pokok</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Angsuran/Bln</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Sisa</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Progress</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Status</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Periode</th>
+                        <th class="px-4 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
@@ -207,32 +206,32 @@
                             $isOverdueWarning = $this->isOverdueWarning($loan);
                         @endphp
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                            <td class="px-6 py-4 align-top">
-                                <div class="min-w-[200px]">
-                                    <p class="font-semibold text-slate-800 dark:text-white">{{ $loan->member?->name ?? '-' }}</p>
-                                    <p class="text-[11px] text-slate-500 mt-0.5">{{ $loan->member?->nomorAnggota ?? '-' }}</p>
+                            <td class="px-4 py-3 align-top">
+                                <div>
+                                    <p class="font-semibold text-sm text-slate-800 dark:text-white">{{ $loan->member?->name ?? '-' }}</p>
+                                    <div class="mt-0.5 flex items-center gap-2">
+                                        <p class="text-[11px] text-slate-500">{{ $loan->member?->nomorAnggota ?? '-' }}</p>
+                                        <span class="inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full border {{ $this->sourceBadgeClass($loan->loanSource) }}">
+                                            {{ $this->formatLoanSource($loan->loanSource) }}
+                                        </span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 align-top">
-                                <span class="inline-flex px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $this->sourceBadgeClass($loan->loanSource) }}">
-                                    {{ $this->formatLoanSource($loan->loanSource) }}
-                                </span>
+                            <td class="px-3 py-3 align-top text-right font-semibold text-slate-700 dark:text-slate-200" title="Rp {{ number_format($loan->amount, 0, ',', '.') }}">
+                                {{ $this->formatCompactCurrency($loan->amount) }}
                             </td>
-                            <td class="px-6 py-4 align-top text-right font-semibold text-slate-700 dark:text-slate-200">
-                                Rp {{ number_format($loan->amount, 0, ',', '.') }}
+                            <td class="px-3 py-3 align-top text-right font-semibold text-primary dark:text-indigo-400" title="Rp {{ number_format($loan->monthlyPayment, 0, ',', '.') }}">
+                                {{ $this->formatCompactCurrency($loan->monthlyPayment) }}
                             </td>
-                            <td class="px-6 py-4 align-top text-right font-semibold text-primary dark:text-indigo-400">
-                                Rp {{ number_format($loan->monthlyPayment, 0, ',', '.') }}
-                            </td>
-                            <td class="px-6 py-4 align-top text-right">
+                            <td class="px-3 py-3 align-top text-right" title="Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}">
                                 <span class="font-bold {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }}">
-                                    Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}
+                                    {{ $this->formatCompactCurrency($loan->remainingAmount) }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 align-top">
-                                <div class="min-w-[170px]">
+                            <td class="px-3 py-3 align-top">
+                                <div>
                                     <div class="flex items-center justify-between text-[11px] mb-1">
-                                        <span class="text-slate-500">{{ $paidInstallments }}/{{ max(0, $tenor) }} cicilan</span>
+                                        <span class="text-slate-500">{{ $paidInstallments }}/{{ max(0, $tenor) }}</span>
                                         <span class="font-semibold text-slate-700 dark:text-slate-200">{{ $progress }}%</span>
                                     </div>
                                     <div class="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -240,9 +239,9 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 align-top">
+                            <td class="px-3 py-3 align-top">
                                 <div class="space-y-1">
-                                    <span class="inline-flex px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $this->statusBadgeClass($loan->status) }}">
+                                    <span class="inline-flex px-2 py-0.5 text-[10px] font-bold rounded-full border {{ $this->statusBadgeClass($loan->status) }}">
                                         {{ $loan->status }}
                                     </span>
                                     @if($isOverdueWarning)
@@ -253,16 +252,13 @@
                                     @endif
                                 </div>
                             </td>
-                            <td class="px-6 py-4 align-top">
-                                <div class="text-[11px] text-slate-500">
-                                    <div>Mulai: {{ $loan->startDate ? $loan->startDate->format('d M Y') : '-' }}</div>
-                                    <div>Akhir: {{ $loan->endDate ? $loan->endDate->format('d M Y') : '-' }}</div>
-                                </div>
+                            <td class="px-3 py-3 align-top text-[11px] text-slate-500 whitespace-nowrap">
+                                {{ $this->formatDateRangeShort($loan->startDate, $loan->endDate) }}
                             </td>
-                            <td class="px-6 py-4 align-top text-center">
+                            <td class="px-4 py-3 align-top text-center">
                                 @if($loan->member)
                                     <a href="{{ route('admin.members.show', $loan->member->id) }}"
-                                        class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white px-3 py-1.5 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">
+                                        class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white px-2.5 py-1 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">
                                         Detail
                                         <i class='bx bx-chevron-right'></i>
                                     </a>
@@ -273,7 +269,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="px-6 py-14 text-center">
+                            <td colspan="8" class="px-4 py-14 text-center">
                                 <div class="flex flex-col items-center justify-center text-slate-400">
                                     <div class="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                                         <i class='bx bx-search-alt text-3xl opacity-60'></i>
@@ -289,7 +285,7 @@
         </div>
     </div>
 
-    <div class="px-1 sm:px-2 py-3 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700 rounded-xl">
+    <div class="px-1.5 py-2.5 bg-slate-50/60 dark:bg-slate-800/30 border border-slate-100 dark:border-slate-700 rounded-xl">
         {{ $loans->links() }}
     </div>
 </div>

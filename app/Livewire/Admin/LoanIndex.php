@@ -130,6 +130,39 @@ class LoanIndex extends Component
         };
     }
 
+    public function formatCompactCurrency(float|int|null $amount): string
+    {
+        $value = (float) ($amount ?? 0);
+        $abs = abs($value);
+
+        if ($abs >= 1000000000) {
+            return 'Rp ' . $this->trimDecimal(number_format($value / 1000000000, 1, ',', '.')) . ' M';
+        }
+
+        if ($abs >= 1000000) {
+            return 'Rp ' . $this->trimDecimal(number_format($value / 1000000, 1, ',', '.')) . ' jt';
+        }
+
+        if ($abs >= 1000) {
+            return 'Rp ' . $this->trimDecimal(number_format($value / 1000, 1, ',', '.')) . ' rb';
+        }
+
+        return 'Rp ' . number_format($value, 0, ',', '.');
+    }
+
+    public function formatDateRangeShort($startDate, $endDate): string
+    {
+        $start = $startDate ? Carbon::parse($startDate)->format('d M y') : '-';
+        $end = $endDate ? Carbon::parse($endDate)->format('d M y') : '-';
+
+        return $start . ' - ' . $end;
+    }
+
+    private function trimDecimal(string $value): string
+    {
+        return str_ends_with($value, ',0') ? substr($value, 0, -2) : $value;
+    }
+
     public function render()
     {
         return view('livewire.admin.loan-index', [
