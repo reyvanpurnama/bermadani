@@ -188,9 +188,9 @@
 
                 <div>
                     @if($loan->member)
-                        <a href="{{ route('admin.members.show', $loan->member->id) }}"
+                        <a href="{{ route('admin.loans.show', $loan->id) }}"
                             class="inline-flex items-center justify-center gap-1 w-full text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            Detail Member
+                            Detail Pinjaman
                             <i class='bx bx-chevron-right'></i>
                         </a>
                     @else
@@ -286,9 +286,9 @@
                             </td>
                             <td class="px-4 py-3 align-top text-center">
                                 @if($loan->member)
-                                    <a href="{{ route('admin.members.show', $loan->member->id) }}"
+                                    <a href="{{ route('admin.loans.show', $loan->id) }}"
                                         class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white px-2.5 py-1 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">
-                                        Detail
+                                        Detail Pinjaman
                                         <i class='bx bx-chevron-right'></i>
                                     </a>
                                 @else

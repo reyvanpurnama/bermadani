@@ -289,6 +289,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/loans', \App\Livewire\Admin\LoanIndex::class)->name('admin.loans');
     Route::get('/loans/create', \App\Livewire\Admin\LoanCreate::class)->name('admin.loans.create');
     Route::get('/loans/import', \App\Livewire\Admin\LoanImport::class)->name('admin.loans.import');
+    Route::get('/loans/{loan}', \App\Livewire\Admin\LoanShow::class)->name('admin.loans.show');
 
     // Users Management (Super Admin & Developer only for CRUD, Admin read-only)
     Route::middleware(['role:SUPER_ADMIN,DEVELOPER,ADMIN'])->get('/users', function () {
