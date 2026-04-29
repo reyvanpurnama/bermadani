@@ -88,6 +88,10 @@
             background: transparent;
         }
 
+        #main-sidebar.sidebar-collapsed .workspace-switcher-wrapper {
+            display: none;
+        }
+
         #main-sidebar.sidebar-collapsed .workspace-switch-btn {
             width: 100%;
             flex: none;
