@@ -24,6 +24,9 @@ class LoanCreate extends Component
     public $startDate;
     public $purpose;
     public $description;
+    public $monthlyPaymentOverridden = false;
+
+    protected bool $isAutoUpdatingMonthlyPayment = false;
 
     public function mount()
     {
@@ -31,19 +34,44 @@ class LoanCreate extends Component
         $this->startDate = now()->addMonth()->startOfMonth()->format('Y-m-d');
     }
 
-    public function calculateMonthly()
+    private function parseNumber($value): float
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        if (is_numeric($value)) {
+            return (float) $value;
+        }
+
+        $normalized = str_replace([' ', ','], ['', '.'], (string) $value);
+        $normalized = preg_replace('/[^0-9.]/', '', $normalized) ?? '0';
+
+        return (float) $normalized;
+    }
+
+    public function calculateMonthly(bool $forceAuto = false): void
     {
         if (!empty($this->amount) && !empty($this->tenor) && $this->tenor > 0) {
-            $baseAmount = floatval(str_replace(['.', ','], ['', '.'], $this->amount));
+            $baseAmount = $this->parseNumber($this->amount);
             $interest = floatval($this->interestRate ?? 0);
-            
+
             $totalAmount = $baseAmount + ($baseAmount * ($interest / 100));
             $monthly = $totalAmount / $this->tenor;
-            
+
             // Add BMT ITQAN simwa if applicable
-            $simwa = floatval(str_replace(['.', ','], ['', '.'], $this->simwa_amount ?? 0));
-            
-            $this->monthlyPayment = round($monthly + $simwa);
+            $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 0) : 0;
+            $calculatedMonthlyPayment = round($monthly + $simwa);
+
+            if (!$this->monthlyPaymentOverridden || $forceAuto) {
+                $this->isAutoUpdatingMonthlyPayment = true;
+                $this->monthlyPayment = $calculatedMonthlyPayment;
+                $this->isAutoUpdatingMonthlyPayment = false;
+
+                if ($forceAuto) {
+                    $this->monthlyPaymentOverridden = false;
+                }
+            }
         }
     }
 
@@ -51,6 +79,29 @@ class LoanCreate extends Component
     public function updatedTenor() { $this->calculateMonthly(); }
     public function updatedInterestRate() { $this->calculateMonthly(); }
     public function updatedSimwaAmount() { $this->calculateMonthly(); }
+    public function updatedLoanSource()
+    {
+        if ($this->loanSource !== 'BMT_ITQAN') {
+            $this->simwa_amount = 0;
+        }
+
+        $this->calculateMonthly();
+    }
+
+    public function updatedMonthlyPayment($value): void
+    {
+        if ($this->isAutoUpdatingMonthlyPayment) {
+            return;
+        }
+
+        $this->monthlyPaymentOverridden = !($value === null || $value === '');
+    }
+
+    public function resetMonthlyToAuto(): void
+    {
+        $this->monthlyPaymentOverridden = false;
+        $this->calculateMonthly(true);
+    }
 
     public function selectMember($id)
     {
@@ -73,9 +124,9 @@ class LoanCreate extends Component
         DB::beginTransaction();
         try {
             // Bersihkan format titik/koma jika ada
-            $cleanAmount = floatval(str_replace(['.', ','], ['', '.'], $this->amount));
-            $cleanMonthly = floatval(str_replace(['.', ','], ['', '.'], $this->monthlyPayment));
-            $cleanSimwa = floatval(str_replace(['.', ','], ['', '.'], $this->simwa_amount ?? 0));
+            $cleanAmount = $this->parseNumber($this->amount);
+            $cleanMonthly = $this->parseNumber($this->monthlyPayment);
+            $cleanSimwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 0) : 0;
             $cleanInterest = floatval($this->interestRate ?? 0);
 
             // Total hutang yg hrs dibayar (pokok + bunga)
@@ -111,6 +162,48 @@ class LoanCreate extends Component
         }
     }
 
+    public function getSelectedMemberProperty()
+    {
+        if (!$this->member_id) {
+            return null;
+        }
+
+        return Member::find($this->member_id);
+    }
+
+    public function getSimulationProperty(): array
+    {
+        $baseAmount = $this->parseNumber($this->amount);
+        $interestRate = (float) ($this->interestRate ?? 0);
+        $interestAmount = $baseAmount * ($interestRate / 100);
+        $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 0) : 0;
+        $tenor = (int) ($this->tenor ?? 0);
+        $totalDebt = $baseAmount + $interestAmount;
+        $calculatedMonthly = $tenor > 0 ? round(($totalDebt / $tenor) + $simwa) : 0;
+        $effectiveMonthly = $this->parseNumber($this->monthlyPayment ?: $calculatedMonthly);
+
+        $endDate = null;
+        if (!empty($this->startDate) && $tenor > 0) {
+            try {
+                $endDate = Carbon::parse($this->startDate)->addMonths($tenor)->format('d M Y');
+            } catch (\Throwable $e) {
+                $endDate = null;
+            }
+        }
+
+        return [
+            'baseAmount' => $baseAmount,
+            'interestRate' => $interestRate,
+            'interestAmount' => $interestAmount,
+            'simwa' => $simwa,
+            'tenor' => $tenor,
+            'totalDebt' => $totalDebt,
+            'calculatedMonthly' => $calculatedMonthly,
+            'effectiveMonthly' => $effectiveMonthly,
+            'endDate' => $endDate,
+        ];
+    }
+
     public function render()
     {
         $members = collect();
@@ -123,7 +216,9 @@ class LoanCreate extends Component
         }
 
         return view('livewire.admin.loan-create', [
-            'members' => $members
+            'members' => $members,
+            'simulation' => $this->simulation,
+            'selectedMember' => $this->selectedMember,
         ]);
     }
 }
