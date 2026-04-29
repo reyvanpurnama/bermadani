@@ -224,7 +224,7 @@
         </div>
 
         <div class="xl:col-span-4 space-y-4">
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-5 xl:sticky xl:top-6">
+            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-4 sm:p-5">
                 <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Ringkasan Simulasi</h3>
 
                 <div class="mb-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700">

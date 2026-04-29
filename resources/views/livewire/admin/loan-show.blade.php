@@ -145,7 +145,7 @@
         </div>
 
         <div class="xl:col-span-4 space-y-4">
-            <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-5 xl:sticky xl:top-6">
+            <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-5">
                 <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-4">Aksi Operasional</h2>
 
                 @if($loan->member)
