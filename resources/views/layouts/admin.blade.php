@@ -92,6 +92,28 @@
             display: none;
         }
 
+        #main-sidebar.sidebar-collapsed nav {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+
+        #main-sidebar.sidebar-collapsed .nav-item {
+            width: 2.5rem;
+            min-height: 2rem;
+            margin-inline: auto;
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        #main-sidebar.sidebar-collapsed .nav-item i {
+            margin-right: 0 !important;
+        }
+
+        #main-sidebar.sidebar-collapsed .nav-item > div {
+            justify-content: center;
+        }
+
         #main-sidebar.sidebar-collapsed .workspace-switch-btn {
             width: 100%;
             flex: none;
