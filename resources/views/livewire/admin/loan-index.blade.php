@@ -52,6 +52,7 @@
     <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-3 sm:p-4">
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-3">
             <div class="relative md:col-span-2 xl:col-span-4">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Cari Anggota</label>
                 <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-400">
                     <i class='bx bx-search text-lg'></i>
                 </div>
@@ -60,14 +61,15 @@
             </div>
 
             <div class="relative xl:col-span-2">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Status</label>
                 <select wire:model.live="filterStatus"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
-                    <option value="ACTIVE">Status: Active</option>
-                    <option value="OVERDUE">Status: Overdue</option>
-                    <option value="COMPLETED">Status: Completed</option>
-                    <option value="PENDING">Status: Pending</option>
-                    <option value="REJECTED">Status: Rejected</option>
-                    <option value="ALL">Status: Semua</option>
+                    <option value="ACTIVE">Aktif</option>
+                    <option value="OVERDUE">Lewat Jatuh Tempo</option>
+                    <option value="COMPLETED">Lunas</option>
+                    <option value="PENDING">Menunggu</option>
+                    <option value="REJECTED">Ditolak</option>
+                    <option value="ALL">Semua Status</option>
                 </select>
                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                     <i class='bx bx-chevron-down text-slate-400'></i>
@@ -75,6 +77,7 @@
             </div>
 
             <div class="relative xl:col-span-2">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Sumber</label>
                 <select wire:model.live="filterSource"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
                     <option value="">Semua Sumber</option>
@@ -87,20 +90,21 @@
             </div>
 
             <div class="relative xl:col-span-3">
+                <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">Urutkan</label>
                 <select wire:model.live="sortBy"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-slate-700 dark:text-white cursor-pointer appearance-none">
-                    <option value="priority">Sort: Prioritas Sistem</option>
-                    <option value="start_date">Sort: Tanggal Mulai</option>
-                    <option value="end_date">Sort: Tanggal Akhir</option>
-                    <option value="member_name">Sort: Nama Anggota</option>
-                    <option value="member_number">Sort: No. Anggota</option>
-                    <option value="amount">Sort: Pokok Pinjaman</option>
-                    <option value="monthly_payment">Sort: Angsuran/Bulan</option>
-                    <option value="remaining_amount">Sort: Sisa Hutang</option>
-                    <option value="tenor">Sort: Tenor</option>
-                    <option value="progress">Sort: Progress Cicilan</option>
-                    <option value="status">Sort: Status</option>
-                    <option value="source">Sort: Sumber</option>
+                    <option value="priority">Prioritas Sistem</option>
+                    <option value="start_date">Tanggal Mulai</option>
+                    <option value="end_date">Tanggal Akhir</option>
+                    <option value="member_name">Nama Anggota</option>
+                    <option value="member_number">Nomor Anggota</option>
+                    <option value="amount">Pokok Pinjaman</option>
+                    <option value="monthly_payment">Angsuran per Bulan</option>
+                    <option value="remaining_amount">Sisa Hutang</option>
+                    <option value="tenor">Tenor</option>
+                    <option value="progress">Progress Cicilan</option>
+                    <option value="status">Status</option>
+                    <option value="source">Sumber</option>
                 </select>
                 <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                     <i class='bx bx-chevron-down text-slate-400'></i>
@@ -110,7 +114,7 @@
             <div class="xl:col-span-1 grid grid-cols-2 gap-2">
                 <button wire:click="toggleSortDirection"
                     class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
-                    {{ $sortDirection === 'asc' ? 'ASC' : 'DESC' }}
+                    {{ $sortDirection === 'asc' ? 'Naik' : 'Turun' }}
                 </button>
                 <button wire:click="clearFilters"
                     class="w-full px-2 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-bold transition-colors">
