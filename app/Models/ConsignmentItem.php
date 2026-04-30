@@ -37,6 +37,16 @@ class ConsignmentItem extends Model
         return $this->belongsTo(Product::class, 'productId');
     }
 
+    public function countLogs()
+    {
+        return $this->hasMany(ConsignmentItemCount::class, 'consignmentItemId');
+    }
+
+    public function payoutAllocations()
+    {
+        return $this->hasMany(SupplierPayoutAllocation::class, 'consignmentItemId');
+    }
+
     public function getPayableAmountAttribute()
     {
         return $this->soldQty * $this->supplierPrice;
@@ -45,6 +55,21 @@ class ConsignmentItem extends Model
     public function getMarginAttribute()
     {
         return ($this->sellPrice - $this->supplierPrice) * $this->soldQty;
+    }
+
+    public function getGrossPayableAttribute()
+    {
+        return $this->soldQty * $this->supplierPrice;
+    }
+
+    public function getPaidAmountAttribute()
+    {
+        return (float) ($this->payoutAllocations()->sum('allocatedAmount') ?? 0);
+    }
+
+    public function getOutstandingPayableAttribute()
+    {
+        return max(0, $this->grossPayable - $this->paidAmount);
     }
 
     /**

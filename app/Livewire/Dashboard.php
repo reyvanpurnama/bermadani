@@ -12,6 +12,16 @@ use Livewire\Component;
 
 class Dashboard extends Component
 {
+    private const HISTORICAL_INCOME_CATEGORIES = [
+        'Omset Penjualan (Historis)',
+        'Omset Supplier Manual (Non-POS)',
+    ];
+
+    private const COGS_CATEGORIES = [
+        'Pembayaran Supplier Konsinyasi',
+        'Pembayaran Supplier Manual (Non-POS)',
+    ];
+
     public $filter = 'month'; // Unified filter untuk card DAN chart
     public $startDate;
     public $endDate;
@@ -88,7 +98,7 @@ class Dashboard extends Component
     public function getHistoricalSalesProperty()
     {
         $query = FinancialTransaction::income()
-            ->where('category', 'Omset Penjualan (Historis)');
+            ->whereIn('category', self::HISTORICAL_INCOME_CATEGORIES);
         
         return match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -140,7 +150,7 @@ class Dashboard extends Component
         // Ambil total pengeluaran dari financial_transactions berdasarkan filter
         // EXCLUDE: Pembayaran Supplier Konsinyasi (karena itu COGS, bukan operating expense)
         $query = FinancialTransaction::expense()
-            ->where('category', '!=', 'Pembayaran Supplier Konsinyasi');
+            ->whereNotIn('category', self::COGS_CATEGORIES);
         
         $expenses = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -158,7 +168,7 @@ class Dashboard extends Component
     public function getOtherIncomeProperty()
     {
         $query = FinancialTransaction::income()
-            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)']);
+            ->whereNotIn('category', array_merge(['Suntikan Modal'], self::HISTORICAL_INCOME_CATEGORIES));
         
         $income = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -176,7 +186,7 @@ class Dashboard extends Component
     public function getConsignmentCogsProperty()
     {
         $query = FinancialTransaction::expense()
-            ->where('category', 'Pembayaran Supplier Konsinyasi');
+            ->whereIn('category', self::COGS_CATEGORIES);
         
         $cogs = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -242,12 +252,12 @@ class Dashboard extends Component
             ->sum('totalAmount') ?? 0;
         
         $currentHistorical = FinancialTransaction::income()
-            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereIn('category', self::HISTORICAL_INCOME_CATEGORIES)
             ->whereBetween('transactionDate', [$currentStart, $currentEnd])
             ->sum('amount') ?? 0;
         
         $currentOtherIncome = FinancialTransaction::income()
-            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->whereNotIn('category', array_merge(['Suntikan Modal'], self::HISTORICAL_INCOME_CATEGORIES))
             ->whereBetween('transactionDate', [$currentStart, $currentEnd])
             ->sum('amount') ?? 0;
             
@@ -264,12 +274,12 @@ class Dashboard extends Component
             ->sum('totalAmount') ?? 0;
         
         $previousHistorical = FinancialTransaction::income()
-            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereIn('category', self::HISTORICAL_INCOME_CATEGORIES)
             ->whereBetween('transactionDate', [$previousStart, $previousEnd])
             ->sum('amount') ?? 0;
         
         $previousOtherIncome = FinancialTransaction::income()
-            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->whereNotIn('category', array_merge(['Suntikan Modal'], self::HISTORICAL_INCOME_CATEGORIES))
             ->whereBetween('transactionDate', [$previousStart, $previousEnd])
             ->sum('amount') ?? 0;
             
@@ -328,7 +338,7 @@ class Dashboard extends Component
             ->sum('totalAmount');
         
         $historicalSales = FinancialTransaction::income()
-            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereIn('category', self::HISTORICAL_INCOME_CATEGORIES)
             ->sum('amount');
         
         return $posSales + $historicalSales;
@@ -343,7 +353,7 @@ class Dashboard extends Component
     public function getAllTimeOtherIncomeProperty()
     {
         return FinancialTransaction::income()
-            ->whereNotIn('category', ['Suntikan Modal', 'Omset Penjualan (Historis)'])
+            ->whereNotIn('category', array_merge(['Suntikan Modal'], self::HISTORICAL_INCOME_CATEGORIES))
             ->sum('amount');
     }
 
@@ -363,7 +373,7 @@ class Dashboard extends Component
             
         // 2. Cek transaksi manual (Omset Historis) pertama
         $firstHistoricalSale = FinancialTransaction::income()
-            ->where('category', 'Omset Penjualan (Historis)')
+            ->whereIn('category', self::HISTORICAL_INCOME_CATEGORIES)
             ->orderBy('transactionDate')
             ->first();
             

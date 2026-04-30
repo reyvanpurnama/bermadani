@@ -39,6 +39,11 @@ class ConsignmentBatch extends Model
         return $this->hasMany(ConsignmentItem::class, 'batchId');
     }
 
+    public function payouts()
+    {
+        return $this->hasMany(SupplierPayoutAllocation::class, 'batchId');
+    }
+
     public function getTotalInitialQtyAttribute()
     {
         return $this->items->sum('initialQty');
@@ -102,6 +107,37 @@ class ConsignmentBatch extends Model
     public function getMarginAttribute()
     {
         return $this->totalSold - $this->payableAmount;
+    }
+
+    public function getOutstandingPayableAttribute()
+    {
+        $paid = (float) ($this->payouts()->sum('allocatedAmount') ?? 0);
+
+        return max(0, (float) $this->payableAmount - $paid);
+    }
+
+    public function syncLifecycleStatus(): void
+    {
+        $hasRemaining = $this->items()->sum('remainingQty') > 0;
+        $outstanding = $this->outstandingPayable;
+
+        if ($hasRemaining) {
+            $nextStatus = 'ACTIVE';
+        } elseif ($outstanding > 0) {
+            $nextStatus = 'PENDING_SETTLEMENT';
+        } else {
+            $nextStatus = 'SETTLED';
+        }
+
+        if ($this->status !== $nextStatus) {
+            $payload = ['status' => $nextStatus];
+
+            if ($nextStatus === 'SETTLED' && ! $this->settledAt) {
+                $payload['settledAt'] = now();
+            }
+
+            $this->update($payload);
+        }
     }
 
     /**

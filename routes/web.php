@@ -208,6 +208,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     // Konsinyasi
     Route::get('/konsinyasi/batch', \App\Livewire\Admin\ConsignmentBatches::class)->name('admin.consignment-batches');
     Route::get('/konsinyasi/laporan', \App\Livewire\Admin\ConsignmentReport::class)->name('admin.consignment-report');
+    Route::get('/konsinyasi/operasional-harian', \App\Livewire\SupplierDailyOps::class)->name('admin.supplier-daily-ops');
 
     // Categories
     Route::get('/kategori', function () {
@@ -377,6 +378,7 @@ Route::middleware(['auth', 'role:KASIR', 'log.activity'])->prefix('kasir')->grou
 
     // Laporan Harian Supplier
     Route::get('/laporan-supplier', \App\Livewire\Kasir\LaporanSupplier::class)->name('kasir.laporan-supplier');
+    Route::get('/supplier-harian', \App\Livewire\SupplierDailyOps::class)->name('kasir.supplier-daily-ops');
 });
 
 // Keep old /pos route for backward compatibility

@@ -85,6 +85,16 @@ class Supplier extends Authenticatable
         return $this->hasMany(Product::class, 'supplierId');
     }
 
+    public function consignmentBatches()
+    {
+        return $this->hasMany(ConsignmentBatch::class, 'supplierId');
+    }
+
+    public function supplierPayouts()
+    {
+        return $this->hasMany(SupplierPayout::class, 'supplierId');
+    }
+
     public function scopeActive($query)
     {
         return $query->where('isActive', true)->where('status', 'ACTIVE');

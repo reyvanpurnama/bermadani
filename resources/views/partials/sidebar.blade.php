@@ -100,6 +100,12 @@
                 <i class='bx bx-bar-chart-alt-2 text-sm mr-2 {{ request()->routeIs('kasir.laporan-supplier') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
                 <span class="sidebar-text text-xs {{ request()->routeIs('kasir.laporan-supplier') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Laporan Supplier</span>
             </a>
+
+            <a href="{{ route('kasir.supplier-daily-ops') }}"
+                class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('kasir.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                <i class='bx bx-notepad text-sm mr-2 {{ request()->routeIs('kasir.supplier-daily-ops') ? 'opacity-100' : 'opacity-70 group-hover:opacity-100' }} transition-opacity shrink-0'></i>
+                <span class="sidebar-text text-xs {{ request()->routeIs('kasir.supplier-daily-ops') ? 'font-semibold' : 'font-medium' }} transition-opacity duration-300">Ops Supplier Harian</span>
+            </a>
         @else
             {{-- ADMIN --}}
 
@@ -147,7 +153,7 @@
                 </a>
 
                 <a href="{{ route('admin.suppliers') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*', 'admin.consignment-batches', 'admin.consignment-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*', 'admin.consignment-batches', 'admin.consignment-report', 'admin.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <div class="flex items-center">
                         <i class='bx bx-store-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                         <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Suplai</span>
@@ -156,6 +162,12 @@
                         <span
                             class="sidebar-text bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">{{ $actionableConsignmentBatches }}</span>
                     @endif
+                </a>
+
+                <a href="{{ route('admin.supplier-daily-ops') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-notepad text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Ops Supplier Harian</span>
                 </a>
 
                 <a href="{{ route('admin.transactions') }}"

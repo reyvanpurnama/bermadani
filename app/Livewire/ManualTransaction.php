@@ -29,6 +29,7 @@ class ManualTransaction extends Component
 
     public $incomeCategories = [
         'Omset Penjualan (Historis)',
+        'Omset Supplier Manual (Non-POS)',
         'Suntikan Modal',
         'Hibah / Donasi',
         'Pendapatan Lain-lain',
