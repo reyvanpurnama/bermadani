@@ -63,6 +63,32 @@ class SupplierDailyOps extends Component
         $this->stockItems = [$this->emptyStockItem()];
     }
 
+    public function updatedStockItems($value, $key): void
+    {
+        if (! is_string($key) || ! str_ends_with($key, '.productId')) {
+            return;
+        }
+
+        $index = (int) explode('.', $key)[0];
+        $productId = (int) $value;
+
+        if ($productId <= 0 || ! isset($this->stockItems[$index])) {
+            return;
+        }
+
+        $product = Product::query()
+            ->whereKey($productId)
+            ->where('isActive', true)
+            ->when($this->stockSupplierId, fn ($query) => $query->where('supplierId', $this->stockSupplierId))
+            ->first();
+
+        if (! $product) {
+            return;
+        }
+
+        $this->stockItems[$index]['supplierPrice'] = (float) $product->buyPrice;
+    }
+
     public function updatedRecapSupplierId(): void
     {
         $this->loadCountItems();

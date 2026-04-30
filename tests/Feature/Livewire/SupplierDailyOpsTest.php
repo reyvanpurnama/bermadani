@@ -128,6 +128,20 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertSame('ACTIVE', $batch->fresh()->status);
     }
 
+    public function test_stock_item_supplier_price_autofills_from_selected_product_buy_price(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['buyPrice' => 8450, 'sellPrice' => 12000]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('stockSupplierId', $supplier->id)
+            ->set('stockItems.0.productId', $product->id);
+
+        $this->assertSame(8450.0, (float) ($component->instance()->stockItems[0]['supplierPrice'] ?? 0));
+    }
+
     public function test_full_payout_marks_batch_settled_when_stock_exhausted(): void
     {
         $admin = $this->makeUser('ADMIN');
