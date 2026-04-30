@@ -24,7 +24,7 @@ class SupplierDailyOpsTest extends TestCase
         $supplier = $this->makeSupplier();
         $product = $this->makeProduct($supplier, ['stock' => 2, 'sellPrice' => 8000]);
 
-        Livewire::actingAs($admin)
+        $component = Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
             ->set('stockSupplierId', $supplier->id)
             ->set('stockDate', now()->toDateString())
@@ -34,6 +34,8 @@ class SupplierDailyOpsTest extends TestCase
                 'supplierPrice' => 6000,
             ]])
             ->call('saveStockIn');
+
+        $component->assertSet('tab', 'stock-in');
 
         $batch = ConsignmentBatch::query()->firstOrFail();
         $item = ConsignmentItem::query()->firstOrFail();
@@ -258,6 +260,85 @@ class SupplierDailyOpsTest extends TestCase
             ->set('payNowAmount', 0)
             ->call('saveRecapAndPayout')
             ->assertHasErrors(['countItems.0.physicalQty']);
+    }
+
+    public function test_stepper_metadata_reflects_active_completed_and_locked_states(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+
+        $component = Livewire::actingAs($admin)->test(SupplierDailyOps::class);
+
+        $this->assertSame(1, $component->instance()->currentStep);
+        $this->assertSame('Langkah 1 dari 2', $component->instance()->stepProgressText);
+        $this->assertTrue($component->instance()->step2SoftLocked);
+        $this->assertSame('active', $component->instance()->stepperSteps[0]['status']);
+        $this->assertSame('inactive', $component->instance()->stepperSteps[1]['status']);
+
+        $component->call('setTab', 'recap');
+
+        $this->assertSame(2, $component->instance()->currentStep);
+        $this->assertSame('locked', $component->instance()->stepperSteps[1]['status']);
+        $this->assertTrue($component->instance()->step2SoftLocked);
+
+        $component->set('recapSupplierId', $supplier->id);
+
+        $this->assertFalse($component->instance()->step2SoftLocked);
+        $this->assertSame('active', $component->instance()->stepperSteps[1]['status']);
+    }
+
+    public function test_cta_flags_follow_soft_gate_and_input_validity(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['stock' => 3]);
+
+        $batch = ConsignmentBatch::create([
+            'batchCode' => 'BCH-2001',
+            'supplierId' => $supplier->id,
+            'status' => 'ACTIVE',
+            'receivedAt' => now(),
+        ]);
+
+        ConsignmentItem::create([
+            'batchId' => $batch->id,
+            'productId' => $product->id,
+            'initialQty' => 3,
+            'receivedQty' => 3,
+            'soldQty' => 0,
+            'remainingQty' => 3,
+            'sellPrice' => 10000,
+            'supplierPrice' => 7000,
+        ]);
+
+        $component = Livewire::actingAs($admin)->test(SupplierDailyOps::class);
+
+        $this->assertFalse($component->instance()->canSubmitStockIn);
+        $this->assertFalse($component->instance()->canSubmitRecap);
+
+        $component
+            ->set('stockSupplierId', $supplier->id)
+            ->set('stockDate', now()->toDateString())
+            ->set('stockItems', [[
+                'productId' => $product->id,
+                'qty' => 2,
+                'supplierPrice' => 6000,
+            ]]);
+
+        $this->assertTrue($component->instance()->canSubmitStockIn);
+
+        $component->set('stockItems.0.qty', 0);
+        $this->assertFalse($component->instance()->canSubmitStockIn);
+
+        $component
+            ->set('recapSupplierId', $supplier->id)
+            ->set('payNowAmount', 0);
+
+        $this->assertFalse($component->instance()->step2SoftLocked);
+        $this->assertTrue($component->instance()->canSubmitRecap);
+
+        $component->set('payNowAmount', -1);
+        $this->assertFalse($component->instance()->canSubmitRecap);
     }
 
     private function makeUser(string $role): User

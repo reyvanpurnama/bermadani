@@ -53,6 +53,11 @@ class SupplierDailyOps extends Component
         $this->tab = in_array($tab, ['stock-in', 'recap'], true) ? $tab : 'stock-in';
     }
 
+    public function goToStep(int $step): void
+    {
+        $this->setTab($step === 2 ? 'recap' : 'stock-in');
+    }
+
     public function updatedStockSupplierId(): void
     {
         $this->stockItems = [$this->emptyStockItem()];
@@ -163,7 +168,7 @@ class SupplierDailyOps extends Component
 
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Gagal menyimpan stok masuk. Coba ulangi, lalu cek data produk/supplier.',
+                'message' => 'Proses gagal. Periksa data lalu coba lagi.',
             ]);
 
             return;
@@ -171,7 +176,7 @@ class SupplierDailyOps extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Stok masuk supplier berhasil dicatat.',
+            'message' => 'Stok masuk berhasil disimpan.',
         ]);
 
         $this->stockItems = [$this->emptyStockItem()];
@@ -330,7 +335,7 @@ class SupplierDailyOps extends Component
 
             $this->dispatch('notify', [
                 'type' => 'error',
-                'message' => 'Gagal proses rekap & payout. Coba ulangi dan cek nominal atau data stok fisik.',
+                'message' => 'Proses gagal. Periksa data lalu coba lagi.',
             ]);
 
             return;
@@ -343,7 +348,7 @@ class SupplierDailyOps extends Component
 
         $this->dispatch('notify', [
             'type' => 'success',
-            'message' => 'Rekap & pembayaran supplier berhasil diproses.',
+            'message' => 'Rekap dan pembayaran berhasil diproses.',
         ]);
     }
 
@@ -408,6 +413,100 @@ class SupplierDailyOps extends Component
             'payable' => $payable,
             'margin' => $omzet - $payable,
         ];
+    }
+
+    public function getCurrentStepProperty(): int
+    {
+        return $this->tab === 'recap' ? 2 : 1;
+    }
+
+    public function getStepProgressTextProperty(): string
+    {
+        return "Langkah {$this->currentStep} dari 2";
+    }
+
+    public function getStep2SoftLockedProperty(): bool
+    {
+        return ! (bool) $this->recapSupplierId;
+    }
+
+    public function getStepperStepsProperty(): array
+    {
+        $step1Status = $this->currentStep === 1 ? 'active' : 'completed';
+        $step2Status = $this->currentStep === 2
+            ? ($this->step2SoftLocked ? 'locked' : 'active')
+            : 'inactive';
+
+        return [
+            [
+                'number' => 1,
+                'tab' => 'stock-in',
+                'title' => 'Stok Masuk',
+                'instruction' => 'Pilih supplier, input item, lalu simpan batch masuk.',
+                'status' => $step1Status,
+                'isClickable' => true,
+            ],
+            [
+                'number' => 2,
+                'tab' => 'recap',
+                'title' => 'Rekap & Bayar',
+                'instruction' => 'Pilih supplier, hitung stok fisik, review angka, lalu bayar.',
+                'status' => $step2Status,
+                'isClickable' => true,
+            ],
+        ];
+    }
+
+    public function getCompactHeaderStatsProperty(): array
+    {
+        $preview = $this->countPreview;
+
+        return [
+            'omzet' => (float) ($preview['omzet'] ?? 0),
+            'payable' => (float) ($preview['payable'] ?? 0),
+            'outstanding' => $this->outstandingPayable,
+        ];
+    }
+
+    public function getCanSubmitStockInProperty(): bool
+    {
+        if (! $this->stockSupplierId || blank($this->stockDate) || count($this->stockItems) < 1) {
+            return false;
+        }
+
+        foreach ($this->stockItems as $row) {
+            $hasProduct = ! blank($row['productId'] ?? null);
+            $qty = (int) ($row['qty'] ?? 0);
+            $price = $row['supplierPrice'] ?? null;
+
+            if (! $hasProduct || $qty < 1 || ! is_numeric($price) || (float) $price < 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getCanSubmitRecapProperty(): bool
+    {
+        if (! $this->recapSupplierId || ! is_numeric($this->payNowAmount) || (float) $this->payNowAmount < 0) {
+            return false;
+        }
+
+        foreach ($this->countItems as $row) {
+            if (! isset($row['physicalQty'], $row['beforeQty']) || ! is_numeric($row['physicalQty']) || ! is_numeric($row['beforeQty'])) {
+                return false;
+            }
+
+            $physicalQty = (int) $row['physicalQty'];
+            $beforeQty = (int) $row['beforeQty'];
+
+            if ($physicalQty < 0 || $physicalQty > $beforeQty) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function getOutstandingPayableProperty(): float
