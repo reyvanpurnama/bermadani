@@ -331,7 +331,7 @@
                                 <div>
                                     <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Nominal Dibayar</label>
                                     <div class="flex items-center gap-2">
-                                        <input type="number" min="0" step="0.01" placeholder="0" wire:model="payNowAmount" @disabled($isLocked)
+                                        <input type="text" inputmode="numeric" placeholder="0" wire:model.live.debounce.200ms="payNowAmountDisplay" @disabled($isLocked)
                                             class="w-full min-h-[42px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 text-sm font-semibold disabled:opacity-60 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                                         <button type="button" wire:click="fillPayNowFromSupplierRights" @disabled($isLocked)
                                             class="inline-flex shrink-0 items-center gap-1 px-2.5 min-h-[42px] rounded-lg border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-[11px] font-bold text-blue-700 dark:text-blue-300 disabled:opacity-50">

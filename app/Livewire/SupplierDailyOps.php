@@ -46,6 +46,7 @@ class SupplierDailyOps extends Component
     public string $recapDate = '';
     public string $countNote = '';
     public $payNowAmount = '';
+    public string $payNowAmountDisplay = '';
     public string $payoutNote = '';
     public array $countItems = [];
 
@@ -168,6 +169,7 @@ class SupplierDailyOps extends Component
         if (! $this->recapSupplierId) {
             $this->countItems = [];
             $this->payNowAmount = '';
+            $this->payNowAmountDisplay = '';
             return;
         }
 
@@ -180,6 +182,21 @@ class SupplierDailyOps extends Component
 
         $this->loadCountItems();
         $this->refreshPayNowDefault();
+    }
+
+    public function updatedPayNowAmountDisplay($value): void
+    {
+        $value = (string) $value;
+
+        if (trim($value) === '') {
+            $this->payNowAmount = '';
+            $this->payNowAmountDisplay = '';
+            return;
+        }
+
+        $amount = $this->parseRupiah($value);
+        $this->payNowAmount = $amount;
+        $this->payNowAmountDisplay = $amount > 0 ? $this->formatRupiah($amount) : '';
     }
 
     public function addStockItem(): void
@@ -322,10 +339,7 @@ class SupplierDailyOps extends Component
     public function saveRecapAndPayout(): void
     {
         $this->assertDateSupplierNotLocked((int) $this->recapSupplierId, $this->recapDate);
-
-        if (blank($this->payNowAmount)) {
-            $this->payNowAmount = 0;
-        }
+        $this->payNowAmount = $this->resolvePayNowAmount();
 
         $this->validate([
             'recapSupplierId' => 'required|exists:suppliers,id',
@@ -498,22 +512,26 @@ class SupplierDailyOps extends Component
     {
         if (! $this->recapSupplierId) {
             $this->payNowAmount = '';
+            $this->payNowAmountDisplay = '';
             return;
         }
 
         $outstanding = $this->getSupplierOutstandingAmount((int) $this->recapSupplierId);
         $this->payNowAmount = $outstanding > 0 ? $outstanding : '';
+        $this->payNowAmountDisplay = $outstanding > 0 ? $this->formatRupiah($outstanding) : '';
     }
 
     public function fillPayNowFromSupplierRights(): void
     {
         if (! $this->recapSupplierId) {
             $this->payNowAmount = '';
+            $this->payNowAmountDisplay = '';
             return;
         }
 
         $payable = (float) ($this->countPreview['payable'] ?? 0);
         $this->payNowAmount = $payable > 0 ? round($payable, 2) : '';
+        $this->payNowAmountDisplay = $payable > 0 ? $this->formatRupiah($payable) : '';
     }
 
     public function copyPreviousDayDraft(): void
@@ -738,7 +756,8 @@ class SupplierDailyOps extends Component
             return false;
         }
 
-        if (! blank($this->payNowAmount) && (! is_numeric($this->payNowAmount) || (float) $this->payNowAmount < 0)) {
+        $payNowAmount = $this->resolvePayNowAmount();
+        if ($payNowAmount < 0) {
             return false;
         }
 
@@ -1334,6 +1353,34 @@ class SupplierDailyOps extends Component
             'NO_DELIVERY' => 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-900/20 dark:text-rose-300',
             default => 'border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300',
         };
+    }
+
+    private function resolvePayNowAmount(): float
+    {
+        if (! blank($this->payNowAmountDisplay)) {
+            return $this->parseRupiah($this->payNowAmountDisplay);
+        }
+
+        if (blank($this->payNowAmount)) {
+            return 0.0;
+        }
+
+        return (float) $this->payNowAmount;
+    }
+
+    private function parseRupiah(string $value): float
+    {
+        $numeric = preg_replace('/[^0-9]/', '', $value) ?? '';
+        if ($numeric === '') {
+            return 0.0;
+        }
+
+        return (float) $numeric;
+    }
+
+    private function formatRupiah(float $amount): string
+    {
+        return number_format(max(0, $amount), 0, ',', '.');
     }
 
     public function render()
