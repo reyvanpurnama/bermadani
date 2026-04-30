@@ -168,7 +168,7 @@
                                 </div>
 
                                 <div class="md:col-span-3">
-                                    <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Harga Supplier</label>
+                                    <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Harga Beli Supplier</label>
                                     <input type="number" min="0" step="0.01" wire:model="stockItems.{{ $index }}.supplierPrice" class="w-full min-h-[44px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm">
                                     @error('stockItems.' . $index . '.supplierPrice') <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p> @enderror
                                 </div>
