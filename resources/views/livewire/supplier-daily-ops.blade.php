@@ -282,8 +282,18 @@
                                                     </div>
                                                     <div>
                                                         <p class="text-[10px] text-slate-400">Fisik</p>
-                                                        <input type="number" min="0" max="{{ $row['beforeQty'] }}" wire:model.live="countItems.{{ $index }}.physicalQty" @disabled($isLocked)
-                                                            class="w-full min-h-[34px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 text-xs text-right disabled:opacity-60">
+                                                        <div class="flex items-center gap-1">
+                                                            <button type="button" wire:click="decrementPhysicalQty({{ $index }})" @disabled($isLocked)
+                                                                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                                <i class='bx bx-minus text-sm'></i>
+                                                            </button>
+                                                            <input type="number" min="0" max="{{ $row['beforeQty'] }}" wire:model.live="countItems.{{ $index }}.physicalQty" @disabled($isLocked)
+                                                                class="w-full h-8 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md px-2 text-xs text-center font-semibold disabled:opacity-60 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                                            <button type="button" wire:click="incrementPhysicalQty({{ $index }})" @disabled($isLocked)
+                                                                class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                                                <i class='bx bx-plus text-sm'></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div class="text-right">
                                                         <p class="text-[10px] text-slate-400">Delta</p>

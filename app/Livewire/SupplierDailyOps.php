@@ -197,6 +197,27 @@ class SupplierDailyOps extends Component
         $this->stockItems = array_values($this->stockItems);
     }
 
+    public function decrementPhysicalQty(int $index): void
+    {
+        if (! isset($this->countItems[$index])) {
+            return;
+        }
+
+        $current = (int) ($this->countItems[$index]['physicalQty'] ?? 0);
+        $this->countItems[$index]['physicalQty'] = max(0, $current - 1);
+    }
+
+    public function incrementPhysicalQty(int $index): void
+    {
+        if (! isset($this->countItems[$index])) {
+            return;
+        }
+
+        $current = (int) ($this->countItems[$index]['physicalQty'] ?? 0);
+        $max = (int) ($this->countItems[$index]['beforeQty'] ?? 0);
+        $this->countItems[$index]['physicalQty'] = min($max, $current + 1);
+    }
+
     public function saveStockIn(): void
     {
         $this->assertDateSupplierNotLocked((int) $this->stockSupplierId, $this->stockDate);
