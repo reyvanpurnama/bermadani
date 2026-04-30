@@ -136,8 +136,11 @@ class SupplierDailyOpsTest extends TestCase
 
         $component = Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
-            ->set('stockSupplierId', $supplier->id)
-            ->set('stockItems.0.productId', $product->id);
+            ->set('stockSupplierId', $supplier->id);
+
+        $this->assertSame('', $component->instance()->stockItems[0]['supplierPrice']);
+
+        $component->set('stockItems.0.productId', $product->id);
 
         $this->assertSame(8450.0, (float) ($component->instance()->stockItems[0]['supplierPrice'] ?? 0));
     }
@@ -286,6 +289,7 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertSame(1, $component->instance()->currentStep);
         $this->assertSame('Langkah 1 dari 2', $component->instance()->stepProgressText);
         $this->assertTrue($component->instance()->step2SoftLocked);
+        $this->assertSame('', $component->instance()->payNowAmount);
         $this->assertSame('active', $component->instance()->stepperSteps[0]['status']);
         $this->assertSame('inactive', $component->instance()->stepperSteps[1]['status']);
 
@@ -298,6 +302,7 @@ class SupplierDailyOpsTest extends TestCase
         $component->set('recapSupplierId', $supplier->id);
 
         $this->assertFalse($component->instance()->step2SoftLocked);
+        $this->assertSame('', $component->instance()->payNowAmount);
         $this->assertSame('active', $component->instance()->stepperSteps[1]['status']);
     }
 

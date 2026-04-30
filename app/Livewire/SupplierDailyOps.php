@@ -37,7 +37,7 @@ class SupplierDailyOps extends Component
     public $recapSupplierId = '';
     public string $recapDate = '';
     public string $countNote = '';
-    public $payNowAmount = 0;
+    public $payNowAmount = '';
     public string $payoutNote = '';
     public array $countItems = [];
 
@@ -211,10 +211,14 @@ class SupplierDailyOps extends Component
 
     public function saveRecapAndPayout(): void
     {
+        if (blank($this->payNowAmount)) {
+            $this->payNowAmount = 0;
+        }
+
         $this->validate([
             'recapSupplierId' => 'required|exists:suppliers,id',
             'recapDate' => 'required|date',
-            'payNowAmount' => 'required|numeric|min:0',
+            'payNowAmount' => 'nullable|numeric|min:0',
             'countNote' => 'nullable|string|max:500',
             'payoutNote' => 'nullable|string|max:500',
             'countItems' => 'array',
@@ -381,11 +385,12 @@ class SupplierDailyOps extends Component
     public function refreshPayNowDefault(): void
     {
         if (! $this->recapSupplierId) {
-            $this->payNowAmount = 0;
+            $this->payNowAmount = '';
             return;
         }
 
-        $this->payNowAmount = $this->getSupplierOutstandingAmount((int) $this->recapSupplierId);
+        $outstanding = $this->getSupplierOutstandingAmount((int) $this->recapSupplierId);
+        $this->payNowAmount = $outstanding > 0 ? $outstanding : '';
     }
 
     public function loadCountItems(): void
@@ -515,7 +520,11 @@ class SupplierDailyOps extends Component
 
     public function getCanSubmitRecapProperty(): bool
     {
-        if (! $this->recapSupplierId || ! is_numeric($this->payNowAmount) || (float) $this->payNowAmount < 0) {
+        if (! $this->recapSupplierId) {
+            return false;
+        }
+
+        if (! blank($this->payNowAmount) && (! is_numeric($this->payNowAmount) || (float) $this->payNowAmount < 0)) {
             return false;
         }
 
@@ -756,7 +765,7 @@ class SupplierDailyOps extends Component
         return [
             'productId' => '',
             'qty' => 1,
-            'supplierPrice' => 0,
+            'supplierPrice' => '',
         ];
     }
 

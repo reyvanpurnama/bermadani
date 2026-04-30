@@ -152,7 +152,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
                                 <div class="md:col-span-6">
                                     <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Produk</label>
-                                    <select wire:model="stockItems.{{ $index }}.productId" class="w-full min-h-[44px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm">
+                                    <select wire:model.live="stockItems.{{ $index }}.productId" class="w-full min-h-[44px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm">
                                         <option value="">Pilih produk</option>
                                         @foreach($this->availableProducts as $product)
                                             <option value="{{ $product->id }}">{{ $product->name }} · Jual Rp {{ number_format($product->sellPrice, 0, ',', '.') }}</option>
@@ -168,8 +168,8 @@
                                 </div>
 
                                 <div class="md:col-span-3">
-                                    <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Harga Beli Supplier</label>
-                                    <input type="number" min="0" step="0.01" wire:model="stockItems.{{ $index }}.supplierPrice" class="w-full min-h-[44px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm">
+                                    <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Harga Produk</label>
+                                    <input type="number" min="0" step="0.01" placeholder="0" wire:model="stockItems.{{ $index }}.supplierPrice" class="w-full min-h-[44px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm">
                                     <p class="text-[10px] text-slate-400 mt-1">Terisi otomatis dari data produk, tetap bisa disesuaikan.</p>
                                     @error('stockItems.' . $index . '.supplierPrice') <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p> @enderror
                                 </div>
@@ -389,7 +389,7 @@
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Nominal Dibayar</label>
-                        <input type="number" min="0" step="0.01" wire:model="payNowAmount" @disabled($step2SoftLocked)
+                        <input type="number" min="0" step="0.01" placeholder="0" wire:model="payNowAmount" @disabled($step2SoftLocked)
                             class="w-full md:w-80 min-h-[46px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
                         <p class="text-[11px] text-slate-400 mt-1">Gunakan tombol Set Nominal Penuh untuk melunasi outstanding saat ini.</p>
                         @error('payNowAmount') <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p> @enderror
