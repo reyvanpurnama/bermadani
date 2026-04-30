@@ -31,6 +31,9 @@ class SupplierDailyOps extends Component
     public string $selectedDate = '';
     public $selectedSupplierId = '';
     public string $tab = 'stock-in';
+    public string $mobileView = 'roster';
+    public string $supplierSearch = '';
+    public string $rosterStatusFilter = 'all';
 
     // Stok Masuk
     public $stockSupplierId = '';
@@ -72,6 +75,11 @@ class SupplierDailyOps extends Component
         $this->tab = in_array($tab, ['stock-in', 'recap'], true) ? $tab : 'stock-in';
     }
 
+    public function setMobileView(string $view): void
+    {
+        $this->mobileView = in_array($view, ['roster', 'detail'], true) ? $view : 'roster';
+    }
+
     public function navigateDate(int $days): void
     {
         $this->selectedDate = Carbon::parse($this->selectedDate)->addDays($days)->toDateString();
@@ -98,6 +106,8 @@ class SupplierDailyOps extends Component
         if ($tab !== null) {
             $this->setTab($tab);
         }
+
+        $this->mobileView = 'detail';
     }
 
     public function clearSelectedSupplier(): void
@@ -869,6 +879,36 @@ class SupplierDailyOps extends Component
             'netSupplierOps' => $income - $expense,
             'isFinalized' => $this->isDateFinalized($date),
         ];
+    }
+
+    public function getVisibleSupplierRosterProperty(): array
+    {
+        $rows = collect($this->supplierRoster);
+
+        if ($this->supplierSearch !== '') {
+            $keyword = mb_strtolower(trim($this->supplierSearch));
+            $rows = $rows->filter(function (array $row) use ($keyword) {
+                return str_contains(mb_strtolower((string) $row['supplierName']), $keyword);
+            });
+        }
+
+        if ($this->rosterStatusFilter !== 'all') {
+            $statusMap = [
+                'pending' => 'PENDING',
+                'no_delivery' => 'NO_DELIVERY',
+                'stock_in' => 'STOCK_IN',
+                'recap' => 'RECAP',
+                'payout_partial' => 'PAYOUT_PARTIAL',
+                'locked' => 'LOCKED',
+            ];
+
+            $target = $statusMap[$this->rosterStatusFilter] ?? null;
+            if ($target) {
+                $rows = $rows->where('statusKey', $target);
+            }
+        }
+
+        return $rows->values()->all();
     }
 
     public function getSelectedSupplierDailyDetailProperty(): array

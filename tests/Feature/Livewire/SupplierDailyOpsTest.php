@@ -454,6 +454,59 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertSame(38000.0, (float) $summary['netSupplierOps']);
     }
 
+    public function test_visible_supplier_roster_supports_search_and_status_filter(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplierA = Supplier::create([
+            'code' => 'SUP-ALPHA',
+            'ownerName' => 'Owner A',
+            'businessName' => 'Alpha Mart',
+            'phone' => '081234111111',
+            'email' => 'alpha@supplier.test',
+            'address' => 'Alamat A',
+            'password' => 'password123',
+            'status' => 'ACTIVE',
+            'isActive' => true,
+        ]);
+        $supplierB = Supplier::create([
+            'code' => 'SUP-BETA',
+            'ownerName' => 'Owner B',
+            'businessName' => 'Beta Store',
+            'phone' => '081234222222',
+            'email' => 'beta@supplier.test',
+            'address' => 'Alamat B',
+            'password' => 'password123',
+            'status' => 'ACTIVE',
+            'isActive' => true,
+        ]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('supplierSearch', 'alpha');
+
+        $visible = collect($component->instance()->visibleSupplierRoster);
+        $this->assertCount(1, $visible);
+        $this->assertSame($supplierA->id, $visible->first()['supplierId']);
+
+        $component->set('supplierSearch', '')->set('rosterStatusFilter', 'pending');
+        $pendingVisible = collect($component->instance()->visibleSupplierRoster);
+        $this->assertTrue($pendingVisible->contains(fn ($row) => $row['supplierId'] === $supplierB->id));
+    }
+
+    public function test_select_supplier_switches_mobile_view_to_detail(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('mobileView', 'roster')
+            ->call('selectSupplier', $supplier->id);
+
+        $this->assertSame('detail', $component->instance()->mobileView);
+        $this->assertSame((string) $supplier->id, (string) $component->instance()->selectedSupplierId);
+    }
+
     private function makeUser(string $role): User
     {
         return User::factory()->create([

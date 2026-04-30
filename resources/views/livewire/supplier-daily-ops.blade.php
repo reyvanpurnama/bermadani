@@ -1,13 +1,14 @@
 <div class="space-y-6 pb-28 md:pb-8">
     @php
         $summary = $this->selectedDateSummary;
-        $roster = collect($this->supplierRoster);
+        $roster = collect($this->visibleSupplierRoster);
         $detail = $this->selectedSupplierDailyDetail;
         $selectedSupplier = $this->selectedSupplier;
         $countPreview = $this->countPreview;
         $outstanding = $this->outstandingPayable;
         $isLocked = (bool) ($detail['lockStatus'] ?? false);
         $isFinalized = (bool) ($summary['isFinalized'] ?? false);
+        $mobileView = $this->mobileView;
     @endphp
 
     <section class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
@@ -68,10 +69,21 @@
                 <p class="text-sm font-bold {{ $summary['netSupplierOps'] >= 0 ? 'text-blue-700 dark:text-blue-300' : 'text-rose-700 dark:text-rose-300' }} mt-1">Rp {{ number_format($summary['netSupplierOps'], 0, ',', '.') }}</p>
             </div>
         </div>
+
+        <div class="xl:hidden rounded-xl border border-slate-200 dark:border-slate-700 p-1 grid grid-cols-2 gap-1 bg-slate-50 dark:bg-slate-800/60">
+            <button type="button" wire:click="setMobileView('roster')"
+                class="h-10 rounded-lg text-xs font-bold transition-colors {{ $mobileView === 'roster' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300' }}">
+                Roster
+            </button>
+            <button type="button" wire:click="setMobileView('detail')"
+                class="h-10 rounded-lg text-xs font-bold transition-colors {{ $mobileView === 'detail' ? 'bg-white dark:bg-slate-700 text-primary shadow-sm' : 'text-slate-600 dark:text-slate-300' }}">
+                Detail {{ $selectedSupplier ? '· ' . \Illuminate\Support\Str::limit($selectedSupplier->businessName, 12) : '' }}
+            </button>
+        </div>
     </section>
 
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        <section class="xl:col-span-7 bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden">
+        <section class="xl:col-span-7 bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden {{ $mobileView === 'detail' ? 'hidden xl:block' : '' }}">
             <div class="px-4 sm:px-5 py-4 border-b border-slate-100 dark:border-slate-700 flex items-center justify-between gap-3">
                 <div>
                     <h2 class="text-sm font-bold text-slate-900 dark:text-white">Roster Supplier {{ \Illuminate\Support\Carbon::parse($selectedDate)->translatedFormat('d M Y') }}</h2>
@@ -80,6 +92,26 @@
                 <span class="text-[10px] font-bold uppercase tracking-wider {{ $isFinalized ? 'text-emerald-600' : 'text-amber-600' }}">
                     {{ $isFinalized ? 'Tanggal Finalized' : 'Belum Finalized' }}
                 </span>
+            </div>
+
+            <div class="px-4 sm:px-5 py-3 border-b border-slate-100 dark:border-slate-700 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div class="md:col-span-2 relative">
+                    <i class='bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400'></i>
+                    <input type="text" wire:model.live.debounce.250ms="supplierSearch" placeholder="Cari supplier..."
+                        class="w-full h-10 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl pl-9 pr-3 text-sm text-slate-700 dark:text-white">
+                </div>
+                <div>
+                    <select wire:model.live="rosterStatusFilter"
+                        class="w-full h-10 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm text-slate-700 dark:text-white">
+                        <option value="all">Semua Status</option>
+                        <option value="pending">Belum Diproses</option>
+                        <option value="stock_in">Stok Masuk</option>
+                        <option value="recap">Rekap</option>
+                        <option value="payout_partial">Payout Parsial</option>
+                        <option value="locked">Lunas (Locked)</option>
+                        <option value="no_delivery">Tidak Kirim</option>
+                    </select>
+                </div>
             </div>
 
             <div class="hidden md:block overflow-x-auto">
@@ -132,11 +164,11 @@
             <div class="md:hidden p-4 space-y-2">
                 @forelse($roster as $row)
                     <button type="button" wire:click="selectSupplier({{ $row['supplierId'] }})"
-                        class="w-full text-left rounded-xl border p-3 {{ $row['isSelected'] ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700' }}">
+                        class="w-full text-left rounded-xl border p-3.5 min-h-[84px] {{ $row['isSelected'] ? 'border-primary bg-indigo-50 dark:bg-indigo-900/20' : 'border-slate-200 dark:border-slate-700' }}">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <p class="text-sm font-semibold text-slate-900 dark:text-white">{{ $row['supplierName'] }}</p>
-                                <p class="text-[11px] text-slate-500 mt-0.5">Masuk {{ $row['stockInQty'] }} · Terjual {{ $row['soldQty'] }}</p>
+                                <p class="text-[11px] text-slate-500 mt-0.5">Masuk {{ $row['stockInQty'] }} · Terjual {{ $row['soldQty'] }} · Outstanding Rp {{ number_format($row['outstandingCurrent'], 0, ',', '.') }}</p>
                             </div>
                             <span class="inline-flex px-2 py-0.5 rounded-full border text-[10px] font-bold {{ $row['statusClass'] }}">{{ $row['statusLabel'] }}</span>
                         </div>
@@ -147,7 +179,7 @@
             </div>
         </section>
 
-        <section class="xl:col-span-5 space-y-4">
+        <section class="xl:col-span-5 space-y-4 {{ $mobileView === 'roster' ? 'hidden xl:block' : '' }}">
             <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm p-4 sm:p-5">
                 @if(!$selectedSupplier)
                     <div class="text-center py-10">
@@ -165,6 +197,10 @@
                                 <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-1">{{ $selectedSupplier->businessName }}</h3>
                                 <p class="text-xs text-slate-500">Tanggal kerja: {{ \Illuminate\Support\Carbon::parse($selectedDate)->translatedFormat('d F Y') }}</p>
                             </div>
+                            <button type="button" wire:click="setMobileView('roster')"
+                                class="xl:hidden inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                                <i class='bx bx-arrow-back'></i> Roster
+                            </button>
                             <div class="flex items-center gap-2">
                                 <button type="button" wire:click="setTab('stock-in')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold {{ $tab === 'stock-in' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' }}">Stok</button>
                                 <button type="button" wire:click="setTab('recap')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold {{ $tab === 'recap' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300' }}">Rekap</button>
