@@ -360,6 +360,47 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertFalse($component->instance()->canSubmitRecap);
     }
 
+    public function test_fill_pay_now_from_supplier_rights_uses_preview_payable(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['stock' => 4, 'sellPrice' => 10000]);
+
+        $batch = ConsignmentBatch::create([
+            'batchCode' => 'BCH-2002',
+            'supplierId' => $supplier->id,
+            'status' => 'ACTIVE',
+            'receivedAt' => now(),
+        ]);
+
+        $item = ConsignmentItem::create([
+            'batchId' => $batch->id,
+            'productId' => $product->id,
+            'initialQty' => 4,
+            'receivedQty' => 4,
+            'soldQty' => 0,
+            'remainingQty' => 4,
+            'sellPrice' => 10000,
+            'supplierPrice' => 7000,
+        ]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('recapSupplierId', $supplier->id)
+            ->set('countItems', [[
+                'itemId' => $item->id,
+                'batchCode' => $batch->batchCode,
+                'productName' => $product->name,
+                'beforeQty' => 4,
+                'physicalQty' => 1,
+                'sellPrice' => 10000,
+                'supplierPrice' => 7000,
+            ]])
+            ->call('fillPayNowFromSupplierRights');
+
+        $this->assertSame(21000.0, (float) $component->instance()->payNowAmount);
+    }
+
     private function makeUser(string $role): User
     {
         return User::factory()->create([

@@ -393,6 +393,17 @@ class SupplierDailyOps extends Component
         $this->payNowAmount = $outstanding > 0 ? $outstanding : '';
     }
 
+    public function fillPayNowFromSupplierRights(): void
+    {
+        if (! $this->recapSupplierId) {
+            $this->payNowAmount = '';
+            return;
+        }
+
+        $payable = (float) ($this->countPreview['payable'] ?? 0);
+        $this->payNowAmount = $payable > 0 ? round($payable, 2) : '';
+    }
+
     public function loadCountItems(): void
     {
         if (! $this->recapSupplierId) {
