@@ -389,9 +389,15 @@
 
                     <div>
                         <label class="block text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Nominal Dibayar</label>
-                        <input type="number" min="0" step="0.01" placeholder="0" wire:model="payNowAmount" @disabled($step2SoftLocked)
-                            class="w-full md:w-80 min-h-[46px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
-                        <p class="text-[11px] text-slate-400 mt-1">Gunakan preset cepat: Hak Supplier (draft rekap) atau Nominal Penuh (outstanding).</p>
+                        <div class="flex items-center gap-2 w-full md:max-w-[420px]">
+                            <input type="number" min="0" step="0.01" placeholder="0" wire:model="payNowAmount" @disabled($step2SoftLocked)
+                                class="w-full md:w-56 min-h-[46px] bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 text-sm font-semibold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none disabled:opacity-60 disabled:cursor-not-allowed">
+                            <button type="button" wire:click="fillPayNowFromSupplierRights" @disabled($step2SoftLocked)
+                                class="inline-flex shrink-0 items-center justify-center gap-1.5 min-h-[46px] px-3 rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-xs font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 disabled:opacity-60 disabled:cursor-not-allowed">
+                                <i class='bx bx-transfer-alt'></i> Isi Hak
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">`Isi Hak` pakai hak supplier dari draft. `Set Nominal Penuh` untuk outstanding.</p>
                         @error('payNowAmount') <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p> @enderror
                     </div>
                 </section>
@@ -401,10 +407,6 @@
                     <p class="text-xs text-slate-500 dark:text-slate-400">Data delta dan outstanding di atas akan dijadikan dasar posting omzet dan payout supplier.</p>
 
                     <div class="hidden md:flex items-center gap-3">
-                        <button type="button" wire:click="fillPayNowFromSupplierRights" @disabled($step2SoftLocked)
-                            class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 disabled:opacity-60 disabled:cursor-not-allowed">
-                            <i class='bx bx-transfer-alt'></i> Isi Sesuai Hak Supplier
-                        </button>
                         <button type="button" wire:click="refreshPayNowDefault" @disabled($step2SoftLocked)
                             class="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-60 disabled:cursor-not-allowed">
                             <i class='bx bx-reset'></i> Set Nominal Penuh
@@ -522,24 +524,18 @@
                 </button>
             </div>
         @else
-            <div class="space-y-2">
-                <button type="button" wire:click="fillPayNowFromSupplierRights" @disabled($step2SoftLocked)
-                    class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-xs font-semibold text-blue-700 dark:text-blue-300 disabled:opacity-60 disabled:cursor-not-allowed">
-                    <i class='bx bx-transfer-alt'></i> Isi Sesuai Hak Supplier
+            <div class="grid grid-cols-2 gap-2">
+                <button type="button" wire:click="refreshPayNowDefault" @disabled($step2SoftLocked)
+                    class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <i class='bx bx-reset'></i> Set Nominal Penuh
                 </button>
-                <div class="grid grid-cols-2 gap-2">
-                    <button type="button" wire:click="refreshPayNowDefault" @disabled($step2SoftLocked)
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 disabled:opacity-60 disabled:cursor-not-allowed">
-                        <i class='bx bx-reset'></i> Set Nominal Penuh
-                    </button>
-                    <button type="button" wire:click="saveRecapAndPayout" wire:loading.attr="disabled" wire:target="saveRecapAndPayout"
-                        @disabled($step2SoftLocked || ! $this->canSubmitRecap)
-                        class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-sm shadow-primary/20 disabled:opacity-60 disabled:cursor-not-allowed">
-                        <i class='bx bx-save' wire:loading.remove wire:target="saveRecapAndPayout"></i>
-                        <span wire:loading.remove wire:target="saveRecapAndPayout">Simpan Rekap & Payout</span>
-                        <span wire:loading wire:target="saveRecapAndPayout">Menyimpan...</span>
-                    </button>
-                </div>
+                <button type="button" wire:click="saveRecapAndPayout" wire:loading.attr="disabled" wire:target="saveRecapAndPayout"
+                    @disabled($step2SoftLocked || ! $this->canSubmitRecap)
+                    class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-primary text-white text-xs font-bold shadow-sm shadow-primary/20 disabled:opacity-60 disabled:cursor-not-allowed">
+                    <i class='bx bx-save' wire:loading.remove wire:target="saveRecapAndPayout"></i>
+                    <span wire:loading.remove wire:target="saveRecapAndPayout">Simpan Rekap & Payout</span>
+                    <span wire:loading wire:target="saveRecapAndPayout">Menyimpan...</span>
+                </button>
             </div>
         @endif
     </div>
