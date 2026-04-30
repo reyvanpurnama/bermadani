@@ -322,6 +322,10 @@
                                         <p class="text-rose-600 font-bold uppercase text-[10px]">Outstanding</p>
                                         <p class="font-bold text-rose-700 dark:text-rose-300 mt-0.5">Rp {{ number_format($outstanding, 0, ',', '.') }}</p>
                                     </div>
+                                    <div class="col-span-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 p-2.5">
+                                        <p class="text-indigo-600 font-bold uppercase text-[10px]">Keuntungan</p>
+                                        <p class="font-bold text-indigo-700 dark:text-indigo-300 mt-0.5">Rp {{ number_format($countPreview['margin'], 0, ',', '.') }}</p>
+                                    </div>
                                 </div>
 
                                 <div>
