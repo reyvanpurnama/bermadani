@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\ActivityLog;
 use App\Models\ConsignmentBatch;
 use App\Models\ConsignmentItem;
 use App\Models\ConsignmentItemCount;
@@ -11,20 +12,24 @@ use App\Models\StockMovement;
 use App\Models\Supplier;
 use App\Models\SupplierPayout;
 use App\Models\SupplierPayoutAllocation;
-use Illuminate\Support\Carbon;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Throwable;
 use Livewire\Component;
+use Throwable;
 
 class SupplierDailyOps extends Component
 {
     private const INCOME_CATEGORY = 'Omset Supplier Manual (Non-POS)';
     private const EXPENSE_CATEGORY = 'Pembayaran Supplier Manual (Non-POS)';
+    private const FINALIZE_PREFIX = 'DAILY_FINALIZE:';
+    private const REOPEN_PREFIX = 'DAILY_REOPEN:';
 
+    public string $selectedDate = '';
+    public $selectedSupplierId = '';
     public string $tab = 'stock-in';
 
     // Stok Masuk
@@ -43,9 +48,23 @@ class SupplierDailyOps extends Component
 
     public function mount(): void
     {
-        $this->stockDate = today()->toDateString();
-        $this->recapDate = today()->toDateString();
+        $this->selectedDate = today()->toDateString();
+        $this->syncDateContext();
         $this->stockItems = [$this->emptyStockItem()];
+    }
+
+    public function updatedSelectedDate(): void
+    {
+        $this->syncDateContext();
+
+        if ($this->selectedSupplierId) {
+            $this->selectSupplier((int) $this->selectedSupplierId, $this->tab);
+            return;
+        }
+
+        $this->stockItems = [$this->emptyStockItem()];
+        $this->countItems = [];
+        $this->payNowAmount = '';
     }
 
     public function setTab(string $tab): void
@@ -53,14 +72,59 @@ class SupplierDailyOps extends Component
         $this->tab = in_array($tab, ['stock-in', 'recap'], true) ? $tab : 'stock-in';
     }
 
-    public function goToStep(int $step): void
+    public function navigateDate(int $days): void
     {
-        $this->setTab($step === 2 ? 'recap' : 'stock-in');
+        $this->selectedDate = Carbon::parse($this->selectedDate)->addDays($days)->toDateString();
+        $this->updatedSelectedDate();
+    }
+
+    public function selectSupplier(int $supplierId, ?string $tab = null): void
+    {
+        if (! $this->isSupplierSelectable($supplierId)) {
+            return;
+        }
+
+        $this->selectedSupplierId = $supplierId;
+        $this->stockSupplierId = $supplierId;
+        $this->recapSupplierId = $supplierId;
+        $this->syncDateContext();
+        $this->stockItems = [$this->emptyStockItem()];
+        $this->countNote = '';
+        $this->payoutNote = '';
+
+        $this->loadCountItems();
+        $this->refreshPayNowDefault();
+
+        if ($tab !== null) {
+            $this->setTab($tab);
+        }
+    }
+
+    public function clearSelectedSupplier(): void
+    {
+        $this->selectedSupplierId = '';
+        $this->stockSupplierId = '';
+        $this->recapSupplierId = '';
+        $this->stockItems = [$this->emptyStockItem()];
+        $this->countItems = [];
+        $this->countNote = '';
+        $this->payoutNote = '';
+        $this->payNowAmount = '';
     }
 
     public function updatedStockSupplierId(): void
     {
         $this->stockItems = [$this->emptyStockItem()];
+
+        if (! $this->stockSupplierId) {
+            return;
+        }
+
+        $this->selectedSupplierId = $this->stockSupplierId;
+
+        if ((int) $this->recapSupplierId !== (int) $this->stockSupplierId) {
+            $this->recapSupplierId = $this->stockSupplierId;
+        }
     }
 
     public function updatedStockItems($value, $key): void
@@ -91,6 +155,19 @@ class SupplierDailyOps extends Component
 
     public function updatedRecapSupplierId(): void
     {
+        if (! $this->recapSupplierId) {
+            $this->countItems = [];
+            $this->payNowAmount = '';
+            return;
+        }
+
+        $this->selectedSupplierId = $this->recapSupplierId;
+
+        if ((int) $this->stockSupplierId !== (int) $this->recapSupplierId) {
+            $this->stockSupplierId = $this->recapSupplierId;
+            $this->stockItems = [$this->emptyStockItem()];
+        }
+
         $this->loadCountItems();
         $this->refreshPayNowDefault();
     }
@@ -112,6 +189,8 @@ class SupplierDailyOps extends Component
 
     public function saveStockIn(): void
     {
+        $this->assertDateSupplierNotLocked((int) $this->stockSupplierId, $this->stockDate);
+
         $this->validate([
             'stockSupplierId' => 'required|exists:suppliers,id',
             'stockDate' => 'required|date',
@@ -211,6 +290,8 @@ class SupplierDailyOps extends Component
 
     public function saveRecapAndPayout(): void
     {
+        $this->assertDateSupplierNotLocked((int) $this->recapSupplierId, $this->recapDate);
+
         if (blank($this->payNowAmount)) {
             $this->payNowAmount = 0;
         }
@@ -404,6 +485,142 @@ class SupplierDailyOps extends Component
         $this->payNowAmount = $payable > 0 ? round($payable, 2) : '';
     }
 
+    public function copyPreviousDayDraft(): void
+    {
+        if (! $this->stockSupplierId) {
+            return;
+        }
+
+        $this->assertDateSupplierNotLocked((int) $this->stockSupplierId, $this->stockDate);
+
+        $date = Carbon::parse($this->stockDate);
+        $prevDate = $date->copy()->subDay()->toDateString();
+
+        if ($this->hasAnyDateActivity((int) $this->stockSupplierId, $date->toDateString())) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'Copy draft hanya bisa dilakukan jika tanggal target masih kosong.',
+            ]);
+
+            return;
+        }
+
+        $sourceBatches = ConsignmentBatch::with('items')
+            ->where('supplierId', $this->stockSupplierId)
+            ->whereDate('receivedAt', $prevDate)
+            ->orderBy('id')
+            ->get();
+
+        if ($sourceBatches->isEmpty()) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'Tidak ada stok masuk H-1 untuk disalin.',
+            ]);
+
+            return;
+        }
+
+        $draft = [];
+        foreach ($sourceBatches as $batch) {
+            foreach ($batch->items as $item) {
+                $qty = (int) ($item->receivedQty ?: $item->initialQty);
+                if ($qty <= 0) {
+                    continue;
+                }
+
+                $draft[] = [
+                    'productId' => (string) $item->productId,
+                    'qty' => $qty,
+                    'supplierPrice' => (float) $item->supplierPrice,
+                ];
+            }
+        }
+
+        if (empty($draft)) {
+            $this->dispatch('notify', [
+                'type' => 'warning',
+                'message' => 'Data H-1 tidak memiliki item valid untuk draft.',
+            ]);
+
+            return;
+        }
+
+        $this->stockItems = $draft;
+        $this->stockNote = "Copy draft dari {$prevDate}";
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Draft stok masuk berhasil disalin dari H-1.',
+        ]);
+    }
+
+    public function finalizeDate(): void
+    {
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+
+        if ($this->isDateFinalized($date)) {
+            return;
+        }
+
+        $summary = $this->selectedDateSummary;
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'COMPLETE',
+            'module' => 'SupplierDailyOps',
+            'description' => self::FINALIZE_PREFIX . $date,
+            'loggable_type' => \App\Models\User::class,
+            'loggable_id' => (int) Auth::id(),
+            'old_values' => null,
+            'new_values' => [
+                'date' => $date,
+                'summary' => $summary,
+            ],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Tanggal operasional berhasil difinalisasi.',
+        ]);
+    }
+
+    public function reopenDate(): void
+    {
+        $user = Auth::user();
+        if (! $user || ! ($user->isAdmin() || $user->isSuperAdmin())) {
+            $this->dispatch('notify', [
+                'type' => 'error',
+                'message' => 'Hanya admin/superadmin yang dapat membuka finalisasi tanggal.',
+            ]);
+
+            return;
+        }
+
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'REOPEN',
+            'module' => 'SupplierDailyOps',
+            'description' => self::REOPEN_PREFIX . $date,
+            'loggable_type' => \App\Models\User::class,
+            'loggable_id' => (int) Auth::id(),
+            'old_values' => null,
+            'new_values' => [
+                'date' => $date,
+            ],
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
+
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => 'Finalisasi tanggal dibuka kembali.',
+        ]);
+    }
+
     public function loadCountItems(): void
     {
         if (! $this->recapSupplierId) {
@@ -457,62 +674,13 @@ class SupplierDailyOps extends Component
         ];
     }
 
-    public function getCurrentStepProperty(): int
-    {
-        return $this->tab === 'recap' ? 2 : 1;
-    }
-
-    public function getStepProgressTextProperty(): string
-    {
-        return "Langkah {$this->currentStep} dari 2";
-    }
-
-    public function getStep2SoftLockedProperty(): bool
-    {
-        return ! (bool) $this->recapSupplierId;
-    }
-
-    public function getStepperStepsProperty(): array
-    {
-        $step1Status = $this->currentStep === 1 ? 'active' : 'completed';
-        $step2Status = $this->currentStep === 2
-            ? ($this->step2SoftLocked ? 'locked' : 'active')
-            : 'inactive';
-
-        return [
-            [
-                'number' => 1,
-                'tab' => 'stock-in',
-                'title' => 'Stok Masuk',
-                'instruction' => 'Pilih supplier, input item, lalu simpan batch masuk.',
-                'status' => $step1Status,
-                'isClickable' => true,
-            ],
-            [
-                'number' => 2,
-                'tab' => 'recap',
-                'title' => 'Rekap & Bayar',
-                'instruction' => 'Pilih supplier, hitung stok fisik, review angka, lalu bayar.',
-                'status' => $step2Status,
-                'isClickable' => true,
-            ],
-        ];
-    }
-
-    public function getCompactHeaderStatsProperty(): array
-    {
-        $preview = $this->countPreview;
-
-        return [
-            'omzet' => (float) ($preview['omzet'] ?? 0),
-            'payable' => (float) ($preview['payable'] ?? 0),
-            'outstanding' => $this->outstandingPayable,
-        ];
-    }
-
     public function getCanSubmitStockInProperty(): bool
     {
         if (! $this->stockSupplierId || blank($this->stockDate) || count($this->stockItems) < 1) {
+            return false;
+        }
+
+        if ($this->isSupplierDateLocked((int) $this->stockSupplierId, $this->stockDate)) {
             return false;
         }
 
@@ -532,6 +700,10 @@ class SupplierDailyOps extends Component
     public function getCanSubmitRecapProperty(): bool
     {
         if (! $this->recapSupplierId) {
+            return false;
+        }
+
+        if ($this->isSupplierDateLocked((int) $this->recapSupplierId, $this->recapDate)) {
             return false;
         }
 
@@ -572,6 +744,15 @@ class SupplierDailyOps extends Component
             ->get();
     }
 
+    public function getSelectedSupplierProperty(): ?Supplier
+    {
+        if (! $this->selectedSupplierId) {
+            return null;
+        }
+
+        return $this->suppliers->firstWhere('id', (int) $this->selectedSupplierId);
+    }
+
     public function getAvailableProductsProperty()
     {
         if (! $this->stockSupplierId) {
@@ -585,10 +766,163 @@ class SupplierDailyOps extends Component
             ->get();
     }
 
+    public function getSupplierRosterProperty(): array
+    {
+        $suppliers = $this->suppliers;
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+        $dayStart = Carbon::parse($date)->startOfDay();
+        $dayEnd = Carbon::parse($date)->endOfDay();
+        $isFinalized = $this->isDateFinalized($date);
+
+        $supplierIds = $suppliers->pluck('id')->all();
+
+        $batchesBySupplier = ConsignmentBatch::with('items')
+            ->whereIn('supplierId', $supplierIds)
+            ->whereBetween('receivedAt', [$dayStart, $dayEnd])
+            ->get()
+            ->groupBy('supplierId');
+
+        $countsBySupplier = ConsignmentItemCount::whereIn('supplierId', $supplierIds)
+            ->whereBetween('countedAt', [$dayStart, $dayEnd])
+            ->get()
+            ->groupBy('supplierId');
+
+        $payoutBySupplier = SupplierPayout::whereIn('supplierId', $supplierIds)
+            ->whereDate('payoutDate', $date)
+            ->get()
+            ->groupBy('supplierId');
+
+        $rows = [];
+
+        foreach ($suppliers as $supplier) {
+            $dailyBatches = $batchesBySupplier->get($supplier->id, collect());
+            $dailyCounts = $countsBySupplier->get($supplier->id, collect());
+            $dailyPayouts = $payoutBySupplier->get($supplier->id, collect());
+
+            $stockInQty = 0;
+            $stockInItems = 0;
+            foreach ($dailyBatches as $batch) {
+                $stockInItems += $batch->items->count();
+                $stockInQty += (int) $batch->items->sum(fn ($item) => (int) ($item->receivedQty ?: $item->initialQty));
+            }
+
+            $soldQty = (int) $dailyCounts->sum('soldDeltaQty');
+            $payableToday = (float) $dailyCounts->sum('payableDeltaAmount');
+            $payoutToday = (float) $dailyPayouts->sum('paidAmount');
+            $outstandingCurrent = $this->getSupplierOutstandingAmount((int) $supplier->id);
+
+            $locked = $this->isSupplierDateLocked((int) $supplier->id, $date);
+            $statusKey = $this->resolveRosterStatus(
+                hasStockIn: $stockInItems > 0,
+                hasRecap: $soldQty > 0 || $payableToday > 0,
+                hasPayoutToday: $payoutToday > 0,
+                locked: $locked,
+                dateFinalized: $isFinalized
+            );
+
+            $rows[] = [
+                'supplierId' => (int) $supplier->id,
+                'supplierName' => $supplier->businessName,
+                'statusKey' => $statusKey,
+                'statusLabel' => $this->statusLabel($statusKey),
+                'statusClass' => $this->statusClass($statusKey),
+                'stockInItems' => $stockInItems,
+                'stockInQty' => $stockInQty,
+                'soldQty' => $soldQty,
+                'payableToday' => $payableToday,
+                'payoutToday' => $payoutToday,
+                'outstandingCurrent' => $outstandingCurrent,
+                'locked' => $locked,
+                'isSelected' => (int) $this->selectedSupplierId === (int) $supplier->id,
+            ];
+        }
+
+        return $rows;
+    }
+
+    public function getSelectedDateSummaryProperty(): array
+    {
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+        $rows = collect($this->supplierRoster);
+
+        $income = (float) FinancialTransaction::query()
+            ->whereDate('transactionDate', $date)
+            ->where('category', self::INCOME_CATEGORY)
+            ->sum('amount');
+
+        $expense = (float) FinancialTransaction::query()
+            ->whereDate('transactionDate', $date)
+            ->where('category', self::EXPENSE_CATEGORY)
+            ->sum('amount');
+
+        return [
+            'date' => $date,
+            'supplierTotal' => $rows->count(),
+            'processedSuppliers' => $rows->whereNotIn('statusKey', ['PENDING', 'NO_DELIVERY'])->count(),
+            'noDeliverySuppliers' => $rows->where('statusKey', 'NO_DELIVERY')->count(),
+            'stockInQty' => (int) $rows->sum('stockInQty'),
+            'soldQty' => (int) $rows->sum('soldQty'),
+            'payableToday' => (float) $rows->sum('payableToday'),
+            'payoutToday' => (float) $rows->sum('payoutToday'),
+            'incomeSupplierOps' => $income,
+            'expenseSupplierOps' => $expense,
+            'netSupplierOps' => $income - $expense,
+            'isFinalized' => $this->isDateFinalized($date),
+        ];
+    }
+
+    public function getSelectedSupplierDailyDetailProperty(): array
+    {
+        if (! $this->selectedSupplierId) {
+            return [
+                'hasSelection' => false,
+                'supplierName' => '-',
+                'lockStatus' => false,
+                'isFinalized' => $this->isDateFinalized($this->selectedDate),
+                'todayBatches' => collect(),
+                'todayPayouts' => collect(),
+                'todayCounts' => collect(),
+            ];
+        }
+
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+        $dayStart = Carbon::parse($date)->startOfDay();
+        $dayEnd = Carbon::parse($date)->endOfDay();
+
+        $todayBatches = ConsignmentBatch::with('items.product')
+            ->where('supplierId', $this->selectedSupplierId)
+            ->whereBetween('receivedAt', [$dayStart, $dayEnd])
+            ->latest('receivedAt')
+            ->get();
+
+        $todayPayouts = SupplierPayout::query()
+            ->where('supplierId', $this->selectedSupplierId)
+            ->whereDate('payoutDate', $date)
+            ->latest('id')
+            ->get();
+
+        $todayCounts = ConsignmentItemCount::with('product')
+            ->where('supplierId', $this->selectedSupplierId)
+            ->whereBetween('countedAt', [$dayStart, $dayEnd])
+            ->latest('id')
+            ->get();
+
+        return [
+            'hasSelection' => true,
+            'supplierName' => $this->selectedSupplier?->businessName ?? '-',
+            'lockStatus' => $this->isSupplierDateLocked((int) $this->selectedSupplierId, $date),
+            'isFinalized' => $this->isDateFinalized($date),
+            'todayBatches' => $todayBatches,
+            'todayPayouts' => $todayPayouts,
+            'todayCounts' => $todayCounts,
+        ];
+    }
+
     public function getRecentCountLogsProperty()
     {
         return ConsignmentItemCount::with(['supplier', 'product', 'user'])
-            ->when($this->recapSupplierId, fn ($query) => $query->where('supplierId', $this->recapSupplierId))
+            ->when($this->selectedSupplierId, fn ($query) => $query->where('supplierId', $this->selectedSupplierId))
+            ->when($this->selectedDate, fn ($query) => $query->whereDate('countedAt', $this->selectedDate))
             ->latest('countedAt')
             ->latest('id')
             ->limit(8)
@@ -598,11 +932,19 @@ class SupplierDailyOps extends Component
     public function getRecentPayoutsProperty()
     {
         return SupplierPayout::with(['supplier', 'user'])
-            ->when($this->recapSupplierId, fn ($query) => $query->where('supplierId', $this->recapSupplierId))
+            ->when($this->selectedSupplierId, fn ($query) => $query->where('supplierId', $this->selectedSupplierId))
+            ->when($this->selectedDate, fn ($query) => $query->whereDate('payoutDate', $this->selectedDate))
             ->latest('payoutDate')
             ->latest('id')
             ->limit(8)
             ->get();
+    }
+
+    public function getCanReopenFinalizationProperty(): bool
+    {
+        $user = Auth::user();
+
+        return (bool) $user && ($user->isAdmin() || $user->isSuperAdmin());
     }
 
     private function processPayout(Supplier $supplier, float $grossDueAmount, float $paidAmount, Carbon $payoutDate, ?string $note): void
@@ -681,6 +1023,10 @@ class SupplierDailyOps extends Component
 
     private function getSupplierOutstandingAmount(int $supplierId, bool $lockForUpdate = false): float
     {
+        if ($supplierId <= 0) {
+            return 0;
+        }
+
         $query = ConsignmentItem::query()
             ->whereHas('batch', function ($query) use ($supplierId) {
                 $query->where('supplierId', $supplierId)
@@ -778,6 +1124,155 @@ class SupplierDailyOps extends Component
             'qty' => 1,
             'supplierPrice' => '',
         ];
+    }
+
+    private function syncDateContext(): void
+    {
+        $date = Carbon::parse($this->selectedDate)->toDateString();
+        $this->stockDate = $date;
+        $this->recapDate = $date;
+    }
+
+    private function isSupplierSelectable(int $supplierId): bool
+    {
+        return $this->suppliers->contains(fn ($supplier) => (int) $supplier->id === $supplierId);
+    }
+
+    private function hasAnyDateActivity(int $supplierId, string $date): bool
+    {
+        if ($supplierId <= 0) {
+            return false;
+        }
+
+        $hasStockIn = ConsignmentBatch::query()
+            ->where('supplierId', $supplierId)
+            ->whereDate('receivedAt', $date)
+            ->exists();
+
+        if ($hasStockIn) {
+            return true;
+        }
+
+        $hasRecap = ConsignmentItemCount::query()
+            ->where('supplierId', $supplierId)
+            ->whereDate('countedAt', $date)
+            ->exists();
+
+        return $hasRecap;
+    }
+
+    private function isDateFinalized(string $date): bool
+    {
+        $lastFinalizeId = ActivityLog::query()
+            ->where('module', 'SupplierDailyOps')
+            ->where('description', self::FINALIZE_PREFIX . $date)
+            ->max('id');
+
+        if (! $lastFinalizeId) {
+            return false;
+        }
+
+        $lastReopenId = ActivityLog::query()
+            ->where('module', 'SupplierDailyOps')
+            ->where('description', self::REOPEN_PREFIX . $date)
+            ->max('id');
+
+        return ! $lastReopenId || $lastFinalizeId > $lastReopenId;
+    }
+
+    private function isSupplierDateLocked(int $supplierId, string $date): bool
+    {
+        if ($supplierId <= 0) {
+            return false;
+        }
+
+        $dayStart = Carbon::parse($date)->startOfDay();
+        $dayEnd = Carbon::parse($date)->endOfDay();
+
+        $counts = ConsignmentItemCount::query()
+            ->where('supplierId', $supplierId)
+            ->whereBetween('countedAt', [$dayStart, $dayEnd])
+            ->get(['consignmentItemId', 'payableDeltaAmount']);
+
+        if ($counts->isEmpty()) {
+            return false;
+        }
+
+        $payableTotal = (float) $counts->sum('payableDeltaAmount');
+        if ($payableTotal <= 0) {
+            return false;
+        }
+
+        $itemIds = $counts->pluck('consignmentItemId')->unique()->values();
+        if ($itemIds->isEmpty()) {
+            return false;
+        }
+
+        $allocatedTotal = (float) SupplierPayoutAllocation::query()
+            ->whereIn('consignmentItemId', $itemIds)
+            ->sum('allocatedAmount');
+
+        return $allocatedTotal + 0.0001 >= $payableTotal;
+    }
+
+    private function assertDateSupplierNotLocked(int $supplierId, string $date): void
+    {
+        if ($supplierId <= 0) {
+            return;
+        }
+
+        if (! $this->isSupplierDateLocked($supplierId, $date)) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'recapSupplierId' => 'Data tanggal ini sudah lunas/locked dan tidak dapat diubah.',
+        ]);
+    }
+
+    private function resolveRosterStatus(bool $hasStockIn, bool $hasRecap, bool $hasPayoutToday, bool $locked, bool $dateFinalized): string
+    {
+        if ($locked) {
+            return 'LOCKED';
+        }
+
+        if ($hasPayoutToday) {
+            return 'PAYOUT_PARTIAL';
+        }
+
+        if ($hasRecap) {
+            return 'RECAP';
+        }
+
+        if ($hasStockIn) {
+            return 'STOCK_IN';
+        }
+
+        return $dateFinalized ? 'NO_DELIVERY' : 'PENDING';
+    }
+
+    private function statusLabel(string $statusKey): string
+    {
+        return match ($statusKey) {
+            'LOCKED' => 'Lunas (Locked)',
+            'PAYOUT_PARTIAL' => 'Payout Parsial',
+            'RECAP' => 'Rekap',
+            'STOCK_IN' => 'Stok Masuk',
+            'NO_DELIVERY' => 'Tidak Kirim',
+            default => 'Belum Diproses',
+        };
+    }
+
+    private function statusClass(string $statusKey): string
+    {
+        return match ($statusKey) {
+            'LOCKED' => 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300',
+            'PAYOUT_PARTIAL' => 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+            'RECAP' => 'border-indigo-200 bg-indigo-50 text-indigo-700 dark:border-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300',
+            'STOCK_IN' => 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-300',
+            'NO_DELIVERY' => 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-800 dark:bg-rose-900/20 dark:text-rose-300',
+            default => 'border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300',
+        };
     }
 
     public function render()

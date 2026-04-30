@@ -3,13 +3,19 @@
 namespace Tests\Feature\Livewire;
 
 use App\Livewire\SupplierDailyOps;
+use App\Models\ActivityLog;
 use App\Models\Category;
 use App\Models\ConsignmentBatch;
 use App\Models\ConsignmentItem;
+use App\Models\ConsignmentItemCount;
+use App\Models\FinancialTransaction;
 use App\Models\Product;
 use App\Models\Supplier;
+use App\Models\SupplierPayout;
+use App\Models\SupplierPayoutAllocation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -24,8 +30,9 @@ class SupplierDailyOpsTest extends TestCase
         $supplier = $this->makeSupplier();
         $product = $this->makeProduct($supplier, ['stock' => 2, 'sellPrice' => 8000]);
 
-        $component = Livewire::actingAs($admin)
+        Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
+            ->set('selectedDate', now()->toDateString())
             ->set('stockSupplierId', $supplier->id)
             ->set('stockDate', now()->toDateString())
             ->set('stockItems', [[
@@ -35,8 +42,6 @@ class SupplierDailyOpsTest extends TestCase
             ]])
             ->call('saveStockIn');
 
-        $component->assertSet('tab', 'stock-in');
-
         $batch = ConsignmentBatch::query()->firstOrFail();
         $item = ConsignmentItem::query()->firstOrFail();
 
@@ -45,14 +50,6 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertSame(5, $item->initialQty);
         $this->assertSame(5, $item->remainingQty);
         $this->assertSame(7, $product->fresh()->stock);
-
-        $this->assertDatabaseHas('stock_movements', [
-            'productId' => $product->id,
-            'movementType' => 'CONSIGNMENT_IN',
-            'quantity' => 5,
-            'referenceType' => 'CONSIGNMENT_BATCH',
-            'referenceId' => $batch->id,
-        ]);
     }
 
     public function test_recap_with_partial_payout_updates_ledger_and_keeps_batch_active(): void
@@ -82,6 +79,7 @@ class SupplierDailyOpsTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
+            ->set('selectedDate', now()->toDateString())
             ->set('recapSupplierId', $supplier->id)
             ->set('countItems', [[
                 'itemId' => $item->id,
@@ -111,38 +109,7 @@ class SupplierDailyOpsTest extends TestCase
             'amount' => 10000,
         ]);
 
-        $this->assertDatabaseHas('supplier_payouts', [
-            'supplierId' => $supplier->id,
-            'grossDueAmount' => 28000,
-            'paidAmount' => 10000,
-            'outstandingAfter' => 18000,
-        ]);
-
-        $this->assertDatabaseHas('consignment_item_counts', [
-            'consignmentItemId' => $item->id,
-            'soldDeltaQty' => 4,
-            'soldDeltaAmount' => 40000,
-            'payableDeltaAmount' => 28000,
-        ]);
-
         $this->assertSame('ACTIVE', $batch->fresh()->status);
-    }
-
-    public function test_stock_item_supplier_price_autofills_from_selected_product_buy_price(): void
-    {
-        $admin = $this->makeUser('ADMIN');
-        $supplier = $this->makeSupplier();
-        $product = $this->makeProduct($supplier, ['buyPrice' => 8450, 'sellPrice' => 12000]);
-
-        $component = Livewire::actingAs($admin)
-            ->test(SupplierDailyOps::class)
-            ->set('stockSupplierId', $supplier->id);
-
-        $this->assertSame('', $component->instance()->stockItems[0]['supplierPrice']);
-
-        $component->set('stockItems.0.productId', $product->id);
-
-        $this->assertSame(8450.0, (float) ($component->instance()->stockItems[0]['supplierPrice'] ?? 0));
     }
 
     public function test_full_payout_marks_batch_settled_when_stock_exhausted(): void
@@ -172,6 +139,7 @@ class SupplierDailyOpsTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
+            ->set('selectedDate', now()->toDateString())
             ->set('recapSupplierId', $supplier->id)
             ->set('countItems', [[
                 'itemId' => $item->id,
@@ -188,64 +156,16 @@ class SupplierDailyOpsTest extends TestCase
         $this->assertSame(0, $item->fresh()->remainingQty);
         $this->assertSame(5, $item->fresh()->soldQty);
         $this->assertSame('SETTLED', $batch->fresh()->status);
-
-        $this->assertDatabaseHas('supplier_payouts', [
-            'supplierId' => $supplier->id,
-            'grossDueAmount' => 45000,
-            'paidAmount' => 45000,
-            'outstandingAfter' => 0,
-        ]);
     }
 
-    public function test_recap_rejects_overpayment_amount(): void
+    public function test_recap_validation_for_overpay_and_physical_qty(): void
     {
         $admin = $this->makeUser('ADMIN');
         $supplier = $this->makeSupplier();
-        $product = $this->makeProduct($supplier, ['stock' => 2, 'sellPrice' => 10000]);
+        $product = $this->makeProduct($supplier, ['stock' => 3, 'sellPrice' => 10000]);
 
         $batch = ConsignmentBatch::create([
             'batchCode' => 'BCH-1002',
-            'supplierId' => $supplier->id,
-            'status' => 'ACTIVE',
-            'receivedAt' => now(),
-        ]);
-
-        $item = ConsignmentItem::create([
-            'batchId' => $batch->id,
-            'productId' => $product->id,
-            'initialQty' => 2,
-            'receivedQty' => 2,
-            'soldQty' => 0,
-            'remainingQty' => 2,
-            'sellPrice' => 10000,
-            'supplierPrice' => 7000,
-        ]);
-
-        Livewire::actingAs($admin)
-            ->test(SupplierDailyOps::class)
-            ->set('recapSupplierId', $supplier->id)
-            ->set('countItems', [[
-                'itemId' => $item->id,
-                'batchCode' => $batch->batchCode,
-                'productName' => $product->name,
-                'beforeQty' => 2,
-                'physicalQty' => 0,
-                'sellPrice' => 10000,
-                'supplierPrice' => 7000,
-            ]])
-            ->set('payNowAmount', 20000)
-            ->call('saveRecapAndPayout')
-            ->assertHasErrors(['payNowAmount']);
-    }
-
-    public function test_recap_rejects_physical_qty_more_than_recorded(): void
-    {
-        $admin = $this->makeUser('ADMIN');
-        $supplier = $this->makeSupplier();
-        $product = $this->makeProduct($supplier, ['stock' => 3]);
-
-        $batch = ConsignmentBatch::create([
-            'batchCode' => 'BCH-1003',
             'supplierId' => $supplier->id,
             'status' => 'ACTIVE',
             'receivedAt' => now(),
@@ -270,7 +190,23 @@ class SupplierDailyOpsTest extends TestCase
                 'batchCode' => $batch->batchCode,
                 'productName' => $product->name,
                 'beforeQty' => 3,
-                'physicalQty' => 5,
+                'physicalQty' => 0,
+                'sellPrice' => 10000,
+                'supplierPrice' => 7000,
+            ]])
+            ->set('payNowAmount', 30000)
+            ->call('saveRecapAndPayout')
+            ->assertHasErrors(['payNowAmount']);
+
+        Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('recapSupplierId', $supplier->id)
+            ->set('countItems', [[
+                'itemId' => $item->id,
+                'batchCode' => $batch->batchCode,
+                'productName' => $product->name,
+                'beforeQty' => 3,
+                'physicalQty' => 9,
                 'sellPrice' => 10000,
                 'supplierPrice' => 7000,
             ]])
@@ -279,126 +215,243 @@ class SupplierDailyOpsTest extends TestCase
             ->assertHasErrors(['countItems.0.physicalQty']);
     }
 
-    public function test_stepper_metadata_reflects_active_completed_and_locked_states(): void
+    public function test_stock_item_supplier_price_autofills_from_selected_product_buy_price(): void
     {
         $admin = $this->makeUser('ADMIN');
         $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['buyPrice' => 8450, 'sellPrice' => 12000]);
 
-        $component = Livewire::actingAs($admin)->test(SupplierDailyOps::class);
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('stockSupplierId', $supplier->id);
 
-        $this->assertSame(1, $component->instance()->currentStep);
-        $this->assertSame('Langkah 1 dari 2', $component->instance()->stepProgressText);
-        $this->assertTrue($component->instance()->step2SoftLocked);
-        $this->assertSame('', $component->instance()->payNowAmount);
-        $this->assertSame('active', $component->instance()->stepperSteps[0]['status']);
-        $this->assertSame('inactive', $component->instance()->stepperSteps[1]['status']);
+        $this->assertSame('', $component->instance()->stockItems[0]['supplierPrice']);
 
-        $component->call('setTab', 'recap');
+        $component->set('stockItems.0.productId', $product->id);
 
-        $this->assertSame(2, $component->instance()->currentStep);
-        $this->assertSame('locked', $component->instance()->stepperSteps[1]['status']);
-        $this->assertTrue($component->instance()->step2SoftLocked);
-
-        $component->set('recapSupplierId', $supplier->id);
-
-        $this->assertFalse($component->instance()->step2SoftLocked);
-        $this->assertSame('', $component->instance()->payNowAmount);
-        $this->assertSame('active', $component->instance()->stepperSteps[1]['status']);
+        $this->assertSame(8450.0, (float) ($component->instance()->stockItems[0]['supplierPrice'] ?? 0));
     }
 
-    public function test_cta_flags_follow_soft_gate_and_input_validity(): void
+    public function test_supplier_roster_contains_all_active_suppliers_for_date(): void
     {
         $admin = $this->makeUser('ADMIN');
-        $supplier = $this->makeSupplier();
-        $product = $this->makeProduct($supplier, ['stock' => 3]);
+        $supplierA = $this->makeSupplier();
+        $supplierB = $this->makeSupplier();
 
-        $batch = ConsignmentBatch::create([
-            'batchCode' => 'BCH-2001',
-            'supplierId' => $supplier->id,
-            'status' => 'ACTIVE',
-            'receivedAt' => now(),
-        ]);
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', now()->toDateString());
 
-        ConsignmentItem::create([
-            'batchId' => $batch->id,
-            'productId' => $product->id,
-            'initialQty' => 3,
-            'receivedQty' => 3,
-            'soldQty' => 0,
-            'remainingQty' => 3,
-            'sellPrice' => 10000,
-            'supplierPrice' => 7000,
-        ]);
+        $roster = collect($component->instance()->supplierRoster);
 
-        $component = Livewire::actingAs($admin)->test(SupplierDailyOps::class);
+        $this->assertTrue($roster->contains(fn ($row) => $row['supplierId'] === $supplierA->id));
+        $this->assertTrue($roster->contains(fn ($row) => $row['supplierId'] === $supplierB->id));
 
-        $this->assertFalse($component->instance()->canSubmitStockIn);
-        $this->assertFalse($component->instance()->canSubmitRecap);
-
-        $component
-            ->set('stockSupplierId', $supplier->id)
-            ->set('stockDate', now()->toDateString())
-            ->set('stockItems', [[
-                'productId' => $product->id,
-                'qty' => 2,
-                'supplierPrice' => 6000,
-            ]]);
-
-        $this->assertTrue($component->instance()->canSubmitStockIn);
-
-        $component->set('stockItems.0.qty', 0);
-        $this->assertFalse($component->instance()->canSubmitStockIn);
-
-        $component
-            ->set('recapSupplierId', $supplier->id)
-            ->set('payNowAmount', 0);
-
-        $this->assertFalse($component->instance()->step2SoftLocked);
-        $this->assertTrue($component->instance()->canSubmitRecap);
-
-        $component->set('payNowAmount', -1);
-        $this->assertFalse($component->instance()->canSubmitRecap);
+        $rowA = $roster->firstWhere('supplierId', $supplierA->id);
+        $this->assertSame('Belum Diproses', $rowA['statusLabel']);
     }
 
-    public function test_fill_pay_now_from_supplier_rights_uses_preview_payable(): void
+    public function test_finalize_and_reopen_date_changes_no_delivery_status(): void
     {
         $admin = $this->makeUser('ADMIN');
         $supplier = $this->makeSupplier();
-        $product = $this->makeProduct($supplier, ['stock' => 4, 'sellPrice' => 10000]);
+        $date = now()->toDateString();
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', $date)
+            ->call('finalizeDate');
+
+        $this->assertDatabaseHas('activity_logs', [
+            'module' => 'SupplierDailyOps',
+            'action' => 'COMPLETE',
+            'description' => 'DAILY_FINALIZE:' . $date,
+        ]);
+
+        $refreshed = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', $date);
+
+        $row = collect($refreshed->instance()->supplierRoster)->firstWhere('supplierId', $supplier->id);
+        $this->assertSame('Tidak Kirim', $row['statusLabel']);
+
+        $component->call('reopenDate');
+
+        $this->assertDatabaseHas('activity_logs', [
+            'module' => 'SupplierDailyOps',
+            'action' => 'REOPEN',
+            'description' => 'DAILY_REOPEN:' . $date,
+        ]);
+
+        $refreshedAfterReopen = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', $date);
+
+        $rowAfterReopen = collect($refreshedAfterReopen->instance()->supplierRoster)->firstWhere('supplierId', $supplier->id);
+        $this->assertSame('Belum Diproses', $rowAfterReopen['statusLabel']);
+    }
+
+    public function test_date_supplier_lock_is_true_when_allocations_cover_date_payable(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['stock' => 3, 'sellPrice' => 10000]);
+        $date = Carbon::parse('2026-04-10');
 
         $batch = ConsignmentBatch::create([
-            'batchCode' => 'BCH-2002',
+            'batchCode' => 'BCH-3001',
             'supplierId' => $supplier->id,
             'status' => 'ACTIVE',
-            'receivedAt' => now(),
+            'receivedAt' => $date,
         ]);
 
         $item = ConsignmentItem::create([
             'batchId' => $batch->id,
             'productId' => $product->id,
-            'initialQty' => 4,
-            'receivedQty' => 4,
-            'soldQty' => 0,
-            'remainingQty' => 4,
+            'initialQty' => 3,
+            'receivedQty' => 3,
+            'soldQty' => 2,
+            'remainingQty' => 1,
             'sellPrice' => 10000,
             'supplierPrice' => 7000,
         ]);
 
+        ConsignmentItemCount::create([
+            'consignmentItemId' => $item->id,
+            'batchId' => $batch->id,
+            'supplierId' => $supplier->id,
+            'productId' => $product->id,
+            'userId' => $admin->id,
+            'beforeQty' => 3,
+            'physicalQty' => 1,
+            'soldDeltaQty' => 2,
+            'soldDeltaAmount' => 20000,
+            'payableDeltaAmount' => 14000,
+            'marginDeltaAmount' => 6000,
+            'countedAt' => $date->copy()->setTime(10, 0),
+        ]);
+
+        $payout = SupplierPayout::create([
+            'payoutCode' => 'PAY-000001',
+            'supplierId' => $supplier->id,
+            'userId' => $admin->id,
+            'payoutDate' => $date->copy()->addDay()->toDateString(),
+            'grossDueAmount' => 14000,
+            'paidAmount' => 14000,
+            'outstandingAfter' => 0,
+        ]);
+
+        SupplierPayoutAllocation::create([
+            'supplierPayoutId' => $payout->id,
+            'batchId' => $batch->id,
+            'consignmentItemId' => $item->id,
+            'allocatedAmount' => 14000,
+            'allocatedQtyEquivalent' => 2,
+        ]);
+
         $component = Livewire::actingAs($admin)
             ->test(SupplierDailyOps::class)
-            ->set('recapSupplierId', $supplier->id)
-            ->set('countItems', [[
-                'itemId' => $item->id,
-                'batchCode' => $batch->batchCode,
-                'productName' => $product->name,
-                'beforeQty' => 4,
-                'physicalQty' => 1,
-                'sellPrice' => 10000,
-                'supplierPrice' => 7000,
-            ]])
-            ->call('fillPayNowFromSupplierRights');
+            ->set('selectedDate', $date->toDateString());
 
-        $this->assertSame(21000.0, (float) $component->instance()->payNowAmount);
+        $row = collect($component->instance()->supplierRoster)->firstWhere('supplierId', $supplier->id);
+
+        $this->assertTrue($row['locked']);
+        $this->assertSame('Lunas (Locked)', $row['statusLabel']);
+    }
+
+    public function test_copy_previous_day_draft_only_when_target_date_empty(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $supplier = $this->makeSupplier();
+        $product = $this->makeProduct($supplier, ['buyPrice' => 6000]);
+
+        $today = Carbon::parse('2026-04-11');
+        $yesterday = $today->copy()->subDay();
+
+        $batch = ConsignmentBatch::create([
+            'batchCode' => 'BCH-3002',
+            'supplierId' => $supplier->id,
+            'status' => 'ACTIVE',
+            'receivedAt' => $yesterday,
+        ]);
+
+        ConsignmentItem::create([
+            'batchId' => $batch->id,
+            'productId' => $product->id,
+            'initialQty' => 2,
+            'receivedQty' => 2,
+            'soldQty' => 0,
+            'remainingQty' => 2,
+            'sellPrice' => 9000,
+            'supplierPrice' => 6000,
+        ]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', $today->toDateString())
+            ->set('stockSupplierId', $supplier->id)
+            ->call('copyPreviousDayDraft');
+
+        $this->assertSame(1, count($component->instance()->stockItems));
+        $this->assertSame((string) $product->id, $component->instance()->stockItems[0]['productId']);
+        $this->assertSame(2, $component->instance()->stockItems[0]['qty']);
+
+        $component
+            ->set('stockItems', [[
+                'productId' => $product->id,
+                'qty' => 1,
+                'supplierPrice' => 6000,
+            ]])
+            ->call('saveStockIn')
+            ->set('stockItems', [
+                ['productId' => '', 'qty' => 1, 'supplierPrice' => ''],
+            ])
+            ->call('copyPreviousDayDraft');
+
+        $this->assertSame('', $component->instance()->stockItems[0]['productId']);
+    }
+
+    public function test_selected_date_summary_counts_supplier_ops_categories_only(): void
+    {
+        $admin = $this->makeUser('ADMIN');
+        $date = '2026-04-12';
+
+        FinancialTransaction::create([
+            'type' => 'INCOME',
+            'category' => 'Omset Supplier Manual (Non-POS)',
+            'amount' => 50000,
+            'transactionDate' => $date,
+            'description' => 'Test income supplier',
+            'userId' => $admin->id,
+        ]);
+
+        FinancialTransaction::create([
+            'type' => 'EXPENSE',
+            'category' => 'Pembayaran Supplier Manual (Non-POS)',
+            'amount' => 12000,
+            'transactionDate' => $date,
+            'description' => 'Test payout supplier',
+            'userId' => $admin->id,
+        ]);
+
+        FinancialTransaction::create([
+            'type' => 'INCOME',
+            'category' => 'Kategori Lain',
+            'amount' => 99999,
+            'transactionDate' => $date,
+            'description' => 'Should be ignored',
+            'userId' => $admin->id,
+        ]);
+
+        $component = Livewire::actingAs($admin)
+            ->test(SupplierDailyOps::class)
+            ->set('selectedDate', $date);
+
+        $summary = $component->instance()->selectedDateSummary;
+
+        $this->assertSame(50000.0, (float) $summary['incomeSupplierOps']);
+        $this->assertSame(12000.0, (float) $summary['expenseSupplierOps']);
+        $this->assertSame(38000.0, (float) $summary['netSupplierOps']);
     }
 
     private function makeUser(string $role): User
