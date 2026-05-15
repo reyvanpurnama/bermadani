@@ -7,15 +7,16 @@ use App\Models\Member;
 use App\Models\Loan;
 use App\Models\SimpananTransaction;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class RatReport extends Component
 {
     public function render()
     {
         // 1. Evaluasi Simpanan
-        $simpananPokok = SimpananTransaction::where('type', 'POKOK')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType = "SETOR" THEN amount ELSE -amount END'));
-        $simpananWajib = SimpananTransaction::where('type', 'WAJIB')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType = "SETOR" THEN amount ELSE -amount END'));
-        $simpananSukarela = SimpananTransaction::where('type', 'SUKARELA')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType = "SETOR" THEN amount ELSE -amount END'));
+        $simpananPokok = SimpananTransaction::where('type', 'POKOK')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
+        $simpananWajib = SimpananTransaction::where('type', 'WAJIB')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
+        $simpananSukarela = SimpananTransaction::where('type', 'SUKARELA')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
         $totalSimpanan = $simpananPokok + $simpananWajib + $simpananSukarela;
 
         // 2. Evaluasi Pinjaman
@@ -31,12 +32,45 @@ class RatReport extends Component
         $nplRatio = $totalPinjamanAktif > 0 ? round(($kolektibilitasMacet / $totalPinjamanAktif) * 100, 2) : 0;
 
         // 3. Evaluasi Potongan Gaji (Payroll Projection)
-        // Hitung estimasi Simpanan Wajib & Sukarela via Potong Gaji per bulan
-        // Asumsi simwa base = 50000 (sesuaikan dengan config jika ada)
         $simwaDeductionMembers = Member::where('simwa_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->count();
-        $simwaDeductionEst = $simwaDeductionMembers * 50000; // Contoh 50rb
+        $simwaDeductionEst = $simwaDeductionMembers * 50000;
         
         $sukarelaDeductionEst = Member::where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->sum('monthly_sukarela_amount');
+
+        // 4. Data Bulanan (Tahun Berjalan)
+        $currentYear = Carbon::now()->year;
+        
+        $monthlySimpanan = SimpananTransaction::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
+        )
+        ->where('status', 'APPROVED')
+        ->whereYear('created_at', $currentYear)
+        ->groupBy('month')
+        ->get()
+        ->keyBy('month');
+
+        $monthlyPinjaman = Loan::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(amount) as total_pinjaman')
+        )
+        ->whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
+        ->whereYear('created_at', $currentYear)
+        ->groupBy('month')
+        ->get()
+        ->keyBy('month');
+
+        $monthlyData = [];
+        $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        for ($i = 1; $i <= 12; $i++) {
+            $monthlyData[] = [
+                'month_name' => $months[$i - 1],
+                'setoran' => $monthlySimpanan->get($i)->total_setor ?? 0,
+                'penarikan' => $monthlySimpanan->get($i)->total_tarik ?? 0,
+                'pinjaman' => $monthlyPinjaman->get($i)->total_pinjaman ?? 0,
+            ];
+        }
 
         return view('livewire.admin.rat-report', [
             'simpanan' => [
@@ -57,7 +91,9 @@ class RatReport extends Component
                 'simwa' => $simwaDeductionEst,
                 'sukarela' => $sukarelaDeductionEst,
                 'total' => $simwaDeductionEst + $sukarelaDeductionEst,
-            ]
+            ],
+            'monthlyData' => $monthlyData,
+            'currentYear' => $currentYear
         ])->layout('layouts.admin');
     }
 }
