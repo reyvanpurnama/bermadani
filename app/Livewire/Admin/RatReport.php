@@ -58,6 +58,6 @@ class RatReport extends Component
                 'sukarela' => $sukarelaDeductionEst,
                 'total' => $simwaDeductionEst + $sukarelaDeductionEst,
             ]
-        ])->layout('layouts.app'); // or wherever the admin layout is
+        ])->layout('layouts.admin');
     }
 }
