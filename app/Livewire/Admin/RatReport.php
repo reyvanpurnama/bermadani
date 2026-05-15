@@ -49,6 +49,76 @@ class RatReport extends Component
         }, 'rekap_keseluruhan_simpanan.csv');
     }
 
+    public function exportMonthlyCsv()
+    {
+        $currentYear = Carbon::now()->year;
+        
+        $monthlySimpanan = SimpananTransaction::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
+        )
+        ->where('status', 'APPROVED')
+        ->whereYear('created_at', $currentYear)
+        ->groupBy('month')
+        ->get()
+        ->keyBy('month');
+
+        $monthlyPinjaman = Loan::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(amount) as total_pinjaman')
+        )
+        ->whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
+        ->whereYear('created_at', $currentYear)
+        ->groupBy('month')
+        ->get()
+        ->keyBy('month');
+
+        return response()->streamDownload(function () use ($monthlySimpanan, $monthlyPinjaman, $currentYear) {
+            $handle = fopen('php://output', 'w');
+            
+            fputcsv($handle, ['Laporan Bulanan Simpan Pinjam Tahun ' . $currentYear]);
+            fputcsv($handle, []);
+            fputcsv($handle, [
+                'Bulan',
+                'Setoran Simpanan',
+                'Penarikan Simpanan',
+                'Penyaluran Pinjaman'
+            ]);
+            
+            $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $totalSetor = 0;
+            $totalTarik = 0;
+            $totalPinjam = 0;
+
+            for ($i = 1; $i <= 12; $i++) {
+                $setor = $monthlySimpanan->get($i)->total_setor ?? 0;
+                $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
+                $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
+
+                $totalSetor += $setor;
+                $totalTarik += $tarik;
+                $totalPinjam += $pinjam;
+
+                fputcsv($handle, [
+                    $months[$i - 1],
+                    $setor,
+                    $tarik,
+                    $pinjam
+                ]);
+            }
+            
+            fputcsv($handle, [
+                'TOTAL',
+                $totalSetor,
+                $totalTarik,
+                $totalPinjam
+            ]);
+            
+            fclose($handle);
+        }, 'rekap_bulanan_tahun_' . $currentYear . '.csv');
+    }
+
     public function render()
     {
         // 1. Evaluasi Simpanan

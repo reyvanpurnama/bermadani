@@ -6,6 +6,10 @@
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Ringkasan keuangan dan pencapaian koperasi tahun berjalan.</p>
         </div>
         <div class="flex gap-2">
+            <button wire:click="exportMonthlyCsv" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 print:hidden">
+                <i class='bx bx-export'></i>
+                Download CSV Tahunan
+            </button>
             <button wire:click="exportSimpananCsv" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 print:hidden">
                 <i class='bx bx-export'></i>
                 Download CSV Simpanan
