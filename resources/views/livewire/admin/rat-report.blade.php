@@ -99,8 +99,16 @@
 
     <!-- Monthly Report Table -->
     <div class="bg-white dark:bg-gray-800 rounded shadow-sm border border-gray-200 dark:border-gray-700 mb-6 overflow-hidden">
-        <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <h3 class="font-semibold text-gray-800 dark:text-gray-200">Laporan Bulanan SIMPAN PINJAM (Tahun {{ $currentYear }})</h3>
+            <div class="flex items-center gap-2">
+                <label for="yearFilter" class="text-sm text-gray-600 dark:text-gray-400 font-medium">Pilih Tahun:</label>
+                <select id="yearFilter" wire:model.live="selectedYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2">
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-sm text-left align-middle">

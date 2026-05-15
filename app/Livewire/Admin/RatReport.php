@@ -11,6 +11,24 @@ use Carbon\Carbon;
 
 class RatReport extends Component
 {
+    public $selectedYear;
+    public $availableYears = [];
+
+    public function mount()
+    {
+        $this->selectedYear = Carbon::now()->year;
+        
+        // Dapatkan tahun paling awal ada transaksi, fallback ke tahun sekarang jika kosong
+        $startYearSimpanan = SimpananTransaction::min(DB::raw('YEAR(created_at)'));
+        $startYearLoan = Loan::min(DB::raw('YEAR(created_at)'));
+        
+        $startYear = max(2020, min($startYearSimpanan ?: $this->selectedYear, $startYearLoan ?: $this->selectedYear));
+        
+        $years = range($startYear, Carbon::now()->year);
+        rsort($years);
+        $this->availableYears = $years;
+    }
+
     public function exportSimpananCsv()
     {
         return response()->streamDownload(function () {
@@ -51,7 +69,7 @@ class RatReport extends Component
 
     public function exportMonthlyCsv()
     {
-        $currentYear = Carbon::now()->year;
+        $currentYear = $this->selectedYear;
         
         $monthlySimpanan = SimpananTransaction::select(
             DB::raw('MONTH(created_at) as month'),
@@ -145,8 +163,8 @@ class RatReport extends Component
         
         $sukarelaDeductionEst = Member::where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->sum('monthly_sukarela_amount');
 
-        // 4. Data Bulanan (Tahun Berjalan)
-        $currentYear = Carbon::now()->year;
+        // 4. Data Bulanan (Sesuai Tahun yg dipilih)
+        $currentYear = $this->selectedYear;
         
         $monthlySimpanan = SimpananTransaction::select(
             DB::raw('MONTH(created_at) as month'),
