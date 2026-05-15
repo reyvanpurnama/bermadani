@@ -5,7 +5,11 @@
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Laporan Rapat Anggota Tahunan (RAT) {{ $currentYear }}</h1>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Ringkasan keuangan dan pencapaian koperasi tahun berjalan.</p>
         </div>
-        <div>
+        <div class="flex gap-2">
+            <button wire:click="exportSimpananCsv" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 print:hidden">
+                <i class='bx bx-export'></i>
+                Download CSV Simpanan
+            </button>
             <button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 print:hidden">
                 <i class='bx bx-printer'></i>
                 Cetak Laporan

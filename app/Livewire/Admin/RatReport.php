@@ -11,6 +11,44 @@ use Carbon\Carbon;
 
 class RatReport extends Component
 {
+    public function exportSimpananCsv()
+    {
+        return response()->streamDownload(function () {
+            $handle = fopen('php://output', 'w');
+            
+            // Header CSV
+            fputcsv($handle, [
+                'No. Anggota',
+                'Nama',
+                'Unit Kerja',
+                'Status',
+                'Simpanan Pokok',
+                'Simpanan Wajib',
+                'Simpanan Sukarela',
+                'Total Simpanan'
+            ]);
+            
+            // Data Anggota yang ikut koperasi
+            $members = Member::where('isMemberKoperasi', true)->get();
+            
+            foreach ($members as $member) {
+                $total = $member->simpananPokok + $member->simpananWajib + $member->simpananSukarela;
+                fputcsv($handle, [
+                    $member->nomorAnggota,
+                    $member->name,
+                    $member->unitKerja,
+                    $member->status,
+                    $member->simpananPokok,
+                    $member->simpananWajib,
+                    $member->simpananSukarela,
+                    $total
+                ]);
+            }
+            
+            fclose($handle);
+        }, 'rekap_keseluruhan_simpanan.csv');
+    }
+
     public function render()
     {
         // 1. Evaluasi Simpanan
