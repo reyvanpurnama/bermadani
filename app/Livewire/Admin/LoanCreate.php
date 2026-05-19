@@ -139,6 +139,8 @@ class LoanCreate extends Component
                 'tenor' => $this->tenor,
                 'monthlyPayment' => $cleanMonthly,
                 'simwa_amount' => $cleanSimwa,
+                'admin_fee' => 25000,
+                'is_admin_fee_paid' => true, // Menandakan dipotong di awal
                 'remainingAmount' => $totalDebt, // Sisa hutang dicatat termasuk margin admin
                 'status' => 'ACTIVE',
                 'loanSource' => $this->loanSource,
@@ -222,3 +224,4 @@ class LoanCreate extends Component
         ]);
     }
 }
+

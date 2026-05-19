@@ -24,6 +24,8 @@ class Loan extends Model
         'paid_installments',
         'account_number',
         'simwa_amount',
+        'admin_fee',
+        'is_admin_fee_paid',
     ];
 
     protected $casts = [
@@ -96,3 +98,4 @@ class Loan extends Model
         return $this;
     }
 }
+
