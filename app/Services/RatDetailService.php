@@ -169,6 +169,10 @@ class RatDetailService
             'simpanan_pokok_balance' => $this->simpananBalanceByYear('POKOK', $year),
             'simpanan_wajib_balance' => $this->simpananBalanceByYear('WAJIB', $year),
             'simpanan_sukarela_balance' => $this->simpananBalanceByYear('SUKARELA', $year),
+            'simpanan_pokok_inflow' => $this->simpananInflowByYear('POKOK', $year),
+            'simpanan_wajib_inflow' => $this->simpananInflowByYear('WAJIB', $year),
+            'simpanan_sukarela_inflow' => $this->simpananInflowByYear('SUKARELA', $year),
+            'simpanan_sukarela_outflow' => $this->simpananOutflowByYear('SUKARELA', $year),
             default => null,
         };
     }
@@ -180,6 +184,26 @@ class RatDetailService
             ->where('status', 'APPROVED')
             ->whereYear('created_at', '<=', $year)
             ->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
+    }
+
+    private function simpananInflowByYear(string $type, int $year): float
+    {
+        return (float) SimpananTransaction::query()
+            ->where('type', $type)
+            ->where('status', 'APPROVED')
+            ->whereYear('created_at', $year)
+            ->whereIn('transactionType', ['SETOR', 'TRANSFER_IN'])
+            ->sum('amount');
+    }
+
+    private function simpananOutflowByYear(string $type, int $year): float
+    {
+        return (float) SimpananTransaction::query()
+            ->where('type', $type)
+            ->where('status', 'APPROVED')
+            ->whereYear('created_at', $year)
+            ->whereIn('transactionType', ['TARIK', 'TRANSFER_OUT'])
+            ->sum('amount');
     }
 
     private function findRowDef(array $rowDefs, ?string $key): ?array
