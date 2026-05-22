@@ -11,10 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('loans', function (Blueprint $table) {
-            $table->decimal('admin_fee', 15, 2)->default(0)->after('monthlyPayment');
-            $table->boolean('is_admin_fee_paid')->default(false)->after('admin_fee');
-        });
+        if (!Schema::hasColumn('loans', 'admin_fee')) {
+            Schema::table('loans', function (Blueprint $table) {
+                $table->decimal('admin_fee', 15, 2)->default(0)->after('monthlyPayment');
+            });
+        }
+
+        if (!Schema::hasColumn('loans', 'is_admin_fee_paid')) {
+            Schema::table('loans', function (Blueprint $table) {
+                $table->boolean('is_admin_fee_paid')->default(false)->after('admin_fee');
+            });
+        }
     }
 
     /**
@@ -22,8 +29,16 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('loans', function (Blueprint $table) {
-            $table->dropColumn(['admin_fee', 'is_admin_fee_paid']);
-        });
+        if (Schema::hasColumn('loans', 'is_admin_fee_paid')) {
+            Schema::table('loans', function (Blueprint $table) {
+                $table->dropColumn('is_admin_fee_paid');
+            });
+        }
+
+        if (Schema::hasColumn('loans', 'admin_fee')) {
+            Schema::table('loans', function (Blueprint $table) {
+                $table->dropColumn('admin_fee');
+            });
+        }
     }
 };
