@@ -5,14 +5,34 @@
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Laporan RAT - Neraca Hasil Usaha (Retail)</h1>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Data dikelompokkan per bulan berdasarkan laporan transaksi retail koperasi.</p>
         </div>
-        <div class="flex items-center gap-2">
-            <label for="yearFilter" class="text-sm text-gray-600 dark:text-gray-400 font-medium">Filter Tahun:</label>
-            <select id="yearFilter" wire:model.live="selectedYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2">
-                <option value="All">Semua Tahun</option>
-                @foreach($availableYears as $yr)
-                    <option value="{{ $yr }}">{{ $yr }}</option>
-                @endforeach
-            </select>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+            {{-- Filter Tahun --}}
+            <div class="flex items-center gap-2">
+                <label for="yearFilter" class="text-sm text-gray-600 dark:text-gray-400 font-medium">Filter:</label>
+                <select id="yearFilter" wire:model.live="selectedYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2">
+                    <option value="All">Semua Tahun</option>
+                    @foreach($availableYears as $yr)
+                        <option value="{{ $yr }}">{{ $yr }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            {{-- Form Upload CSV --}}
+            <form wire:submit.prevent="importCsv" class="flex items-center gap-2">
+                <input type="file" wire:model="csvFile" accept=".csv" class="block w-full text-xs text-slate-500
+                    file:mr-2 file:py-1.5 file:px-3
+                    file:rounded-md file:border-0
+                    file:text-xs file:font-semibold
+                    file:bg-indigo-50 file:text-indigo-700
+                    hover:file:bg-indigo-100
+                    dark:file:bg-indigo-950/10 dark:file:text-indigo-400
+                    border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 p-1" />
+                <button type="submit" class="inline-flex items-center gap-1.5 px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded shadow-sm transition-all" wire:loading.attr="disabled">
+                    <i class='bx bx-upload'></i>
+                    <span wire:loading.remove>Import CSV</span>
+                    <span wire:loading>Loading...</span>
+                </button>
+            </form>
         </div>
     </div>
 
