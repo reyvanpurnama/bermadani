@@ -199,6 +199,11 @@ class RatDetailReport extends Component
             $startCandidates[] = (int) $financialStart;
         }
 
+        $bankStart = \App\Models\BankTransaction::min(DB::raw('YEAR(transaction_date)'));
+        if ($bankStart) {
+            $startCandidates[] = (int) $bankStart;
+        }
+
         $manualStart = RatManualEntry::min('year');
         if ($manualStart) {
             $startCandidates[] = (int) $manualStart;
