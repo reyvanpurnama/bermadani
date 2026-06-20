@@ -173,37 +173,108 @@ class RatDetailService
             'simpanan_wajib_inflow' => $this->simpananInflowByYear('WAJIB', $year),
             'simpanan_sukarela_inflow' => $this->simpananInflowByYear('SUKARELA', $year),
             'simpanan_sukarela_outflow' => $this->simpananOutflowByYear('SUKARELA', $year),
+            
+            // Bank transaction-based calculations
+            'neraca_penempatan_bank_syariah' => $this->bankPlacementBalanceByYear($year),
+            'laba_rugi_pendapatan_margin' => $this->bankIncomeByCategory('Penjualan QRIS', $year),
+            'laba_rugi_bagi_hasil_tabungan' => $this->bankIncomeByCategory('Bagi Hasil', $year),
+            'laba_rugi_pendapatan_lainnya' => $this->bankIncomeByCategories(['Transfer Masuk', 'Dana Universitas', 'Potongan Gaji'], $year),
+            'laba_rugi_pajak_pajak' => $this->bankExpenseByCategory('Pajak Bagi Hasil', $year),
+            'laba_rugi_beban_lainnya' => $this->bankExpenseByCategories(['Biaya Admin Bank', 'Biaya Transfer', 'Penarikan Tunai', 'Transfer Keluar'], $year),
+            
             default => null,
         };
     }
 
     private function simpananBalanceByYear(string $type, int $year): float
     {
+        // May 31st of $year
+        $endDate = "$year-05-31 23:59:59";
         return (float) SimpananTransaction::query()
             ->where('type', $type)
             ->where('status', 'APPROVED')
-            ->whereYear('created_at', '<=', $year)
+            ->where('created_at', '<=', $endDate)
             ->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
     }
 
     private function simpananInflowByYear(string $type, int $year): float
     {
+        // June 1st of ($year-1) to May 31st of $year
+        $startDate = ($year - 1) . "-06-01 00:00:00";
+        $endDate = "$year-05-31 23:59:59";
         return (float) SimpananTransaction::query()
             ->where('type', $type)
             ->where('status', 'APPROVED')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->whereIn('transactionType', ['SETOR', 'TRANSFER_IN'])
             ->sum('amount');
     }
 
     private function simpananOutflowByYear(string $type, int $year): float
     {
+        // June 1st of ($year-1) to May 31st of $year
+        $startDate = ($year - 1) . "-06-01 00:00:00";
+        $endDate = "$year-05-31 23:59:59";
         return (float) SimpananTransaction::query()
             ->where('type', $type)
             ->where('status', 'APPROVED')
-            ->whereYear('created_at', $year)
+            ->whereBetween('created_at', [$startDate, $endDate])
             ->whereIn('transactionType', ['TARIK', 'TRANSFER_OUT'])
             ->sum('amount');
+    }
+
+    private function bankPlacementBalanceByYear(int $year): float
+    {
+        // Find the last bank transaction on or before May 31st of $year
+        $endDate = "$year-05-31";
+        $lastTx = \App\Models\BankTransaction::query()
+            ->where('transaction_date', '<=', $endDate)
+            ->orderBy('transaction_date', 'desc')
+            ->orderBy('transaction_time', 'desc')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        return $lastTx ? (float) $lastTx->balance : 0.0;
+    }
+
+    private function bankIncomeByCategory(string $category, int $year): float
+    {
+        $startDate = ($year - 1) . "-06-01";
+        $endDate = "$year-05-31";
+        return (float) \App\Models\BankTransaction::query()
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->where('category', $category)
+            ->sum('credit');
+    }
+
+    private function bankIncomeByCategories(array $categories, int $year): float
+    {
+        $startDate = ($year - 1) . "-06-01";
+        $endDate = "$year-05-31";
+        return (float) \App\Models\BankTransaction::query()
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->whereIn('category', $categories)
+            ->sum('credit');
+    }
+
+    private function bankExpenseByCategory(string $category, int $year): float
+    {
+        $startDate = ($year - 1) . "-06-01";
+        $endDate = "$year-05-31";
+        return (float) \App\Models\BankTransaction::query()
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->where('category', $category)
+            ->sum('debit');
+    }
+
+    private function bankExpenseByCategories(array $categories, int $year): float
+    {
+        $startDate = ($year - 1) . "-06-01";
+        $endDate = "$year-05-31";
+        return (float) \App\Models\BankTransaction::query()
+            ->whereBetween('transaction_date', [$startDate, $endDate])
+            ->whereIn('category', $categories)
+            ->sum('debit');
     }
 
     private function findRowDef(array $rowDefs, ?string $key): ?array
