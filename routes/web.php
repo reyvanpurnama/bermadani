@@ -186,6 +186,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     // Laporan RAT
     Route::get('/laporan-rat', \App\Livewire\Admin\RatReport::class)->name('admin.rat-report');
     Route::get('/laporan-rat-detail', \App\Livewire\Admin\RatDetailReport::class)->name('admin.rat-detail');
+    Route::get('/laporan-rat-retail', \App\Livewire\Admin\RatRetailReport::class)->name('admin.rat-retail-report');
 
     // Inventaris / Products
     Route::get('/inventaris', function () {
