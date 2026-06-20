@@ -3,6 +3,11 @@
         setWorkspace(val) {
             this.workspace = val;
             localStorage.setItem('sidebar_workspace', val);
+        },
+        ratDropdown: localStorage.getItem('sidebar_rat_dropdown') === 'true' || false,
+        toggleRatDropdown() {
+            this.ratDropdown = !this.ratDropdown;
+            localStorage.setItem('sidebar_rat_dropdown', this.ratDropdown);
         }
     }"
     class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-[180px] border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden group/sidebar">
@@ -219,11 +224,27 @@
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Laporan RAT</span>
                 </a>
 
-                <a href="{{ route('admin.rat-detail') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-detail') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-spreadsheet text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">RAT Akuntansi</span>
-                </a>
+                {{-- Dropdown RAT Akuntansi --}}
+                <div class="space-y-0.5">
+                    <button @click="toggleRatDropdown()"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+                        <div class="flex items-center">
+                            <i class='bx bx-spreadsheet text-sm mr-2 opacity-70 group-hover:opacity-100 text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">RAT Akuntansi</span>
+                        </div>
+                        <i class='bx text-xs transition-transform duration-200 mr-1 opacity-70 group-hover:opacity-100' :class="ratDropdown ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="ratDropdown" x-transition class="pl-4 space-y-0.5">
+                        <a href="{{ route('admin.rat-detail') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-detail') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">Detail Laporan</span>
+                        </a>
+                        <a href="{{ route('admin.rat-retail-report') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-retail-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">Neraca Hasil Usaha</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             {{-- SYSTEM (ADMIN ONLY) --}}
