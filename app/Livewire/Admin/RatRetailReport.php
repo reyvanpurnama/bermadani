@@ -4,15 +4,18 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class RatRetailReport extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     public $selectedYear = 'All';
     public $selectedMonth = null;
     public $searchDetail = '';
     public $availableYears = [];
+    public $csvFile;
     
     // Non-paginated month summaries
     public $monthSummaries = [];
@@ -20,6 +23,31 @@ class RatRetailReport extends Component
     public function mount()
     {
         $this->loadData();
+    }
+
+    public function importCsv()
+    {
+        $this->validate([
+            'csvFile' => 'required|file|mimes:csv,txt|max:10240', // 10MB Max
+        ]);
+
+        $destinationPath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        
+        // Ensure directory exists
+        if (!file_exists(dirname($destinationPath))) {
+            mkdir(dirname($destinationPath), 0775, true);
+        }
+
+        // Copy/overwrite the uploaded file
+        copy($this->csvFile->getRealPath(), $destinationPath);
+
+        $this->csvFile = null;
+        $this->loadData();
+
+        $this->dispatch('notify', [
+            'message' => 'Laporan CSV retail berhasil di-import dan diperbarui.',
+            'type' => 'success',
+        ]);
     }
 
     public function updatedSelectedYear()
