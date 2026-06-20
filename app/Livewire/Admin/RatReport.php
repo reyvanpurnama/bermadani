@@ -21,8 +21,13 @@ class RatReport extends Component
         // Dapatkan tahun paling awal ada transaksi, fallback ke tahun sekarang jika kosong
         $startYearSimpanan = SimpananTransaction::min(DB::raw('YEAR(created_at)'));
         $startYearLoan = Loan::min(DB::raw('YEAR(created_at)'));
+        $startYearBank = \App\Models\BankTransaction::min(DB::raw('YEAR(transaction_date)'));
         
-        $startYear = max(2020, min($startYearSimpanan ?: $this->selectedYear, $startYearLoan ?: $this->selectedYear));
+        $startYear = max(2020, min(
+            $startYearSimpanan ?: $this->selectedYear, 
+            $startYearLoan ?: $this->selectedYear,
+            $startYearBank ?: $this->selectedYear
+        ));
         
         $years = range($startYear, Carbon::now()->year);
         rsort($years);
