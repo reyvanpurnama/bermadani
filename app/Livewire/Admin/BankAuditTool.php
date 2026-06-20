@@ -20,7 +20,7 @@ class BankAuditTool extends Component
     public $activeTab = 'upload'; // upload, review, rules, sync
     
     // Balance tracking
-    public $saldoAwal = 9582656.65; // Initial balance
+    public $saldoAwal = 0.0; // Initial balance (resettable/configurable by user)
     
     // Review filters
     public $filterType = 'all'; // all, INCOME, EXPENSE
@@ -48,15 +48,16 @@ class BankAuditTool extends Component
         // Calculate balance
         $totalKredit = AuditBankImport::sum('kredit');
         $totalDebet = AuditBankImport::sum('debet');
-        $saldoAkhirCalculated = $this->saldoAwal + $totalKredit - $totalDebet;
+        $saldoAwalFloat = floatval($this->saldoAwal);
+        $saldoAkhirCalculated = $saldoAwalFloat + $totalKredit - $totalDebet;
         
         // Get actual final balance from last transaction
         $lastTransaction = AuditBankImport::orderBy('transaction_date', 'desc')
             ->orderBy('transaction_time', 'desc')
             ->first();
-        $saldoAkhirActual = $lastTransaction ? $lastTransaction->saldo : $this->saldoAwal;
+        $saldoAkhirActual = $lastTransaction ? $lastTransaction->saldo : $saldoAwalFloat;
 
-        $stats['saldo_awal'] = $this->saldoAwal;
+        $stats['saldo_awal'] = $saldoAwalFloat;
         $stats['total_kredit'] = $totalKredit;
         $stats['total_debet'] = $totalDebet;
         $stats['saldo_akhir_calculated'] = $saldoAkhirCalculated;

@@ -14,8 +14,16 @@
             <p class="text-3xl font-bold text-slate-900 dark:text-white">{{ number_format($stats['total_imports']) }}</p>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2">Saldo Awal</h3>
-            <p class="text-xl font-bold text-blue-600">Rp {{ number_format($stats['saldo_awal'], 0) }}</p>
+            <div class="flex items-center justify-between mb-2">
+                <h3 class="text-xs font-bold text-blue-500 uppercase tracking-widest">Saldo Awal</h3>
+                <button wire:click="$set('saldoAwal', 0)" class="text-[10px] font-bold text-slate-400 hover:text-rose-500 transition-colors flex items-center gap-0.5" title="Reset ke 0">
+                    <i class='bx bx-refresh text-xs'></i> Reset
+                </button>
+            </div>
+            <div class="relative mt-1">
+                <span class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-xs font-bold text-blue-500">Rp</span>
+                <input type="number" wire:model.live="saldoAwal" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-xl pl-8 pr-2.5 py-1.5 text-sm font-bold text-blue-600 dark:text-blue-400 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all" step="0.01" placeholder="0">
+            </div>
         </div>
         <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <h3 class="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Total Kredit</h3>
