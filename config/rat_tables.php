@@ -4,13 +4,18 @@ return [
     'neraca' => [
         'title' => 'Laporan Neraca',
         'columns' => [
-            ['key' => 'current', 'label' => '31 Desember {year}', 'year_offset' => 0],
-            ['key' => 'previous', 'label' => '31 Desember {prev}', 'year_offset' => -1],
+            ['key' => 'current', 'label' => 'Mei {year}', 'year_offset' => 0],
+            ['key' => 'previous', 'label' => 'Mei {prev}', 'year_offset' => -1],
         ],
         'rows' => [
             ['type' => 'section', 'label' => 'AKTIVA'],
             ['key' => 'kas', 'label' => 'Kas', 'level' => 1],
-            ['key' => 'penempatan_bank_syariah', 'label' => 'Penempatan pada Bank/Koperasi Syariah', 'level' => 1],
+            [
+                'key' => 'penempatan_bank_syariah',
+                'label' => 'Penempatan pada Bank/Koperasi Syariah',
+                'level' => 1,
+                'auto_key' => 'neraca_penempatan_bank_syariah',
+            ],
             ['type' => 'group', 'label' => 'Piutang', 'level' => 1],
             ['key' => 'piutang_murabahah', 'label' => '- Murabahah', 'level' => 2],
             ['key' => 'piutang_salam', 'label' => '- Salam', 'level' => 2],
@@ -130,19 +135,29 @@ return [
     'laba_rugi' => [
         'title' => 'Laporan Hasil Usaha (Laba Rugi)',
         'columns' => [
-            ['key' => 'current', 'label' => '31 Desember {year}', 'year_offset' => 0],
-            ['key' => 'previous', 'label' => '31 Desember {prev}', 'year_offset' => -1],
+            ['key' => 'current', 'label' => 'Mei {year}', 'year_offset' => 0],
+            ['key' => 'previous', 'label' => 'Mei {prev}', 'year_offset' => -1],
         ],
         'rows' => [
             ['type' => 'section', 'label' => 'I. Pendapatan Operasional'],
             ['type' => 'section', 'label' => 'A. Pendapatan dari Penyaluran Dana', 'level' => 1],
             ['type' => 'group', 'label' => 'Dari Penyaluran ke Anggota', 'level' => 2],
-            ['key' => 'pendapatan_margin', 'label' => '- Pendapatan Margin', 'level' => 3],
+            [
+                'key' => 'pendapatan_margin',
+                'label' => '- Pendapatan Margin',
+                'level' => 3,
+                'auto_key' => 'laba_rugi_pendapatan_margin',
+            ],
             ['key' => 'pendapatan_sewa', 'label' => '- Pendapatan Sewa', 'level' => 3],
             ['key' => 'pendapatan_bagi_hasil', 'label' => '- Pendapatan Bagi Hasil', 'level' => 3],
             ['key' => 'pendapatan_multijasa', 'label' => '- Pendapatan Multijasa', 'level' => 3],
             ['type' => 'group', 'label' => 'Dari Bank-Bank Syariah', 'level' => 2],
-            ['key' => 'bagi_hasil_tabungan', 'label' => '- Bagi Hasil Tabungan', 'level' => 3],
+            [
+                'key' => 'bagi_hasil_tabungan',
+                'label' => '- Bagi Hasil Tabungan',
+                'level' => 3,
+                'auto_key' => 'laba_rugi_bagi_hasil_tabungan',
+            ],
             ['key' => 'bagi_hasil_deposito', 'label' => '- Bagi Hasil Deposito', 'level' => 3],
             ['key' => 'bonus_giro', 'label' => '- Bonus Giro', 'level' => 3],
             ['type' => 'section', 'label' => 'B. Pendapatan Operasional Lainnya', 'level' => 1],
@@ -150,7 +165,12 @@ return [
             ['key' => 'jasa_layanan', 'label' => '- Jasa Layanan', 'level' => 2],
             ['key' => 'pendapatan_qardh', 'label' => '- Pendapatan Qardh', 'level' => 2],
             ['key' => 'pendapatan_administrasi', 'label' => '- Pendapatan Administrasi', 'level' => 2],
-            ['key' => 'pendapatan_lainnya', 'label' => '- Pendapatan lainnya', 'level' => 2],
+            [
+                'key' => 'pendapatan_lainnya',
+                'label' => '- Pendapatan lainnya',
+                'level' => 2,
+                'auto_key' => 'laba_rugi_pendapatan_lainnya',
+            ],
             [
                 'type' => 'total',
                 'key' => 'total_pendapatan_operasional',
@@ -202,10 +222,20 @@ return [
             ['key' => 'beban_tenaga_kerja', 'label' => '- Beban tenaga kerja', 'level' => 1],
             ['key' => 'pendidikan_dan_pelatihan', 'label' => '- Pendidikan dan Pelatihan', 'level' => 1],
             ['key' => 'promosi', 'label' => '- Promosi', 'level' => 1],
-            ['key' => 'pajak_pajak', 'label' => '- Pajak-Pajak', 'level' => 1],
+            [
+                'key' => 'pajak_pajak',
+                'label' => '- Pajak-Pajak',
+                'level' => 1,
+                'auto_key' => 'laba_rugi_pajak_pajak',
+            ],
             ['key' => 'pembelian_aktiva_tetap_dan_inventaris', 'label' => '- Pembelian Aktiva Tetap dan Inventaris', 'level' => 1],
             ['key' => 'penyusutan_amortisasi', 'label' => '- Penyusutan Penyisihan / Amortisasi', 'level' => 1],
-            ['key' => 'beban_lainnya', 'label' => '- Beban Lainnya', 'level' => 1],
+            [
+                'key' => 'beban_lainnya',
+                'label' => '- Beban Lainnya',
+                'level' => 1,
+                'auto_key' => 'laba_rugi_beban_lainnya',
+            ],
             [
                 'type' => 'total',
                 'key' => 'total_beban_operasional',
