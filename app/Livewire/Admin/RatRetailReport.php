@@ -121,15 +121,16 @@ class RatRetailReport extends Component
                 $monthKey = "$year-$month";
 
                 $quantity = (int) trim($data[2]);
+                $hargaBeli = $this->parseNumber($data[4]);
                 $totalHargaBeli = $this->parseNumber($data[5]);
                 $hargaJual = $this->parseNumber($data[6]);
-                $laba = $this->parseNumber($data[7]);
 
-                $totalHargaJual = $quantity * $hargaJual;
-                $totalKeuntungan = $quantity * $laba;
-
-                if ($laba <= 0 && $hargaJual > 0) {
+                if ($hargaJual > 0) {
+                    $totalHargaJual = $quantity * $hargaJual;
                     $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+                } else {
+                    $totalHargaJual = 0.0;
+                    $totalKeuntungan = 0.0;
                 }
 
                 if (!isset($summaries[$monthKey])) {
@@ -206,13 +207,13 @@ class RatRetailReport extends Component
                 $hargaSatuan = $this->parseNumber($data[4]);
                 $totalHargaBeli = $this->parseNumber($data[5]);
                 $hargaJual = $this->parseNumber($data[6]);
-                $laba = $this->parseNumber($data[7]);
 
-                $totalHargaJual = $quantity * $hargaJual;
-                $totalKeuntungan = $quantity * $laba;
-
-                if ($laba <= 0 && $hargaJual > 0) {
+                if ($hargaJual > 0) {
+                    $totalHargaJual = $quantity * $hargaJual;
                     $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+                } else {
+                    $totalHargaJual = 0.0;
+                    $totalKeuntungan = 0.0;
                 }
 
                 // Apply search filter if present
