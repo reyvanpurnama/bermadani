@@ -207,6 +207,7 @@ class RatRetailReport extends Component
                 $hargaSatuan = $this->parseNumber($data[4]);
                 $totalHargaBeli = $this->parseNumber($data[5]);
                 $hargaJual = $this->parseNumber($data[6]);
+                $laba = $this->parseNumber($data[7]);
 
                 if ($hargaJual > 0) {
                     $totalHargaJual = $quantity * $hargaJual;
