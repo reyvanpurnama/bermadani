@@ -35,6 +35,22 @@ class BankAuditTool extends Component
 
     protected $listeners = ['refreshComponent' => '$refresh'];
 
+    public function mount()
+    {
+        $this->initSaldoAwal();
+    }
+
+    public function initSaldoAwal()
+    {
+        $firstTransaction = AuditBankImport::orderBy('transaction_date', 'asc')
+            ->orderBy('transaction_time', 'asc')
+            ->first();
+            
+        $this->saldoAwal = $firstTransaction 
+            ? floatval($firstTransaction->saldo - $firstTransaction->kredit + $firstTransaction->debet) 
+            : 0.0;
+    }
+
     public function render()
     {
         $stats = [
@@ -210,6 +226,7 @@ class BankAuditTool extends Component
         }
 
         $this->reset('csvFiles');
+        $this->initSaldoAwal();
         $this->dispatch('notify', ['type' => 'success', 'message' => 'File berhasil diimport!']);
     }
 
@@ -258,6 +275,7 @@ class BankAuditTool extends Component
     public function deletePeriod($period)
     {
         AuditBankImport::where('period', $period)->delete();
+        $this->initSaldoAwal();
         $this->dispatch('notify', ['type' => 'success', 'message' => "Data periode $period berhasil dihapus."]);
     }
 
