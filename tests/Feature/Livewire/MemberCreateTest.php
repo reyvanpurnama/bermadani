@@ -138,17 +138,18 @@ class MemberCreateTest extends TestCase
             // Step 3
             ->call('submit');
 
+        // simpananPokok starts at 0 – all 4 installments go through payroll
         $this->assertDatabaseHas('members', [
             'name' => 'Budi Santoso',
-            'simpananPokok' => 50000,
+            'simpananPokok' => 0,
             'simpananWajib' => 50000,
             'simpananSukarela' => 10000,
         ]);
 
         $member = Member::where('name', 'Budi Santoso')->firstOrFail();
 
-        // Should have 3 paid initial transactions (POKOK = 50k, WAJIB = 50k, SUKARELA = 10k)
-        // AND 3 future unpaid bills of POKOK = 50k each
+        // Should have 2 paid initial transactions (WAJIB = 50k, SUKARELA = 10k)
+        // AND 4 unpaid payroll bills of POKOK = 50k each (including current month)
         $this->assertSame(6, SimpananTransaction::where('memberId', $member->id)->count());
 
         $bills = SimpananTransaction::where('memberId', $member->id)
@@ -157,7 +158,7 @@ class MemberCreateTest extends TestCase
             ->where('billStatus', 'APPROVED')
             ->get();
 
-        $this->assertCount(3, $bills);
+        $this->assertCount(4, $bills);
         foreach ($bills as $bill) {
             $this->assertEquals(50000, $bill->amount);
             $this->assertNotNull($bill->billingMonth);

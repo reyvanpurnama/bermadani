@@ -142,7 +142,8 @@ class MemberCreate extends Component
                 'gender' => $this->gender,
                 'unitKerja' => $this->unitKerja ?: '-', // Default to strip if empty
                 'address' => $this->address ?: '-',     // Default to strip if empty
-                'simpananPokok' => $this->simpananPokok,
+                // CICIL_4X: Don't auto-pay pokok at registration; all 4 installments go through payroll
+                'simpananPokok' => $this->simpananPokokOption === 'CICIL_4X' ? 0 : $this->simpananPokok,
                 'simpananWajib' => $this->simpananWajib,
                 'simpananSukarela' => $this->simpananSukarela,
                 'createNewUser' => true,
@@ -160,18 +161,19 @@ class MemberCreate extends Component
             $result = $memberService->createMember($data);
             $memberKoperasi = $result['memberKoperasi'];
 
-            // If choosing installment, create remaining 3 bills
+            // If choosing installment, create ALL 4 bills (including current month)
+            // All installments are billed through payroll for proper tracking
             if ($this->simpananPokokOption === 'CICIL_4X') {
                 $startMonth = now();
-                for ($i = 2; $i <= 4; $i++) {
-                    $nextMonth = $startMonth->copy()->addMonths($i - 1);
+                for ($i = 1; $i <= 4; $i++) {
+                    $billMonth = $i === 1 ? $startMonth->copy() : $startMonth->copy()->addMonths($i - 1);
                     \App\Models\SimpananTransaction::create([
                         'memberId' => $memberKoperasi->id,
                         'type' => 'POKOK',
                         'transactionType' => 'SETOR',
                         'amount' => 50000,
                         'paidAmount' => 0,
-                        'billingMonth' => $nextMonth->format('Y-m'),
+                        'billingMonth' => $billMonth->format('Y-m'),
                         'billStatus' => 'APPROVED',
                         'status' => 'APPROVED',
                         'balanceAfter' => 0,
