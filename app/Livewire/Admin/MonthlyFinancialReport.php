@@ -98,6 +98,30 @@ class MonthlyFinancialReport extends Component
                 if (!$member)
                     continue;
 
+                // 0. Simpanan Pokok (Cicilan)
+                if (isset($item['pokok']) && $item['pokok'] > 0) {
+                    $pokokInstallment = SimpananTransaction::where('memberId', $member->id)
+                        ->where('type', 'POKOK')
+                        ->where('transactionType', 'SETOR')
+                        ->where('billingMonth', $billingMonth)
+                        ->where('billStatus', 'APPROVED')
+                        ->first();
+                    
+                    if ($pokokInstallment) {
+                        $newBalance = ($member->simpananPokok ?? 0) + $item['pokok'];
+                        $pokokInstallment->update([
+                            'paidAmount' => $item['pokok'],
+                            'balanceAfter' => $newBalance,
+                            'status' => 'APPROVED',
+                            'processedBy' => auth()->id(),
+                            'approvedBy' => auth()->id(),
+                            'approvedAt' => $transactionDate,
+                            'notes' => "Setoran Payroll (Cicilan Pokok) - $monthName",
+                        ]);
+                        $member->increment('simpananPokok', $item['pokok']);
+                    }
+                }
+
                 // 1. Simwa Koperasi
                 if ($item['simwa'] > 0) {
                     $newBalance = ($member->simpananWajib ?? 0) + $item['simwa'];
@@ -247,6 +271,7 @@ class MonthlyFinancialReport extends Component
 
         // Format data untuk laporan
         $reportItems = [];
+        $totalPokok = 0;
         $totalAngsuranBermadani = 0;
         $totalAngsuranBmtItqan1 = 0;
         $totalAngsuranBmtItqan2 = 0;
@@ -327,12 +352,22 @@ class MonthlyFinancialReport extends Component
 
             $simwaAmount = ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) ? ($member->monthly_simpanan_wajib ?? 50000) : 0;
             $sukarelaAmount = $member->hasSalaryDeductionSukarela() ? ($member->monthly_sukarela_amount ?? 0) : 0;
-            $total = $angsuranBermadani + $angsuranBmtItqan1 + $simwaBmtItqan1 + $angsuranBmtItqan2 + $simwaBmtItqan2 + $simwaAmount + $sukarelaAmount;
+            
+            $pokokInstallment = SimpananTransaction::where('memberId', $member->id)
+                ->where('type', 'POKOK')
+                ->where('transactionType', 'SETOR')
+                ->where('billingMonth', $billingMonth)
+                ->where('billStatus', 'APPROVED')
+                ->first();
+            $pokokAmount = $pokokInstallment ? (float) $pokokInstallment->amount : 0;
+
+            $total = $angsuranBermadani + $angsuranBmtItqan1 + $simwaBmtItqan1 + $angsuranBmtItqan2 + $simwaBmtItqan2 + $pokokAmount + $simwaAmount + $sukarelaAmount;
 
             $reportItems[] = [
                 'member_id' => $member->id,
                 'nama' => $member->name,
                 'unit_kerja' => $member->unitKerja ?? '-',
+                'pokok' => $pokokAmount,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => $angsuranBermadani,
@@ -354,6 +389,7 @@ class MonthlyFinancialReport extends Component
             $totalAngsuranBermadani += $angsuranBermadani;
             $totalAngsuranBmtItqan1 += ($angsuranBmtItqan1 + $simwaBmtItqan1);
             $totalAngsuranBmtItqan2 += ($angsuranBmtItqan2 + $simwaBmtItqan2);
+            $totalPokok += $pokokAmount;
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
             $processedMemberIds[] = $member->id;
@@ -361,23 +397,40 @@ class MonthlyFinancialReport extends Component
 
         $membersWithSalaryDeduction = Member::where('status', 'ACTIVE')
             ->whereNotIn('id', $processedMemberIds ?: [0])
-            ->where(function ($query) {
+            ->where(function ($query) use ($billingMonth) {
                 $query->where('simwa_payment_method', 'SALARY_DEDUCTION')
                     ->orWhere(function ($q) {
                         $q->where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('monthly_sukarela_amount', '>', 0);
+                    })
+                    ->orWhereHas('simpananTransactions', function ($q) use ($billingMonth) {
+                        $q->where('type', 'POKOK')
+                            ->where('transactionType', 'SETOR')
+                            ->where('billingMonth', $billingMonth)
+                            ->where('billStatus', 'APPROVED')
+                            ->whereColumn('paidAmount', '<', 'amount');
                     });
             })->get();
 
         foreach ($membersWithSalaryDeduction as $member) {
             $simwaAmount = ($member->isMemberKoperasi && $member->hasSalaryDeductionSimwa()) ? ($member->monthly_simpanan_wajib ?? 50000) : 0;
             $sukarelaAmount = $member->hasSalaryDeductionSukarela() ? ($member->monthly_sukarela_amount ?? 0) : 0;
-            if ($simwaAmount == 0 && $sukarelaAmount == 0)
+            
+            $pokokInstallment = SimpananTransaction::where('memberId', $member->id)
+                ->where('type', 'POKOK')
+                ->where('transactionType', 'SETOR')
+                ->where('billingMonth', $billingMonth)
+                ->where('billStatus', 'APPROVED')
+                ->first();
+            $pokokAmount = $pokokInstallment ? (float) $pokokInstallment->amount : 0;
+
+            if ($simwaAmount == 0 && $sukarelaAmount == 0 && $pokokAmount == 0)
                 continue;
 
             $reportItems[] = [
                 'member_id' => $member->id,
                 'nama' => $member->name,
                 'unit_kerja' => $member->unitKerja ?? '-',
+                'pokok' => $pokokAmount,
                 'simwa' => $simwaAmount,
                 'sukarela' => $sukarelaAmount,
                 'angsuran_bermadani' => 0,
@@ -391,10 +444,11 @@ class MonthlyFinancialReport extends Component
                 'simwa_bmt_itqan_2' => 0,
                 'angsuran_ke_bmt_itqan_2' => 0,
                 'tenor_bmt_itqan_2' => 0,
-                'total' => $simwaAmount + $sukarelaAmount,
+                'total' => $pokokAmount + $simwaAmount + $sukarelaAmount,
                 'has_loan' => false,
                 'loan_details' => [],
             ];
+            $totalPokok += $pokokAmount;
             $totalSimwa += $simwaAmount;
             $totalSukarela += $sukarelaAmount;
         }
@@ -412,12 +466,13 @@ class MonthlyFinancialReport extends Component
         return [
             'items' => $reportItems,
             'summary' => [
+                'total_pokok' => $totalPokok,
                 'total_simwa' => $totalSimwa,
                 'total_sukarela' => $totalSukarela,
                 'total_angsuran_bermadani' => $totalAngsuranBermadani,
                 'total_angsuran_bmt_itqan_1' => $totalAngsuranBmtItqan1,
                 'total_angsuran_bmt_itqan_2' => $totalAngsuranBmtItqan2,
-                'grand_total' => $totalAngsuranBermadani + $totalAngsuranBmtItqan1 + $totalAngsuranBmtItqan2 + $totalSimwa + $totalSukarela,
+                'grand_total' => $totalAngsuranBermadani + $totalAngsuranBmtItqan1 + $totalAngsuranBmtItqan2 + $totalPokok + $totalSimwa + $totalSukarela,
                 'total_members' => count($reportItems)
             ]
         ];

@@ -186,6 +186,15 @@
                     </div>
                 </div>
 
+                {{-- Pokok Total --}}
+                <div
+                    class="bg-white dark:bg-darkCard p-4 rounded-xl border border-indigo-100 dark:border-indigo-900/40 shadow-sm flex flex-col justify-between h-full">
+                    <div class="text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider mb-2">
+                        Total Pokok</div>
+                    <div class="text-lg font-bold text-slate-800 dark:text-white">Rp
+                        {{ number_format($reportData['summary']['total_pokok'] ?? 0, 0, ',', '.') }}</div>
+                </div>
+
                 {{-- Simwa Total --}}
                 <div
                     class="bg-white dark:bg-darkCard p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/40 shadow-sm flex flex-col justify-between h-full">
@@ -241,7 +250,7 @@
                                     Nama Anggota</th>
 
                                 {{-- Simpanan Group --}}
-                                <th colspan="2"
+                                <th colspan="3"
                                     class="px-2 py-1 text-center border-b border-r border-slate-200 dark:border-slate-700 bg-emerald-50/30 dark:bg-emerald-900/10 text-emerald-700">
                                     Simpanan</th>
 
@@ -274,6 +283,9 @@
                                 </th>
 
                                 {{-- Sub Headers --}}
+                                <th
+                                    class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
+                                    Pokok</th>
                                 <th
                                     class="px-2 py-2 text-right border-b border-r border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800">
                                     Wajib</th>
@@ -338,6 +350,10 @@
                                     </td>
 
                                     {{-- Simpanan --}}
+                                    <td
+                                        class="px-2 py-2 text-right font-mono {{ $item['pokok'] > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-300' }}">
+                                        {{ $item['pokok'] > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
+                                    </td>
                                     <td class="px-2 py-2 text-right font-mono text-emerald-600 dark:text-emerald-400">
                                         {{ number_format($item['simwa'], 0, ',', '.') }}</td>
                                     <td
@@ -396,6 +412,8 @@
                             class="bg-slate-100 dark:bg-slate-800 font-bold text-xs sticky bottom-0 z-10 shadow-[0_-2px_4px_rgba(0,0,0,0.1)]">
                             <tr>
                                 <td colspan="2" class="px-3 py-3 text-right uppercase text-slate-500">Total Keseluruhan</td>
+                                <td class="px-2 py-3 text-right text-indigo-600">
+                                    {{ number_format($reportData['summary']['total_pokok'] ?? 0, 0, ',', '.') }}</td>
                                 <td class="px-2 py-3 text-right text-emerald-600">
                                     {{ number_format($reportData['summary']['total_simwa'], 0, ',', '.') }}</td>
                                 <td class="px-2 py-3 text-right text-amber-600">

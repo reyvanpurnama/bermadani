@@ -203,11 +203,12 @@
         <thead>
             <tr>
                 <th class="center" style="width: 35px;">No</th>
-                <th style="width: 180px;">Nama Anggota</th>
-                <th class="right" style="width: 100px;">Simpanan Wajib</th>
-                <th class="right" style="width: 100px;">Pinjaman</th>
-                <th class="right" style="width: 90px;">Sukarela</th>
-                <th class="right" style="width: 100px;">Total (Rp)</th>
+                <th style="width: 150px;">Nama Anggota</th>
+                <th class="right" style="width: 90px;">Simpanan Pokok</th>
+                <th class="right" style="width: 90px;">Simpanan Wajib</th>
+                <th class="right" style="width: 90px;">Pinjaman</th>
+                <th class="right" style="width: 80px;">Sukarela</th>
+                <th class="right" style="width: 95px;">Total (Rp)</th>
             </tr>
         </thead>
         <tbody>
@@ -218,6 +219,9 @@
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
                     <td><strong>{{ strtoupper($item['nama']) }}</strong></td>
+                    <td class="right" style="font-family: 'Courier New', monospace;">
+                        {{ $item['pokok'] > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
+                    </td>
                     <td class="right" style="font-family: 'Courier New', monospace;">
                         {{ $item['simwa'] > 0 ? number_format($item['simwa'], 0, ',', '.') : '-' }}
                     </td>
@@ -236,6 +240,7 @@
         <tfoot>
             <tr>
                 <td colspan="2" class="right">TOTAL</td>
+                <td class="right">{{ number_format($data['summary']['total_pokok'] ?? 0, 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_simwa'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_angsuran_bermadani'] + $data['summary']['total_angsuran_bmt_itqan_1'] + $data['summary']['total_angsuran_bmt_itqan_2'], 0, ',', '.') }}</td>
                 <td class="right">{{ number_format($data['summary']['total_sukarela'], 0, ',', '.') }}</td>
