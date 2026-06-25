@@ -252,7 +252,7 @@
                     <td><strong style="font-size: 8px;">{{ strtoupper($item['nama']) }}</strong></td>
 
                     {{-- Simpanan --}}
-                    <td class="right">{{ $item['pokok'] > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}</td>
+                    <td class="right">{{ ($item['pokok'] ?? 0) > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}</td>
                     <td class="right">{{ number_format($item['simwa'], 0, ',', '.') }}</td>
                     <td class="right">{{ $item['sukarela'] > 0 ? number_format($item['sukarela'], 0, ',', '.') : '-' }}</td>
 

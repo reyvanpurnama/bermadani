@@ -220,7 +220,7 @@
                     <td class="center">{{ $index + 1 }}</td>
                     <td><strong>{{ strtoupper($item['nama']) }}</strong></td>
                     <td class="right" style="font-family: 'Courier New', monospace;">
-                        {{ $item['pokok'] > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
+                        {{ ($item['pokok'] ?? 0) > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
                     </td>
                     <td class="right" style="font-family: 'Courier New', monospace;">
                         {{ $item['simwa'] > 0 ? number_format($item['simwa'], 0, ',', '.') : '-' }}

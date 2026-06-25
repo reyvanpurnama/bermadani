@@ -150,4 +150,62 @@ class MonthlyFinancialReportTest extends TestCase
         $this->assertEquals($admin->id, $bill->approvedBy);
         $this->assertStringContainsString('Setoran Payroll (Cicilan Pokok)', $bill->notes);
     }
+
+    public function test_loading_old_snapshots_without_pokok_key_does_not_crash(): void
+    {
+        $admin = $this->makeAdmin();
+
+        // Create an old snapshot with data missing 'pokok' and 'total_pokok'
+        \App\Models\FinancialReportSnapshot::create([
+            'month' => 5,
+            'year' => 2025,
+            'status' => 'EXECUTED',
+            'executed_by' => $admin->id,
+            'data' => [
+                'summary' => [
+                    'total_members' => 1,
+                    'total_simwa' => 50000,
+                    'total_sukarela' => 10000,
+                    'total_angsuran_bermadani' => 0,
+                    'total_angsuran_bmt_itqan_1' => 0,
+                    'total_angsuran_bmt_itqan_2' => 0,
+                    'grand_total' => 60000,
+                ],
+                'items' => [
+                    [
+                        'member_id' => 999,
+                        'nama' => 'Old Member',
+                        'unit_kerja' => 'Staff',
+                        'simwa' => 50000,
+                        'sukarela' => 10000,
+                        'angsuran_bermadani' => 0,
+                        'angsuran_ke_bermadani' => 0,
+                        'tenor_bermadani' => 0,
+                        'angsuran_bmt_itqan_1' => 0,
+                        'simwa_bmt_itqan_1' => 0,
+                        'angsuran_ke_bmt_itqan_1' => 0,
+                        'tenor_bmt_itqan_1' => 0,
+                        'angsuran_bmt_itqan_2' => 0,
+                        'simwa_bmt_itqan_2' => 0,
+                        'angsuran_ke_bmt_itqan_2' => 0,
+                        'tenor_bmt_itqan_2' => 0,
+                        'total' => 60000,
+                        'has_loan' => false,
+                        'loan_details' => [],
+                    ]
+                ]
+            ]
+        ]);
+
+        // Run the report component for that month (May 2025)
+        Livewire::actingAs($admin)
+            ->test(MonthlyFinancialReport::class)
+            ->set('selectedMonth', '05')
+            ->set('selectedYear', '2025')
+            ->call('generateReport')
+            ->assertSet('isSnapshot', true)
+            ->assertSee('Old Member')
+            ->assertSee('50.000') // simwa
+            ->assertSee('10.000'); // sukarela
+    }
 }

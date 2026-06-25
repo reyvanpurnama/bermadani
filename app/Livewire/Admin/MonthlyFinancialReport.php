@@ -218,7 +218,7 @@ class MonthlyFinancialReport extends Component
 
     public function downloadPDF()
     {
-        $data = $this->collectReportData();
+        $data = $this->reportData ?: $this->collectReportData();
 
         $pdf = Pdf::loadView('admin.reports.monthly-financial-pdf', [
             'data' => $data,
@@ -241,7 +241,7 @@ class MonthlyFinancialReport extends Component
      */
     public function downloadSimplePDF()
     {
-        $data = $this->collectReportData();
+        $data = $this->reportData ?: $this->collectReportData();
 
         $pdf = Pdf::loadView('admin.reports.payroll-simple-pdf', [
             'data' => $data,

@@ -351,8 +351,8 @@
 
                                     {{-- Simpanan --}}
                                     <td
-                                        class="px-2 py-2 text-right font-mono {{ $item['pokok'] > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-300' }}">
-                                        {{ $item['pokok'] > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
+                                        class="px-2 py-2 text-right font-mono {{ ($item['pokok'] ?? 0) > 0 ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-slate-300' }}">
+                                        {{ ($item['pokok'] ?? 0) > 0 ? number_format($item['pokok'], 0, ',', '.') : '-' }}
                                     </td>
                                     <td class="px-2 py-2 text-right font-mono text-emerald-600 dark:text-emerald-400">
                                         {{ number_format($item['simwa'], 0, ',', '.') }}</td>
