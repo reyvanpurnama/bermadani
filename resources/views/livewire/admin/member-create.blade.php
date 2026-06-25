@@ -167,11 +167,31 @@
                     </div>
 
                     <div class="space-y-4">
+                        <!-- Opsi Pembayaran Simpanan Pokok -->
+                        <div class="group p-1 rounded-2xl bg-white dark:bg-[#151521] border border-slate-200 dark:border-white/5 transition-all shadow-sm hover:shadow-md mb-4">
+                            <div class="flex items-center gap-4 p-4">
+                                <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xl shadow-inner">
+                                    <i class='bx bx-credit-card-front'></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h6 class="text-sm font-bold text-slate-800 dark:text-white">Metode Simpanan Pokok</h6>
+                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Pilih opsi pembayaran lunas atau cicilan</p>
+                                </div>
+                                <div class="w-64">
+                                    <select wire:model.live="simpananPokokOption"
+                                        class="w-full bg-slate-50 dark:bg-[#1e1e2d] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3 font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer">
+                                        <option value="LUNAS">Lunas (Rp 200.000)</option>
+                                        <option value="CICIL_4X">Cicil 4x (Rp 50.000 / bulan)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Card Simpanan Modern -->
                         @foreach([
-                            ['key' => 'simpananPokok', 'label' => 'Simpanan Pokok', 'desc' => 'Wajib (Min. 200k)', 'icon' => 'bxs-lock-alt', 'color' => 'indigo', 'min' => 200000],
-                            ['key' => 'simpananWajib', 'label' => 'Simpanan Wajib', 'desc' => 'Opsional / Default', 'icon' => 'bxs-calendar', 'color' => 'blue', 'min' => 0],
-                            ['key' => 'simpananSukarela', 'label' => 'Simpanan Sukarela', 'desc' => 'Tabungan (Opsional)', 'icon' => 'bxs-wallet', 'color' => 'emerald', 'min' => 0]
+                            ['key' => 'simpananPokok', 'label' => 'Simpanan Pokok', 'desc' => $simpananPokokOption === 'CICIL_4X' ? 'Cicilan 1 dari 4 (Wajib)' : 'Wajib (Min. 200k)', 'icon' => 'bxs-lock-alt', 'color' => 'indigo'],
+                            ['key' => 'simpananWajib', 'label' => 'Simpanan Wajib', 'desc' => 'Opsional / Default', 'icon' => 'bxs-calendar', 'color' => 'blue'],
+                            ['key' => 'simpananSukarela', 'label' => 'Simpanan Sukarela', 'desc' => 'Tabungan (Opsional)', 'icon' => 'bxs-wallet', 'color' => 'emerald']
                         ] as $item)
                         <div class="group p-1 rounded-2xl bg-white dark:bg-[#151521] border border-slate-200 dark:border-white/5 transition-all hover:border-{{ $item['color'] }}-400 dark:hover:border-{{ $item['color'] }}-500/50 shadow-sm hover:shadow-md"
                              x-data="{
@@ -193,7 +213,8 @@
                                     <div class="relative">
                                         <span class="absolute left-4 top-3.5 text-xs font-bold text-slate-400">Rp</span>
                                         <input type="text" x-model="display" @input="update"
-                                            class="w-full bg-slate-50 dark:bg-[#1e1e2d] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-right font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-{{ $item['color'] }}-500/20 focus:border-{{ $item['color'] }}-500 transition-all">
+                                            {{ $item['key'] === 'simpananPokok' ? 'readonly' : '' }}
+                                            class="w-full bg-slate-50 dark:bg-[#1e1e2d] border border-slate-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-3 text-right font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-{{ $item['color'] }}-500/20 focus:border-{{ $item['color'] }}-500 transition-all {{ $item['key'] === 'simpananPokok' ? 'cursor-not-allowed opacity-75' : '' }}">
                                     </div>
                                 </div>
                              </div>
@@ -253,7 +274,14 @@
                              <div class="space-y-3">
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-500">Simpanan Pokok</span>
-                                    <span class="font-semibold text-slate-800 dark:text-white">Rp {{ number_format($simpananPokok, 0, ',', '.') }}</span>
+                                    <div class="text-right">
+                                        <span class="font-semibold text-slate-800 dark:text-white">Rp {{ number_format($simpananPokok, 0, ',', '.') }}</span>
+                                        @if($simpananPokokOption === 'CICIL_4X')
+                                            <span class="block text-[10px] text-amber-500 font-bold">(Cicilan 4x @ Rp 50.000)</span>
+                                        @else
+                                            <span class="block text-[10px] text-emerald-500 font-bold">(Lunas Sekaligus)</span>
+                                        @endif
+                                    </div>
                                 </div>
                                 <div class="flex justify-between items-center text-sm">
                                     <span class="text-slate-500">Simpanan Wajib</span>
