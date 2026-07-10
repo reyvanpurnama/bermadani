@@ -187,11 +187,18 @@
                          position: 'top',
                          horizontalAlign: 'right'
                      },
+                     yaxis: {
+                         labels: {
+                             formatter: function (value) {
+                                 return 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(value);
+                             }
+                         }
+                     },
                      tooltip: {
                          theme: c.tooltipTheme,
                          y: {
                              formatter: function (value) {
-                                 return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                 return 'Rp ' + new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(value);
                              }
                          }
                      }
