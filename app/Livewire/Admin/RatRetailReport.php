@@ -243,6 +243,17 @@ class RatRetailReport extends Component
             $filteredSummaries = array_filter($this->monthSummaries, function ($item) {
                 return $item['year'] === $this->selectedYear;
             });
+            $filteredSummaries = array_values($filteredSummaries);
+        }
+
+        // Auto-select first month of the filtered list if current selectedMonth is not in the filtered list
+        if (!empty($filteredSummaries)) {
+            $filteredKeys = array_column($filteredSummaries, 'month_key');
+            if (!$this->selectedMonth || !in_array($this->selectedMonth, $filteredKeys)) {
+                $this->selectedMonth = $filteredKeys[0];
+            }
+        } else {
+            $this->selectedMonth = null;
         }
 
         // Calculate KPI summaries
