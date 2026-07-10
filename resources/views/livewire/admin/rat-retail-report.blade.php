@@ -333,14 +333,14 @@
 
             {{-- Search Filter --}}
             <div class="p-4 border-b border-gray-150 dark:border-gray-700 bg-white dark:bg-gray-800">
-                <div class="relative rounded-md shadow-sm max-w-md">
-                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                        <i class='bx bx-search text-gray-400 text-sm'></i>
+                <div class="relative group max-w-md">
+                    <div class="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                        <i class='bx bx-search text-slate-400 text-lg group-focus-within:text-indigo-500 transition-colors'></i>
                     </div>
                     <input type="text" 
                            wire:model.live.debounce.300ms="searchDetail" 
                            placeholder="Cari nama produk / barang di bulan ini..." 
-                           class="block w-full rounded-lg border-gray-200 dark:border-gray-600 pl-10 text-xs bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:border-indigo-500 focus:ring-indigo-500">
+                           class="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500/20 text-slate-700 dark:text-white placeholder-slate-400 transition-all">
                 </div>
             </div>
 
