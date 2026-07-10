@@ -366,8 +366,22 @@
                                 <td class="px-4 py-3.5 text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
                                     {{ $item['tanggal'] }}
                                 </td>
-                                <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-gray-100 max-w-[200px] truncate" title="{{ $item['nama_barang'] }}">
-                                    {{ $item['nama_barang'] }}
+                                <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-gray-100 max-w-[200px]" title="{{ $item['nama_barang'] }}">
+                                    <div class="truncate">{{ $item['nama_barang'] }}</div>
+                                    @if(isset($item['product']) && $item['product'])
+                                        <div class="text-[10px] font-normal text-slate-500 mt-0.5 flex items-center gap-1.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            <span>DB: {{ $item['product']->name }}</span>
+                                            <span class="text-slate-300 dark:text-slate-600">|</span>
+                                            <span>Supplier: {{ $item['product']->supplier?->businessName ?? 'Toko' }}</span>
+                                        </div>
+                                    @else
+                                        <div class="text-[10px] font-normal text-rose-500 mt-0.5 flex items-center gap-1.5">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                                            <span>Belum Terpetakan</span>
+                                            <a href="{{ route('admin.audit.retail-product') }}" class="underline text-indigo-500 dark:text-indigo-400 font-bold hover:text-indigo-600" target="_blank">Petakan</a>
+                                        </div>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-3.5 text-right text-gray-600 dark:text-gray-300 whitespace-nowrap">
                                     Rp {{ number_format($item['harga_beli_satuan'], 0, ',', '.') }}

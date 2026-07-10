@@ -173,6 +173,9 @@ class RatRetailReport extends Component
             return [];
         }
 
+        // Fetch mappings
+        $mappings = \App\Models\AuditRetailProductMapping::with(['product.supplier'])->get()->keyBy('raw_product_name');
+
         $details = [];
 
         if (($handle = fopen($filePath, 'r')) !== false) {
@@ -214,6 +217,8 @@ class RatRetailReport extends Component
                     }
                 }
 
+                $mapped = $mappings[$namaBarang] ?? null;
+
                 $details[] = [
                     'tanggal' => $tanggal,
                     'nama_barang' => $namaBarang,
@@ -225,6 +230,7 @@ class RatRetailReport extends Component
                     'total_harga_jual' => $totalHargaJual,
                     'total_keuntungan' => $totalKeuntungan,
                     'persentase_keuntungan' => $persentaseKeuntungan,
+                    'product' => $mapped?->product,
                 ];
             }
             fclose($handle);
