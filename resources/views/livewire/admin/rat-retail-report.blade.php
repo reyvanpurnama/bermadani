@@ -224,6 +224,7 @@
                                     <th class="px-3 py-3 text-right">Harga Jual (Satuan)</th>
                                     <th class="px-3 py-3 text-right">Total Omzet (Jual)</th>
                                     <th class="px-3 py-3 text-right text-indigo-600 dark:text-indigo-400">Total Keuntungan</th>
+                                    <th class="px-3 py-3 text-right">Margin (%)</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -266,10 +267,13 @@
                                                 </span>
                                             @endif
                                         </td>
+                                        <td class="px-3 py-3 text-right font-semibold whitespace-nowrap {{ $item['persentase_keuntungan'] > 0 ? 'text-emerald-600 dark:text-emerald-400' : ($item['persentase_keuntungan'] < 0 ? 'text-rose-600 dark:text-rose-400' : 'text-gray-500') }}">
+                                            {{ number_format($item['persentase_keuntungan'], 2, ',', '.') }}%
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="px-3 py-10 text-center text-gray-400 dark:text-gray-500">
+                                        <td colspan="9" class="px-3 py-10 text-center text-gray-400 dark:text-gray-500">
                                             Tidak ada transaksi barang yang sesuai dengan pencarian Anda.
                                         </td>
                                     </tr>

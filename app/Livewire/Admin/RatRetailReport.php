@@ -205,6 +205,7 @@ class RatRetailReport extends Component
 
                 $totalHargaJual = $quantity * $hargaJualSatuan;
                 $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+                $persentaseKeuntungan = $totalHargaJual > 0 ? ($totalKeuntungan / $totalHargaJual) * 100 : 0;
 
                 // Apply search filter if present
                 if (!empty($this->searchDetail)) {
@@ -223,6 +224,7 @@ class RatRetailReport extends Component
                     'harga_jual_satuan' => $hargaJualSatuan,
                     'total_harga_jual' => $totalHargaJual,
                     'total_keuntungan' => $totalKeuntungan,
+                    'persentase_keuntungan' => $persentaseKeuntungan,
                 ];
             }
             fclose($handle);
