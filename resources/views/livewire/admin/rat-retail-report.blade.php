@@ -126,6 +126,119 @@
         </div>
     </div>
 
+    {{-- Financial Trend Chart Card --}}
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5"
+         x-data="{
+             chart: null,
+             chartData: @js($chartData),
+             getColors() {
+                 const isDark = document.documentElement.classList.contains('dark');
+                 return {
+                     text: isDark ? '#94a3b8' : '#64748b',
+                     grid: isDark ? '#1e293b' : '#e2e8f0',
+                     tooltipTheme: isDark ? 'dark' : 'light'
+                 };
+             },
+             init() {
+                 const c = this.getColors();
+                 const options = {
+                     series: [
+                         {
+                             name: 'Total Omzet (Jual)',
+                             type: 'column',
+                             data: this.chartData.omzet
+                         },
+                         {
+                             name: 'Total HPP (Beli)',
+                             type: 'column',
+                             data: this.chartData.hpp
+                         },
+                         {
+                             name: 'Total Keuntungan',
+                             type: 'line',
+                             data: this.chartData.keuntungan
+                         }
+                     ],
+                     chart: {
+                         height: 320,
+                         type: 'line',
+                         toolbar: { show: false },
+                         fontFamily: 'Inter',
+                         foreColor: c.text
+                     },
+                     stroke: {
+                         width: [0, 0, 3],
+                         curve: 'smooth'
+                     },
+                     colors: ['#6366f1', '#94a3b8', '#10b981'],
+                     fill: {
+                         opacity: [0.85, 0.85, 1],
+                     },
+                     xaxis: {
+                         categories: this.chartData.categories,
+                         axisBorder: { show: false },
+                         axisTicks: { show: false }
+                     },
+                     grid: {
+                         borderColor: c.grid,
+                         strokeDashArray: 4
+                     },
+                     legend: {
+                         position: 'top',
+                         horizontalAlign: 'right'
+                     },
+                     tooltip: {
+                         theme: c.tooltipTheme,
+                         y: {
+                             formatter: function (value) {
+                                 return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                             }
+                         }
+                     }
+                 };
+
+                 this.chart = new ApexCharts(this.$refs.fluctuationChart, options);
+                 this.chart.render();
+
+                 // Watch for Livewire changes
+                 this.$watch('chartData', (value) => {
+                     if (this.chart) {
+                         this.chart.updateOptions({
+                             xaxis: { categories: value.categories }
+                         });
+                         this.chart.updateSeries([
+                             { name: 'Total Omzet (Jual)', data: value.omzet },
+                             { name: 'Total HPP (Beli)', data: value.hpp },
+                             { name: 'Total Keuntungan', data: value.keuntungan }
+                         ]);
+                     }
+                 });
+
+                 // Support Dark Mode toggle observer
+                 const observer = new MutationObserver(() => {
+                     const nc = this.getColors();
+                     if (this.chart) {
+                         this.chart.updateOptions({
+                             chart: { foreColor: nc.text },
+                             grid: { borderColor: nc.grid },
+                             tooltip: { theme: nc.tooltipTheme }
+                         });
+                     }
+                 });
+                 observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+             }
+         }"
+         x-effect="chartData = @js($chartData)"
+         wire:ignore>
+        <div class="flex items-center justify-between mb-4 border-b border-gray-150 dark:border-gray-700 pb-3">
+            <div>
+                <h3 class="font-bold text-gray-900 dark:text-gray-100 text-sm">Visualisasi Tren Keuangan</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Perbandingan grafik Omzet (Penjualan), HPP (Pembelian), dan Laba Bersih secara bulanan.</p>
+            </div>
+        </div>
+        <div x-ref="fluctuationChart" class="w-full"></div>
+    </div>
+
     <style>
         .scrollbar-none::-webkit-scrollbar {
             display: none;

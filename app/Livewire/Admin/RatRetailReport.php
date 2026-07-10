@@ -286,10 +286,18 @@ class RatRetailReport extends Component
             ['path' => url()->current(), 'pageName' => 'detailPage']
         );
 
+        $chartData = [
+            'categories' => array_column($filteredSummaries, 'month_name'),
+            'hpp' => array_column($filteredSummaries, 'total_harga_beli'),
+            'omzet' => array_column($filteredSummaries, 'total_harga_jual'),
+            'keuntungan' => array_column($filteredSummaries, 'total_keuntungan'),
+        ];
+
         return view('livewire.admin.rat-retail-report', [
             'summaries' => $filteredSummaries,
             'kpi' => $kpi,
             'paginatedDetails' => $paginator,
+            'chartData' => $chartData,
         ])->layout('layouts.admin');
     }
 }
