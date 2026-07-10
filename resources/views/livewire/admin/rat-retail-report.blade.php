@@ -146,17 +146,17 @@
                          {
                              name: 'Total Omzet (Jual)',
                              type: 'column',
-                             data: this.chartData.omzet
+                             data: this.chartData.omzet.map(Number)
                          },
                          {
                              name: 'Total HPP (Beli)',
                              type: 'column',
-                             data: this.chartData.hpp
+                             data: this.chartData.hpp.map(Number)
                          },
                          {
                              name: 'Total Keuntungan',
                              type: 'line',
-                             data: this.chartData.keuntungan
+                             data: this.chartData.keuntungan.map(Number)
                          }
                      ],
                      chart: {
@@ -167,11 +167,18 @@
                          foreColor: c.text
                      },
                      stroke: {
-                         width: [0, 0, 3],
+                         width: [1, 1, 3],
                          curve: 'smooth'
+                     },
+                     plotOptions: {
+                         bar: {
+                             columnWidth: '60%',
+                             borderRadius: 4
+                         }
                      },
                      colors: ['#6366f1', '#94a3b8', '#10b981'],
                      fill: {
+                         type: 'solid',
                          opacity: [0.85, 0.85, 1],
                      },
                      xaxis: {
@@ -214,9 +221,9 @@
                              xaxis: { categories: value.categories }
                          });
                          this.chart.updateSeries([
-                             { name: 'Total Omzet (Jual)', data: value.omzet },
-                             { name: 'Total HPP (Beli)', data: value.hpp },
-                             { name: 'Total Keuntungan', data: value.keuntungan }
+                             { name: 'Total Omzet (Jual)', data: value.omzet.map(Number) },
+                             { name: 'Total HPP (Beli)', data: value.hpp.map(Number) },
+                             { name: 'Total Keuntungan', data: value.keuntungan.map(Number) }
                          ]);
                      }
                  });
