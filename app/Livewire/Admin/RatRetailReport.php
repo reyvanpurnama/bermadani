@@ -16,6 +16,7 @@ class RatRetailReport extends Component
     public $searchDetail = '';
     public $availableYears = [];
     public $csvFile;
+    public $showDeleteConfirmModal = false;
     
     // Non-paginated month summaries
     public $monthSummaries = [];
@@ -305,5 +306,80 @@ class RatRetailReport extends Component
             'paginatedDetails' => $paginator,
             'chartData' => $chartData,
         ])->layout('layouts.admin');
+    }
+
+    public function confirmDeleteMonth()
+    {
+        $this->showDeleteConfirmModal = true;
+    }
+
+    public function deleteMonth()
+    {
+        if (!$this->selectedMonth) {
+            return;
+        }
+
+        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        if (!file_exists($filePath)) {
+            return;
+        }
+
+        $tempPath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.tmp');
+        $header = null;
+        $deletedCount = 0;
+
+        if (($handleRead = fopen($filePath, 'r')) !== false && ($handleWrite = fopen($tempPath, 'w')) !== false) {
+            // Read header
+            $header = fgetcsv($handleRead, 1000, ',');
+            fputcsv($handleWrite, $header);
+
+            while (($data = fgetcsv($handleRead, 1000, ',')) !== false) {
+                if (count($data) < 8) {
+                    fputcsv($handleWrite, $data);
+                    continue;
+                }
+
+                $tanggal = trim($data[0]);
+                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') {
+                    fputcsv($handleWrite, $data);
+                    continue;
+                }
+
+                $dateParts = explode('/', $tanggal);
+                if (count($dateParts) !== 3) {
+                    fputcsv($handleWrite, $data);
+                    continue;
+                }
+
+                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                $year = trim($dateParts[2]);
+                $monthKey = "$year-$month";
+
+                if ($monthKey === $this->selectedMonth) {
+                    $deletedCount++;
+                    continue; // Skip this row (deleting it)
+                }
+
+                fputcsv($handleWrite, $data);
+            }
+
+            fclose($handleRead);
+            fclose($handleWrite);
+        }
+
+        if (file_exists($tempPath)) {
+            rename($tempPath, $filePath);
+        }
+
+        $deletedMonthName = $this->getMonthName(substr($this->selectedMonth, 5, 2)) . ' ' . substr($this->selectedMonth, 0, 4);
+
+        $this->selectedMonth = null;
+        $this->showDeleteConfirmModal = false;
+        $this->loadData();
+
+        $this->dispatch('notify', [
+            'message' => "Seluruh data transaksi untuk bulan $deletedMonthName ($deletedCount baris) berhasil dihapus.",
+            'type' => 'success',
+        ]);
     }
 }

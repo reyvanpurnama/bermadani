@@ -326,9 +326,15 @@
                     </h3>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rincian kuantitas, HPP, harga jual, total omzet, dan margin bersih per item produk.</p>
                 </div>
-                <button wire:click="clearSelectedMonth" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-rose-600 font-bold transition-colors">
-                    <i class='bx bx-x-circle text-base'></i> Tutup Detail
-                </button>
+                <div class="flex items-center gap-3">
+                    <button wire:click="confirmDeleteMonth" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/30 text-rose-600 dark:text-rose-400 font-bold transition-all">
+                        <i class='bx bx-trash text-sm'></i> Hapus Laporan Bulan Ini
+                    </button>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
+                    <button wire:click="clearSelectedMonth" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-rose-600 font-bold transition-colors">
+                        <i class='bx bx-x-circle text-base'></i> Tutup Detail
+                    </button>
+                </div>
             </div>
 
             {{-- Search Filter --}}
@@ -445,6 +451,55 @@
             <p class="text-xs text-gray-400 mt-1.5 max-w-sm mx-auto leading-relaxed">
                 Silakan pilih salah satu bulan di atas untuk menganalisis rincian produk, HPP, omzet, dan margin keuntungan secara detail.
             </p>
+        </div>
+    @endif
+
+    {{-- Danger Confirmation Modal --}}
+    @if($showDeleteConfirmModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <!-- Background backdrop -->
+                <div class="fixed inset-0 bg-gray-500/75 dark:bg-gray-900/80 transition-opacity" aria-hidden="true" wire:click="$set('showDeleteConfirmModal', false)"></div>
+
+                <!-- Modal panel -->
+                <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-rose-100 dark:border-rose-950/50">
+                    <div class="bg-white dark:bg-gray-800 px-6 pt-6 pb-4">
+                        <div class="sm:flex sm:items-start">
+                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-rose-100 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 sm:mx-0 sm:h-10 sm:w-10">
+                                <i class='bx bx-error text-2xl animate-pulse'></i>
+                            </div>
+                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                <h3 class="text-base font-bold text-gray-900 dark:text-white" id="modal-title">
+                                    Konfirmasi Penghapusan Laporan
+                                </h3>
+                                <div class="mt-2">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+                                        Apakah Anda yakin ingin menghapus seluruh data transaksi untuk bulan <strong class="text-gray-950 dark:text-white font-bold">{{ $this->getMonthName(substr($selectedMonth, 5, 2)) }} {{ substr($selectedMonth, 0, 4) }}</strong>?
+                                    </p>
+                                    <div class="mt-3 p-3 bg-rose-50 dark:bg-rose-950/20 rounded-xl border border-rose-100 dark:border-rose-900/30">
+                                        <p class="text-[11px] text-rose-700 dark:text-rose-400 font-medium leading-relaxed">
+                                            ⚠️ <strong>Tindakan ini tidak dapat dibatalkan!</strong> Seluruh baris transaksi pada bulan tersebut akan dihapus secara permanen dari file laporan CSV utama di server.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                        <button type="button" 
+                                wire:click="deleteMonth" 
+                                class="w-full inline-flex justify-center rounded-xl border border-transparent shadow-sm px-4 py-2 bg-rose-600 hover:bg-rose-700 text-xs font-bold text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 sm:w-auto transition-colors">
+                            Ya, Hapus Permanen
+                        </button>
+                        <button type="button" 
+                                wire:click="$set('showDeleteConfirmModal', false)" 
+                                class="mt-3 w-full inline-flex justify-center rounded-xl border border-gray-300 dark:border-gray-650 bg-white dark:bg-gray-700 px-4 py-2 text-xs font-bold text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none sm:mt-0 sm:w-auto transition-colors">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     @endif
 </div>
