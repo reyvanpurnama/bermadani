@@ -121,17 +121,12 @@ class RatRetailReport extends Component
                 $monthKey = "$year-$month";
 
                 $quantity = (int) trim($data[2]);
-                $hargaBeli = $this->parseNumber($data[4]);
+                $hargaBeliSatuan = $this->parseNumber($data[4]);
                 $totalHargaBeli = $this->parseNumber($data[5]);
-                $hargaJual = $this->parseNumber($data[6]);
+                $hargaJualSatuan = $this->parseNumber($data[6]);
 
-                if ($hargaJual > 0) {
-                    $totalHargaJual = $quantity * $hargaJual;
-                    $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
-                } else {
-                    $totalHargaJual = 0.0;
-                    $totalKeuntungan = 0.0;
-                }
+                $totalHargaJual = $quantity * $hargaJualSatuan;
+                $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
 
                 if (!isset($summaries[$monthKey])) {
                     $summaries[$monthKey] = [
@@ -204,18 +199,12 @@ class RatRetailReport extends Component
                 $namaBarang = trim($data[1]);
                 $quantity = (int) trim($data[2]);
                 $satuan = trim($data[3]);
-                $hargaSatuan = $this->parseNumber($data[4]);
+                $hargaBeliSatuan = $this->parseNumber($data[4]);
                 $totalHargaBeli = $this->parseNumber($data[5]);
-                $hargaJual = $this->parseNumber($data[6]);
-                $laba = $this->parseNumber($data[7]);
+                $hargaJualSatuan = $this->parseNumber($data[6]);
 
-                if ($hargaJual > 0) {
-                    $totalHargaJual = $quantity * $hargaJual;
-                    $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
-                } else {
-                    $totalHargaJual = 0.0;
-                    $totalKeuntungan = 0.0;
-                }
+                $totalHargaJual = $quantity * $hargaJualSatuan;
+                $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
 
                 // Apply search filter if present
                 if (!empty($this->searchDetail)) {
@@ -229,10 +218,10 @@ class RatRetailReport extends Component
                     'nama_barang' => $namaBarang,
                     'quantity' => $quantity,
                     'satuan' => $satuan,
-                    'harga_satuan' => $hargaSatuan,
+                    'harga_beli_satuan' => $hargaBeliSatuan,
                     'total_harga_beli' => $totalHargaBeli,
-                    'harga_jual' => $hargaJual,
-                    'laba' => $laba,
+                    'harga_jual_satuan' => $hargaJualSatuan,
+                    'total_harga_jual' => $totalHargaJual,
                     'total_keuntungan' => $totalKeuntungan,
                 ];
             }

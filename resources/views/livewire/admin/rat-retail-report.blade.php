@@ -140,9 +140,9 @@
                     <thead class="text-[10px] text-gray-400 font-bold uppercase tracking-wider bg-gray-50 dark:bg-gray-700/50 border-b border-gray-150 dark:border-gray-700">
                         <tr>
                             <th class="px-4 py-3">Bulan / Transaksi</th>
-                            <th class="px-4 py-3 text-right">Harga Beli (HPP)</th>
-                            <th class="px-4 py-3 text-right">Harga Jual (Omzet)</th>
-                            <th class="px-4 py-3 text-right">Keuntungan</th>
+                            <th class="px-4 py-3 text-right">Total HPP (Beli)</th>
+                            <th class="px-4 py-3 text-right">Total Omzet (Jual)</th>
+                            <th class="px-4 py-3 text-right">Total Keuntungan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
@@ -216,35 +216,42 @@
                         <table class="w-full text-xs text-left align-middle">
                             <thead class="text-[10px] text-gray-400 font-bold uppercase tracking-wider bg-gray-50 dark:bg-gray-700/50 border-b border-gray-150 dark:border-gray-700">
                                 <tr>
-                                    <th class="px-4 py-3">Tanggal</th>
-                                    <th class="px-4 py-3">Nama Produk</th>
-                                    <th class="px-4 py-3 text-center">Qty</th>
-                                    <th class="px-4 py-3 text-right">Harga Beli</th>
-                                    <th class="px-4 py-3 text-right">Harga Jual</th>
-                                    <th class="px-4 py-3 text-right">Total Keuntungan</th>
+                                    <th class="px-3 py-3">Tanggal</th>
+                                    <th class="px-3 py-3">Nama Produk</th>
+                                    <th class="px-3 py-3 text-center">Qty Terjual</th>
+                                    <th class="px-3 py-3 text-right">Harga Beli (Satuan)</th>
+                                    <th class="px-3 py-3 text-right">Total HPP (Beli)</th>
+                                    <th class="px-3 py-3 text-right">Harga Jual (Satuan)</th>
+                                    <th class="px-3 py-3 text-right">Total Omzet (Jual)</th>
+                                    <th class="px-3 py-3 text-right text-indigo-600 dark:text-indigo-400">Total Keuntungan</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                                 @forelse($paginatedDetails as $item)
                                     <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-700/20">
-                                        <td class="px-4 py-3 text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
+                                        <td class="px-3 py-3 text-[10px] text-gray-400 dark:text-gray-500 whitespace-nowrap">
                                             {{ $item['tanggal'] }}
                                         </td>
-                                        <td class="px-4 py-3 font-bold text-gray-900 dark:text-gray-100 max-w-[160px] truncate" title="{{ $item['nama_barang'] }}">
+                                        <td class="px-3 py-3 font-bold text-gray-900 dark:text-gray-100 max-w-[140px] truncate" title="{{ $item['nama_barang'] }}">
                                             {{ $item['nama_barang'] }}
                                         </td>
-                                        <td class="px-4 py-3 text-center text-gray-700 dark:text-gray-300">
-                                            <span class="font-semibold text-gray-900 dark:text-white">{{ $item['quantity'] }}</span>
+                                        <td class="px-3 py-3 text-center text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                                            <span class="font-semibold text-gray-900 dark:text-white">{{ number_format($item['quantity']) }}</span>
                                             <span class="text-[10px] text-gray-400">{{ $item['satuan'] }}</span>
                                         </td>
-                                        <td class="px-4 py-3 text-right whitespace-nowrap">
-                                            <div class="text-[9px] text-gray-400">@ Rp{{ number_format($item['harga_satuan'], 0, ',', '.') }}</div>
-                                            <div class="font-medium text-gray-700 dark:text-gray-300">Rp {{ number_format($item['total_harga_beli'], 0, ',', '.') }}</div>
+                                        <td class="px-3 py-3 text-right text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                            Rp {{ number_format($item['harga_beli_satuan'], 0, ',', '.') }}
                                         </td>
-                                        <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-300 font-medium whitespace-nowrap">
-                                            Rp {{ number_format($item['harga_jual'], 0, ',', '.') }}
+                                        <td class="px-3 py-3 text-right font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                                            Rp {{ number_format($item['total_harga_beli'], 0, ',', '.') }}
                                         </td>
-                                        <td class="px-4 py-3 text-right whitespace-nowrap">
+                                        <td class="px-3 py-3 text-right text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                                            Rp {{ number_format($item['harga_jual_satuan'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-3 py-3 text-right font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap">
+                                            Rp {{ number_format($item['total_harga_jual'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-3 py-3 text-right whitespace-nowrap">
                                             @if($item['total_keuntungan'] > 0)
                                                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400">
                                                     +Rp {{ number_format($item['total_keuntungan'], 0, ',', '.') }}
@@ -262,7 +269,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-4 py-10 text-center text-gray-400 dark:text-gray-500">
+                                        <td colspan="8" class="px-3 py-10 text-center text-gray-400 dark:text-gray-500">
                                             Tidak ada transaksi barang yang sesuai dengan pencarian Anda.
                                         </td>
                                     </tr>
