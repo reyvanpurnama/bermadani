@@ -111,14 +111,45 @@
             {{-- TAB 2: PEMETAAN PRODUK --}}
             @if($activeTab === 'mapping')
                 <div class="space-y-4">
-                    {{-- Search Mapping --}}
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="relative flex-1 max-w-md">
+                    {{-- Search Mapping & Filters --}}
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-700/80">
+                        {{-- Search --}}
+                        <div class="relative">
                             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                <i class='bx bx-search'></i>
+                                <i class='bx bx-search text-base'></i>
                             </span>
-                            <input type="text" wire:model.live.debounce.300ms="searchMapping" placeholder="Cari nama barang di CSV..."
-                                class="w-full pl-9 pr-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-xs text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20">
+                            <input type="text" wire:model.live.debounce.300ms="searchMapping" placeholder="Cari nama CSV, produk, supplier..."
+                                class="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20">
+                        </div>
+
+                        {{-- Filter Status --}}
+                        <div>
+                            <select wire:model.live="filterStatus" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20">
+                                <option value="all">Semua Status Hubungan</option>
+                                <option value="mapped">Terpetakan (Mapped)</option>
+                                <option value="unmapped">Belum Terpetakan (Unmapped)</option>
+                            </select>
+                        </div>
+
+                        {{-- Filter Category --}}
+                        <div>
+                            <select wire:model.live="filterCategory" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20">
+                                <option value="all">Semua Kategori Produk</option>
+                                <option value="unmapped">Tanpa Kategori (Unmapped)</option>
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- Sort By --}}
+                        <div>
+                            <select wire:model.live="sortBy" class="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-primary/20">
+                                <option value="name_asc">Urutkan: Nama A - Z</option>
+                                <option value="name_desc">Urutkan: Nama Z - A</option>
+                                <option value="category_asc">Urutkan: Kategori</option>
+                                <option value="supplier_asc">Urutkan: Supplier</option>
+                            </select>
                         </div>
                     </div>
 
@@ -137,7 +168,19 @@
                                     @foreach($mappingList as $item)
                                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
                                             <td class="px-6 py-4">
-                                                <span class="font-mono font-bold text-slate-700 dark:text-slate-200">{{ $item['raw_name'] }}</span>
+                                                <span class="font-mono font-bold text-slate-700 dark:text-slate-200 block">{{ $item['raw_name'] }}</span>
+                                                 <div class="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-450 font-medium">
+                                                     @if(!empty($item['prices']['beli']))
+                                                         <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-100 dark:border-slate-700">
+                                                             Beli: Rp {{ implode(', Rp ', array_map(fn($p) => number_format($p, 0, ',', '.'), $item['prices']['beli'])) }}
+                                                         </span>
+                                                     @endif
+                                                     @if(!empty($item['prices']['jual']))
+                                                         <span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100/50 dark:border-emerald-900/30">
+                                                             Jual: Rp {{ implode(', Rp ', array_map(fn($p) => number_format($p, 0, ',', '.'), $item['prices']['jual'])) }}
+                                                         </span>
+                                                     @endif
+                                                 </div>
                                             </td>
                                             <td class="px-6 py-4 min-w-[250px]">
                                                 @if($item['mapping'] && $item['mapping']->product)
@@ -155,14 +198,19 @@
                                             </td>
                                             <td class="px-6 py-4">
                                                 @if($item['mapping'] && $item['mapping']->product)
-                                                    <p class="text-xs text-slate-600 dark:text-slate-300">
-                                                        {{ $item['mapping']->product->supplier?->businessName ?? 'TOKO (Koperasi)' }}
+                                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                                        <span class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-350 rounded text-[9px] font-bold">
+                                                            {{ $item['category_name'] }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="text-xs text-slate-600 dark:text-slate-305 mt-1 font-semibold">
+                                                        {{ $item['supplier_name'] }}
                                                     </p>
-                                                    <p class="text-[10px] text-slate-400 font-mono">
+                                                    <p class="text-[10px] text-slate-400 font-mono mt-0.5">
                                                         SKU: {{ $item['mapping']->product->sku ?? '-' }}
                                                     </p>
                                                 @else
-                                                    <span class="text-xs text-slate-400 italic">Belum terhubung</span>
+                                                    <span class="text-xs text-slate-400 italic block">Belum terhubung</span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4 text-center">
