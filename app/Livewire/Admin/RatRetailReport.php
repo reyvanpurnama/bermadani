@@ -17,6 +17,7 @@ class RatRetailReport extends Component
     public $availableYears = [];
     public $csvFile;
     public $showDeleteConfirmModal = false;
+    public $monthlyStats = [];
     
     // Non-paginated month summaries
     public $monthSummaries = [];
@@ -178,6 +179,11 @@ class RatRetailReport extends Component
         $mappings = \App\Models\AuditRetailProductMapping::with(['product.supplier'])->get()->keyBy('raw_product_name');
 
         $details = [];
+        $totalQty = 0;
+        $totalHpp = 0.0;
+        $totalOmzet = 0.0;
+        $productAgg = [];
+        $supplierAgg = [];
 
         if (($handle = fopen($filePath, 'r')) !== false) {
             // Skip header
@@ -211,16 +217,41 @@ class RatRetailReport extends Component
                 $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
                 $persentaseKeuntungan = $totalHargaJual > 0 ? ($totalKeuntungan / $totalHargaJual) * 100 : 0;
 
-                // Apply search filter if present
-                if (!empty($this->searchDetail)) {
-                    if (strpos(strtolower($namaBarang), strtolower($this->searchDetail)) === false) {
-                        continue;
-                    }
-                }
-
                 $mapped = $mappings[$namaBarang] ?? null;
+                $product = $mapped?->product;
 
-                $details[] = [
+                // Aggregations (unfiltered by search)
+                $totalQty += $quantity;
+                $totalHpp += $totalHargaBeli;
+                $totalOmzet += $totalHargaJual;
+
+                // Product Aggregation
+                $pName = $product ? $product->name : $namaBarang;
+                if (!isset($productAgg[$pName])) {
+                    $productAgg[$pName] = [
+                        'name' => $pName,
+                        'qty' => 0,
+                        'profit' => 0.0,
+                        'mapped' => $product !== null
+                    ];
+                }
+                $productAgg[$pName]['qty'] += $quantity;
+                $productAgg[$pName]['profit'] += $totalKeuntungan;
+
+                // Supplier Aggregation
+                $sName = ($product && $product->supplier) ? $product->supplier->businessName : "Belum Terpetakan / Non-Supplier";
+                if (!isset($supplierAgg[$sName])) {
+                    $supplierAgg[$sName] = [
+                        'name' => $sName,
+                        'qty' => 0,
+                        'profit' => 0.0,
+                        'mapped' => ($product && $product->supplier) !== null
+                    ];
+                }
+                $supplierAgg[$sName]['qty'] += $quantity;
+                $supplierAgg[$sName]['profit'] += $totalKeuntungan;
+
+                $rowDetail = [
                     'tanggal' => $tanggal,
                     'nama_barang' => $namaBarang,
                     'quantity' => $quantity,
@@ -231,11 +262,53 @@ class RatRetailReport extends Component
                     'total_harga_jual' => $totalHargaJual,
                     'total_keuntungan' => $totalKeuntungan,
                     'persentase_keuntungan' => $persentaseKeuntungan,
-                    'product' => $mapped?->product,
+                    'product' => $product,
                 ];
+
+                // Apply search filter if present (only for displaying in the table)
+                if (!empty($this->searchDetail)) {
+                    if (strpos(strtolower($namaBarang), strtolower($this->searchDetail)) === false && 
+                        ($product === null || strpos(strtolower($product->name), strtolower($this->searchDetail)) === false)) {
+                        continue;
+                    }
+                }
+
+                $details[] = $rowDetail;
             }
             fclose($handle);
         }
+
+        // Sort aggregations by profit desc
+        uasort($productAgg, function($a, $b) {
+            return $b['profit'] <=> $a['profit'];
+        });
+        uasort($supplierAgg, function($a, $b) {
+            return $b['profit'] <=> $a['profit'];
+        });
+
+        // Find top supplier
+        $topSupplierName = '-';
+        $topSupplierProfit = 0.0;
+        foreach ($supplierAgg as $sName => $data) {
+            if ($sName !== "Belum Terpetakan / Non-Supplier") {
+                $topSupplierName = $sName;
+                $topSupplierProfit = $data['profit'];
+                break; // Because sorted by profit desc
+            }
+        }
+
+        $hppRatio = $totalOmzet > 0 ? ($totalHpp / $totalOmzet) * 100 : 0;
+
+        $this->monthlyStats = [
+            'total_qty' => $totalQty,
+            'top_supplier_name' => $topSupplierName,
+            'top_supplier_profit' => $topSupplierProfit,
+            'top_products' => array_slice($productAgg, 0, 5),
+            'supplier_contributions' => $supplierAgg,
+            'hpp_ratio' => $hppRatio,
+            'total_omzet' => $totalOmzet,
+            'total_keuntungan' => $totalOmzet - $totalHpp,
+        ];
 
         return $details;
     }

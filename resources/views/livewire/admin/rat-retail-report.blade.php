@@ -67,7 +67,7 @@
             {{-- Card 1: Harga Beli (HPP) --}}
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5 border-l-4 border-l-slate-400 dark:border-l-slate-500 flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Harga Pokok (HPP)</p>
+                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Harga Pokok Penjualan (HPP)</p>
                     <p class="text-xl font-black text-gray-900 dark:text-gray-100">
                         Rp {{ number_format($kpi['total_harga_beli'], 0, ',', '.') }}
                     </p>
@@ -81,7 +81,7 @@
             {{-- Card 2: Harga Jual (Omzet) --}}
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5 border-l-4 border-l-indigo-500 dark:border-l-indigo-400 flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Total Penjualan (Omzet)</p>
+                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Pendapatan Retail (Omzet)</p>
                     <p class="text-xl font-black text-gray-900 dark:text-gray-100">
                         Rp {{ number_format($kpi['total_harga_jual'], 0, ',', '.') }}
                     </p>
@@ -95,7 +95,7 @@
             {{-- Card 3: Keuntungan Bersih --}}
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5 border-l-4 border-l-emerald-500 dark:border-l-emerald-400 flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Hasil Usaha (Keuntungan)</p>
+                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">SHU Kotor Retail</p>
                     <p class="text-xl font-black text-emerald-600 dark:text-emerald-400">
                         Rp {{ number_format($kpi['total_keuntungan'], 0, ',', '.') }}
                     </p>
@@ -109,7 +109,7 @@
             {{-- Card 4: Margin Margin --}}
             <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5 border-l-4 border-l-blue-500 dark:border-l-blue-400 flex items-center justify-between">
                 <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Margin Keuntungan</p>
+                    <p class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">Persentase Margin SHU (%)</p>
                     <p class="text-xl font-black text-blue-600 dark:text-blue-400">
                         @if($kpi['total_harga_jual'] > 0)
                             {{ number_format(($kpi['total_keuntungan'] / $kpi['total_harga_jual']) * 100, 2, ',', '.') }}%
@@ -336,6 +336,139 @@
                     </button>
                 </div>
             </div>
+
+            {{-- Monthly Analytics Dashboard Section --}}
+            @if(!empty($monthlyStats))
+                <div class="p-5 bg-slate-50/50 dark:bg-gray-800/50 border-b border-gray-150 dark:border-gray-700 space-y-5">
+                    {{-- 4 Small Monthly KPIs --}}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {{-- Monthly KPI 1: Volume Penjualan --}}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs border border-gray-150 dark:border-gray-700/80 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Volume Penjualan</span>
+                                <span class="text-lg font-black text-slate-800 dark:text-slate-100">{{ number_format($monthlyStats['total_qty']) }} <span class="text-xs font-normal text-slate-400">Pcs</span></span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700/50 flex items-center justify-center text-slate-500">
+                                <i class='bx bx-package text-lg'></i>
+                            </div>
+                        </div>
+
+                        {{-- Monthly KPI 2: SHU Kotor --}}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs border border-gray-150 dark:border-gray-700/80 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">SHU Kotor Bulanan</span>
+                                <span class="text-lg font-black text-emerald-600 dark:text-emerald-400">Rp {{ number_format($monthlyStats['total_keuntungan'], 0, ',', '.') }}</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-emerald-50 dark:bg-emerald-950 flex items-center justify-center text-emerald-500">
+                                <i class='bx bx-wallet text-lg'></i>
+                            </div>
+                        </div>
+
+                        {{-- Monthly KPI 3: Top Supplier --}}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs border border-gray-150 dark:border-gray-700/80 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Top Supplier Kontributor</span>
+                                <span class="text-xs font-black text-indigo-600 dark:text-indigo-400 block truncate max-w-[130px]">{{ $monthlyStats['top_supplier_name'] }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">Rp {{ number_format($monthlyStats['top_supplier_profit'], 0, ',', '.') }} SHU</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center text-indigo-500">
+                                <i class='bx bx-crown text-lg'></i>
+                            </div>
+                        </div>
+
+                        {{-- Monthly KPI 4: Rasio HPP --}}
+                        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-xs border border-gray-150 dark:border-gray-700/80 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">Rasio Efisiensi HPP</span>
+                                <span class="text-lg font-black text-blue-600 dark:text-blue-400">{{ number_format($monthlyStats['hpp_ratio'], 1, ',', '.') }}%</span>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950 flex items-center justify-center text-blue-500">
+                                <i class='bx bx-line-chart-down text-lg'></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Side-by-Side Breakdown Tables --}}
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        {{-- Left: Top 5 Produk Terlaris --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-150 dark:border-gray-700/80 p-4">
+                            <div class="flex items-center gap-1.5 mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
+                                <i class='bx bx-medal text-amber-500 text-lg'></i>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Top 5 Produk Terlaris (Bulan Ini)</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-[11px] text-left">
+                                    <thead>
+                                        <tr class="text-slate-400 dark:text-slate-500 border-b border-gray-100 dark:border-gray-700 font-semibold">
+                                            <th class="pb-2">Nama Produk</th>
+                                            <th class="pb-2 text-center">Qty</th>
+                                            <th class="pb-2 text-right">Kontribusi SHU</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50 dark:divide-gray-750/30">
+                                        @forelse($monthlyStats['top_products'] as $p)
+                                            <tr>
+                                                <td class="py-2.5 font-medium text-slate-700 dark:text-slate-300">
+                                                    {{ $p['name'] }}
+                                                    @if(!$p['mapped'])
+                                                        <span class="text-[9px] bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 px-1 rounded">Unmapped</span>
+                                                    @endif
+                                                </td>
+                                                <td class="py-2.5 text-center text-slate-600 dark:text-slate-400 font-semibold">{{ number_format($p['qty']) }} pcs</td>
+                                                <td class="py-2.5 text-right text-emerald-600 dark:text-emerald-400 font-bold">Rp {{ number_format($p['profit'], 0, ',', '.') }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="py-3 text-center text-slate-400">Tidak ada data produk</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {{-- Right: Kontribusi SHU per Supplier --}}
+                        <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-150 dark:border-gray-700/80 p-4">
+                            <div class="flex items-center gap-1.5 mb-3 border-b border-gray-100 dark:border-gray-700 pb-2">
+                                <i class='bx bx-store text-indigo-500 text-lg'></i>
+                                <span class="text-xs font-bold text-slate-800 dark:text-slate-100">Kinerja Kontribusi SHU per Supplier</span>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-[11px] text-left">
+                                    <thead>
+                                        <tr class="text-slate-400 dark:text-slate-500 border-b border-gray-100 dark:border-gray-700 font-semibold">
+                                            <th class="pb-2">Nama Supplier</th>
+                                            <th class="pb-2 text-center">Qty</th>
+                                            <th class="pb-2 text-right">Total SHU</th>
+                                            <th class="pb-2 text-right">Share (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50 dark:divide-gray-750/30">
+                                        @forelse($monthlyStats['supplier_contributions'] as $sName => $s)
+                                            <tr>
+                                                <td class="py-2.5 font-medium text-slate-700 dark:text-slate-300">{{ $sName }}</td>
+                                                <td class="py-2.5 text-center text-slate-600 dark:text-slate-400">{{ number_format($s['qty']) }} pcs</td>
+                                                <td class="py-2.5 text-right text-indigo-600 dark:text-indigo-400 font-bold">Rp {{ number_format($s['profit'], 0, ',', '.') }}</td>
+                                                <td class="py-2.5 text-right font-black text-slate-700 dark:text-slate-300">
+                                                    @if($monthlyStats['total_keuntungan'] > 0)
+                                                        {{ number_format(($s['profit'] / $monthlyStats['total_keuntungan']) * 100, 1, ',', '.') }}%
+                                                    @else
+                                                        0%
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="py-3 text-center text-slate-400">Tidak ada data supplier</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             {{-- Search Filter --}}
             <div class="p-4 border-b border-gray-150 dark:border-gray-700 bg-white dark:bg-gray-800">
