@@ -20,7 +20,7 @@ if (($h = fopen($masterRefFile, 'r')) !== false) {
         if ($hjRaw !== '' && $hjRaw !== '#N/A' && $hjRaw !== '-') {
             $hj = (float) str_replace(['.', ','], ['', '.'], $hjRaw);
             if ($hj > 0) {
-                $benchmarkHj[$nama] = $hj;
+                $benchmarkHj[$nama] = round($hj);
             }
         }
     }
@@ -60,7 +60,7 @@ while (($data = fgetcsv($handle, 1000, ',')) !== false) {
 
     $rawName = trim($data[0]);
     $hbClean = str_replace(['.', ','], ['', '.'], trim($data[1]));
-    $hb = (float) $hbClean;
+    $hb = round((float) $hbClean);
 
     if (!isset($nameCounts[$rawName])) {
         $nameCounts[$rawName] = 1;
@@ -73,7 +73,7 @@ while (($data = fgetcsv($handle, 1000, ',')) !== false) {
     $rows[] = [
         'raw_name' => $rawName,
         'final_name' => $finalName,
-        'hb' => $hb,
+        'hb' => (int)$hb,
     ];
 }
 fclose($handle);
@@ -84,7 +84,6 @@ $filledRows = [];
 $totalHb = 0;
 $totalHj = 0;
 $totalLaba = 0;
-$matchedBenchmarkCount = 0;
 
 foreach ($rows as $r) {
     $hb = $r['hb'];
@@ -93,7 +92,6 @@ foreach ($rows as $r) {
 
     if (isset($benchmarkHj[$rawName])) {
         $patokanHj = $benchmarkHj[$rawName];
-        $matchedBenchmarkCount++;
 
         if (isGorengan($rawName, $gorenganKeywords)) {
             $hj = max($patokanHj, $hb + 500);
@@ -114,7 +112,8 @@ foreach ($rows as $r) {
         $hj = roundTo500($hb + 500);
     }
 
-    $laba = $hj - $hb;
+    $hj = (int) round($hj);
+    $laba = (int) ($hj - $hb);
 
     $totalHb += $hb;
     $totalHj += $hj;
@@ -122,13 +121,13 @@ foreach ($rows as $r) {
 
     $filledRows[] = [
         'NAMA BARANG' => $finalName,
-        'HARGA BELI' => $hb == (int)$hb ? (int)$hb : number_format($hb, 2, ',', ''),
-        'HARGA JUAL' => $hj == (int)$hj ? (int)$hj : number_format($hj, 0, ',', ''),
-        'LABA' => $laba == (int)$laba ? (int)$laba : number_format($laba, 0, ',', ''),
+        'HARGA BELI' => $hb,
+        'HARGA JUAL' => $hj,
+        'LABA' => $laba,
     ];
 }
 
-// 3. Write output to PENJUALAN 25 - DAFTAR HARGA JUAL 25.csv
+// 3. Write output to PENJUALAN 25 - DAFTAR HARGA JUAL 25.csv with clean standard CSV formatting
 $writeHandle = fopen($masterPricesFile, 'w');
 fputcsv($writeHandle, ['NAMA BARANG', 'HARGA BELI', 'HARGA JUAL', 'LABA']);
 foreach ($filledRows as $fr) {
@@ -136,8 +135,7 @@ foreach ($filledRows as $fr) {
 }
 fclose($writeHandle);
 
-echo "Successfully written " . count($filledRows) . " rows to $masterPricesFile" . PHP_EOL;
-echo "Benchmark match count: $matchedBenchmarkCount rows." . PHP_EOL;
+echo "Successfully written " . count($filledRows) . " clean rows to $masterPricesFile" . PHP_EOL;
 echo "Cumulative Buy Price (HPP): Rp " . number_format($totalHb, 0, ',', '.') . PHP_EOL;
 echo "Cumulative Sell Price (Omzet): Rp " . number_format($totalHj, 0, ',', '.') . PHP_EOL;
 echo "Cumulative Profit (Laba): Rp " . number_format($totalLaba, 0, ',', '.') . PHP_EOL;
