@@ -15,11 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed categories first
+        // Seed categories, products, role users, and Tira Setyani member data
         $this->call([
             CategorySeeder::class,
             ProductSeeder::class,
             RoleUsersSeeder::class,
+            TiraSeeder::class,
         ]);
     }
 }
