@@ -22,7 +22,7 @@ return new class extends Migration
         if ($tiraMember) {
             $tiraMember->update([
                 'name' => 'Tira Setyani',
-                'isMemberKoperasi' => true,
+                'isMemberKoperasi' => false,
                 'simpananSukarela' => 1150000.00,
                 'simpananWajib' => 1150000.00,
                 'monthly_simpanan_wajib' => 50000.00,

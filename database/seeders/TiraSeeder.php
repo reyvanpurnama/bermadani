@@ -40,7 +40,7 @@ class TiraSeeder extends Seeder
                 'gender' => 'FEMALE',
                 'unitKerja' => 'Retail',
                 'status' => 'ACTIVE',
-                'isMemberKoperasi' => true,
+                'isMemberKoperasi' => false,
 
                 // SAVING BALANCES & PREFERENCES
                 'simpananSukarela' => 1150000.00, // 2.300.000 / 2
