@@ -48,19 +48,58 @@ class RetailProductAuditTool extends Component
             'csvFile' => 'required|file|mimes:csv,txt|max:10240', // 10MB Max
         ]);
 
-        $destinationPath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-
+        $filePath = $this->csvFile->getRealPath();
+        
         // Ensure directory exists
-        if (!file_exists(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), 0775, true);
+        $dirPath = base_path('docs/data/databulanan');
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0775, true);
         }
 
-        // Copy/overwrite the uploaded file
-        copy($this->csvFile->getRealPath(), $destinationPath);
+        $header = null;
+        $groupedRows = [];
+
+        if (($handle = fopen($filePath, 'r')) !== false) {
+            $header = fgetcsv($handle, 1000, ',');
+            
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                if (count($data) < 8) continue;
+
+                $tanggal = trim($data[0]);
+                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+
+                $dateParts = explode('/', $tanggal);
+                if (count($dateParts) !== 3) continue;
+
+                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                $year = trim($dateParts[2]);
+                $monthKey = "$year-$month";
+
+                $groupedRows[$monthKey][] = $data;
+            }
+            fclose($handle);
+        }
+
+        if (empty($groupedRows)) {
+            session()->flash('error', 'Format file tidak valid atau data transaksi kosong.');
+            return;
+        }
+
+        foreach ($groupedRows as $monthKey => $rows) {
+            $targetFile = "$dirPath/retail_report_$monthKey.csv";
+            
+            if (($writeHandle = fopen($targetFile, 'w')) !== false) {
+                fputcsv($writeHandle, $header);
+                foreach ($rows as $row) {
+                    fputcsv($writeHandle, $row);
+                }
+                fclose($writeHandle);
+            }
+        }
 
         $this->csvFile = null;
 
-        session()->flash('message', 'Laporan CSV retail berhasil di-import.');
+        session()->flash('message', 'Laporan CSV retail berhasil di-import dan dipisahkan per bulan.');
         $this->activeTab = 'mapping';
 
         // Auto-run auto-map after upload
@@ -69,24 +108,26 @@ class RetailProductAuditTool extends Component
 
     public function autoMap()
     {
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (!file_exists($filePath)) {
+        $files = $this->getCsvFiles();
+        if (empty($files)) {
             return;
         }
 
         $rawNames = [];
-        if (($handle = fopen($filePath, 'r')) !== false) {
-            // Skip header
-            fgetcsv($handle, 1000, ',');
+        foreach ($files as $filePath) {
+            if (($handle = fopen($filePath, 'r')) !== false) {
+                // Skip header
+                fgetcsv($handle, 1000, ',');
 
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if (count($data) < 2) continue;
-                $name = trim($data[1]);
-                if (!empty($name) && strtolower($name) !== 'nama barang') {
-                    $rawNames[] = $name;
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    if (count($data) < 2) continue;
+                    $name = trim($data[1]);
+                    if (!empty($name) && strtolower($name) !== 'nama barang') {
+                        $rawNames[] = $name;
+                    }
                 }
+                fclose($handle);
             }
-            fclose($handle);
         }
         $rawNames = array_unique($rawNames);
 
@@ -124,38 +165,94 @@ class RetailProductAuditTool extends Component
         return (float) $val;
     }
 
-    public function getCsvProducts()
+    private function getCsvFiles()
     {
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (!file_exists($filePath)) {
-            return [];
+        $dirPath = base_path('docs/data/databulanan');
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0775, true);
         }
 
-        $rawNames = [];
-        if (($handle = fopen($filePath, 'r')) !== false) {
-            fgetcsv($handle, 1000, ',');
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if (count($data) < 2) continue;
-                $name = trim($data[1]);
-                if (!empty($name) && strtolower($name) !== 'nama barang') {
-                    $rawNames[] = $name;
+        $files = glob("$dirPath/retail_report_*.csv");
+
+        // Fallback to master file if no monthly files exist
+        $masterFile = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        if (empty($files) && file_exists($masterFile)) {
+            // Auto-split
+            $header = null;
+            $grouped = [];
+            if (($handle = fopen($masterFile, 'r')) !== false) {
+                $header = fgetcsv($handle, 1000, ',');
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    if (count($data) < 8) continue;
+                    $tanggal = trim($data[0]);
+                    if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+                    $dateParts = explode('/', $tanggal);
+                    if (count($dateParts) !== 3) continue;
+
+                    $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                    $year = trim($dateParts[2]);
+                    $monthKey = "$year-$month";
+
+                    $grouped[$monthKey][] = $data;
+                }
+                fclose($handle);
+            }
+            foreach ($grouped as $monthKey => $rows) {
+                $target = "$dirPath/retail_report_$monthKey.csv";
+                if (($write = fopen($target, 'w')) !== false) {
+                    fputcsv($write, $header);
+                    foreach ($rows as $row) {
+                        fputcsv($write, $row);
+                    }
+                    fclose($write);
                 }
             }
-            fclose($handle);
+            $files = glob("$dirPath/retail_report_*.csv");
+        }
+
+        return $files;
+    }
+
+    public function getCsvProducts()
+    {
+        $files = $this->getCsvFiles();
+        $rawNames = [];
+        foreach ($files as $filePath) {
+            if (($handle = fopen($filePath, 'r')) !== false) {
+                fgetcsv($handle, 1000, ',');
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    if (count($data) < 2) continue;
+                    $name = trim($data[1]);
+                    if (!empty($name) && strtolower($name) !== 'nama barang') {
+                        $rawNames[] = $name;
+                    }
+                }
+                fclose($handle);
+            }
         }
         return array_unique($rawNames);
     }
 
     public function render()
     {
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        $csvExists = file_exists($filePath);
+        $files = $this->getCsvFiles();
+        $csvExists = !empty($files);
         $fileStats = [];
 
         if ($csvExists) {
+            // Stats of the most recently updated file
+            $latestMtime = 0;
+            $totalSize = 0;
+            foreach ($files as $file) {
+                $mtime = filemtime($file);
+                if ($mtime > $latestMtime) {
+                    $latestMtime = $mtime;
+                }
+                $totalSize += filesize($file);
+            }
             $fileStats = [
-                'size' => filesize($filePath),
-                'updated_at' => filemtime($filePath),
+                'size' => $totalSize,
+                'updated_at' => $latestMtime,
             ];
         }
 
@@ -163,33 +260,35 @@ class RetailProductAuditTool extends Component
         $csvPrices = []; // raw_name => ['beli' => [], 'jual' => []]
 
         if ($csvExists) {
-            if (($handle = fopen($filePath, 'r')) !== false) {
-                // Skip header
-                fgetcsv($handle, 1000, ',');
-                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                    if (count($data) < 7) continue;
-                    $rawName = trim($data[1]);
-                    if (empty($rawName) || strtolower($rawName) === 'nama barang') continue;
+            foreach ($files as $file) {
+                if (($handle = fopen($file, 'r')) !== false) {
+                    // Skip header
+                    fgetcsv($handle, 1000, ',');
+                    while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                        if (count($data) < 7) continue;
+                        $rawName = trim($data[1]);
+                        if (empty($rawName) || strtolower($rawName) === 'nama barang') continue;
 
-                    $csvProducts[] = $rawName;
+                        $csvProducts[] = $rawName;
 
-                    $beli = $this->parseNumber($data[4]);
-                    $jual = $this->parseNumber($data[6]);
+                        $beli = $this->parseNumber($data[4]);
+                        $jual = $this->parseNumber($data[6]);
 
-                    if (!isset($csvPrices[$rawName])) {
-                        $csvPrices[$rawName] = [
-                            'beli' => [],
-                            'jual' => []
-                        ];
+                        if (!isset($csvPrices[$rawName])) {
+                            $csvPrices[$rawName] = [
+                                'beli' => [],
+                                'jual' => []
+                            ];
+                        }
+                        if ($beli > 0) {
+                            $csvPrices[$rawName]['beli'][] = $beli;
+                        }
+                        if ($jual > 0) {
+                            $csvPrices[$rawName]['jual'][] = $jual;
+                        }
                     }
-                    if ($beli > 0) {
-                        $csvPrices[$rawName]['beli'][] = $beli;
-                    }
-                    if ($jual > 0) {
-                        $csvPrices[$rawName]['jual'][] = $jual;
-                    }
+                    fclose($handle);
                 }
-                fclose($handle);
             }
         }
         $csvProducts = array_unique($csvProducts);
@@ -288,41 +387,43 @@ class RetailProductAuditTool extends Component
         // Preview Table Data
         $previewRows = [];
         if ($this->activeTab === 'preview' && $csvExists) {
-            if (($handle = fopen($filePath, 'r')) !== false) {
-                fgetcsv($handle, 1000, ',');
-                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                    if (count($data) < 8) continue;
-                    $tanggal = trim($data[0]);
-                    if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+            foreach ($files as $file) {
+                if (($handle = fopen($file, 'r')) !== false) {
+                    fgetcsv($handle, 1000, ',');
+                    while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                        if (count($data) < 8) continue;
+                        $tanggal = trim($data[0]);
+                        if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
 
-                    $rawName = trim($data[1]);
-                    $quantity = (int) trim($data[2]);
-                    $satuan = trim($data[3]);
-                    $hargaBeliSatuan = $this->parseNumber($data[4]);
-                    $totalHargaBeli = $this->parseNumber($data[5]);
-                    $hargaJualSatuan = $this->parseNumber($data[6]);
+                        $rawName = trim($data[1]);
+                        $quantity = (int) trim($data[2]);
+                        $satuan = trim($data[3]);
+                        $hargaBeliSatuan = $this->parseNumber($data[4]);
+                        $totalHargaBeli = $this->parseNumber($data[5]);
+                        $hargaJualSatuan = $this->parseNumber($data[6]);
 
-                    $totalHargaJual = $quantity * $hargaJualSatuan;
-                    $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
-                    $persentaseKeuntungan = $totalHargaJual > 0 ? ($totalKeuntungan / $totalHargaJual) * 100 : 0;
+                        $totalHargaJual = $quantity * $hargaJualSatuan;
+                        $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+                        $persentaseKeuntungan = $totalHargaJual > 0 ? ($totalKeuntungan / $totalHargaJual) * 100 : 0;
 
-                    $mapped = $mappings[$rawName] ?? null;
+                        $mapped = $mappings[$rawName] ?? null;
 
-                    $previewRows[] = [
-                        'tanggal' => $tanggal,
-                        'raw_name' => $rawName,
-                        'quantity' => $quantity,
-                        'satuan' => $satuan,
-                        'harga_beli_satuan' => $hargaBeliSatuan,
-                        'total_harga_beli' => $totalHargaBeli,
-                        'harga_jual_satuan' => $hargaJualSatuan,
-                        'total_harga_jual' => $totalHargaJual,
-                        'total_keuntungan' => $totalKeuntungan,
-                        'persentase_keuntungan' => $persentaseKeuntungan,
-                        'product' => $mapped?->product,
-                    ];
+                        $previewRows[] = [
+                            'tanggal' => $tanggal,
+                            'raw_name' => $rawName,
+                            'quantity' => $quantity,
+                            'satuan' => $satuan,
+                            'harga_beli_satuan' => $hargaBeliSatuan,
+                            'total_harga_beli' => $totalHargaBeli,
+                            'harga_jual_satuan' => $hargaJualSatuan,
+                            'total_harga_jual' => $totalHargaJual,
+                            'total_keuntungan' => $totalKeuntungan,
+                            'persentase_keuntungan' => $persentaseKeuntungan,
+                            'product' => $mapped?->product,
+                        ];
+                    }
+                    fclose($handle);
                 }
-                fclose($handle);
             }
         }
 

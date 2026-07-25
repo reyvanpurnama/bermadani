@@ -33,21 +33,69 @@ class RatRetailReport extends Component
             'csvFile' => 'required|file|mimes:csv,txt|max:10240', // 10MB Max
         ]);
 
-        $destinationPath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        $filePath = $this->csvFile->getRealPath();
         
         // Ensure directory exists
-        if (!file_exists(dirname($destinationPath))) {
-            mkdir(dirname($destinationPath), 0775, true);
+        $dirPath = base_path('docs/data/databulanan');
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0775, true);
         }
 
-        // Copy/overwrite the uploaded file
-        copy($this->csvFile->getRealPath(), $destinationPath);
+        $header = null;
+        $groupedRows = [];
+
+        if (($handle = fopen($filePath, 'r')) !== false) {
+            $header = fgetcsv($handle, 1000, ',');
+            
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                if (count($data) < 8) continue;
+
+                $tanggal = trim($data[0]);
+                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+
+                $dateParts = explode('/', $tanggal);
+                if (count($dateParts) !== 3) continue;
+
+                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                $year = trim($dateParts[2]);
+                $monthKey = "$year-$month";
+
+                $groupedRows[$monthKey][] = $data;
+            }
+            fclose($handle);
+        }
+
+        if (empty($groupedRows)) {
+            $this->dispatch('notify', [
+                'message' => 'Format file tidak valid atau data transaksi kosong.',
+                'type' => 'error',
+            ]);
+            return;
+        }
+
+        $importedMonths = [];
+        foreach ($groupedRows as $monthKey => $rows) {
+            $targetFile = "$dirPath/retail_report_$monthKey.csv";
+            
+            if (($writeHandle = fopen($targetFile, 'w')) !== false) {
+                fputcsv($writeHandle, $header);
+                foreach ($rows as $row) {
+                    fputcsv($writeHandle, $row);
+                }
+                fclose($writeHandle);
+                $importedMonths[] = $monthKey;
+            }
+        }
 
         $this->csvFile = null;
         $this->loadData();
 
+        $monthNames = array_map(function($key) {
+            return $this->getMonthName(substr($key, 5, 2)) . ' ' . substr($key, 0, 4);
+        }, $importedMonths);
+
         $this->dispatch('notify', [
-            'message' => 'Laporan CSV retail berhasil di-import dan diperbarui.',
+            'message' => 'Laporan retail berhasil di-import untuk: ' . implode(', ', $monthNames),
             'type' => 'success',
         ]);
     }
@@ -95,64 +143,73 @@ class RatRetailReport extends Component
 
     private function loadData()
     {
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (!file_exists($filePath)) {
-            $this->monthSummaries = [];
-            $this->availableYears = [];
-            return;
+        $dirPath = base_path('docs/data/databulanan');
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0775, true);
+        }
+
+        // Check for retail_report_*.csv files
+        $files = glob("$dirPath/retail_report_*.csv");
+
+        // Fallback: split the old master file if it exists and no monthly files exist yet
+        $masterFile = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        if (empty($files) && file_exists($masterFile)) {
+            $this->splitMasterFile($masterFile, $dirPath);
+            $files = glob("$dirPath/retail_report_*.csv");
         }
 
         $years = [];
         $summaries = [];
 
-        if (($handle = fopen($filePath, 'r')) !== false) {
-            // Skip header
-            fgetcsv($handle, 1000, ',');
+        foreach ($files as $file) {
+            if (($handle = fopen($file, 'r')) !== false) {
+                // Skip header
+                fgetcsv($handle, 1000, ',');
 
-            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if (count($data) < 8) continue;
+                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                    if (count($data) < 8) continue;
 
-                $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+                    $tanggal = trim($data[0]);
+                    if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
 
-                $dateParts = explode('/', $tanggal);
-                if (count($dateParts) !== 3) continue;
+                    $dateParts = explode('/', $tanggal);
+                    if (count($dateParts) !== 3) continue;
 
-                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
-                $year = trim($dateParts[2]);
-                $monthKey = "$year-$month";
+                    $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                    $year = trim($dateParts[2]);
+                    $monthKey = "$year-$month";
 
-                $quantity = (int) trim($data[2]);
-                $hargaBeliSatuan = $this->parseNumber($data[4]);
-                $totalHargaBeli = $this->parseNumber($data[5]);
-                $hargaJualSatuan = $this->parseNumber($data[6]);
+                    $quantity = (int) trim($data[2]);
+                    $totalHargaBeli = $this->parseNumber($data[5]);
+                    $hargaJualSatuan = $this->parseNumber($data[6]);
 
-                $totalHargaJual = $quantity * $hargaJualSatuan;
-                $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
+                    $totalHargaJual = $quantity * $hargaJualSatuan;
+                    $totalKeuntungan = $totalHargaJual - $totalHargaBeli;
 
-                if (!isset($summaries[$monthKey])) {
-                    $summaries[$monthKey] = [
-                        'month_key' => $monthKey,
-                        'year' => $year,
-                        'month' => $month,
-                        'month_name' => $this->getMonthName($month) . ' ' . $year,
-                        'total_harga_beli' => 0.0,
-                        'total_harga_jual' => 0.0,
-                        'total_keuntungan' => 0.0,
-                        'item_count' => 0,
-                    ];
+                    if (!isset($summaries[$monthKey])) {
+                        $summaries[$monthKey] = [
+                            'month_key' => $monthKey,
+                            'year' => $year,
+                            'month' => $month,
+                            'month_name' => $this->getMonthName($month) . ' ' . $year,
+                            'total_harga_beli' => 0.0,
+                            'total_harga_jual' => 0.0,
+                            'total_keuntungan' => 0.0,
+                            'item_count' => 0,
+                        ];
+                    }
+
+                    $summaries[$monthKey]['total_harga_beli'] += $totalHargaBeli;
+                    $summaries[$monthKey]['total_harga_jual'] += $totalHargaJual;
+                    $summaries[$monthKey]['total_keuntungan'] += $totalKeuntungan;
+                    $summaries[$monthKey]['item_count']++;
+
+                    if (!in_array($year, $years)) {
+                        $years[] = $year;
+                    }
                 }
-
-                $summaries[$monthKey]['total_harga_beli'] += $totalHargaBeli;
-                $summaries[$monthKey]['total_harga_jual'] += $totalHargaJual;
-                $summaries[$monthKey]['total_keuntungan'] += $totalKeuntungan;
-                $summaries[$monthKey]['item_count']++;
-
-                if (!in_array($year, $years)) {
-                    $years[] = $year;
-                }
+                fclose($handle);
             }
-            fclose($handle);
         }
 
         // Sort summaries chronologically
@@ -164,13 +221,47 @@ class RatRetailReport extends Component
         $this->availableYears = $years;
     }
 
+    private function splitMasterFile($masterPath, $dirPath)
+    {
+        $header = null;
+        $grouped = [];
+        if (($handle = fopen($masterPath, 'r')) !== false) {
+            $header = fgetcsv($handle, 1000, ',');
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                if (count($data) < 8) continue;
+                $tanggal = trim($data[0]);
+                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+                $dateParts = explode('/', $tanggal);
+                if (count($dateParts) !== 3) continue;
+
+                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                $year = trim($dateParts[2]);
+                $monthKey = "$year-$month";
+
+                $grouped[$monthKey][] = $data;
+            }
+            fclose($handle);
+        }
+
+        foreach ($grouped as $monthKey => $rows) {
+            $target = "$dirPath/retail_report_$monthKey.csv";
+            if (($write = fopen($target, 'w')) !== false) {
+                fputcsv($write, $header);
+                foreach ($rows as $row) {
+                    fputcsv($write, $row);
+                }
+                fclose($write);
+            }
+        }
+    }
+
     public function getDetailsProperty()
     {
         if (!$this->selectedMonth) {
             return [];
         }
 
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
+        $filePath = base_path("docs/data/databulanan/retail_report_{$this->selectedMonth}.csv");
         if (!file_exists($filePath)) {
             return [];
         }
@@ -195,17 +286,6 @@ class RatRetailReport extends Component
                 $tanggal = trim($data[0]);
                 if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
 
-                $dateParts = explode('/', $tanggal);
-                if (count($dateParts) !== 3) continue;
-
-                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
-                $year = trim($dateParts[2]);
-                $monthKey = "$year-$month";
-
-                if ($monthKey !== $this->selectedMonth) {
-                    continue;
-                }
-
                 $namaBarang = trim($data[1]);
                 $quantity = (int) trim($data[2]);
                 $satuan = trim($data[3]);
@@ -220,7 +300,7 @@ class RatRetailReport extends Component
                 $mapped = $mappings[$namaBarang] ?? null;
                 $product = $mapped?->product;
 
-                // Aggregations (unfiltered by search)
+                // Aggregations
                 $totalQty += $quantity;
                 $totalHpp += $totalHargaBeli;
                 $totalOmzet += $totalHargaJual;
@@ -265,7 +345,7 @@ class RatRetailReport extends Component
                     'product' => $product,
                 ];
 
-                // Apply search filter if present (only for displaying in the table)
+                // Apply search filter if present
                 if (!empty($this->searchDetail)) {
                     if (strpos(strtolower($namaBarang), strtolower($this->searchDetail)) === false && 
                         ($product === null || strpos(strtolower($product->name), strtolower($this->searchDetail)) === false)) {
@@ -315,7 +395,6 @@ class RatRetailReport extends Component
 
     public function render()
     {
-        // Reload fresh summaries list (just in case)
         $this->loadData();
 
         $filteredSummaries = $this->monthSummaries;
@@ -326,7 +405,6 @@ class RatRetailReport extends Component
             $filteredSummaries = array_values($filteredSummaries);
         }
 
-        // Auto-select first month of the filtered list if current selectedMonth is not in the filtered list
         if (!empty($filteredSummaries)) {
             $filteredKeys = array_column($filteredSummaries, 'month_key');
             if (!$this->selectedMonth || !in_array($this->selectedMonth, $filteredKeys)) {
@@ -336,7 +414,6 @@ class RatRetailReport extends Component
             $this->selectedMonth = null;
         }
 
-        // Calculate KPI summaries
         $kpi = [
             'total_harga_beli' => 0.0,
             'total_harga_jual' => 0.0,
@@ -349,7 +426,6 @@ class RatRetailReport extends Component
             $kpi['total_keuntungan'] += $item['total_keuntungan'];
         }
 
-        // Paginate the details table manually from the collection
         $detailsCollection = $this->getDetailsProperty();
         $totalDetailsCount = count($detailsCollection);
         $perPage = 15;
@@ -392,56 +468,9 @@ class RatRetailReport extends Component
             return;
         }
 
-        $filePath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (!file_exists($filePath)) {
-            return;
-        }
-
-        $tempPath = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.tmp');
-        $header = null;
-        $deletedCount = 0;
-
-        if (($handleRead = fopen($filePath, 'r')) !== false && ($handleWrite = fopen($tempPath, 'w')) !== false) {
-            // Read header
-            $header = fgetcsv($handleRead, 1000, ',');
-            fputcsv($handleWrite, $header);
-
-            while (($data = fgetcsv($handleRead, 1000, ',')) !== false) {
-                if (count($data) < 8) {
-                    fputcsv($handleWrite, $data);
-                    continue;
-                }
-
-                $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') {
-                    fputcsv($handleWrite, $data);
-                    continue;
-                }
-
-                $dateParts = explode('/', $tanggal);
-                if (count($dateParts) !== 3) {
-                    fputcsv($handleWrite, $data);
-                    continue;
-                }
-
-                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
-                $year = trim($dateParts[2]);
-                $monthKey = "$year-$month";
-
-                if ($monthKey === $this->selectedMonth) {
-                    $deletedCount++;
-                    continue; // Skip this row (deleting it)
-                }
-
-                fputcsv($handleWrite, $data);
-            }
-
-            fclose($handleRead);
-            fclose($handleWrite);
-        }
-
-        if (file_exists($tempPath)) {
-            rename($tempPath, $filePath);
+        $filePath = base_path("docs/data/databulanan/retail_report_{$this->selectedMonth}.csv");
+        if (file_exists($filePath)) {
+            unlink($filePath);
         }
 
         $deletedMonthName = $this->getMonthName(substr($this->selectedMonth, 5, 2)) . ' ' . substr($this->selectedMonth, 0, 4);
@@ -451,7 +480,7 @@ class RatRetailReport extends Component
         $this->loadData();
 
         $this->dispatch('notify', [
-            'message' => "Seluruh data transaksi untuk bulan $deletedMonthName ($deletedCount baris) berhasil dihapus.",
+            'message' => "Seluruh data transaksi untuk bulan $deletedMonthName berhasil dihapus.",
             'type' => 'success',
         ]);
     }
