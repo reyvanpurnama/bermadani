@@ -264,7 +264,34 @@
     </style>
 
     {{-- Month Selector Horizontal Scroll Section --}}
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-150 dark:border-gray-700 p-5"
+         x-data="{
+             scrollContainer: null,
+             showLeftBtn: false,
+             showRightBtn: false,
+             checkScroll() {
+                 if (!this.scrollContainer) return;
+                 const { scrollLeft, scrollWidth, clientWidth } = this.scrollContainer;
+                 this.showLeftBtn = scrollLeft > 10;
+                 this.showRightBtn = scrollLeft + clientWidth < scrollWidth - 10;
+             },
+             scroll(direction) {
+                 if (!this.scrollContainer) return;
+                 const scrollAmount = 350;
+                 this.scrollContainer.scrollBy({
+                     left: direction === 'left' ? -scrollAmount : scrollAmount,
+                     behavior: 'smooth'
+                 });
+             },
+             init() {
+                 this.scrollContainer = this.$refs.monthCards;
+                 this.$nextTick(() => {
+                     this.checkScroll();
+                 });
+                 window.addEventListener('resize', () => this.checkScroll());
+             }
+         }"
+         x-effect="$nextTick(() => checkScroll())">
         <div class="flex items-center justify-between mb-4 border-b border-gray-150 dark:border-gray-700 pb-3">
             <div>
                 <h3 class="font-bold text-gray-900 dark:text-gray-100 text-sm">Pilih Bulan Transaksi</h3>
@@ -275,43 +302,97 @@
             </div>
         </div>
 
-        {{-- Horizontal Scrollable Cards List --}}
-        <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
-            @forelse($summaries as $summary)
-                <button wire:click="selectMonth('{{ $summary['month_key'] }}')"
-                        class="flex-none w-60 snap-start p-4 rounded-xl border text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:scale-[1.01]
-                               {{ $selectedMonth === $summary['month_key'] 
-                                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' 
-                                  : 'bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-600 hover:border-indigo-400 text-gray-800 dark:text-gray-100' }}">
-                    <div class="font-bold text-sm truncate {{ $selectedMonth === $summary['month_key'] ? 'text-white' : 'text-gray-900 dark:text-gray-100' }}">
-                        {{ $summary['month_name'] }}
-                    </div>
-                    <div class="text-[10px] mt-0.5 {{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">
-                        {{ number_format($summary['item_count']) }} Item Terjual
-                    </div>
+        <div class="relative group/scroll mt-2">
+            <!-- Left Gradient Fade -->
+            <div x-show="showLeftBtn" 
+                 x-transition:enter="transition-opacity duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute left-0 top-0 bottom-0 w-12 bg-gradient-to-r from-white dark:from-gray-800 to-transparent pointer-events-none z-10 rounded-l-xl">
+            </div>
 
-                    <div class="mt-4 space-y-1.5 text-xs">
-                        <div class="flex justify-between">
-                            <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Total HPP:</span>
-                            <span class="font-semibold">Rp {{ number_format($summary['total_harga_beli'], 0, ',', '.') }}</span>
+            <!-- Right Gradient Fade -->
+            <div x-show="showRightBtn" 
+                 x-transition:enter="transition-opacity duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition-opacity duration-300"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none z-10 rounded-r-xl">
+            </div>
+
+            <!-- Left Scroll Button -->
+            <button x-show="showLeftBtn"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    @click="scroll('left')"
+                    class="absolute -left-4 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 rounded-full w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 focus:outline-none"
+                    title="Geser Kiri">
+                <i class='bx bx-chevron-left text-2xl'></i>
+            </button>
+
+            <!-- Right Scroll Button -->
+            <button x-show="showRightBtn"
+                    x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    @click="scroll('right')"
+                    class="absolute -right-4 top-1/2 -translate-y-1/2 z-20 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md hover:shadow-lg border border-gray-200 dark:border-gray-700 rounded-full w-9 h-9 flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-200 focus:outline-none"
+                    title="Geser Kanan">
+                <i class='bx bx-chevron-right text-2xl'></i>
+            </button>
+
+            {{-- Horizontal Scrollable Cards List --}}
+            <div x-ref="monthCards"
+                 @scroll.debounce.50ms="checkScroll()"
+                 class="flex gap-4 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory">
+                @forelse($summaries as $summary)
+                    <button wire:click="selectMonth('{{ $summary['month_key'] }}')"
+                            class="flex-none w-60 snap-start p-4 rounded-xl border text-left transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 hover:scale-[1.01]
+                                   {{ $selectedMonth === $summary['month_key'] 
+                                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' 
+                                      : 'bg-gray-50 dark:bg-gray-700/30 border-gray-200 dark:border-gray-600 hover:border-indigo-400 text-gray-800 dark:text-gray-100' }}">
+                        <div class="font-bold text-sm truncate {{ $selectedMonth === $summary['month_key'] ? 'text-white' : 'text-gray-900 dark:text-gray-100' }}">
+                            {{ $summary['month_name'] }}
                         </div>
-                        <div class="flex justify-between">
-                            <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Total Omzet:</span>
-                            <span class="font-bold">Rp {{ number_format($summary['total_harga_jual'], 0, ',', '.') }}</span>
+                        <div class="text-[10px] mt-0.5 {{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">
+                            {{ number_format($summary['item_count']) }} Item Terjual
                         </div>
-                        <div class="flex justify-between pt-1.5 border-t {{ $selectedMonth === $summary['month_key'] ? 'border-indigo-500/50' : 'border-gray-200 dark:border-gray-600' }}">
-                            <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Laba Bersih:</span>
-                            <span class="font-black {{ $selectedMonth === $summary['month_key'] ? 'text-emerald-300' : 'text-emerald-600 dark:text-emerald-400' }}">
-                                Rp {{ number_format($summary['total_keuntungan'], 0, ',', '.') }}
-                            </span>
+
+                        <div class="mt-4 space-y-1.5 text-xs">
+                            <div class="flex justify-between">
+                                <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Total HPP:</span>
+                                <span class="font-semibold">Rp {{ number_format($summary['total_harga_beli'], 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Total Omzet:</span>
+                                <span class="font-bold">Rp {{ number_format($summary['total_harga_jual'], 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between pt-1.5 border-t {{ $selectedMonth === $summary['month_key'] ? 'border-indigo-500/50' : 'border-gray-200 dark:border-gray-600' }}">
+                                <span class="{{ $selectedMonth === $summary['month_key'] ? 'text-indigo-200' : 'text-gray-400' }}">Laba Bersih:</span>
+                                <span class="font-black {{ $selectedMonth === $summary['month_key'] ? 'text-emerald-300' : 'text-emerald-600 dark:text-emerald-400' }}">
+                                    Rp {{ number_format($summary['total_keuntungan'], 0, ',', '.') }}
+                                </span>
+                            </div>
                         </div>
+                    </button>
+                @empty
+                    <div class="w-full py-8 text-center text-gray-400 dark:text-gray-500 text-xs font-semibold">
+                        Tidak ada ringkasan bulanan tersedia. Silakan unggah file CSV terlebih dahulu.
                     </div>
-                </button>
-            @empty
-                <div class="w-full py-8 text-center text-gray-400 dark:text-gray-500 text-xs font-semibold">
-                    Tidak ada ringkasan bulanan tersedia. Silakan unggah file CSV terlebih dahulu.
-                </div>
-            @endforelse
+                @endforelse
+            </div>
         </div>
     </div>
 
