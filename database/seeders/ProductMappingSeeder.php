@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\AuditRetailProductMapping;
+use App\Models\RatManualEntry;
 
 class ProductMappingSeeder extends Seeder
 {
@@ -38,7 +39,6 @@ class ProductMappingSeeder extends Seeder
             $hj = isset($data[2]) ? (float) str_replace(['.', ','], ['', '.'], $data[2]) : 0;
 
             $total++;
-            // Remove numeric suffix for matching base product name in DB
             $baseName = preg_replace('/\s+\d+$/', '', $finalName);
             $normRaw = $this->normalizeName($baseName);
 
@@ -99,6 +99,19 @@ class ProductMappingSeeder extends Seeder
         echo "Fuzzy Matched: $fuzzyCount" . PHP_EOL;
         echo "Unmapped: $unmappedCount" . PHP_EOL;
         echo "AuditRetailProductMapping table now has " . AuditRetailProductMapping::count() . " records." . PHP_EOL;
+
+        // Sync RatManualEntry for RAT Detail report
+        $summaryFile = base_path('docs/data/databulanan/rat_laba_summary.json');
+        if (file_exists($summaryFile)) {
+            $labaData = json_decode(file_get_contents($summaryFile), true);
+            foreach ($labaData as $year => $amount) {
+                RatManualEntry::updateOrCreate(
+                    ['table_key' => 'laba_rugi', 'row_key' => 'pendapatan_margin', 'field_key' => 'nilai', 'year' => (int)$year],
+                    ['amount' => $amount, 'created_by' => 1, 'updated_by' => 1]
+                );
+                echo "Updated RatManualEntry for year $year: Rp " . number_format($amount, 0, ',', '.') . PHP_EOL;
+            }
+        }
     }
 
     private function normalizeName(string $name): string
