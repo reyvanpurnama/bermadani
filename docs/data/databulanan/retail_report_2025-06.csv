@@ -1,5 +1,5 @@
 Tanggal,"Nama Barang",Quantity,Satuan,"Harga Satuan","Total Harga","Harga Jual",Laba,Revenue,Margin,"Jenis Produk"
-27/06/2025,Roti,10,Pcs,4000,40000,5000,10000,50000,25%,Harian
+27/06/2025,Roti,10,Pcs,4000,40000,4500,10000,50000,25%,Harian
 27/06/2025,"Pisang Cokelat",10,Pcs,4000,40000,5000,10000,50000,25%,Harian
 30/06/2025,"Baso Tahu",10,Pcs,8000,80000,10000,10000,90000,"12,5%",Harian
 30/06/2025,Makaroni,100,Pcs,1600,160000,2500,40000,200000,25%,Ritel
