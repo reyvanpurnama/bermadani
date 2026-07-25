@@ -13,6 +13,7 @@ use Livewire\Component;
 class RatDetailReport extends Component
 {
     public $selectedYear;
+    public $compareYear;
     public $availableYears = [];
     public $tables = [];
     public $activeTab = 'neraca';
@@ -21,11 +22,18 @@ class RatDetailReport extends Component
     public function mount()
     {
         $this->selectedYear = (int) now()->format('Y');
+        $this->compareYear = (int) $this->selectedYear - 1;
         $this->availableYears = $this->buildAvailableYears();
         $this->loadReport();
     }
 
     public function updatedSelectedYear()
+    {
+        $this->compareYear = (int) $this->selectedYear - 1;
+        $this->loadReport();
+    }
+
+    public function updatedCompareYear()
     {
         $this->loadReport();
     }
@@ -158,7 +166,7 @@ class RatDetailReport extends Component
 
     private function loadReport(): void
     {
-        $this->tables = app(RatDetailService::class)->build((int) $this->selectedYear);
+        $this->tables = app(RatDetailService::class)->build((int) $this->selectedYear, (int) $this->compareYear);
         $this->manualInputs = [];
 
         foreach ($this->tables as $tableKey => $table) {

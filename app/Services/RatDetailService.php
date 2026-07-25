@@ -8,13 +8,14 @@ use Illuminate\Support\Facades\DB;
 
 class RatDetailService
 {
-    public function build(int $year): array
+    public function build(int $year, ?int $compareYear = null): array
     {
         $tables = config('rat_tables', []);
         $report = [];
+        $compareYear = $compareYear ?? ($year - 1);
 
         foreach ($tables as $tableKey => $tableDef) {
-            $columns = $this->resolveColumns($tableDef['columns'] ?? [], $year);
+            $columns = $this->resolveColumns($tableDef['columns'] ?? [], $year, $compareYear);
             $columnYears = array_values(array_unique(array_filter(array_map(fn ($col) => $col['year'], $columns))));
             $fieldKeys = array_values(array_unique(array_map(fn ($col) => $col['field_key'], $columns)));
 
@@ -117,14 +118,13 @@ class RatDetailService
         return $report;
     }
 
-    private function resolveColumns(array $columns, int $year): array
+    private function resolveColumns(array $columns, int $year, int $compareYear): array
     {
         $resolved = [];
         foreach ($columns as $column) {
-            $offset = (int) ($column['year_offset'] ?? 0);
-            $columnYear = $year + $offset;
+            $columnYear = ($column['key'] === 'previous') ? $compareYear : $year;
             $label = $column['label'] ?? '';
-            $label = str_replace(['{year}', '{prev}'], [$year, $year - 1], $label);
+            $label = str_replace(['{year}', '{prev}'], [$year, $compareYear], $label);
 
             $resolved[] = [
                 'key' => $column['key'],

@@ -4,14 +4,24 @@
             <h1 class="text-xl font-bold text-gray-900 dark:text-gray-100">Laporan RAT - Detail Akuntansi</h1>
             <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Tabel lengkap sesuai format RAT dengan dukungan input manual per tahun.</p>
         </div>
-        <div class="flex items-center gap-2">
-            <label for="ratYear" class="text-sm text-gray-600 dark:text-gray-400 font-medium">Tahun:</label>
-            <select id="ratYear" wire:model.live="selectedYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block p-2">
-                @foreach($availableYears as $year)
-                    <option value="{{ $year }}">{{ $year }}</option>
-                @endforeach
-            </select>
-            <button wire:click="notifyExport" class="inline-flex items-center gap-2 px-3 py-2 bg-slate-600 hover:bg-slate-700 text-white text-sm font-medium rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-1.5">
+                <label for="ratYear" class="text-xs text-gray-600 dark:text-gray-400 font-semibold uppercase tracking-wider">Tahun Utama:</label>
+                <select id="ratYear" wire:model.live="selectedYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm font-semibold rounded focus:ring-blue-500 focus:border-blue-500 block px-3 py-1.5">
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <label for="compareYear" class="text-xs text-gray-600 dark:text-gray-400 font-semibold uppercase tracking-wider">Pembanding:</label>
+                <select id="compareYear" wire:model.live="compareYear" class="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 text-sm font-semibold rounded focus:ring-blue-500 focus:border-blue-500 block px-3 py-1.5">
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}">{{ $year }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <button wire:click="notifyExport" class="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-600 hover:bg-slate-700 text-white text-xs font-semibold rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
                 <i class='bx bx-export'></i>
                 Export
             </button>
