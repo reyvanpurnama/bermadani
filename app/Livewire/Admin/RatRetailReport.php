@@ -253,6 +253,10 @@ class RatRetailReport extends Component
                 fclose($write);
             }
         }
+
+        if (file_exists($masterPath)) {
+            rename($masterPath, $masterPath . '.imported');
+        }
     }
 
     public function getDetailsProperty()

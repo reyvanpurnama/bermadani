@@ -207,6 +207,9 @@ class RetailProductAuditTool extends Component
                     fclose($write);
                 }
             }
+            if (file_exists($masterFile)) {
+                rename($masterFile, $masterFile . '.imported');
+            }
             $files = glob("$dirPath/retail_report_*.csv");
         }
 
