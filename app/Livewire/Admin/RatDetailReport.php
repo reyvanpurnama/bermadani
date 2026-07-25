@@ -189,7 +189,7 @@ class RatDetailReport extends Component
             $startCandidates[] = (int) $simpananStart;
         }
 
-        $loanStart = Loan::min(DB::raw('YEAR(created_at)'));
+        $loanStart = Loan::min(DB::raw('YEAR(startDate)'));
         if ($loanStart) {
             $startCandidates[] = (int) $loanStart;
         }

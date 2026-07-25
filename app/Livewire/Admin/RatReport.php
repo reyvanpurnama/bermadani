@@ -20,7 +20,7 @@ class RatReport extends Component
         
         // Dapatkan tahun paling awal ada transaksi, fallback ke tahun sekarang jika kosong
         $startYearSimpanan = SimpananTransaction::min(DB::raw('YEAR(created_at)'));
-        $startYearLoan = Loan::min(DB::raw('YEAR(created_at)'));
+        $startYearLoan = Loan::min(DB::raw('YEAR(startDate)'));
         $startYearBank = \App\Models\BankTransaction::min(DB::raw('YEAR(transaction_date)'));
         
         $startYear = max(2020, min(
@@ -88,11 +88,11 @@ class RatReport extends Component
         ->keyBy('month');
 
         $monthlyPinjaman = Loan::select(
-            DB::raw('MONTH(created_at) as month'),
+            DB::raw('MONTH(startDate) as month'),
             DB::raw('SUM(amount) as total_pinjaman')
         )
         ->whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
-        ->whereYear('created_at', $currentYear)
+        ->whereYear('startDate', $currentYear)
         ->groupBy('month')
         ->get()
         ->keyBy('month');
@@ -183,11 +183,11 @@ class RatReport extends Component
         ->keyBy('month');
 
         $monthlyPinjaman = Loan::select(
-            DB::raw('MONTH(created_at) as month'),
+            DB::raw('MONTH(startDate) as month'),
             DB::raw('SUM(amount) as total_pinjaman')
         )
         ->whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
-        ->whereYear('created_at', $currentYear)
+        ->whereYear('startDate', $currentYear)
         ->groupBy('month')
         ->get()
         ->keyBy('month');
