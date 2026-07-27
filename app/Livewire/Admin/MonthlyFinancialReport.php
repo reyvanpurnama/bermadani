@@ -66,6 +66,20 @@ class MonthlyFinancialReport extends Component
         $this->showPreview = true;
     }
 
+    public function recalculateLiveData()
+    {
+        FinancialReportSnapshot::where('month', (int) $this->selectedMonth)
+            ->where('year', (int) $this->selectedYear)
+            ->delete();
+
+        $this->reportData = $this->collectReportData();
+        $this->isSnapshot = false;
+        $this->checkIfExecuted();
+        $this->showPreview = true;
+
+        session()->flash('success', 'Laporan berhasil dihitung ulang secara LIVE berdasarkan database terbaru.');
+    }
+
     private function checkIfExecuted()
     {
         $billingMonth = $this->selectedYear . '-' . str_pad($this->selectedMonth, 2, '0', STR_PAD_LEFT);

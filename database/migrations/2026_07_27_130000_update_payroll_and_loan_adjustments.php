@@ -75,6 +75,9 @@ return new class extends Migration
                     'simwa_amount' => 30000.00,
                 ]);
         }
+
+        // 7. Hapus arsip snapshot laporan bulan 7 (Juli) jika ada, agar sistem secara otomatis melakukan perhitungan ulang (LIVE)
+        \App\Models\FinancialReportSnapshot::whereIn('month', [7, '07'])->delete();
     }
 
     /**

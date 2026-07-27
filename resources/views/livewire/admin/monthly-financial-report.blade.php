@@ -70,6 +70,14 @@
                     <i class='bx bx-refresh text-xl group-hover:rotate-180 transition-transform duration-700'></i>
                     <span>Tampilkan Data</span>
                 </button>
+
+                <button wire:click="recalculateLiveData"
+                    wire:confirm="Yakin ingin menghapus arsip snapshot dan menghitung ulang laporan secara LIVE dari database terbaru?"
+                    class="w-full sm:w-auto bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-bold py-2.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs whitespace-nowrap"
+                    title="Hapus cache snapshot dan hitung ulang data live dari database">
+                    <i class='bx bx-sync text-lg'></i>
+                    <span>Hitung Ulang Live</span>
+                </button>
             </div>
 
             {{-- Right: Export Actions (Only if preview shown) --}}
