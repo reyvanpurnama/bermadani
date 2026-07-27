@@ -43,13 +43,15 @@ return new class extends Migration
                 ]);
         }
 
-        // 4. Asep Indra Sugiri: Rincian angsuran rutin sebesar Rp 741.700
+        // 4. Asep Indra Sugiri: Potongan pinjaman BMT Itqan sebesar Rp 1.205.850 (sesuai konfirmasi manajemen)
         $asepMember = Member::where('name', 'like', '%Asep Indra%')->first();
         if ($asepMember) {
             Loan::where('member_id', $asepMember->id)
                 ->where('status', 'ACTIVE')
                 ->update([
-                    'monthlyPayment' => 741700.00,
+                    'monthlyPayment' => 1205850.00,
+                    'loanSource' => 'BMT_ITQAN',
+                    'simwa_amount' => 30000.00,
                 ]);
         }
 
