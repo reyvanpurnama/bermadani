@@ -151,13 +151,6 @@ class RatRetailReport extends Component
         // Check for retail_report_*.csv files
         $files = glob("$dirPath/retail_report_*.csv");
 
-        // Fallback: split the old master file if it exists and no monthly files exist yet
-        $masterFile = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (empty($files) && file_exists($masterFile)) {
-            $this->splitMasterFile($masterFile, $dirPath);
-            $files = glob("$dirPath/retail_report_*.csv");
-        }
-
         $years = [];
         $summaries = [];
 

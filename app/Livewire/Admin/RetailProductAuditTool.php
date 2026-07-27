@@ -174,45 +174,6 @@ class RetailProductAuditTool extends Component
 
         $files = glob("$dirPath/retail_report_*.csv");
 
-        // Fallback to master file if no monthly files exist
-        $masterFile = base_path('docs/Laporan Keuangan Koperasi UMB - Sheet6.csv');
-        if (empty($files) && file_exists($masterFile)) {
-            // Auto-split
-            $header = null;
-            $grouped = [];
-            if (($handle = fopen($masterFile, 'r')) !== false) {
-                $header = fgetcsv($handle, 1000, ',');
-                while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                    if (count($data) < 8) continue;
-                    $tanggal = trim($data[0]);
-                    if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
-                    $dateParts = explode('/', $tanggal);
-                    if (count($dateParts) !== 3) continue;
-
-                    $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
-                    $year = trim($dateParts[2]);
-                    $monthKey = "$year-$month";
-
-                    $grouped[$monthKey][] = $data;
-                }
-                fclose($handle);
-            }
-            foreach ($grouped as $monthKey => $rows) {
-                $target = "$dirPath/retail_report_$monthKey.csv";
-                if (($write = fopen($target, 'w')) !== false) {
-                    fputcsv($write, $header);
-                    foreach ($rows as $row) {
-                        fputcsv($write, $row);
-                    }
-                    fclose($write);
-                }
-            }
-            if (file_exists($masterFile)) {
-                rename($masterFile, $masterFile . '.imported');
-            }
-            $files = glob("$dirPath/retail_report_*.csv");
-        }
-
         return $files;
     }
 
