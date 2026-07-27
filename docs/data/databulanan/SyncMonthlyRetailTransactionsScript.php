@@ -60,7 +60,11 @@ foreach ($monthlyFiles as $file) {
         $header = fgetcsv($h);
         while (($d = fgetcsv($h)) !== false) {
             if (count($d) < 7) continue;
-            $nama = trim($d[1]);
+            $tanggal = trim($d[0] ?? '');
+            $nama = trim($d[1] ?? '');
+            if (empty($tanggal) || empty($nama)) continue;
+            if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+            if (str_contains(strtolower($nama), 'total') || str_contains(strtolower($nama), 'jumlah')) continue;
             $qty = (int) trim($d[2]);
             $hb = parseNumberClean($d[5] ?? $d[4]);
 

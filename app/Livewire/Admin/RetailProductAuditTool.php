@@ -74,8 +74,11 @@ class RetailProductAuditTool extends Component
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 if (count($data) < 5) continue;
 
-                $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal' || strtolower($tanggal) === 'total') continue;
+                $tanggal = trim($data[0] ?? '');
+                $namaBarangCheck = trim($data[1] ?? '');
+                if (empty($tanggal) || empty($namaBarangCheck)) continue;
+                if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+                if (str_contains(strtolower($namaBarangCheck), 'total') || str_contains(strtolower($namaBarangCheck), 'jumlah')) continue;
 
                 $dateParts = preg_split('/[\/\-\.]/', $tanggal);
                 if (count($dateParts) !== 3) continue;
@@ -277,8 +280,11 @@ class RetailProductAuditTool extends Component
                     fgetcsv($handle, 1000, ',');
                     while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                         if (count($data) < 7) continue;
-                        $rawName = trim($data[1]);
-                        if (empty($rawName) || strtolower($rawName) === 'nama barang') continue;
+                        $rawName = trim($data[1] ?? '');
+                        $tanggal = trim($data[0] ?? '');
+                        if (empty($rawName) || empty($tanggal)) continue;
+                        if (str_contains(strtolower($rawName), 'nama barang') || str_contains(strtolower($rawName), 'total') || str_contains(strtolower($rawName), 'jumlah')) continue;
+                        if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
 
                         $csvProducts[] = $rawName;
 
@@ -402,11 +408,12 @@ class RetailProductAuditTool extends Component
                 if (($handle = fopen($file, 'r')) !== false) {
                     fgetcsv($handle, 1000, ',');
                     while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                        if (count($data) < 8) continue;
-                        $tanggal = trim($data[0]);
-                        if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
-
-                        $rawName = trim($data[1]);
+                        if (count($data) < 7) continue;
+                        $tanggal = trim($data[0] ?? '');
+                        $rawName = trim($data[1] ?? '');
+                        if (empty($tanggal) || empty($rawName)) continue;
+                        if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+                        if (str_contains(strtolower($rawName), 'total') || str_contains(strtolower($rawName), 'jumlah')) continue;
                         $quantity = (int) trim($data[2]);
                         $satuan = trim($data[3]);
                         $hargaBeliSatuan = $this->parseNumber($data[4]);

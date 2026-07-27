@@ -60,8 +60,11 @@ class RatRetailReport extends Component
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 if (count($data) < 5) continue;
 
-                $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal' || strtolower($tanggal) === 'total') continue;
+                $tanggal = trim($data[0] ?? '');
+                $namaBarangCheck = trim($data[1] ?? '');
+                if (empty($tanggal) || empty($namaBarangCheck)) continue;
+                if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+                if (str_contains(strtolower($namaBarangCheck), 'total') || str_contains(strtolower($namaBarangCheck), 'jumlah')) continue;
 
                 $dateParts = preg_split('/[\/\-\.]/', $tanggal);
                 if (count($dateParts) !== 3) continue;
@@ -214,8 +217,11 @@ class RatRetailReport extends Component
                 while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                     if (count($data) < 7) continue;
 
-                    $tanggal = trim($data[0]);
-                    if (empty($tanggal) || strtolower($tanggal) === 'tanggal' || strtolower($tanggal) === 'total') continue;
+                    $tanggal = trim($data[0] ?? '');
+                    $namaBarangCheck = trim($data[1] ?? '');
+                    if (empty($tanggal) || empty($namaBarangCheck)) continue;
+                    if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+                    if (str_contains(strtolower($namaBarangCheck), 'total') || str_contains(strtolower($namaBarangCheck), 'jumlah')) continue;
 
                     $dateParts = preg_split('/[\/\-\.]/', $tanggal);
                     if (count($dateParts) !== 3) continue;
@@ -337,10 +343,11 @@ class RatRetailReport extends Component
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 if (count($data) < 7) continue;
 
-                $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal' || strtolower($tanggal) === 'total') continue;
-
-                $namaBarang = trim($data[1]);
+                $tanggal = trim($data[0] ?? '');
+                $namaBarang = trim($data[1] ?? '');
+                if (empty($tanggal) || empty($namaBarang)) continue;
+                if (str_contains(strtolower($tanggal), 'tanggal') || str_contains(strtolower($tanggal), 'total')) continue;
+                if (str_contains(strtolower($namaBarang), 'total') || str_contains(strtolower($namaBarang), 'jumlah')) continue;
                 $quantity = (int) trim($data[2]);
                 $satuan = trim($data[3]);
                 $hargaBeliSatuan = $this->parseNumber($data[4]);
