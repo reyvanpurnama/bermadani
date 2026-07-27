@@ -45,10 +45,20 @@ class RatRetailReport extends Component
         $groupedRows = [];
 
         if (($handle = fopen($filePath, 'r')) !== false) {
-            $header = fgetcsv($handle, 1000, ',');
+            $rawHeader = fgetcsv($handle, 1000, ',');
             
+            $is8ColFormat = false;
+            if ($rawHeader && count($rawHeader) >= 5) {
+                $h0 = strtolower(trim($rawHeader[0] ?? ''));
+                $h3 = strtolower(trim($rawHeader[3] ?? ''));
+                $h4 = strtolower(trim($rawHeader[4] ?? ''));
+                if ($h0 === 'tanggal' && str_contains($h3, 'harga beli') && str_contains($h4, 'harga jual')) {
+                    $is8ColFormat = true;
+                }
+            }
+
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
-                if (count($data) < 8) continue;
+                if (count($data) < 5) continue;
 
                 $tanggal = trim($data[0]);
                 if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
@@ -60,7 +70,20 @@ class RatRetailReport extends Component
                 $year = trim($dateParts[2]);
                 $monthKey = "$year-$month";
 
-                $groupedRows[$monthKey][] = $data;
+                if ($is8ColFormat) {
+                    $namaBarang = trim($data[1]);
+                    $qty = (int) trim($data[2]);
+                    $hbSatuan = $this->parseNumber($data[3]);
+                    $hjSatuan = $this->parseNumber($data[4]);
+                    $totalHb = $qty * $hbSatuan;
+                    $totalHj = $qty * $hjSatuan;
+                    $totalKeuntungan = $totalHj - $totalHb;
+                    $normalizedRow = [$tanggal, $namaBarang, $qty, 'Pcs', $hbSatuan, $totalHb, $hjSatuan, $totalKeuntungan];
+                } else {
+                    $normalizedRow = $data;
+                }
+
+                $groupedRows[$monthKey][] = $normalizedRow;
             }
             fclose($handle);
         }
@@ -73,12 +96,13 @@ class RatRetailReport extends Component
             return;
         }
 
+        $standardHeader = ['Tanggal', 'Nama Barang', 'Qty', 'Satuan', 'Harga Beli Satuan', 'Total Harga Beli', 'Harga Jual Satuan', 'Total Keuntungan'];
         $importedMonths = [];
         foreach ($groupedRows as $monthKey => $rows) {
             $targetFile = "$dirPath/retail_report_$monthKey.csv";
             
             if (($writeHandle = fopen($targetFile, 'w')) !== false) {
-                fputcsv($writeHandle, $header);
+                fputcsv($writeHandle, $standardHeader);
                 foreach ($rows as $row) {
                     fputcsv($writeHandle, $row);
                 }
