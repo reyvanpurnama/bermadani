@@ -363,6 +363,19 @@ class MonthlyFinancialReport extends Component
 
             $total = $angsuranBermadani + $angsuranBmtItqan1 + $simwaBmtItqan1 + $angsuranBmtItqan2 + $simwaBmtItqan2 + $pokokAmount + $simwaAmount + $sukarelaAmount;
 
+            // Khusus Bu Widhi: Bulan Juli tidak ada potongan gaji
+            if (str_pad((string) $this->selectedMonth, 2, '0', STR_PAD_LEFT) === '07' && str_contains(strtolower($member->name), 'widhi')) {
+                $angsuranBermadani = 0;
+                $angsuranBmtItqan1 = 0;
+                $simwaBmtItqan1 = 0;
+                $angsuranBmtItqan2 = 0;
+                $simwaBmtItqan2 = 0;
+                $simwaAmount = 0;
+                $sukarelaAmount = 0;
+                $pokokAmount = 0;
+                $total = 0;
+            }
+
             $reportItems[] = [
                 'member_id' => $member->id,
                 'nama' => $member->name,
