@@ -75,13 +75,18 @@ class RetailProductAuditTool extends Component
                 if (count($data) < 5) continue;
 
                 $tanggal = trim($data[0]);
-                if (empty($tanggal) || strtolower($tanggal) === 'tanggal') continue;
+                if (empty($tanggal) || strtolower($tanggal) === 'tanggal' || strtolower($tanggal) === 'total') continue;
 
-                $dateParts = explode('/', $tanggal);
+                $dateParts = preg_split('/[\/\-\.]/', $tanggal);
                 if (count($dateParts) !== 3) continue;
 
-                $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
-                $year = trim($dateParts[2]);
+                if (strlen(trim($dateParts[0])) === 4) {
+                    $year = trim($dateParts[0]);
+                    $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                } else {
+                    $month = str_pad(trim($dateParts[1]), 2, '0', STR_PAD_LEFT);
+                    $year = trim($dateParts[2]);
+                }
                 $monthKey = "$year-$month";
 
                 if ($is8ColFormat) {
@@ -179,13 +184,32 @@ class RetailProductAuditTool extends Component
 
     private function parseNumber($val)
     {
-        $val = trim($val);
+        $val = trim((string)$val);
         if ($val === '' || $val === '#N/A' || $val === '-') {
             return 0.0;
         }
-        $val = str_replace(',', '.', $val);
-        $val = preg_replace('/[^\d\.\-]/', '', $val);
-        return (float) $val;
+
+        if (str_contains($val, '.') && str_contains($val, ',')) {
+            $val = str_replace('.', '', $val);
+            $val = str_replace(',', '.', $val);
+            return (float) preg_replace('/[^\d\.\-]/', '', $val);
+        }
+
+        if (str_contains($val, ',')) {
+            $val = str_replace(',', '.', $val);
+            return (float) preg_replace('/[^\d\.\-]/', '', $val);
+        }
+
+        if (str_contains($val, '.')) {
+            $parts = explode('.', $val);
+            if (count($parts) > 2) {
+                $val = str_replace('.', '', $val);
+            } elseif (strlen($parts[1]) === 3 && is_numeric($parts[0]) && (int)$parts[0] > 0 && (int)$parts[0] < 10000) {
+                $val = str_replace('.', '', $val);
+            }
+        }
+
+        return (float) preg_replace('/[^\d\.\-]/', '', $val);
     }
 
     private function getCsvFiles()
