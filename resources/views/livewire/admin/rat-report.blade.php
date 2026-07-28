@@ -115,26 +115,54 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                     <tr>
                         <th class="px-4 py-3 font-semibold">Bulan</th>
-                        <th class="px-4 py-3 font-semibold text-right">Setoran Simpanan</th>
+                        <th class="px-4 py-3 font-semibold text-right">Simpanan Pokok</th>
+                        <th class="px-4 py-3 font-semibold text-right">Simpanan Wajib</th>
+                        <th class="px-4 py-3 font-semibold text-right">Simpanan Sukarela</th>
+                        <th class="px-4 py-3 font-semibold text-right">Total Setoran</th>
                         <th class="px-4 py-3 font-semibold text-right">Penarikan Simpanan</th>
                         <th class="px-4 py-3 font-semibold text-right">Penyaluran Pinjaman</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @php 
+                        $totalPokok = 0;
+                        $totalWajib = 0;
+                        $totalSukarela = 0;
                         $totalSetoran = 0; 
                         $totalPenarikan = 0; 
                         $totalPinjaman = 0; 
                     @endphp
                     @foreach ($monthlyData as $data)
                     @php 
+                        $totalPokok += $data['pokok'];
+                        $totalWajib += $data['wajib'];
+                        $totalSukarela += $data['sukarela'];
                         $totalSetoran += $data['setoran']; 
                         $totalPenarikan += $data['penarikan']; 
                         $totalPinjaman += $data['pinjaman']; 
                     @endphp
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">{{ $data['month_name'] }}</td>
-                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['setoran'], 0, ',', '.') }}</td>
+
+                    @if ($currentYear == 2025 && $data['month'] == 5)
+                    <tr class="bg-indigo-50/80 dark:bg-indigo-950/50 border-y-2 border-indigo-500/40">
+                        <td colspan="7" class="px-4 py-2 text-xs font-bold text-indigo-700 dark:text-indigo-300 text-center uppercase tracking-wider">
+                            ── Periode Kepengurusan Baru (Mei - Desember 2025) ──
+                        </td>
+                    </tr>
+                    @endif
+
+                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 {{ $data['is_kepengurusan_baru'] ? 'bg-indigo-50/20 dark:bg-indigo-900/10' : '' }}">
+                        <td class="px-4 py-3 font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                            <span>{{ $data['month_name'] }}</span>
+                            @if ($data['is_kepengurusan_baru'])
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900/60 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-700">
+                                    Kepengurusan Baru
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['pokok'], 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['wajib'], 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['sukarela'], 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right font-medium text-gray-800 dark:text-gray-200">Rp {{ number_format($data['setoran'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['penarikan'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['pinjaman'], 0, ',', '.') }}</td>
                     </tr>
@@ -143,6 +171,9 @@
                 <tfoot class="bg-gray-50 dark:bg-gray-700/50 font-semibold text-gray-900 dark:text-white border-t-2 border-gray-300 dark:border-gray-600">
                     <tr>
                         <td class="px-4 py-3">TOTAL</td>
+                        <td class="px-4 py-3 text-right">Rp {{ number_format($totalPokok, 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right">Rp {{ number_format($totalWajib, 0, ',', '.') }}</td>
+                        <td class="px-4 py-3 text-right">Rp {{ number_format($totalSukarela, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalSetoran, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalPenarikan, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalPinjaman, 0, ',', '.') }}</td>
@@ -170,7 +201,7 @@ Total Pendanaan bersumber dari modal simpanan tercatat sebesar Rp {{ number_form
 - Simpanan Wajib: Rp {{ number_format($simpanan['wajib'], 0, ',', '.') }}
 - Simpanan Sukarela: Rp {{ number_format($simpanan['sukarela'], 0, ',', '.') }}
 
-Sepanjang tahun berjalan ({{ $currentYear }}), total dana simpanan yang masuk sebesar Rp {{ number_format($totalSetoran, 0, ',', '.') }} dan total penarikan sebesar Rp {{ number_format($totalPenarikan, 0, ',', '.') }}.
+Sepanjang tahun berjalan ({{ $currentYear }}), total dana simpanan yang masuk sebesar Rp {{ number_format($totalSetoran, 0, ',', '.') }} (Pokok: Rp {{ number_format($totalPokok, 0, ',', '.') }}, Wajib: Rp {{ number_format($totalWajib, 0, ',', '.') }}, Sukarela: Rp {{ number_format($totalSukarela, 0, ',', '.') }}) dan total penarikan sebesar Rp {{ number_format($totalPenarikan, 0, ',', '.') }}.
 
 --- DATA PINJAMAN & KOLEKTIBILITAS ---
 Koperasi telah menyalurkan pinjaman dengan akumulasi sebesar Rp {{ number_format($pinjaman['tersalurkan'], 0, ',', '.') }} dan pada tahun berjalan tersalurkan sebesar Rp {{ number_format($totalPinjaman, 0, ',', '.') }}.

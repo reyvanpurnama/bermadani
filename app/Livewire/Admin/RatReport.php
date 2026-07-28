@@ -78,6 +78,9 @@ class RatReport extends Component
         
         $monthlySimpanan = SimpananTransaction::select(
             DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_pokok'),
+            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_wajib'),
+            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_sukarela'),
             DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
             DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
         )
@@ -104,38 +107,60 @@ class RatReport extends Component
             fputcsv($handle, []);
             fputcsv($handle, [
                 'Bulan',
-                'Setoran Simpanan',
+                'Simpanan Pokok',
+                'Simpanan Wajib',
+                'Simpanan Sukarela',
+                'Total Setoran Simpanan',
                 'Penarikan Simpanan',
-                'Penyaluran Pinjaman'
+                'Penyaluran Pinjaman',
+                'Keterangan Kepengurusan'
             ]);
             
             $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+            $totalPokok = 0;
+            $totalWajib = 0;
+            $totalSukarela = 0;
             $totalSetor = 0;
             $totalTarik = 0;
             $totalPinjam = 0;
 
             for ($i = 1; $i <= 12; $i++) {
+                $pokok = $monthlySimpanan->get($i)->total_pokok ?? 0;
+                $wajib = $monthlySimpanan->get($i)->total_wajib ?? 0;
+                $sukarela = $monthlySimpanan->get($i)->total_sukarela ?? 0;
                 $setor = $monthlySimpanan->get($i)->total_setor ?? 0;
                 $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
                 $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
+                $ket = ($currentYear == 2025 && $i >= 5) ? 'Kepengurusan Baru' : '-';
 
+                $totalPokok += $pokok;
+                $totalWajib += $wajib;
+                $totalSukarela += $sukarela;
                 $totalSetor += $setor;
                 $totalTarik += $tarik;
                 $totalPinjam += $pinjam;
 
                 fputcsv($handle, [
                     $months[$i - 1],
+                    $pokok,
+                    $wajib,
+                    $sukarela,
                     $setor,
                     $tarik,
-                    $pinjam
+                    $pinjam,
+                    $ket
                 ]);
             }
             
             fputcsv($handle, [
                 'TOTAL',
+                $totalPokok,
+                $totalWajib,
+                $totalSukarela,
                 $totalSetor,
                 $totalTarik,
-                $totalPinjam
+                $totalPinjam,
+                ''
             ]);
             
             fclose($handle);
@@ -144,10 +169,10 @@ class RatReport extends Component
 
     public function render()
     {
-        // 1. Evaluasi Simpanan
-        $simpananPokok = SimpananTransaction::where('type', 'POKOK')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
-        $simpananWajib = SimpananTransaction::where('type', 'WAJIB')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
-        $simpananSukarela = SimpananTransaction::where('type', 'SUKARELA')->where('status', 'APPROVED')->sum(DB::raw('CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE -amount END'));
+        // 1. Evaluasi Simpanan (Anggota Aktif)
+        $simpananPokok = Member::where('status', 'ACTIVE')->sum('simpananPokok');
+        $simpananWajib = Member::where('status', 'ACTIVE')->sum('simpananWajib');
+        $simpananSukarela = Member::where('status', 'ACTIVE')->sum('simpananSukarela');
         $totalSimpanan = $simpananPokok + $simpananWajib + $simpananSukarela;
 
         // 2. Evaluasi Pinjaman
@@ -173,6 +198,9 @@ class RatReport extends Component
         
         $monthlySimpanan = SimpananTransaction::select(
             DB::raw('MONTH(created_at) as month'),
+            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_pokok'),
+            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_wajib'),
+            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_sukarela'),
             DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
             DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
         )
@@ -196,10 +224,15 @@ class RatReport extends Component
         $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         for ($i = 1; $i <= 12; $i++) {
             $monthlyData[] = [
+                'month' => $i,
                 'month_name' => $months[$i - 1],
+                'pokok' => $monthlySimpanan->get($i)->total_pokok ?? 0,
+                'wajib' => $monthlySimpanan->get($i)->total_wajib ?? 0,
+                'sukarela' => $monthlySimpanan->get($i)->total_sukarela ?? 0,
                 'setoran' => $monthlySimpanan->get($i)->total_setor ?? 0,
                 'penarikan' => $monthlySimpanan->get($i)->total_tarik ?? 0,
                 'pinjaman' => $monthlyPinjaman->get($i)->total_pinjaman ?? 0,
+                'is_kepengurusan_baru' => ($currentYear == 2025 && $i >= 5),
             ];
         }
 

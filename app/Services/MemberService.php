@@ -351,14 +351,18 @@ class MemberService
      */
     public function getStats(): array
     {
+        // Hanya hitung dana simpanan dari anggota dengan status ACTIVE
+        // (Anggota dibekukan / dinonaktifkan yang menarik simpanannya tidak masuk ke perhitungan aset)
+        $activeMembersQuery = Member::where('status', 'ACTIVE');
+
         return [
             'total' => Member::count(),
-            'active' => Member::where('status', 'ACTIVE')->count(),
-            'totalSimpanan' => Member::sum(DB::raw('simpananPokok + simpananWajib + simpananSukarela')),
-            'simpananPokok' => Member::sum('simpananPokok'),
-            'simpananWajib' => Member::sum('simpananWajib'),
-            'simpananSukarela' => Member::sum('simpananSukarela'),
-            'avgPoints' => Member::avg('points'),
+            'active' => (clone $activeMembersQuery)->count(),
+            'totalSimpanan' => (float) (clone $activeMembersQuery)->sum(DB::raw('simpananPokok + simpananWajib + simpananSukarela')),
+            'simpananPokok' => (float) (clone $activeMembersQuery)->sum('simpananPokok'),
+            'simpananWajib' => (float) (clone $activeMembersQuery)->sum('simpananWajib'),
+            'simpananSukarela' => (float) (clone $activeMembersQuery)->sum('simpananSukarela'),
+            'avgPoints' => (float) ((clone $activeMembersQuery)->avg('points') ?? 0),
         ];
     }
 
