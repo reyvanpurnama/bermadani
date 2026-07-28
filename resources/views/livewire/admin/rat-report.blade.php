@@ -119,8 +119,6 @@
                         <th class="px-4 py-3 font-semibold text-right">Simpanan Wajib</th>
                         <th class="px-4 py-3 font-semibold text-right">Simpanan Sukarela</th>
                         <th class="px-4 py-3 font-semibold text-right">Total Setoran</th>
-                        <th class="px-4 py-3 font-semibold text-right">Penarikan Simpanan</th>
-                        <th class="px-4 py-3 font-semibold text-right">Penyaluran Pinjaman</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -129,8 +127,6 @@
                         $totalWajib = 0;
                         $totalSukarela = 0;
                         $totalSetoran = 0; 
-                        $totalPenarikan = 0; 
-                        $totalPinjaman = 0; 
                     @endphp
                     @foreach ($monthlyData as $data)
                     @php 
@@ -138,13 +134,11 @@
                         $totalWajib += $data['wajib'];
                         $totalSukarela += $data['sukarela'];
                         $totalSetoran += $data['setoran']; 
-                        $totalPenarikan += $data['penarikan']; 
-                        $totalPinjaman += $data['pinjaman']; 
                     @endphp
 
                     @if ($currentYear == 2025 && $data['month'] == 5)
                     <tr class="bg-indigo-50/80 dark:bg-indigo-950/50 border-y-2 border-indigo-500/40">
-                        <td colspan="7" class="px-4 py-2 text-xs font-bold text-indigo-700 dark:text-indigo-300 text-center uppercase tracking-wider">
+                        <td colspan="5" class="px-4 py-2 text-xs font-bold text-indigo-700 dark:text-indigo-300 text-center uppercase tracking-wider">
                             ── Periode Kepengurusan Baru (Mei - Desember 2025) ──
                         </td>
                     </tr>
@@ -163,8 +157,6 @@
                         <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['wajib'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['sukarela'], 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right font-medium text-gray-800 dark:text-gray-200">Rp {{ number_format($data['setoran'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['penarikan'], 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right text-gray-600 dark:text-gray-300">Rp {{ number_format($data['pinjaman'], 0, ',', '.') }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -175,8 +167,6 @@
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalWajib, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalSukarela, 0, ',', '.') }}</td>
                         <td class="px-4 py-3 text-right">Rp {{ number_format($totalSetoran, 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right">Rp {{ number_format($totalPenarikan, 0, ',', '.') }}</td>
-                        <td class="px-4 py-3 text-right">Rp {{ number_format($totalPinjaman, 0, ',', '.') }}</td>
                     </tr>
                 </tfoot>
             </table>

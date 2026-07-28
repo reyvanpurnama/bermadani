@@ -115,8 +115,6 @@ class RatReport extends Component
                 'Simpanan Wajib',
                 'Simpanan Sukarela',
                 'Total Setoran Simpanan',
-                'Penarikan Simpanan',
-                'Penyaluran Pinjaman',
                 'Keterangan Kepengurusan'
             ]);
             
@@ -125,16 +123,12 @@ class RatReport extends Component
             $totalWajib = 0;
             $totalSukarela = 0;
             $totalSetor = 0;
-            $totalTarik = 0;
-            $totalPinjam = 0;
 
             for ($i = 1; $i <= 12; $i++) {
                 $txPokok = $monthlySimpanan->get($i)->total_pokok ?? 0;
                 $txWajib = $monthlySimpanan->get($i)->total_wajib ?? 0;
                 $txSukarela = $monthlySimpanan->get($i)->total_sukarela ?? 0;
                 $txSetor = $monthlySimpanan->get($i)->total_setor ?? 0;
-                $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
-                $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
                 $ket = ($currentYear == 2025 && $i >= 5) ? 'Kepengurusan Baru' : '-';
 
                 $isFutureMonth = ($currentYear > now()->year) || ($currentYear == now()->year && $i > now()->month);
@@ -157,8 +151,6 @@ class RatReport extends Component
                 $totalWajib += $wajib;
                 $totalSukarela += $sukarela;
                 $totalSetor += $setor;
-                $totalTarik += $tarik;
-                $totalPinjam += $pinjam;
 
                 fputcsv($handle, [
                     $months[$i - 1],
@@ -166,8 +158,6 @@ class RatReport extends Component
                     $wajib,
                     $sukarela,
                     $setor,
-                    $tarik,
-                    $pinjam,
                     $ket
                 ]);
             }
@@ -178,8 +168,6 @@ class RatReport extends Component
                 $totalWajib,
                 $totalSukarela,
                 $totalSetor,
-                $totalTarik,
-                $totalPinjam,
                 ''
             ]);
             
