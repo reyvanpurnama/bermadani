@@ -137,7 +137,11 @@ class RatReport extends Component
                 $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
                 $ket = ($currentYear == 2025 && $i >= 5) ? 'Kepengurusan Baru' : '-';
 
-                if ($txWajib < 2000000 && $simwaDeductionEst > 0) {
+                $isFutureMonth = ($currentYear > now()->year) || ($currentYear == now()->year && $i > now()->month);
+
+                // Proyeksi fallback hanya berlaku untuk bulan lampau yang transaksi DB-nya belum lengkap (< 2.000.000).
+                // Bulan masa depan (misal Agustus 2026 ke atas) tetap menampilkan data riil (0 jika belum ada transaksi).
+                if (!$isFutureMonth && $txWajib < 2000000 && $simwaDeductionEst > 0) {
                     $wajib = max($txWajib, $simwaDeductionEst);
                     $sukarela = max($txSukarela, $sukarelaDeductionEst);
                     $pokok = $txPokok;
@@ -245,9 +249,11 @@ class RatReport extends Component
             $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
             $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
 
-            // Jika transaksi simpanan wajib tercatat < 2.000.000 (bulan tanpa eksekusi payroll lengkap seperti Juli, Oktober, November),
-            // gunakan proyeksi potongan gaji bulanan anggota aktif agar data laporan tidak bolong/anomali.
-            if ($txWajib < 2000000 && $simwaDeductionEst > 0) {
+            $isFutureMonth = ($currentYear > now()->year) || ($currentYear == now()->year && $i > now()->month);
+
+            // Proyeksi fallback hanya berlaku untuk bulan lampau yang transaksi DB-nya belum lengkap (< 2.000.000).
+            // Bulan masa depan (misal Agustus 2026 ke atas) tetap menampilkan data riil (0 jika belum ada transaksi).
+            if (!$isFutureMonth && $txWajib < 2000000 && $simwaDeductionEst > 0) {
                 $wajib = max($txWajib, $simwaDeductionEst);
                 $sukarela = max($txSukarela, $sukarelaDeductionEst);
                 $pokok = $txPokok;
