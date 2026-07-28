@@ -191,10 +191,10 @@ Total Pendanaan bersumber dari modal simpanan tercatat sebesar Rp {{ number_form
 - Simpanan Wajib: Rp {{ number_format($simpanan['wajib'], 0, ',', '.') }}
 - Simpanan Sukarela: Rp {{ number_format($simpanan['sukarela'], 0, ',', '.') }}
 
-Sepanjang tahun berjalan ({{ $currentYear }}), total dana simpanan yang masuk sebesar Rp {{ number_format($totalSetoran, 0, ',', '.') }} (Pokok: Rp {{ number_format($totalPokok, 0, ',', '.') }}, Wajib: Rp {{ number_format($totalWajib, 0, ',', '.') }}, Sukarela: Rp {{ number_format($totalSukarela, 0, ',', '.') }}) dan total penarikan sebesar Rp {{ number_format($totalPenarikan, 0, ',', '.') }}.
+Sepanjang tahun berjalan ({{ $currentYear }}), total dana simpanan yang masuk sebesar Rp {{ number_format($totalSetoran, 0, ',', '.') }} (Pokok: Rp {{ number_format($totalPokok, 0, ',', '.') }}, Wajib: Rp {{ number_format($totalWajib, 0, ',', '.') }}, Sukarela: Rp {{ number_format($totalSukarela, 0, ',', '.') }}).
 
 --- DATA PINJAMAN & KOLEKTIBILITAS ---
-Koperasi telah menyalurkan pinjaman dengan akumulasi sebesar Rp {{ number_format($pinjaman['tersalurkan'], 0, ',', '.') }} dan pada tahun berjalan tersalurkan sebesar Rp {{ number_format($totalPinjaman, 0, ',', '.') }}.
+Koperasi telah menyalurkan pinjaman dengan akumulasi sebesar Rp {{ number_format($pinjaman['tersalurkan'], 0, ',', '.') }}.
 Status pembiayaan saat ini:
 - Kol. Lancar: {{ $pinjaman['lancar_count'] }} Anggota (Sisa Nilai Pokok: Rp {{ number_format($pinjaman['lancar_rp'], 0, ',', '.') }})
 - Kredit Bermasalah (NPL): {{ $pinjaman['macet_count'] }} Anggota (Sisa Nilai Pokok: Rp {{ number_format($pinjaman['macet_rp'], 0, ',', '.') }})
