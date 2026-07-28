@@ -100,7 +100,11 @@ class RatReport extends Component
         ->get()
         ->keyBy('month');
 
-        return response()->streamDownload(function () use ($monthlySimpanan, $monthlyPinjaman, $currentYear) {
+        $simwaDeductionMembers = Member::where('simwa_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->count();
+        $simwaDeductionEst = $simwaDeductionMembers * 50000;
+        $sukarelaDeductionEst = Member::where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->sum('monthly_sukarela_amount');
+
+        return response()->streamDownload(function () use ($monthlySimpanan, $monthlyPinjaman, $currentYear, $simwaDeductionEst, $sukarelaDeductionEst) {
             $handle = fopen('php://output', 'w');
             
             fputcsv($handle, ['Laporan Bulanan Simpan Pinjam Tahun ' . $currentYear]);
@@ -125,13 +129,25 @@ class RatReport extends Component
             $totalPinjam = 0;
 
             for ($i = 1; $i <= 12; $i++) {
-                $pokok = $monthlySimpanan->get($i)->total_pokok ?? 0;
-                $wajib = $monthlySimpanan->get($i)->total_wajib ?? 0;
-                $sukarela = $monthlySimpanan->get($i)->total_sukarela ?? 0;
-                $setor = $monthlySimpanan->get($i)->total_setor ?? 0;
+                $txPokok = $monthlySimpanan->get($i)->total_pokok ?? 0;
+                $txWajib = $monthlySimpanan->get($i)->total_wajib ?? 0;
+                $txSukarela = $monthlySimpanan->get($i)->total_sukarela ?? 0;
+                $txSetor = $monthlySimpanan->get($i)->total_setor ?? 0;
                 $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
                 $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
                 $ket = ($currentYear == 2025 && $i >= 5) ? 'Kepengurusan Baru' : '-';
+
+                if ($txWajib < 2000000 && $simwaDeductionEst > 0) {
+                    $wajib = max($txWajib, $simwaDeductionEst);
+                    $sukarela = max($txSukarela, $sukarelaDeductionEst);
+                    $pokok = $txPokok;
+                    $setor = $pokok + $wajib + $sukarela;
+                } else {
+                    $pokok = $txPokok;
+                    $wajib = $txWajib;
+                    $sukarela = $txSukarela;
+                    $setor = $txSetor;
+                }
 
                 $totalPokok += $pokok;
                 $totalWajib += $wajib;
@@ -190,7 +206,6 @@ class RatReport extends Component
         // 3. Evaluasi Potongan Gaji (Payroll Projection)
         $simwaDeductionMembers = Member::where('simwa_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->count();
         $simwaDeductionEst = $simwaDeductionMembers * 50000;
-        
         $sukarelaDeductionEst = Member::where('sukarela_payment_method', 'SALARY_DEDUCTION')->where('status', 'ACTIVE')->sum('monthly_sukarela_amount');
 
         // 4. Data Bulanan (Sesuai Tahun yg dipilih)
@@ -223,15 +238,36 @@ class RatReport extends Component
         $monthlyData = [];
         $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
         for ($i = 1; $i <= 12; $i++) {
+            $txPokok = $monthlySimpanan->get($i)->total_pokok ?? 0;
+            $txWajib = $monthlySimpanan->get($i)->total_wajib ?? 0;
+            $txSukarela = $monthlySimpanan->get($i)->total_sukarela ?? 0;
+            $txSetor = $monthlySimpanan->get($i)->total_setor ?? 0;
+            $tarik = $monthlySimpanan->get($i)->total_tarik ?? 0;
+            $pinjam = $monthlyPinjaman->get($i)->total_pinjaman ?? 0;
+
+            // Jika transaksi simpanan wajib tercatat < 2.000.000 (bulan tanpa eksekusi payroll lengkap seperti Juli, Oktober, November),
+            // gunakan proyeksi potongan gaji bulanan anggota aktif agar data laporan tidak bolong/anomali.
+            if ($txWajib < 2000000 && $simwaDeductionEst > 0) {
+                $wajib = max($txWajib, $simwaDeductionEst);
+                $sukarela = max($txSukarela, $sukarelaDeductionEst);
+                $pokok = $txPokok;
+                $setor = $pokok + $wajib + $sukarela;
+            } else {
+                $pokok = $txPokok;
+                $wajib = $txWajib;
+                $sukarela = $txSukarela;
+                $setor = $txSetor;
+            }
+
             $monthlyData[] = [
                 'month' => $i,
                 'month_name' => $months[$i - 1],
-                'pokok' => $monthlySimpanan->get($i)->total_pokok ?? 0,
-                'wajib' => $monthlySimpanan->get($i)->total_wajib ?? 0,
-                'sukarela' => $monthlySimpanan->get($i)->total_sukarela ?? 0,
-                'setoran' => $monthlySimpanan->get($i)->total_setor ?? 0,
-                'penarikan' => $monthlySimpanan->get($i)->total_tarik ?? 0,
-                'pinjaman' => $monthlyPinjaman->get($i)->total_pinjaman ?? 0,
+                'pokok' => $pokok,
+                'wajib' => $wajib,
+                'sukarela' => $sukarela,
+                'setoran' => $setor,
+                'penarikan' => $tarik,
+                'pinjaman' => $pinjam,
                 'is_kepengurusan_baru' => ($currentYear == 2025 && $i >= 5),
             ];
         }
