@@ -77,15 +77,15 @@ class RatReport extends Component
         $currentYear = $this->selectedYear;
         
         $monthlySimpanan = SimpananTransaction::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_pokok'),
-            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_wajib'),
-            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_sukarela'),
-            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
+            DB::raw('CASE WHEN billingMonth IS NOT NULL AND billingMonth != "" THEN CAST(SUBSTRING(billingMonth, 6, 2) AS UNSIGNED) ELSE MONTH(created_at) END as month'),
+            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_pokok'),
+            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_wajib'),
+            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_sukarela'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_setor'),
             DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
         )
         ->where('status', 'APPROVED')
-        ->whereYear('created_at', $currentYear)
+        ->where(DB::raw('CASE WHEN billingMonth IS NOT NULL AND billingMonth != "" THEN CAST(SUBSTRING(billingMonth, 1, 4) AS UNSIGNED) ELSE YEAR(created_at) END'), $currentYear)
         ->groupBy('month')
         ->get()
         ->keyBy('month');
@@ -197,15 +197,15 @@ class RatReport extends Component
         $currentYear = $this->selectedYear;
         
         $monthlySimpanan = SimpananTransaction::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_pokok'),
-            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_wajib'),
-            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_sukarela'),
-            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN amount ELSE 0 END) as total_setor'),
+            DB::raw('CASE WHEN billingMonth IS NOT NULL AND billingMonth != "" THEN CAST(SUBSTRING(billingMonth, 6, 2) AS UNSIGNED) ELSE MONTH(created_at) END as month'),
+            DB::raw('SUM(CASE WHEN type = "POKOK" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_pokok'),
+            DB::raw('SUM(CASE WHEN type = "WAJIB" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_wajib'),
+            DB::raw('SUM(CASE WHEN type = "SUKARELA" AND transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_sukarela'),
+            DB::raw('SUM(CASE WHEN transactionType IN ("SETOR", "TRANSFER_IN") THEN (CASE WHEN paidAmount > 0 THEN paidAmount WHEN status = "APPROVED" THEN amount ELSE 0 END) ELSE 0 END) as total_setor'),
             DB::raw('SUM(CASE WHEN transactionType IN ("TARIK", "TRANSFER_OUT") THEN amount ELSE 0 END) as total_tarik')
         )
         ->where('status', 'APPROVED')
-        ->whereYear('created_at', $currentYear)
+        ->where(DB::raw('CASE WHEN billingMonth IS NOT NULL AND billingMonth != "" THEN CAST(SUBSTRING(billingMonth, 1, 4) AS UNSIGNED) ELSE YEAR(created_at) END'), $currentYear)
         ->groupBy('month')
         ->get()
         ->keyBy('month');
