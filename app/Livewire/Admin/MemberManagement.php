@@ -158,6 +158,52 @@ class MemberManagement extends Component
         }, $fileName);
     }
 
+    public function downloadAccountPdf()
+    {
+        $members = Member::query()
+            ->where('isMemberKoperasi', true)
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('name', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('email', 'LIKE', '%' . $this->search . '%')
+                        ->orWhere('unitKerja', 'LIKE', '%' . $this->search . '%');
+                });
+            })
+            ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
+            ->when($this->filterTier, fn($q) => $q->where('tier', $this->filterTier))
+            ->when($this->filterUnitKerja, fn($q) => $q->where('unitKerja', $this->filterUnitKerja))
+            ->when($this->filterJoinMonth, fn($q) => $q->whereMonth('joinDate', $this->filterJoinMonth))
+            ->when($this->filterJoinYear, fn($q) => $q->whereYear('joinDate', $this->filterJoinYear))
+            ->orderBy('name', 'asc')
+            ->get();
+
+        if ($members->isEmpty()) {
+            session()->flash('error', 'Tidak ada data anggota untuk diexport.');
+            return null;
+        }
+
+        $pdf = Pdf::loadView('admin.reports.member-account-pdf', [
+            'members'     => $members,
+            'filters'     => [
+                'search'         => $this->search,
+                'filterStatus'   => $this->filterStatus,
+                'filterTier'     => $this->filterTier,
+                'filterUnitKerja'=> $this->filterUnitKerja,
+                'filterJoinMonth'=> $this->filterJoinMonth,
+                'filterJoinYear' => $this->filterJoinYear,
+            ],
+            'loginUrl'    => url('/login'),
+            'generatedAt' => now()->format('d-m-Y H:i'),
+        ])->setPaper('a4', 'landscape');
+
+        $fileName = 'Daftar_Akun_Anggota_Koperasi_' . now()->format('Ymd_His') . '.pdf';
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $fileName);
+    }
+
     private function buildMembersQuery()
     {
         return Member::query()
