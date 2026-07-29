@@ -138,6 +138,9 @@ class LoanAuditTool extends Component
             ->groupBy('m')
             ->pluck('total', 'm');
 
+        // Fetch all active loans up to this year for historical fallback reconstruction
+        $allYearLoans = Loan::where('startDate', '<=', \Carbon\Carbon::createFromDate($year, 12, 31))->get();
+
         $summaries = [];
         $chartCategories = [];
         $chartAngsuran = [];
@@ -151,6 +154,31 @@ class LoanAuditTool extends Component
             $angsuran = (float) ($loanPaymentsByMonth[$mNum] ?? 0);
             $angsuranBmt = (float) ($paymentsMonthSourceMap[$mNum]['BMT_ITQAN'] ?? 0);
             $angsuranBermadani = (float) ($paymentsMonthSourceMap[$mNum]['BERMADANI'] ?? 0);
+
+            // Reconstruct historical monthly installments if explicit LoanPayment logs don't exist for this year/month
+            if ($angsuran <= 0) {
+                $monthDate = \Carbon\Carbon::createFromDate($year, $mNum, 1)->endOfMonth();
+                $reconBmt = 0;
+                $reconBermadani = 0;
+
+                foreach ($allYearLoans as $loan) {
+                    $start = \Carbon\Carbon::parse($loan->startDate);
+                    if ($start <= $monthDate) {
+                        $monthsDiff = ($year - $start->year) * 12 + ($mNum - $start->month) + 1;
+                        if ($monthsDiff >= 1 && $monthsDiff <= $loan->tenor) {
+                            if ($loan->loanSource === 'BMT_ITQAN') {
+                                $reconBmt += (float) ($loan->monthlyPayment ?? 0);
+                            } else {
+                                $reconBermadani += (float) ($loan->monthlyPayment ?? 0);
+                            }
+                        }
+                    }
+                }
+
+                $angsuranBmt = $reconBmt;
+                $angsuranBermadani = $reconBermadani;
+                $angsuran = $reconBmt + $reconBermadani;
+            }
 
             $percentBmt = $angsuran > 0 ? round(($angsuranBmt / $angsuran) * 100, 1) : 0;
             $percentBermadani = $angsuran > 0 ? round(($angsuranBermadani / $angsuran) * 100, 1) : 0;
@@ -306,6 +334,34 @@ class LoanAuditTool extends Component
                 ->orderBy('paymentDate', 'desc')
                 ->get();
 
+            // Reconstruct payments detail for historical months if explicit logs don't exist
+            if ($monthLoanPayments->isEmpty()) {
+                $mNum = (int) $this->selectedCashFlowMonth;
+                $mYear = (int) $this->selectedCashFlowYear;
+                $monthDate = \Carbon\Carbon::createFromDate($mYear, $mNum, 1)->endOfMonth();
+                $activeLoans = Loan::with('member')
+                    ->where('startDate', '<=', $monthDate)
+                    ->get();
+
+                $reconstructedPayments = collect();
+                foreach ($activeLoans as $l) {
+                    $start = \Carbon\Carbon::parse($l->startDate);
+                    $monthsDiff = (($mYear - $start->year) * 12) + ($mNum - $start->month) + 1;
+
+                    if ($monthsDiff >= 1 && $monthsDiff <= $l->tenor) {
+                        $reconstructedPayments->push((object)[
+                            'id' => 'RECON-' . $l->id,
+                            'loanId' => $l->id,
+                            'amount' => $l->monthlyPayment,
+                            'paymentDate' => $monthDate->format('Y-m-d'),
+                            'description' => "Potongan Payroll (Angsuran ke-{$monthsDiff})",
+                            'loan' => $l,
+                        ]);
+                    }
+                }
+                $monthLoanPayments = $reconstructedPayments;
+            }
+
             $monthSimpananTransactions = SimpananTransaction::with('member')
                 ->where('status', 'APPROVED')
                 ->whereYear('created_at', $this->selectedCashFlowYear)
@@ -354,13 +410,6 @@ class LoanAuditTool extends Component
             ->get()
             ->keyBy('loanSource');
 
-        $paymentsBySource = LoanPayment::query()
-            ->join('loans', 'loan_payments.loanId', '=', 'loans.id')
-            ->selectRaw('loans.loanSource, SUM(loan_payments.amount) as total_payments')
-            ->groupBy('loans.loanSource')
-            ->get()
-            ->keyBy('loanSource');
-
         $plafonBmtItqan = (float) ($plafonBySource['BMT_ITQAN']->total_plafon ?? 0);
         $plafonBermadani = (float) ($plafonBySource['BERMADANI']->total_plafon ?? 0);
         $totalPlafonAll = max(1, $plafonBmtItqan + $plafonBermadani);
@@ -368,8 +417,9 @@ class LoanAuditTool extends Component
         $piutangBmtItqan = (float) ($plafonBySource['BMT_ITQAN']->total_piutang ?? 0);
         $piutangBermadani = (float) ($plafonBySource['BERMADANI']->total_piutang ?? 0);
 
-        $paymentsBmtItqan = (float) ($paymentsBySource['BMT_ITQAN']->total_payments ?? 0);
-        $paymentsBermadani = (float) ($paymentsBySource['BERMADANI']->total_payments ?? 0);
+        // Payments calculated dynamically per selected year
+        $paymentsBmtItqan = (float) collect($cashFlowData['summaries'])->sum('angsuran_bmt');
+        $paymentsBermadani = (float) collect($cashFlowData['summaries'])->sum('angsuran_bermadani');
         $totalPaymentsAll = max(1, $paymentsBmtItqan + $paymentsBermadani);
 
         $sourceShareStats = [
