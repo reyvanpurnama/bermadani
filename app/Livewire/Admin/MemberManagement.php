@@ -21,7 +21,8 @@ class MemberManagement extends Component
     public $filterStatus = '';
     public $filterTier = '';
     public $filterUnitKerja = '';
-    public $filterJoinDate = '';
+    public $filterJoinMonth = '';
+    public $filterJoinYear = '';
 
     // Import properties
     public $showImportModal = false;
@@ -34,7 +35,8 @@ class MemberManagement extends Component
         'filterStatus' => ['except' => ''],
         'filterTier' => ['except' => ''],
         'filterUnitKerja' => ['except' => ''],
-        'filterJoinDate' => ['except' => ''],
+        'filterJoinMonth' => ['except' => ''],
+        'filterJoinYear' => ['except' => ''],
     ];
 
     protected $memberService;
@@ -70,7 +72,12 @@ class MemberManagement extends Component
         $this->resetPage();
     }
 
-    public function updatingFilterJoinDate()
+    public function updatingFilterJoinMonth()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterJoinYear()
     {
         $this->resetPage();
     }
@@ -120,7 +127,8 @@ class MemberManagement extends Component
             })
             ->when($this->filterTier, fn($query) => $query->where('tier', $this->filterTier))
             ->when($this->filterUnitKerja, fn($query) => $query->where('unitKerja', $this->filterUnitKerja))
-            ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate))
+            ->when($this->filterJoinMonth, fn($query) => $query->whereMonth('joinDate', $this->filterJoinMonth))
+            ->when($this->filterJoinYear, fn($query) => $query->whereYear('joinDate', $this->filterJoinYear))
             ->select(['id', 'name'])
             ->orderBy('name', 'asc')
             ->get();
@@ -137,7 +145,7 @@ class MemberManagement extends Component
                 'memberType' => 'Koperasi + Retail',
                 'tier' => $this->filterTier,
                 'unitKerja' => $this->filterUnitKerja,
-                'joinDate' => $this->filterJoinDate,
+            'joinDate' => ($this->filterJoinMonth ? $this->filterJoinMonth : '') . ($this->filterJoinYear ? '/' . $this->filterJoinYear : '') ?: 'Semua',
                 'search' => $this->search,
             ],
             'generatedAt' => now()->format('d-m-Y H:i'),
@@ -166,7 +174,8 @@ class MemberManagement extends Component
             ->when($this->filterStatus, fn($query) => $query->where('status', $this->filterStatus))
             ->when($this->filterTier, fn($query) => $query->where('tier', $this->filterTier))
             ->when($this->filterUnitKerja, fn($query) => $query->where('unitKerja', $this->filterUnitKerja))
-            ->when($this->filterJoinDate, fn($query) => $query->whereDate('joinDate', $this->filterJoinDate));
+            ->when($this->filterJoinMonth, fn($query) => $query->whereMonth('joinDate', $this->filterJoinMonth))
+            ->when($this->filterJoinYear, fn($query) => $query->whereYear('joinDate', $this->filterJoinYear));
     }
 
     public function getMembersProperty()

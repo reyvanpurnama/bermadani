@@ -153,7 +153,7 @@
 
         {{-- Filters --}}
         <div
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 bg-white dark:bg-darkCard p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 mb-6">
             <div class="relative">
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Cari
                     Anggota</label>
@@ -198,10 +198,34 @@
             </div>
 
             <div class="relative">
-                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Tanggal
-                    Bergabung</label>
-                <input type="date" wire:model.live="filterJoinDate"
-                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Bulan Bergabung</label>
+                <select wire:model.live="filterJoinMonth"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
+                    <option value="">Semua Bulan</option>
+                    <option value="1">Januari</option>
+                    <option value="2">Februari</option>
+                    <option value="3">Maret</option>
+                    <option value="4">April</option>
+                    <option value="5">Mei</option>
+                    <option value="6">Juni</option>
+                    <option value="7">Juli</option>
+                    <option value="8">Agustus</option>
+                    <option value="9">September</option>
+                    <option value="10">Oktober</option>
+                    <option value="11">November</option>
+                    <option value="12">Desember</option>
+                </select>
+            </div>
+
+            <div class="relative">
+                <label class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 block">Tahun Bergabung</label>
+                <select wire:model.live="filterJoinYear"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-[13px] rounded-md px-3 py-2 outline-none focus:ring-1 focus:ring-primary text-slate-700 dark:text-white cursor-pointer">
+                    <option value="">Semua Tahun</option>
+                    @foreach(range(date('Y'), 2018) as $y)
+                        <option value="{{ $y }}">{{ $y }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
