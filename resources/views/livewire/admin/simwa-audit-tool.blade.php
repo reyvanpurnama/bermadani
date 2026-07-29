@@ -707,9 +707,12 @@
                     {{-- Detailed Monthly Cash Flow Table --}}
                     <div class="bg-white dark:bg-darkCard rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
                         <div class="p-5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-                            <h4 class="text-xs font-extrabold uppercase tracking-widest text-slate-800 dark:text-white flex items-center gap-2">
-                                <i class='bx bx-spreadsheet text-indigo-500 text-base'></i> Tabel Breakdown Setoran Simpanan Bulanan (Januari - Desember {{ $selectedYear }})
-                            </h4>
+                            <div>
+                                <h4 class="text-xs font-extrabold uppercase tracking-widest text-slate-800 dark:text-white flex items-center gap-2">
+                                    <i class='bx bx-spreadsheet text-indigo-500 text-base'></i> Tabel Breakdown Setoran Simpanan Bulanan (Januari - Desember {{ $selectedYear }})
+                                </h4>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Klik pada salah satu baris bulan di bawah ini untuk membuka daftar rincian setoran per anggota.</p>
+                            </div>
                             <span class="text-xs text-slate-400">Arus Kas Inflow</span>
                         </div>
 
@@ -723,17 +726,18 @@
                                         <th class="px-5 py-3.5 text-right">Simpanan Sukarela</th>
                                         <th class="px-5 py-3.5 text-right">Total Setoran Bulan Ini</th>
                                         <th class="px-5 py-3.5 text-right">Akumulasi Saldo (Running Total)</th>
-                                        <th class="px-5 py-3.5 text-center">Member Bayar</th>
+                                        <th class="px-5 py-3.5 text-center">Rincian Member</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-darkCard">
                                     @foreach($savingsCashFlowData['monthly'] as $m)
-                                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                        <tr wire:click="selectTrendsMonth({{ $m['month_num'] }})"
+                                            class="cursor-pointer transition-all duration-150 {{ $selectedTrendsMonth === $m['month_num'] ? 'bg-indigo-50/90 dark:bg-indigo-950/60 font-bold border-l-4 border-indigo-600 shadow-inner' : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50' }}">
                                             <td class="px-5 py-3.5 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-                                                <span class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black">
+                                                <span class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black {{ $selectedTrendsMonth === $m['month_num'] ? 'bg-indigo-600 text-white shadow' : 'bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400' }}">
                                                     {{ $m['month_num'] }}
                                                 </span>
-                                                <span>{{ $m['month_name'] }} {{ $selectedYear }}</span>
+                                                <span class="{{ $selectedTrendsMonth === $m['month_num'] ? 'text-indigo-900 dark:text-indigo-200 font-extrabold text-sm' : '' }}">{{ $m['month_name'] }} {{ $selectedYear }}</span>
                                             </td>
                                             <td class="px-5 py-3.5 text-right font-mono font-bold text-amber-600 dark:text-amber-400">
                                                 Rp {{ number_format($m['simpok'], 0, ',', '.') }}
@@ -751,15 +755,105 @@
                                                 Rp {{ number_format($m['cumulative'], 0, ',', '.') }}
                                             </td>
                                             <td class="px-5 py-3.5 text-center">
-                                                @if($m['members_paid'] > 0)
-                                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                                                        {{ $m['members_paid'] }} Member
-                                                    </span>
-                                                @else
-                                                    <span class="text-slate-300 dark:text-slate-600 italic text-[10px]">-</span>
-                                                @endif
+                                                <button class="px-3 py-1 rounded-xl text-[11px] font-extrabold transition-all flex items-center justify-center gap-1 mx-auto {{ $selectedTrendsMonth === $m['month_num'] ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-indigo-50 hover:text-indigo-600' }}">
+                                                    <span>{{ $m['members_paid'] }} Member</span>
+                                                    <i class='bx {{ $selectedTrendsMonth === $m['month_num'] ? 'bx-chevron-up' : 'bx-chevron-down' }} text-base'></i>
+                                                </button>
                                             </td>
                                         </tr>
+
+                                        {{-- Expanded Monthly Member Detail Table --}}
+                                        @if($selectedTrendsMonth === $m['month_num'])
+                                            <tr class="bg-indigo-50/30 dark:bg-indigo-950/20">
+                                                <td colspan="7" class="p-4 sm:p-6">
+                                                    <div class="bg-white dark:bg-darkCard rounded-2xl border border-indigo-200 dark:border-indigo-800 p-5 shadow-xl space-y-4">
+                                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-3">
+                                                            <div class="flex items-center gap-3">
+                                                                <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md">
+                                                                    {{ $m['month_num'] }}
+                                                                </div>
+                                                                <div>
+                                                                    <h5 class="font-black text-slate-900 dark:text-white text-sm">Rincian Transaksi Simpanan Member Bulan {{ $m['month_name'] }} {{ $selectedYear }}</h5>
+                                                                    <p class="text-xs text-slate-400">Total {{ count($monthlyDetailRows) }} Anggota Terdaftar | Periode {{ $m['period'] }}</p>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="flex items-center gap-3">
+                                                                <div class="relative">
+                                                                    <i class='bx bx-search absolute left-3 top-2 text-slate-400 text-xs'></i>
+                                                                    <input type="text" wire:model.live.debounce.200ms="searchTrendsMember" placeholder="Cari nama member..." class="pl-8 pr-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-white">
+                                                                </div>
+                                                                <button wire:click.stop="selectTrendsMonth({{ $m['month_num'] }})" class="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg" title="Tutup Rincian">
+                                                                    <i class='bx bx-x text-xl'></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        @if(count($monthlyDetailRows) > 0)
+                                                            <div class="overflow-x-auto border border-slate-100 dark:border-slate-800 rounded-xl max-h-96 custom-scroll">
+                                                                <table class="w-full text-left text-xs">
+                                                                    <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 font-bold sticky top-0 border-b border-slate-200 dark:border-slate-700">
+                                                                        <tr>
+                                                                            <th class="py-2.5 px-4 w-12 text-center">#</th>
+                                                                            <th class="py-2.5 px-4">Nama Anggota (DB / CSV)</th>
+                                                                            <th class="py-2.5 px-4 text-center">No. Anggota</th>
+                                                                            <th class="py-2.5 px-4 text-right">Simpanan Pokok</th>
+                                                                            <th class="py-2.5 px-4 text-right">Simpanan Wajib</th>
+                                                                            <th class="py-2.5 px-4 text-right">Simpanan Sukarela</th>
+                                                                            <th class="py-2.5 px-4 text-right">Total Setoran</th>
+                                                                            <th class="py-2.5 px-4 text-center">Status Mapping</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-darkCard">
+                                                                        @foreach($monthlyDetailRows as $idx => $d)
+                                                                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                                                                                <td class="py-2.5 px-4 text-center font-mono text-slate-400 font-bold">{{ $idx + 1 }}</td>
+                                                                                <td class="py-2.5 px-4">
+                                                                                    <div class="font-extrabold text-slate-800 dark:text-slate-200">{{ $d['member_name'] }}</div>
+                                                                                    @if($d['raw_name'] !== $d['member_name'])
+                                                                                        <div class="text-[10px] text-slate-400 font-mono">CSV: {{ $d['raw_name'] }}</div>
+                                                                                    @endif
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-center font-mono text-slate-500">
+                                                                                    {{ $d['nomor_anggota'] }}
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-right font-mono font-bold text-amber-600 dark:text-amber-400">
+                                                                                    {{ $d['simpok'] > 0 ? 'Rp ' . number_format($d['simpok'], 0, ',', '.') : '-' }}
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                                                                    {{ $d['simwa'] > 0 ? 'Rp ' . number_format($d['simwa'], 0, ',', '.') : '-' }}
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                                                                                    {{ $d['sukarela'] > 0 ? 'Rp ' . number_format($d['sukarela'], 0, ',', '.') : '-' }}
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-right font-mono font-extrabold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/30">
+                                                                                    Rp {{ number_format($d['total'], 0, ',', '.') }}
+                                                                                </td>
+                                                                                <td class="py-2.5 px-4 text-center">
+                                                                                    @if($d['is_matched'])
+                                                                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 border border-emerald-200 dark:border-emerald-800">
+                                                                                            ✓ Mapped
+                                                                                        </span>
+                                                                                    @else
+                                                                                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-600 border border-rose-200 dark:border-rose-800">
+                                                                                            Unmapped
+                                                                                        </span>
+                                                                                    @endif
+                                                                                </td>
+                                                                            </tr>
+                                                                        @endforeach
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        @else
+                                                            <div class="text-center py-6 text-slate-400 text-xs">
+                                                                Tidak ada transaksi simpanan tercatat pada bulan ini.
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endif
                                     @endforeach
                                 </tbody>
                                 <tfoot class="bg-slate-900 text-white font-bold border-t-2 border-indigo-500">

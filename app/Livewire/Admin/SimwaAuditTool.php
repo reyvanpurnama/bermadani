@@ -24,6 +24,8 @@ class SimwaAuditTool extends Component
     public $filterStatus = 'all'; // all, match, mismatch
     public $selectedYear = '2026';
     public $selectedCashFlowMonth = null;
+    public $selectedTrendsMonth = null;
+    public $searchTrendsMember = '';
 
     // Progress Tracking
     public $cleanupProgress = 0;
@@ -35,6 +37,15 @@ class SimwaAuditTool extends Component
     public function mount()
     {
         $this->selectedYear = (string) date('Y');
+    }
+
+    public function selectTrendsMonth($monthNum)
+    {
+        if ($this->selectedTrendsMonth === (int)$monthNum) {
+            $this->selectedTrendsMonth = null;
+        } else {
+            $this->selectedTrendsMonth = (int)$monthNum;
+        }
     }
 
     public function handleMemberMapped($data)
@@ -171,6 +182,111 @@ class SimwaAuditTool extends Component
         ];
     }
 
+    public function getMonthlyDetailRowsProperty()
+    {
+        if (!$this->selectedTrendsMonth) {
+            return [];
+        }
+
+        $periodKey = sprintf('%s-%02d', $this->selectedYear, $this->selectedTrendsMonth);
+
+        $importRows = DB::table('audit_simwa_imports')
+            ->where('period', $periodKey)
+            ->get();
+
+        if ($importRows->count() > 0) {
+            $grouped = $importRows->groupBy(function ($r) {
+                return $r->matched_member_id ? 'member_' . $r->matched_member_id : 'raw_' . $r->raw_name;
+            });
+
+            $details = [];
+            foreach ($grouped as $key => $rows) {
+                $first = $rows->first();
+                $member = $first->matched_member_id ? DB::table('members')->where('id', $first->matched_member_id)->first() : null;
+
+                $simpok = (float) $rows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SIMPOK'))->sum('amount');
+                $simwa = (float) $rows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SIMWA'))->sum('amount');
+                $sukarela = (float) $rows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SUKARELA') || str_contains(strtoupper($r->raw_uraian), 'EXTRA'))->sum('amount');
+                $total = (float) $rows->sum('amount');
+
+                $rawName = $first->raw_name;
+                $memberName = $member ? $member->name : $first->raw_name;
+
+                if (!empty($this->searchTrendsMember)) {
+                    $term = strtolower($this->searchTrendsMember);
+                    if (!str_contains(strtolower($rawName), $term) && !str_contains(strtolower($memberName), $term) && !str_contains(strtolower((string)($member->nomorAnggota ?? '')), $term)) {
+                        continue;
+                    }
+                }
+
+                $details[] = [
+                    'raw_name' => $rawName,
+                    'member_name' => $memberName,
+                    'member_id' => $first->matched_member_id,
+                    'nomor_anggota' => $member->nomorAnggota ?? '-',
+                    'is_matched' => !empty($first->matched_member_id),
+                    'simpok' => $simpok,
+                    'simwa' => $simwa,
+                    'sukarela' => $sukarela,
+                    'total' => $total,
+                    'uraian_list' => $rows->pluck('raw_uraian')->unique()->implode(' | '),
+                ];
+            }
+
+            return collect($details)->sortByDesc('total')->values()->all();
+        } else {
+            $txs = DB::table('simpanan_transactions as st')
+                ->leftJoin('members as m', 'st.memberId', '=', 'm.id')
+                ->whereYear('st.created_at', $this->selectedYear)
+                ->whereMonth('st.created_at', $this->selectedTrendsMonth)
+                ->where('st.transactionType', 'SETOR')
+                ->where('st.status', 'APPROVED')
+                ->select(
+                    'st.memberId',
+                    'm.name as member_name',
+                    'm.nomorAnggota as nomor_anggota',
+                    'st.type',
+                    'st.amount',
+                    'st.notes'
+                )
+                ->get();
+
+            $grouped = $txs->groupBy('memberId');
+            $details = [];
+            foreach ($grouped as $memberId => $rows) {
+                $first = $rows->first();
+                $simpok = (float) $rows->where('type', 'POKOK')->sum('amount');
+                $simwa = (float) $rows->where('type', 'WAJIB')->sum('amount');
+                $sukarela = (float) $rows->where('type', 'SUKARELA')->sum('amount');
+                $total = (float) $rows->sum('amount');
+
+                $memberName = $first->member_name ?? 'Member #' . $memberId;
+
+                if (!empty($this->searchTrendsMember)) {
+                    $term = strtolower($this->searchTrendsMember);
+                    if (!str_contains(strtolower($memberName), $term) && !str_contains(strtolower((string)($first->nomor_anggota ?? '')), $term)) {
+                        continue;
+                    }
+                }
+
+                $details[] = [
+                    'raw_name' => $memberName,
+                    'member_name' => $memberName,
+                    'member_id' => $memberId,
+                    'nomor_anggota' => $first->nomor_anggota ?? '-',
+                    'is_matched' => true,
+                    'simpok' => $simpok,
+                    'simwa' => $simwa,
+                    'sukarela' => $sukarela,
+                    'total' => $total,
+                    'uraian_list' => 'Transaksi System DB Live',
+                ];
+            }
+
+            return collect($details)->sortByDesc('total')->values()->all();
+        }
+    }
+
     public function getFilteredAuditResultsProperty()
     {
         $collection = collect($this->auditResults);
@@ -229,6 +345,7 @@ class SimwaAuditTool extends Component
             'unmappedNames' => $unmappedNames,
             'savingsCashFlowData' => $this->savingsCashFlowSummaries,
             'availableYears' => $this->availableYears,
+            'monthlyDetailRows' => $this->monthlyDetailRows,
         ])->layout('layouts.admin');
     }
 
