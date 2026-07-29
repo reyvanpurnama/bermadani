@@ -282,6 +282,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return redirect()->route('admin.members.index');
     })->name('admin.savings');
     Route::get('/audit/simwa', \App\Livewire\Admin\SimwaAuditTool::class)->name('admin.audit.simwa');
+    Route::get('/audit/loan', \App\Livewire\Admin\LoanAuditTool::class)->name('admin.audit.loan');
     Route::get('/audit/bank', \App\Livewire\Admin\BankAuditTool::class)->name('admin.audit.bank');
     Route::get('/audit/retail-product', \App\Livewire\Admin\RetailProductAuditTool::class)->name('admin.audit.retail-product');
 

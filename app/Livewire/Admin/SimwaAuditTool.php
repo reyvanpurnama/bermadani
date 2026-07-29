@@ -856,6 +856,35 @@ class SimwaAuditTool extends Component
         $this->detailRows = [];
     }
 
+    public function syncToRatReport($year = 2025)
+    {
+        $year = (int) $year;
+
+        // Calculate total simpanan (Pokok + Wajib + Sukarela) from members table
+        $totalSimpanan = \App\Models\Member::sum('simpananPokok')
+            + \App\Models\Member::sum('simpananWajib')
+            + \App\Models\Member::sum('simpananSukarela');
+
+        \App\Models\RatManualEntry::updateOrCreate(
+            [
+                'table_key' => 'kewajiban_jangka_pendek',
+                'row_key' => 'simpanan_anggota',
+                'field_key' => 'nilai',
+                'year' => $year,
+            ],
+            [
+                'amount' => $totalSimpanan,
+                'notes' => 'Auto-synced from Simwa Audit Tool',
+            ]
+        );
+
+        $formatted = number_format($totalSimpanan, 0, ',', '.');
+        $this->dispatch('notify', [
+            'type' => 'success',
+            'message' => "Berhasil sync Total Simpanan Anggota RAT Tahun $year: Rp $formatted",
+        ]);
+    }
+
     private function saveMapping($rawName, $memberId)
     {
         DB::table('audit_simwa_name_mappings')->updateOrInsert(
