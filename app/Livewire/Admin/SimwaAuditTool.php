@@ -486,17 +486,21 @@ class SimwaAuditTool extends Component
                         $mainRecordAmount = 0;
                     }
 
-                    // PATTERN 4: Pure "simwa" only (no simpok)
-                    // If amount > 50k, split: 50k Simwa + excess to Sukarela
+                    // PATTERN 4: Pure "simwa" only (no simpok, no tabungan)
+                    // FIX: Full amount = SIMWA unless uraian/notes ALSO contain sukarela/tabungan keyword
+                    // E.g. "simwa 150k" = 3 months arrears = 150k SIMWA (NOT split to sukarela)
+                    // E.g. "simwa mei25, sukarela" = 50k SIMWA + 50k SUKARELA (explicit keyword)
                     elseif ($hasSimwa && !$hasSimpok && !$hasTabungan) {
-                        if ($rawAmount > 50000) {
+                        $hasSukarelaKeyword = str_contains($combinedText, 'sukarela');
+                        if ($hasSukarelaKeyword && $rawAmount > 50000) {
+                            // Explicit sukarela keyword: split 50k simwa + rest to sukarela
                             $splitSimwa = 50000;
                             $splitSukarela = $rawAmount - 50000;
-                            $mainRecordAmount = 0;
                         } else {
+                            // No sukarela keyword: entire amount = SIMWA (could be multi-month arrears)
                             $splitSimwa = $rawAmount;
-                            $mainRecordAmount = 0;
                         }
+                        $mainRecordAmount = 0;
                     }
 
                     // PATTERN 5: Pure "Tabungan" only
@@ -509,37 +513,59 @@ class SimwaAuditTool extends Component
                             $splitSukarela = 0; // Safety check
                         $mainRecordAmount = 0;
                     }
+
+                    // PATTERN 5b: Pure "Sukarela" only (no simwa/simpok/tabungan keyword)
+                    // Some CSV rows may be labeled explicitly as sukarela setoran
+                    elseif (!$hasSimwa && !$hasSimpok && !$hasTabungan && str_contains($combinedText, 'sukarela')) {
+                        $splitSukarela = $rawAmount;
+                        $mainRecordAmount = 0;
+                    }
                 } else {
                     // =============================================
-                    // PATTERN 6: ANGSURAN - Always includes Simwa 50k!
-                    // Total angsuran amount INCLUDES: Simwa 50k + optional Sukarela
-                    // E.g. "Angsuran 12, 1.383.350, + Sukarela 100"
-                    //      = Simwa 50k + Sukarela 100k + Angsuran sisa (IGNORED)
+                    // PATTERN 6: ANGSURAN
+                    // FIX: Only extract Simwa 50k IF the uraian or notes also mention simwa/tabungan
+                    // Pre-2025 CSV format: "Angsuran 11" = pure loan repayment, NO simwa component
+                    // 2025+ CSV format: simwa is listed SEPARATELY in its own row (not bundled with angsuran)
+                    // So: angsuran-only rows = ignore completely (no simwa extraction)
+                    //
+                    // EXCEPTION: If combined text explicitly contains simwa/tabungan keyword,
+                    //            then extract simwa 50k (e.g. "angsuran+simwa", "angs simwa")
                     // =============================================
 
-                    // ALWAYS extract Simwa 50k from Angsuran rows
-                    $splitSimwa = 50000;
+                    $angsuranHasSimwa = preg_match('/\bsimwa\b/i', $combinedText);
+                    $angsuranHasTabungan = str_contains($combinedText, 'tabungan') && !str_contains($combinedText, 'tab+');
 
-                    // Check for Sukarela - PRIORITIZE notes column, then uraian
-                    // Don't combine both to avoid double-counting same info
-                    if ($extraSukarelaAmount > 0) {
-                        // Use notes column value (already calculated above)
-                        $splitSukarela = $extraSukarelaAmount;
-                        $extraSukarelaAmount = 0; // Don't add again in extra record
-                    } elseif (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian, $uraianMatch)) {
-                        // Fallback to uraian column if notes is empty
-                        $val = (int) $uraianMatch[3];
-                        // Convert abbreviated amounts: 100 -> 100,000
-                        if ($val < 1000)
-                            $val *= 1000;
-                        if ($val < 10000)
-                            $val *= 1000;
-                        $splitSukarela = $val;
+                    if ($angsuranHasSimwa || $angsuranHasTabungan) {
+                        // Extract Simwa 50k from this angsuran (it bundles savings)
+                        $splitSimwa = 50000;
+
+                        // Check for Sukarela - PRIORITIZE notes column, then uraian
+                        if ($extraSukarelaAmount > 0) {
+                            $splitSukarela = $extraSukarelaAmount;
+                            $extraSukarelaAmount = 0;
+                        } elseif (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian, $uraianMatch)) {
+                            $val = (int) $uraianMatch[3];
+                            if ($val < 1000)
+                                $val *= 1000;
+                            if ($val < 10000)
+                                $val *= 1000;
+                            $splitSukarela = $val;
+                        }
+                    } else {
+                        // Pure angsuran row - no savings component to extract
+                        // Just check for explicit sukarela in notes
+                        if ($extraSukarelaAmount > 0) {
+                            $splitSukarela = $extraSukarelaAmount;
+                            $extraSukarelaAmount = 0;
+                        } elseif (preg_match('/(sukarela|tabungan)\s*(\+)?\s*(\d+)/i', $rawUraian . ' ' . $extraNote, $uraianMatch)) {
+                            $val = (int) $uraianMatch[3];
+                            if ($val < 1000)
+                                $val *= 1000;
+                            if ($val < 10000)
+                                $val *= 1000;
+                            $splitSukarela = $val;
+                        }
                     }
-
-                    // Note: Don't multiply Simwa by any number in uraian!
-                    // "Angsuran 5+Simwa 2" means Simwa installment #2, NOT 2 months of Simwa
-                    // Each CSV row = 1 month = 50k SIMWA fixed
 
                     // Main Angsuran amount stays full (will be marked as IGNORED in display)
                 }
