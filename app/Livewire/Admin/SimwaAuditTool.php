@@ -17,9 +17,11 @@ class SimwaAuditTool extends Component
     public $processingReport = [];
     public $activeTab = 'upload'; // upload, mapping, preview
 
-    // Mapping Data
+    // Mapping & Reconciliation Filter Data
     public $unmappedEntries = [];
     public $searchMember = '';
+    public $searchAudit = '';
+    public $filterStatus = 'all'; // all, match, mismatch
 
     // Progress Tracking
     public $cleanupProgress = 0;
@@ -33,12 +35,49 @@ class SimwaAuditTool extends Component
         $this->matchManual($data['rawName'], $data['memberId']);
     }
 
+    public function getFilteredAuditResultsProperty()
+    {
+        $collection = collect($this->auditResults);
+
+        if (!empty($this->searchAudit)) {
+            $term = strtolower($this->searchAudit);
+            $collection = $collection->filter(function ($item) use ($term) {
+                return str_contains(strtolower($item['name']), $term)
+                    || str_contains((string)$item['member_id'], $term);
+            });
+        }
+
+        if ($this->filterStatus === 'match') {
+            $collection = $collection->where('status', 'MATCH');
+        } elseif ($this->filterStatus === 'mismatch') {
+            $collection = $collection->where('status', '!=', 'MATCH');
+        }
+
+        return $collection;
+    }
+
     public function render()
     {
+        $totalImports = DB::table('audit_simwa_imports')->count();
+        $totalAmount = DB::table('audit_simwa_imports')->sum('amount');
+        $unprocessed = DB::table('audit_simwa_imports')->whereNull('matched_member_id')->distinct('raw_name')->count('raw_name');
+        $processed = DB::table('audit_simwa_imports')->whereNotNull('matched_member_id')->distinct('matched_member_id')->count('matched_member_id');
+        $periodsCount = DB::table('audit_simwa_imports')->distinct('period')->count('period');
+
+        $totalMembersAudit = count($this->auditResults);
+        $mismatchCount = collect($this->auditResults)->where('status', '!=', 'MATCH')->count();
+        $matchCount = collect($this->auditResults)->where('status', 'MATCH')->count();
+
         $stats = [
-            'total_imports' => DB::table('audit_simwa_imports')->count(),
-            'unprocessed' => DB::table('audit_simwa_imports')->whereNull('matched_member_id')->distinct('raw_name')->count('raw_name'),
-            'processed' => DB::table('audit_simwa_imports')->whereNotNull('matched_member_id')->distinct('matched_member_id')->count('matched_member_id'),
+            'total_imports' => $totalImports,
+            'total_amount' => $totalAmount,
+            'unprocessed' => $unprocessed,
+            'processed' => $processed,
+            'periods_count' => $periodsCount,
+            'total_audit' => $totalMembersAudit,
+            'mismatch_count' => $mismatchCount,
+            'match_count' => $matchCount,
+            'mapped_percent' => ($processed + $unprocessed) > 0 ? round(($processed / ($processed + $unprocessed)) * 100, 1) : 100,
         ];
 
         // Paginating unmapped distinct names with their earliest appearance
@@ -422,7 +461,6 @@ class SimwaAuditTool extends Component
 
     // Reconciliation Data
     public $auditResults = [];
-    public $filterStatus = 'all'; // all, match, mismatch
     public $excludedMemberIds = []; // IDs to skip during cleanup
     public $processWajib = true;
     public $processSukarela = true;
