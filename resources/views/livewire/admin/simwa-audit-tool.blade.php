@@ -117,40 +117,49 @@
         {{-- Navigation Tabs --}}
         <div class="flex flex-wrap border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-2 gap-2">
             <button wire:click="$set('activeTab', 'upload')"
-                class="flex-1 min-w-[200px] px-5 py-3.5 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2.5 {{ $activeTab === 'upload' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                class="flex-1 min-w-[180px] px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'upload' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
                 <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black {{ $activeTab === 'upload' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' }}">1</span>
                 <span>Upload CSV Payroll</span>
                 @if(count($this->importedPeriods) > 0)
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
-                        {{ count($this->importedPeriods) }} File
+                        {{ count($this->importedPeriods) }}
                     </span>
                 @endif
             </button>
 
             <button wire:click="$set('activeTab', 'mapping')"
-                class="flex-1 min-w-[200px] px-5 py-3.5 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2.5 {{ $activeTab === 'mapping' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                class="flex-1 min-w-[180px] px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'mapping' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
                 <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black {{ $activeTab === 'mapping' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' }}">2</span>
                 <span>Mapping Nama CSV</span>
                 @if($stats['unprocessed'] > 0)
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 dark:bg-rose-900/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800 animate-pulse">
-                        {{ $stats['unprocessed'] }} Unmapped
+                        {{ $stats['unprocessed'] }}
                     </span>
                 @else
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
-                        ✓ Clear
+                        ✓
                     </span>
                 @endif
             </button>
 
             <button wire:click="$set('activeTab', 'reconciliation')"
-                class="flex-1 min-w-[200px] px-5 py-3.5 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2.5 {{ $activeTab === 'reconciliation' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                class="flex-1 min-w-[180px] px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'reconciliation' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
                 <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black {{ $activeTab === 'reconciliation' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' }}">3</span>
                 <span>Rekonsiliasi & Sync</span>
                 @if($stats['total_audit'] > 0)
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 dark:bg-sky-900/40 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-800">
-                        {{ $stats['total_audit'] }} Member
+                        {{ $stats['total_audit'] }}
                     </span>
                 @endif
+            </button>
+
+            <button wire:click="$set('activeTab', 'trends')"
+                class="flex-1 min-w-[180px] px-4 py-3 rounded-2xl text-xs font-extrabold transition-all flex items-center justify-center gap-2 {{ $activeTab === 'trends' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm border border-slate-200/60 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black {{ $activeTab === 'trends' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400' }}">4</span>
+                <span>Trend & Arus Kas Bulanan</span>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                    <i class='bx bx-trending-up'></i> RAT
+                </span>
             </button>
         </div>
 
@@ -566,6 +575,219 @@
                             <p class="text-slate-400 text-xs">Klik "Generate / Refresh Report" untuk memulai analisis rekonsiliasi data.</p>
                         </div>
                     @endif
+                </div>
+            @endif
+
+            {{-- TAB 4: TREND & ARUS KAS BULANAN --}}
+            @if($activeTab === 'trends')
+                <div class="space-y-6">
+                    {{-- Toolbar Year Selector & KPI Bar --}}
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div>
+                            <div class="text-xs text-indigo-300 font-extrabold uppercase tracking-widest flex items-center gap-2">
+                                <i class='bx bx-line-chart text-lg text-emerald-400'></i> Laporan Arus Kas Simpanan Koperasi
+                            </div>
+                            <h3 class="text-xl font-black mt-1">Trend Setoran Simpanan Tahun {{ $selectedYear }}</h3>
+                            <p class="text-xs text-slate-300 mt-1 max-w-xl">
+                                Breakdown setoran Simpanan Wajib, Sukarela, dan Pokok dari anggota per bulan.
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 shrink-0">
+                            <label class="text-xs font-bold text-slate-300">Pilih Tahun:</label>
+                            <select wire:model.live="selectedYear" class="px-4 py-2 bg-slate-800 text-white font-bold text-xs rounded-xl border border-slate-700 focus:ring-2 focus:ring-indigo-500">
+                                @foreach($availableYears as $y)
+                                    <option value="{{ $y }}">{{ $y }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    {{-- Top KPI Breakdown Cards --}}
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        {{-- Total Grand --}}
+                        <div class="bg-gradient-to-br from-indigo-600 to-violet-700 text-white p-5 rounded-2xl shadow-md">
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-200">Total Setoran {{ $selectedYear }}</span>
+                            <p class="text-2xl font-black mt-1">Rp {{ number_format($savingsCashFlowData['totals']['grand_total'], 0, ',', '.') }}</p>
+                            <span class="text-[10px] text-indigo-200 mt-1 block">Akumulasi Inflow Koperasi</span>
+                        </div>
+
+                        {{-- Simwa Share --}}
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Simpanan Wajib (Simwa)</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                    {{ $savingsCashFlowData['totals']['simwa_percent'] }}% Share
+                                </span>
+                            </div>
+                            <p class="text-xl font-black text-slate-900 dark:text-white mt-2">Rp {{ number_format($savingsCashFlowData['totals']['simwa'], 0, ',', '.') }}</p>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: {{ $savingsCashFlowData['totals']['simwa_percent'] }}%"></div>
+                            </div>
+                        </div>
+
+                        {{-- Sukarela Share --}}
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-indigo-600 dark:text-indigo-400">Simpanan Sukarela</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                                    {{ $savingsCashFlowData['totals']['sukarela_percent'] }}% Share
+                                </span>
+                            </div>
+                            <p class="text-xl font-black text-slate-900 dark:text-white mt-2">Rp {{ number_format($savingsCashFlowData['totals']['sukarela'], 0, ',', '.') }}</p>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                <div class="bg-indigo-500 h-full rounded-full" style="width: {{ $savingsCashFlowData['totals']['sukarela_percent'] }}%"></div>
+                            </div>
+                        </div>
+
+                        {{-- Simpok Share --}}
+                        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-amber-600 dark:text-amber-400">Simpanan Pokok</span>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800">
+                                    {{ $savingsCashFlowData['totals']['simpok_percent'] }}% Share
+                                </span>
+                            </div>
+                            <p class="text-xl font-black text-slate-900 dark:text-white mt-2">Rp {{ number_format($savingsCashFlowData['totals']['simpok'], 0, ',', '.') }}</p>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full mt-2 overflow-hidden">
+                                <div class="bg-amber-500 h-full rounded-full" style="width: {{ $savingsCashFlowData['totals']['simpok_percent'] }}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- ApexChart Visualisation --}}
+                    <div class="bg-white dark:bg-darkCard rounded-3xl border border-slate-100 dark:border-slate-800 p-6 shadow-sm space-y-4"
+                         x-data="{
+                             chart: null,
+                             chartData: @js($savingsCashFlowData['chart']),
+                             init() {
+                                 let options = {
+                                     chart: { type: 'line', height: 350, toolbar: { show: false } },
+                                     series: [
+                                         { name: 'Simpanan Wajib (Simwa)', type: 'column', data: this.chartData.simwa_series.map(Number) },
+                                         { name: 'Simpanan Pokok (Simpok)', type: 'column', data: this.chartData.simpok_series.map(Number) },
+                                         { name: 'Simpanan Sukarela', type: 'column', data: this.chartData.sukarela_series.map(Number) },
+                                         { name: 'Total Setoran Bulan Ini', type: 'line', data: this.chartData.total_series.map(Number) }
+                                     ],
+                                     colors: ['#10b981', '#f59e0b', '#6366f1', '#06b6d4'],
+                                     stroke: { width: [0, 0, 0, 3], curve: 'smooth' },
+                                     plotOptions: { bar: { columnWidth: '45%', borderRadius: 6 } },
+                                     xaxis: { categories: this.chartData.categories },
+                                     yaxis: { labels: { formatter: (val) => 'Rp ' + (val/1000000).toFixed(1) + 'M' } },
+                                     tooltip: { y: { formatter: (val) => 'Rp ' + new Intl.NumberFormat('id-ID').format(val) } },
+                                     legend: { position: 'top' }
+                                 };
+                                 this.chart = new ApexCharts(this.$refs.savingsChart, options);
+                                 this.chart.render();
+
+                                 this.$watch('chartData', (val) => {
+                                     if (this.chart) {
+                                         this.chart.updateOptions({ xaxis: { categories: val.categories } });
+                                         this.chart.updateSeries([
+                                             { name: 'Simpanan Wajib (Simwa)', type: 'column', data: val.simwa_series.map(Number) },
+                                             { name: 'Simpanan Pokok (Simpok)', type: 'column', data: val.simpok_series.map(Number) },
+                                             { name: 'Simpanan Sukarela', type: 'column', data: val.sukarela_series.map(Number) },
+                                             { name: 'Total Setoran Bulan Ini', type: 'line', data: val.total_series.map(Number) }
+                                         ]);
+                                     }
+                                 });
+                             }
+                         }"
+                         x-effect="chartData = @js($savingsCashFlowData['chart'])">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                            <h4 class="font-extrabold text-slate-800 dark:text-white text-sm flex items-center gap-2">
+                                <i class='bx bx-bar-chart-alt-2 text-indigo-500 text-base'></i> Grafik Komposisi Setoran Simpanan Per Bulan (Tahun {{ $selectedYear }})
+                            </h4>
+                        </div>
+                        <div x-ref="savingsChart" wire:ignore class="w-full"></div>
+                    </div>
+
+                    {{-- Detailed Monthly Cash Flow Table --}}
+                    <div class="bg-white dark:bg-darkCard rounded-3xl border border-slate-100 dark:border-slate-800 overflow-hidden shadow-sm">
+                        <div class="p-5 bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                            <h4 class="text-xs font-extrabold uppercase tracking-widest text-slate-800 dark:text-white flex items-center gap-2">
+                                <i class='bx bx-spreadsheet text-indigo-500 text-base'></i> Tabel Breakdown Setoran Simpanan Bulanan (Januari - Desember {{ $selectedYear }})
+                            </h4>
+                            <span class="text-xs text-slate-400">Arus Kas Inflow</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-100/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 uppercase font-extrabold tracking-wider border-b border-slate-200 dark:border-slate-800">
+                                    <tr>
+                                        <th class="px-5 py-3.5">Bulan</th>
+                                        <th class="px-5 py-3.5 text-right">Simpanan Pokok</th>
+                                        <th class="px-5 py-3.5 text-right">Simpanan Wajib (Simwa)</th>
+                                        <th class="px-5 py-3.5 text-right">Simpanan Sukarela</th>
+                                        <th class="px-5 py-3.5 text-right">Total Setoran Bulan Ini</th>
+                                        <th class="px-5 py-3.5 text-right">Akumulasi Saldo (Running Total)</th>
+                                        <th class="px-5 py-3.5 text-center">Member Bayar</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-darkCard">
+                                    @foreach($savingsCashFlowData['monthly'] as $m)
+                                        <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="px-5 py-3.5 font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
+                                                <span class="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[10px] font-black">
+                                                    {{ $m['month_num'] }}
+                                                </span>
+                                                <span>{{ $m['month_name'] }} {{ $selectedYear }}</span>
+                                            </td>
+                                            <td class="px-5 py-3.5 text-right font-mono font-bold text-amber-600 dark:text-amber-400">
+                                                Rp {{ number_format($m['simpok'], 0, ',', '.') }}
+                                            </td>
+                                            <td class="px-5 py-3.5 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
+                                                Rp {{ number_format($m['simwa'], 0, ',', '.') }}
+                                            </td>
+                                            <td class="px-5 py-3.5 text-right font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                                                Rp {{ number_format($m['sukarela'], 0, ',', '.') }}
+                                            </td>
+                                            <td class="px-5 py-3.5 text-right font-mono font-extrabold text-slate-900 dark:text-white bg-slate-50/50 dark:bg-slate-800/30">
+                                                Rp {{ number_format($m['total'], 0, ',', '.') }}
+                                            </td>
+                                            <td class="px-5 py-3.5 text-right font-mono font-bold text-sky-600 dark:text-sky-400">
+                                                Rp {{ number_format($m['cumulative'], 0, ',', '.') }}
+                                            </td>
+                                            <td class="px-5 py-3.5 text-center">
+                                                @if($m['members_paid'] > 0)
+                                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
+                                                        {{ $m['members_paid'] }} Member
+                                                    </span>
+                                                @else
+                                                    <span class="text-slate-300 dark:text-slate-600 italic text-[10px]">-</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                                <tfoot class="bg-slate-900 text-white font-bold border-t-2 border-indigo-500">
+                                    <tr>
+                                        <td class="px-5 py-4">TOTAL TAHUN {{ $selectedYear }}</td>
+                                        <td class="px-5 py-4 text-right font-mono text-amber-300">
+                                            Rp {{ number_format($savingsCashFlowData['totals']['simpok'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-5 py-4 text-right font-mono text-emerald-300">
+                                            Rp {{ number_format($savingsCashFlowData['totals']['simwa'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-5 py-4 text-right font-mono text-indigo-300">
+                                            Rp {{ number_format($savingsCashFlowData['totals']['sukarela'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-5 py-4 text-right font-mono font-black text-white text-sm bg-indigo-950">
+                                            Rp {{ number_format($savingsCashFlowData['totals']['grand_total'], 0, ',', '.') }}
+                                        </td>
+                                        <td class="px-5 py-4 text-right font-mono text-sky-300">
+                                            -
+                                        </td>
+                                        <td class="px-5 py-4 text-center text-xs text-indigo-200">
+                                            100% Complete
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             @endif
         </div>

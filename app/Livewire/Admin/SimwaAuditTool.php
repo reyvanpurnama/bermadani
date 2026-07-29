@@ -22,6 +22,8 @@ class SimwaAuditTool extends Component
     public $searchMember = '';
     public $searchAudit = '';
     public $filterStatus = 'all'; // all, match, mismatch
+    public $selectedYear = '2026';
+    public $selectedCashFlowMonth = null;
 
     // Progress Tracking
     public $cleanupProgress = 0;
@@ -30,9 +32,143 @@ class SimwaAuditTool extends Component
 
     protected $listeners = ['audit:member-mapped' => 'handleMemberMapped'];
 
+    public function mount()
+    {
+        $this->selectedYear = (string) date('Y');
+    }
+
     public function handleMemberMapped($data)
     {
         $this->matchManual($data['rawName'], $data['memberId']);
+    }
+
+    public function getAvailableYearsProperty()
+    {
+        $yearsFromImport = DB::table('audit_simwa_imports')
+            ->select(DB::raw("DISTINCT SUBSTRING(period, 1, 4) as year"))
+            ->whereRaw("period REGEXP '^[0-9]{4}-[0-9]{2}'")
+            ->pluck('year')
+            ->toArray();
+
+        $yearsFromDB = DB::table('simpanan_transactions')
+            ->select(DB::raw("DISTINCT YEAR(created_at) as year"))
+            ->pluck('year')
+            ->toArray();
+
+        $merged = array_unique(array_merge($yearsFromImport, $yearsFromDB, ['2024', '2025', '2026']));
+        rsort($merged);
+        return array_values($merged);
+    }
+
+    public function getSavingsCashFlowSummariesProperty()
+    {
+        $year = $this->selectedYear ?? date('Y');
+        $monthlyData = [];
+        $runningBalance = 0;
+
+        $monthsName = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        $simpokYear = 0;
+        $simwaYear = 0;
+        $sukarelaYear = 0;
+
+        for ($m = 1; $m <= 12; $m++) {
+            $periodKey = sprintf('%s-%02d', $year, $m);
+
+            // 1. Check CSV Imports for this period
+            $importRows = DB::table('audit_simwa_imports')
+                ->where('period', $periodKey)
+                ->get();
+
+            if ($importRows->count() > 0) {
+                $simpok = (float) $importRows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SIMPOK'))->sum('amount');
+                $simwa = (float) $importRows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SIMWA'))->sum('amount');
+                $sukarela = (float) $importRows->filter(fn($r) => str_contains(strtoupper($r->raw_uraian), 'SUKARELA') || str_contains(strtoupper($r->raw_uraian), 'EXTRA'))->sum('amount');
+                $activeMembersCount = $importRows->whereNotNull('matched_member_id')->pluck('matched_member_id')->unique()->count();
+            } else {
+                // 2. Fallback to SimpananTransaction database
+                $simpok = (float) DB::table('simpanan_transactions')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $m)
+                    ->where('type', 'POKOK')
+                    ->where('transactionType', 'SETOR')
+                    ->where('status', 'APPROVED')
+                    ->sum('amount');
+
+                $simwa = (float) DB::table('simpanan_transactions')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $m)
+                    ->where('type', 'WAJIB')
+                    ->where('transactionType', 'SETOR')
+                    ->where('status', 'APPROVED')
+                    ->sum('amount');
+
+                $sukarela = (float) DB::table('simpanan_transactions')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $m)
+                    ->where('type', 'SUKARELA')
+                    ->where('transactionType', 'SETOR')
+                    ->where('status', 'APPROVED')
+                    ->sum('amount');
+
+                $activeMembersCount = DB::table('simpanan_transactions')
+                    ->whereYear('created_at', $year)
+                    ->whereMonth('created_at', $m)
+                    ->where('transactionType', 'SETOR')
+                    ->where('status', 'APPROVED')
+                    ->distinct('memberId')
+                    ->count('memberId');
+            }
+
+            $monthTotal = $simpok + $simwa + $sukarela;
+            $runningBalance += $monthTotal;
+
+            $simpokYear += $simpok;
+            $simwaYear += $simwa;
+            $sukarelaYear += $sukarela;
+
+            $monthlyData[] = [
+                'month_num' => $m,
+                'month_name' => $monthsName[$m],
+                'period' => $periodKey,
+                'simpok' => $simpok,
+                'simwa' => $simwa,
+                'sukarela' => $sukarela,
+                'total' => $monthTotal,
+                'cumulative' => $runningBalance,
+                'members_paid' => $activeMembersCount,
+            ];
+        }
+
+        $grandTotalYear = $simpokYear + $simwaYear + $sukarelaYear;
+
+        $simwaPercent = $grandTotalYear > 0 ? round(($simwaYear / $grandTotalYear) * 100, 1) : 0;
+        $sukarelaPercent = $grandTotalYear > 0 ? round(($sukarelaYear / $grandTotalYear) * 100, 1) : 0;
+        $simpokPercent = $grandTotalYear > 0 ? round(($simpokYear / $grandTotalYear) * 100, 1) : 0;
+
+        return [
+            'monthly' => $monthlyData,
+            'totals' => [
+                'simpok' => $simpokYear,
+                'simwa' => $simwaYear,
+                'sukarela' => $sukarelaYear,
+                'grand_total' => $grandTotalYear,
+                'simwa_percent' => $simwaPercent,
+                'sukarela_percent' => $sukarelaPercent,
+                'simpok_percent' => $simpokPercent,
+            ],
+            'chart' => [
+                'categories' => array_column($monthlyData, 'month_name'),
+                'simwa_series' => array_column($monthlyData, 'simwa'),
+                'simpok_series' => array_column($monthlyData, 'simpok'),
+                'sukarela_series' => array_column($monthlyData, 'sukarela'),
+                'total_series' => array_column($monthlyData, 'total'),
+            ]
+        ];
     }
 
     public function getFilteredAuditResultsProperty()
@@ -90,7 +226,9 @@ class SimwaAuditTool extends Component
 
         return view('livewire.admin.simwa-audit-tool', [
             'stats' => $stats,
-            'unmappedNames' => $unmappedNames
+            'unmappedNames' => $unmappedNames,
+            'savingsCashFlowData' => $this->savingsCashFlowSummaries,
+            'availableYears' => $this->availableYears,
         ])->layout('layouts.admin');
     }
 
