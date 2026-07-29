@@ -286,11 +286,10 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th class="center" style="width: 4%;">No</th>
-                <th style="width: 26%;">Nama Anggota</th>
-                <th style="width: 13%;">No. Anggota</th>
-                <th style="width: 13%;">Username</th>
-                <th style="width: 13%;">Password Awal</th>
+                <th class="center" style="width: 5%;">No</th>
+                <th style="width: 32%;">Nama Anggota</th>
+                <th style="width: 16%;">Username</th>
+                <th style="width: 16%;">Password Awal</th>
                 <th style="width: 19%;">Unit Kerja</th>
                 <th class="center" style="width: 12%;">Tanda Terima</th>
             </tr>
@@ -298,19 +297,15 @@
         <tbody>
             @foreach($members as $index => $member)
                 @php
-                    // Strip domain from email -> username
                     $username = $member->nomorAnggota ?? explode('@', $member->email ?? '')[0];
-                    $passwordAwal = $username; // Default: sama dengan username
+                    $passwordAwal = 'password';
                 @endphp
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
                     <td class="name-cell">{{ strtoupper($member->name) }}</td>
-                    <td class="nomor-cell center">{{ $member->nomorAnggota }}</td>
                     <td class="username-cell">{{ $username }}</td>
                     <td class="password-cell">{{ $passwordAwal }}</td>
-                    <td style="font-size: 9px; color: #475569;">
-                        {{ $member->unitKerja === 'unknown' ? '-' : $member->unitKerja }}
-                    </td>
+                    <td style="font-size: 9px; color: #cbd5e1;">&nbsp;</td>
                     <td class="sign-cell center"></td>
                 </tr>
             @endforeach
@@ -324,7 +319,7 @@
             <div class="sig-city-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
             <div class="sig-role">Ketua Koperasi</div>
             <div style="margin-top: 55px;">
-                <div class="sig-name">(Muhammad Alwi Almaliki)</div>
+                <div class="sig-name">(Ridlo Abdillah)</div>
             </div>
         </div>
     </div>
