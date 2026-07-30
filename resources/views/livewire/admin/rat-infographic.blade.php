@@ -284,14 +284,14 @@
                         <span>NOMINAL (RP)</span>
                     </div>
                     <div class="p-4 space-y-3 text-xs">
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Lancar</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Lancar (Aktiva)</div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
-                            <span class="text-slate-600 dark:text-slate-400">Kas & Setara Kas</span>
-                            <span class="font-mono font-semibold">Rp {{ number_format($netProfit, 0, ',', '.') }}</span>
+                            <span class="text-slate-600 dark:text-slate-400">Kas & Bank (Uang Tunai Riil)</span>
+                            <span class="font-mono font-bold text-emerald-600">Rp 35.190.000</span>
                         </div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
                             <span class="text-slate-600 dark:text-slate-400">Piutang Pinjaman Anggota</span>
-                            <span class="font-mono font-semibold">Rp {{ number_format($totalSimpanan - $netProfit, 0, ',', '.') }}</span>
+                            <span class="font-mono font-bold text-indigo-600">Rp 160.000.000</span>
                         </div>
                         <div class="flex justify-between bg-indigo-50 dark:bg-indigo-950/30 p-2.5 rounded-xl font-bold text-indigo-700 dark:text-indigo-300 mt-4">
                             <span>TOTAL ASET KOPERASI</span>

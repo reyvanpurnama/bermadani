@@ -20,19 +20,19 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
 1. CARD TOTAL SIMPANAN ANGGOTA AKTIF:
    - Icon: Wallet / Coin Stack
    - Angka: "Rp 195.190.000"
-   - Label: "Total Dana Simpanan Anggota Aktif"
-2. CARD LABA BERSIH (SHU 2025):
+   - Label: "Total Ekuitas Simpanan Anggota Aktif"
+2. CARD KAS & BANK RIIL TERSOROT:
+   - Icon: Bank / Dollar
+   - Angka: "Rp 35.190.000"
+   - Label: "Kas & Bank Riil Koperasi"
+3. CARD PIUTANG PINJAMAN BERJALAN:
+   - Icon: File Text / Credit Card
+   - Angka: "Rp 160.000.000"
+   - Label: "Piutang Pinjaman Anggota"
+4. CARD LABA BERSIH (SHU 2025):
    - Icon: Trending Up / Chart
    - Angka: "Rp 30.499.118"
    - Label: "Total Laba Bersih Tahun 2025"
-3. CARD SHU DIBAGIKAN:
-   - Icon: Gift / Handshake
-   - Angka: "Rp 15.000.000"
-   - Label: "Total SHU Dibagikan ke Anggota (49,18%)"
-4. CARD KEANGGOTAAN:
-   - Icon: Users / People
-   - Angka: "113 Anggota"
-   - Label: "Anggota Aktif Berhak SHU"
 
 [SECTION 2: VISUALISASI GRAFIK & DIAGRAM (4 Quadrant Grid)]
 - QUADRANT 1 (Komposisi Simpanan Anggota Aktif - Pie/Donut Chart):
@@ -42,24 +42,24 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
   * Total Simpanan Aktif: Rp 195.190.000
   * Catatan: "Simpanan Wajib anggota aktif (Rp 156.100.000) menjadi basis utama perhitungan pembagian SHU RAT 2025."
 
-- QUADRANT 2 (Perbandingan Arus Kas 2025 - Bar Chart):
-  * Total Penerimaan Kas: Rp 168.049.500
-  * Total Pengeluaran Kas: Rp 137.550.382
-  * Surplus Kas Bersih: Rp 30.499.118
+- QUADRANT 2 (Struktur Aset Koperasi 2025 - Bar Chart):
+  * Kas & Setara Kas (Riil): Rp 35.190.000 (18,0%)
+  * Piutang Pinjaman Anggota: Rp 160.000.000 (82,0%)
+  * Total Aset: Rp 195.190.000
 
 - QUADRANT 3 (Alokasi Laba Bersih 2025 - Donut Chart):
   * Modal Usaha Ditahan: Rp 15.499.118 (50,82%)
   * SHU Dibagikan Anggota: Rp 15.000.000 (49,18%)
-  * Catatan: "Alokasi modal ditahan disiapkan untuk penguatan operasional bulan depan."
+  * Catatan: "Alokasi modal ditahan disiapkan untuk penguatan likuiditas kas operasional."
 
 - QUADRANT 4 (Indikator Kesehatan Koperasi - Gauge Status):
-  * Kecukupan Modal Aktif: BAIK & SEHAT (Hijau)
-  * Likuiditas & Kas: SANGAT BAIK (Hijau)
+  * Solvabilitas & Ekuitas: SANGAT BAIK (Hijau)
+  * Struktur Aset & Piutang: SEHAT (Hijau)
   * Efisiensi Operasional: EFISIEN (Hijau)
-  * Kualitas Pengelolaan: BAIK (Hijau)
+  * Kualitas Pengelolaan: TERKONTROLI (Hijau)
 
 [FOOTER BANNER]
-- Keterangan: "Data bersumber dari Sistem Pembukuan Resmi Koperasi Bermadani Per 31 Desember 2025 (Fokus Anggota Aktif)."
+- Keterangan: "Data bersumber dari Pembukuan Resmi Koperasi Bermadani Per 31 Desember 2025 (113 Anggota Aktif)."
 - Pengurus Koperasi: Ridlo Abdillah (Ketua Koperasi)
 - Tanggal Pelaksanaan RAT: 31 Juli 2026
 ```

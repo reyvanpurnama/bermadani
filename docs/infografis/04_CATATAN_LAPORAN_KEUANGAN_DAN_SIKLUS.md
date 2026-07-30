@@ -40,13 +40,13 @@ Grid 3 Aktivitas Arus Kas:
 [SECTION 3: CATATAN ATAS LAPORAN KEUANGAN - CALK (10 POIN PENTING)]
 1. Profil Organisasi: Koperasi Bermadani berdiri untuk meningkatkan kesejahteraan ekonomi 113 Anggota Aktif.
 2. Dasar Penyusunan: Mengacu pada Prinsip Akuntansi Koperasi dan SAK Entitas Tanpa Akuntabilitas Publik.
-3. Kas & Bank: Seluruh kas disimpan dalam rekening korporat yang aman dan transparan.
-4. Piutang Pinjaman: Pengelolaan pembiayaan anggota dengan sistem monitoring kolektibilitas yang sehat.
+3. Kas & Bank Riil: Kas fisik & saldo bank yang tersedia per 31 Des 2025 sebesar Rp 35.190.000.
+4. Piutang Pinjaman Anggota: Sebesar Rp 160.000.000 berada pada pos pinjaman berjalan dalam proses recovering.
 5. Simpanan Anggota Aktif: Total Rp 195.190.000 (Simpanan Wajib Rp 156.100.000, Pokok Rp 22.100.000, Sukarela Rp 16.990.000).
 6. Penentuan SHU: SHU dihasilkan murni dari efisiensi operasional dan partisipasi bisnis anggota.
-7. Alokasi Modal Usaha: Sebesar Rp 15.499.118 disepakati ditahan sebagai cadangan penguatan usaha.
+7. Alokasi Modal Usaha: Sebesar Rp 15.499.118 disepakati ditahan sebagai cadangan penguatan kas likuiditas.
 8. Hak SHU Anggota: Sebesar Rp 15.000.000 disepakati dibagikan secara proporsional ke 113 Anggota Aktif.
-9. Manajemen Risiko: Tidak terdapat piutang macet yang mengganggu likuiditas keuangan koperasi.
+9. Manajemen Risiko: Pemulihan piutang pinjaman dilakukan secara bertahap melalui sistem potong gaji/payroll.
 10. Kejadian Setelah Neraca: Tidak ada kejadian material negatif pasca 31 Desember 2025.
 
 [SECTION 4: KOLOM PENGESAHAN KOPERASI BERMADANI]

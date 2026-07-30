@@ -15,17 +15,17 @@ Tampilan harus berupa gabungan tabel keuangan yang rapi, kartu metrik, dan infog
 - Judul: "LAPORAN POSISI KEUANGAN (NERACA) & EKUITAS ANGGOTA AKTIF"
 - Periode: "Per 31 Desember 2025 (Fokus 113 Anggota Aktif)"
 
-[SECTION 1: TABEL LAPORAN POSISI KEUANGAN (NERACA ANGGOTA AKTIF)]
+[SECTION 1: TABEL LAPORAN POSISI KEUANGAN (NERACA BALANCED)]
 Layout Dua Kolom Seimbang (Side-by-Side Table):
 
-KOLOM KIRI: ASET KOPERASI
+KOLOM KIRI: ASET KOPERASI (AKTIVA)
 ------------------------------------------------------
 - ASET LANCAR:
-  * Kas & Bank / Setara Kas     : Rp  30.499.118
-  * Piutang Pinjaman Anggota    : Rp 164.690.882
+  * Kas & Bank (Uang Tunai Riil) : Rp  35.190.000
+  * Piutang Pinjaman Anggota    : Rp 160.000.000
 - TOTAL ASET KOPERASI           : Rp 195.190.000
 
-KOLOM KANAN: LIABILITAS & EKUITAS (ANGGOTA AKTIF)
+KOLOM KANAN: LIABILITAS & EKUITAS (PASIVA)
 ------------------------------------------------------
 - LIABILITAS (KEWAJIBAN):
   * Utang Usaha / Pihak Ketiga  : Rp           0
@@ -35,7 +35,7 @@ KOLOM KANAN: LIABILITAS & EKUITAS (ANGGOTA AKTIF)
   * Simpanan Sukarela Aktif     : Rp  16.990.000
 - TOTAL EKUITAS ANGGOTA AKTIF   : Rp 195.190.000
 ------------------------------------------------------
-KETERANGAN IMBANG: "TOTAL ASET = TOTAL LIABILITAS & EKUITAS ANGGOTA AKTIF (BALANCE: Rp 195.190.000)"
+KETERANGAN IMBANG: "TOTAL ASET = TOTAL LIABILITAS & EKUITAS (BALANCE: Rp 195.190.000)"
 
 [SECTION 2: TABEL PERUBAHAN EKUITAS ANGGOTA AKTIF 2025]
 Tabel Rincian Ekuitas Anggota Aktif:
@@ -49,9 +49,10 @@ Penarikan/Pengurangan   | Rp          0  | Rp           0 | Rp           0    | 
 SALDO PER 31 DES 2025   | Rp 22.100.000  | Rp 156.100.000 | Rp  16.990.000    | Rp 195.190.000
 ---------------------------------------------------------------------------------------------
 
-[SECTION 3: HIGHLIGHT & ANNOTATION BOX]
+[SECTION 3: HIGHLIGHT LIKUIDITAS & ANNOTATION BOX]
 - Card Highlight:
-  * "100% Modal Koperasi berasal dari partisipasi 113 Anggota Aktif Koperasi Bermadani."
+  * "Uang Kas & Bank Riil tersedia sebesar Rp 35.190.000."
+  * "Sebesar Rp 160.000.000 berada pada pos Piutang Pinjaman Anggota yang dalam proses recovering."
   * "Total Simpanan Wajib Aktif (Rp 156.100.000) menjadi pembagi tunggal porsi SHU RAT 2025."
 
 [FOOTER BANNER]
