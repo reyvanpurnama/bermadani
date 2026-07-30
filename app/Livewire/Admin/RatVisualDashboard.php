@@ -137,9 +137,9 @@ class RatVisualDashboard extends Component
                 'items' => [
                     ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp 285.000.000', 'pct' => '80,5%', 'color' => '#6366F1'],
                     ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp 6.964.859', 'pct' => '2,0%', 'color' => '#10B981'],
-                    ['label' => 'Surplus Kas 2025 (CSV)', 'val' => 'Rp 30.499.118', 'pct' => '8,6%', 'color' => '#06B6D4'],
+                    ['label' => 'Surplus Kas Internal Bermadani', 'val' => 'Rp 19.015.051', 'pct' => '5,4%', 'color' => '#06B6D4'],
                     ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
-                    ['label' => 'Persediaan & Aset Lainnya', 'val' => 'Rp 13.036.023', 'pct' => '3,7%', 'color' => '#94A3B8'],
+                    ['label' => 'Persediaan & Aset Lainnya', 'val' => 'Rp 24.520.090', 'pct' => '6,9%', 'color' => '#94A3B8'],
                 ],
             ],
             'komposisiPendapatan' => [

@@ -886,9 +886,9 @@
             new Chart(ctxAset, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Piutang Pembiayaan', 'Surplus Kas 2025', 'Aset Tetap', 'Kas Awal Periode', 'Aset Lainnya'],
+                    labels: ['Piutang Pembiayaan', 'Surplus Kas Internal', 'Aset Tetap', 'Kas Awal Periode', 'Persediaan Toko'],
                     datasets: [{
-                        data: [285.0, 30.50, 18.5, 6.96, 13.04],
+                        data: [285.0, 19.02, 18.5, 6.96, 24.52],
                         backgroundColor: ['#6366F1', '#06B6D4', '#F59E0B', '#10B981', '#94A3B8'],
                         borderWidth: 0,
                     }]
