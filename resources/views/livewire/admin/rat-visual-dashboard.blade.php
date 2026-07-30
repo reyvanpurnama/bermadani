@@ -84,13 +84,13 @@
     {{-- TOP 5 KPI SUMMARY CARDS --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
-        {{-- KPI 1: TOTAL KAS MASUK INTERNAL --}}
+        {{-- KPI 1: TOTAL KAS MASUK --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-line-chart'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Kas Masuk Internal</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Kas Masuk</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['totalKasMasuk']['val'] }} Jt
                 </h3>
@@ -105,6 +105,7 @@
                 <ul class="space-y-1 text-[10px] text-slate-300">
                     <li>• Pendapatan Toko Minimarket: <strong>Rp 94.777.311</strong></li>
                     <li>• Simpanan Wajib Anggota: <strong>Rp 38.400.000</strong></li>
+                    <li>• Pendapatan BMT ITQAN: <strong>Rp 11.484.067</strong></li>
                     <li>• Simpanan Sukarela: <strong>Rp 6.450.000</strong></li>
                     <li>• Simpanan Pokok: <strong>Rp 600.000</strong></li>
                 </ul>
@@ -137,13 +138,13 @@
             </div>
         </div>
 
-        {{-- KPI 3: SALDO KAS AKHIR & SURPLUS --}}
+        {{-- KPI 3: SISA HASIL USAHA (SHU) --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-wallet'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Saldo Kas Akhir & Surplus</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Sisa Hasil Usaha (SHU)</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['kasBank']['val'] }} Jt
                 </h3>
@@ -155,10 +156,10 @@
             {{-- Floating Hover Tooltip --}}
             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
                 <div class="font-bold text-teal-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
-                    <i class='bx bx-info-circle text-sm'></i> Saldo Kas Akhir & Surplus Kas:
+                    <i class='bx bx-info-circle text-sm'></i> Sisa Hasil Usaha (SHU):
                 </div>
                 <p class="text-[10px] text-slate-300">
-                    Total Saldo Kas Akhir & Surplus Operasional Kas (Arus Kas CSV Line 28) per 31 Desember 2025: <strong>Rp 30.499.118</strong>.
+                    Total Sisa Hasil Usaha (SHU) & Surplus Operasional Kas (Arus Kas CSV Line 28) per 31 Desember 2025: <strong>Rp 30.499.118</strong>.
                 </p>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
