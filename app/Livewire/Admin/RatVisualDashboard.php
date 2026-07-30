@@ -95,27 +95,12 @@ class RatVisualDashboard extends Component
         $operasionalLainCsv = 1910000;    // Rp 1.910.000
         $totalKasKeluarCsv = 121212260;   // Rp 121.212.260
 
-        // Saldo Kas (Exact from CSV)
-        $saldoKasAwalCsv = 6964859;       // Rp 6.964.859 (Saldo Awal Terpisah)
-        $saldoKasAkhirCsv = 30499118;     // Rp 30.499.118 (Kas Masuk 151,7M - Kas Keluar 121,2M)
-        $surplusKasBersihFull = 30499118; // Rp 30.499.118
-        $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv; // Rp 19.015.051
-
-        // Outstanding Pinjaman Internal Bermadani DB
-        try {
-            $outstandingPinjamanBermadani = (float) Loan::where('loanSource', 'BERMADANI')
-                ->whereIn('status', ['ACTIVE', 'OVERDUE'])
-                ->sum('remainingAmount');
-            if ($outstandingPinjamanBermadani <= 0) {
-                $outstandingPinjamanBermadani = 1233333;
-            }
-        } catch (\Throwable $e) {
-            $outstandingPinjamanBermadani = 1233333;
-        }
-
-        $kasBankRiil = 30499118; // CSV Line 28
-        $asetTetap = 11021000;   // CSV Line 13
-        $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani; // 42.753.451
+        // Saldo Kas & Surplus (Exact Breakdown: Rp 15,0M SHU + Rp 4.015.051 Persediaan Barang Dagangan)
+        $saldoKasAwalCsv = 6964859;                // Rp 6.964.859 (Saldo Awal Terpisah)
+        $saldoKasAkhirCsv = 30499118;              // Rp 30.499.118 (Saldo Kas Akhir CSV)
+        $surplusKasBersihFull = 15000000;          // Rp 15.000.000 (15,0 Jt SHU Dibagikan)
+        $surplusKasBersihBermadani = 15000000;     // Rp 15.000.000 (15,0 Jt SHU Dibagikan)
+        $persediaanBarangDagangan = 4015051;       // Rp 4.015.051 (Pindah ke Komposisi Aset)
 
         return [
             'year' => $year,
@@ -131,18 +116,18 @@ class RatVisualDashboard extends Component
                     'growth' => 'Pengeluaran Operasional & Usaha',
                 ],
                 'surplusKas' => [
-                    'val' => '19,0',
+                    'val' => '15,0',
                     'raw' => number_format($surplusKasBersihBermadani, 0, ',', '.'),
-                    'growth' => 'Surplus Kas Bersih 2025',
+                    'growth' => 'Surplus Kas Bersih (SHU) 2025',
                 ],
                 'jumlahAnggota' => [
                     'val' => $activeMemberCount,
                     'growth' => '131 Anggota Aktif Terdaftar (Live DB)',
                 ],
                 'kasBank' => [
-                    'val' => '19,0',
+                    'val' => '15,0',
                     'raw' => number_format($surplusKasBersihBermadani, 0, ',', '.'),
-                    'note' => 'Surplus Kas Bersih Internal Bermadani',
+                    'note' => 'Surplus Kas Bersih (SHU Dibagikan)',
                 ],
             ],
             'komposisiAset' => [
@@ -150,9 +135,10 @@ class RatVisualDashboard extends Component
                 'totalRaw' => '248.561.028',
                 'items' => [
                     ['label' => 'Simpanan Terhimpun (Live DB)', 'val' => 'Rp ' . number_format($simpokDb + $simwaDb, 0, ',', '.'), 'pct' => '85,1%', 'color' => '#6366F1'],
-                    ['label' => 'Surplus Kas Internal (CSV)', 'val' => 'Rp ' . number_format($surplusKasBersihBermadani, 0, ',', '.'), 'pct' => '7,7%', 'color' => '#06B6D4'],
+                    ['label' => 'Surplus Kas Bersih (SHU)', 'val' => 'Rp ' . number_format($surplusKasBersihBermadani, 0, ',', '.'), 'pct' => '6,0%', 'color' => '#06B6D4'],
                     ['label' => 'Pengadaan Aset Tetap Toko', 'val' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '4,4%', 'color' => '#F59E0B'],
                     ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp ' . number_format($saldoKasAwalCsv, 0, ',', '.'), 'pct' => '2,8%', 'color' => '#10B981'],
+                    ['label' => 'Persediaan Barang Dagangan', 'val' => 'Rp ' . number_format($persediaanBarangDagangan, 0, ',', '.'), 'pct' => '1,6%', 'color' => '#EC4899'],
                 ],
             ],
             'komposisiPendapatan' => [

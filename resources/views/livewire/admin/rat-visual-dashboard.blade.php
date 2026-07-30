@@ -137,13 +137,13 @@
             </div>
         </div>
 
-        {{-- KPI 3: SURPLUS KAS BERSIH --}}
+        {{-- KPI 3: SURPLUS SHU DIBAGIKAN --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-coin-stack'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Surplus Kas Bersih</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Surplus SHU Dibagikan</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['surplusKas']['val'] }} Jt
                 </h3>
@@ -153,11 +153,13 @@
             {{-- Floating Hover Tooltip --}}
             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
                 <div class="font-bold text-amber-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
-                    <i class='bx bx-info-circle text-sm'></i> Perhitungan Surplus Kas:
+                    <i class='bx bx-info-circle text-sm'></i> Rincian SHU & Alokasi Persediaan:
                 </div>
-                <p class="text-[10px] text-slate-300">
-                    Kas Masuk Internal (Rp 140,2 Jt) dikurangi Total Kas Keluar (Rp 121,2 Jt) = Surplus Kas Bersih Rp 19.015.051.
-                </p>
+                <ul class="space-y-1 text-[10px] text-slate-300">
+                    <li>• Surplus Kas Gross Operasional: <strong>Rp 19.015.051</strong></li>
+                    <li>• Dialokasikan ke Persediaan Toko: <strong>- Rp 4.015.051</strong></li>
+                    <li class="border-t border-slate-700 pt-1 text-amber-300 font-bold">• SHU Bersih Dibagikan: <strong>Rp 15.000.000</strong></li>
+                </ul>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
         </div>
@@ -869,17 +871,10 @@
             new Chart(ctxAset, {
                 type: 'doughnut',
                 data: {
-<<<<<<< HEAD
-                    labels: ['Simpanan Live DB', 'Surplus Kas 2025', 'Aset Tetap Toko', 'Kas Awal Periode'],
+                    labels: ['Simpanan Live DB', 'Surplus Kas (SHU)', 'Aset Tetap Toko', 'Kas Awal Periode', 'Persediaan Dagangan'],
                     datasets: [{
-                        data: [211.60, 30.50, 11.02, 6.96],
-                        backgroundColor: ['#6366F1', '#06B6D4', '#F59E0B', '#10B981'],
-=======
-                    labels: ['Kas & Bank Akhir', 'Aset Tetap & Inventaris', 'Piutang Pinjaman Bermadani'],
-                    datasets: [{
-                        data: [30.50, 11.02, 1.23],
-                        backgroundColor: ['#10B981', '#F59E0B', '#6366F1'],
->>>>>>> f07c024 (fix: update Komposisi Aset on admin/rat-dashboard to reflect real BERMADANI assets (Rp 42,75M))
+                        data: [211.60, 15.00, 11.02, 6.96, 4.02],
+                        backgroundColor: ['#6366F1', '#06B6D4', '#F59E0B', '#10B981', '#EC4899'],
                         borderWidth: 0,
                     }]
                 },
@@ -949,7 +944,7 @@
                     labels: ['2021', '2022', '2023', '2024', '2025'],
                     datasets: [{
                         label: 'Surplus (Jt)',
-                        data: [5.2, 6.1, 7.3, 12.0, 19.01],
+                        data: [5.2, 6.1, 7.3, 12.0, 15.0],
                         borderColor: '#0284C7',
                         backgroundColor: 'rgba(2, 132, 199, 0.1)',
                         fill: true,
@@ -1000,10 +995,10 @@
             new Chart(ctxArusKas, {
                 type: 'bar',
                 data: {
-                    labels: ['Kas Masuk', 'Kas Keluar', 'Surplus', 'Saldo Akhir'],
+                    labels: ['Kas Masuk', 'Kas Keluar', 'Surplus SHU'],
                     datasets: [{
-                        data: [140.23, 121.21, 19.01, 37.46],
-                        backgroundColor: ['#10B981', '#EF4444', '#3B82F6', '#6366F1'],
+                        data: [140.23, 121.21, 15.00],
+                        backgroundColor: ['#10B981', '#EF4444', '#3B82F6'],
                         borderRadius: 6
                     }]
                 },
