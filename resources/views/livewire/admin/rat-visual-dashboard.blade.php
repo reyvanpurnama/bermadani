@@ -220,9 +220,6 @@
     {{-- 8 MODUL VISUALISASI GRID (2 ROWS X 4 COLS) --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         
-    {{-- 8 MODUL VISUALISASI GRID (2 ROWS X 4 COLS) --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        
         {{-- CARD 1: KOMPOSISI ASET KOPERASI (AKTIVA) --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
