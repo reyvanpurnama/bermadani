@@ -19,7 +19,7 @@
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Penyelenggaraan RAT & Pembagian SHU</h1>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-                Manajemen sesi Rapat Anggota Tahunan (RAT), kalkulasi proporsi SHU anggota, dan cetak tanda terima.
+                Manajemen sesi Rapat Anggota Tahunan (RAT), alokasi pembagian SHU vs modal usaha, dan cetak tanda terima.
             </p>
         </div>
 
@@ -65,29 +65,29 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {{-- Total Laba Bersih --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Laba Bersih / SHU</p>
-            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Laba Bersih</p>
+            <h3 class="text-xl font-bold text-slate-800 dark:text-white">
                 Rp {{ number_format($totalNetProfit, 0, ',', '.') }}
             </h3>
             <p class="text-[10px] text-slate-400 mt-1">Tahun Buku {{ $year }}</p>
         </div>
 
-        {{-- Total Simpanan Wajib Aktif --}}
+        {{-- SHU Dibagikan ke Anggota --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Simpanan Wajib Aktif</p>
-            <h3 class="text-xl font-bold text-slate-800 dark:text-white">
-                Rp {{ number_format($summary['totalSimwa'], 0, ',', '.') }}
+            <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Total SHU Dibagikan</p>
+            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
+                Rp {{ number_format($totalMemberShu, 0, ',', '.') }}
             </h3>
-            <p class="text-[10px] text-indigo-600 dark:text-indigo-400 mt-1">{{ $summary['activeMemberCount'] }} Anggota Aktif</p>
+            <p class="text-[10px] text-emerald-600/80 font-medium mt-1">{{ number_format($memberAllocationPercentage, 2) }}% dari Laba Bersih</p>
         </div>
 
-        {{-- Alokasi SHU Anggota --}}
+        {{-- Modal Usaha / Cadangan Koperasi --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nominal SHU Dibagikan</p>
-            <h3 class="text-xl font-bold text-indigo-600 dark:text-indigo-400">
-                Rp {{ number_format($summary['totalMemberShu'], 0, ',', '.') }}
+            <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Modal Usaha / Cadangan</p>
+            <h3 class="text-xl font-bold text-blue-600 dark:text-blue-400">
+                Rp {{ number_format($summary['retainedAmount'], 0, ',', '.') }}
             </h3>
-            <p class="text-[10px] text-slate-400 mt-1">Alokasi {{ $memberAllocationPercentage }}% untuk anggota</p>
+            <p class="text-[10px] text-slate-400 mt-1">Ditahan untuk Operasional / Modal</p>
         </div>
 
         {{-- Status RAT --}}
@@ -101,16 +101,16 @@
                 </div>
             </div>
             <p class="text-[10px] text-slate-400 mt-2">
-                {{ $session?->status === 'FINALIZED' ? 'SHU sudah tampil di akun anggota' : 'Belum dipublikasikan ke anggota' }}
+                {{ $session?->status === 'FINALIZED' ? 'SHU tampil di portal anggota' : 'Belum dipublikasikan' }}
             </p>
         </div>
     </div>
 
     {{-- Form Config & Actions --}}
     <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Pengaturan Sesi RAT {{ $year }}</h3>
+        <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Pengaturan Alokasi Laba Bersih & SHU RAT {{ $year }}</h3>
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
             <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">Tahun Buku</label>
                 <input type="number" wire:model.blur="year"
@@ -118,21 +118,28 @@
             </div>
 
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-1">Tanggal Pelaksanaan RAT</label>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">Tanggal RAT</label>
                 <input type="date" wire:model.blur="eventDate"
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none">
             </div>
 
             <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">Total Laba Bersih (Rp)</label>
-                <input type="number" wire:model.blur="totalNetProfit"
-                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-600 outline-none">
+                <input type="number" wire:model.live.debounce.300ms="totalNetProfit"
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-white outline-none">
             </div>
 
             <div>
-                <label class="block text-[11px] font-bold text-slate-500 mb-1">% Alokasi Anggota</label>
-                <input type="number" wire:model.blur="memberAllocationPercentage" step="0.1" min="0" max="100"
-                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-indigo-600 outline-none">
+                <label class="block text-[11px] font-bold text-emerald-600 mb-1">Total SHU Dibagikan (Rp)</label>
+                <input type="number" wire:model.live.debounce.300ms="totalMemberShu"
+                    class="w-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-600 outline-none"
+                    placeholder="Misal: 15000000">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-indigo-600 mb-1">Alokasi Anggota (%)</label>
+                <input type="number" wire:model.live.debounce.300ms="memberAllocationPercentage" step="0.01" min="0" max="100"
+                    class="w-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-300 dark:border-indigo-700 rounded-xl px-3 py-2 text-xs font-bold text-indigo-600 outline-none">
             </div>
         </div>
 
@@ -147,7 +154,7 @@
             <div class="flex items-center gap-2">
                 <button wire:click="saveSession"
                     class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2">
-                    <i class='bx bx-save text-base'></i> Simpan & Update Perhitungan SHU
+                    <i class='bx bx-save text-base'></i> Simpan & Hitung Ulang SHU
                 </button>
 
                 @if($session?->status === 'FINALIZED')
@@ -180,8 +187,8 @@
                 <p class="text-xs text-slate-500">{{ $title }} • Tanggal Pelaksanaan: {{ \Carbon\Carbon::parse($eventDate)->format('d F Y') }}</p>
                 <p class="text-xs text-slate-500 font-semibold mt-0.5">
                     Total Laba Bersih: Rp {{ number_format($totalNetProfit, 0, ',', '.') }} | 
-                    Total SHU Dibagikan: Rp {{ number_format($summary['totalMemberShu'], 0, ',', '.') }} |
-                    Total Simpanan Wajib: Rp {{ number_format($summary['totalSimwa'], 0, ',', '.') }}
+                    SHU Dibagikan: <span class="text-emerald-600 font-bold">Rp {{ number_format($totalMemberShu, 0, ',', '.') }}</span> |
+                    Modal Usaha Ditahan: <span class="text-blue-600 font-bold">Rp {{ number_format($summary['retainedAmount'], 0, ',', '.') }}</span>
                 </p>
             </div>
             <div class="no-print">

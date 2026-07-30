@@ -18,7 +18,8 @@ class RatSessionManagement extends Component
     public $eventDate;
     public $title = 'RAT Koperasi Bermadani Tahun Buku 2025';
     public $totalNetProfit = 30499118;
-    public $memberAllocationPercentage = 100;
+    public $totalMemberShu = 15000000; // Default 15 juta dibagikan ke anggota
+    public $memberAllocationPercentage = 49.18;
     public $notes;
 
     public $selectedSessionId;
@@ -40,8 +41,30 @@ class RatSessionManagement extends Component
             $net = $income - $expense;
             if ($net > 0) {
                 $this->totalNetProfit = (float) $net;
+                $this->totalMemberShu = 15000000;
+                $this->memberAllocationPercentage = round((15000000 / $this->totalNetProfit) * 100, 2);
             }
         }
+    }
+
+    public function updatedTotalMemberShu($value)
+    {
+        $val = (float) $value;
+        if ($this->totalNetProfit > 0) {
+            $this->memberAllocationPercentage = round(($val / $this->totalNetProfit) * 100, 2);
+        }
+    }
+
+    public function updatedMemberAllocationPercentage($value)
+    {
+        $val = (float) $value;
+        $this->totalMemberShu = round($this->totalNetProfit * ($val / 100), 0);
+    }
+
+    public function updatedTotalNetProfit($value)
+    {
+        $val = (float) $value;
+        $this->totalMemberShu = round($val * ($this->memberAllocationPercentage / 100), 0);
     }
 
     public function loadSession(RatSession $session)
@@ -51,6 +74,7 @@ class RatSessionManagement extends Component
         $this->eventDate = $session->event_date->format('Y-m-d');
         $this->title = $session->title;
         $this->totalNetProfit = (float) $session->total_net_profit;
+        $this->totalMemberShu = (float) ($session->total_member_shu ?? 0);
         $this->memberAllocationPercentage = (float) $session->member_allocation_percentage;
         $this->notes = $session->notes;
     }
@@ -67,12 +91,14 @@ class RatSessionManagement extends Component
         $totalSimwa = (float) $activeMembers->sum('simpananWajib');
         $totalSimwa = max(1, $totalSimwa); // avoid div by 0
 
-        $totalMemberShu = (float) $this->totalNetProfit * ((float) $this->memberAllocationPercentage / 100);
+        $totalMemberShu = (float) $this->totalMemberShu;
+        $retainedAmount = max(0, (float) $this->totalNetProfit - $totalMemberShu);
 
         return [
             'activeMemberCount' => $activeMembers->count(),
             'totalSimwa' => $totalSimwa,
             'totalMemberShu' => $totalMemberShu,
+            'retainedAmount' => $retainedAmount,
         ];
     }
 
@@ -83,6 +109,7 @@ class RatSessionManagement extends Component
             'eventDate' => 'required|date',
             'title' => 'required|string|max:255',
             'totalNetProfit' => 'required|numeric|min:0',
+            'totalMemberShu' => 'required|numeric|min:0',
             'memberAllocationPercentage' => 'required|numeric|min:0|max:100',
         ]);
 
@@ -95,7 +122,7 @@ class RatSessionManagement extends Component
                 'title' => $this->title,
                 'total_net_profit' => $this->totalNetProfit,
                 'member_allocation_percentage' => $this->memberAllocationPercentage,
-                'total_member_shu' => $summary['totalMemberShu'],
+                'total_member_shu' => $this->totalMemberShu,
                 'total_simpanan_wajib_snapshot' => $summary['totalSimwa'],
                 'status' => 'DRAFT',
                 'notes' => $this->notes,
@@ -108,7 +135,7 @@ class RatSessionManagement extends Component
         // Generate / Update distributions for active members
         $activeMembers = Member::where('status', 'ACTIVE')->get();
         $totalSimwa = $summary['totalSimwa'];
-        $totalMemberShu = $summary['totalMemberShu'];
+        $totalMemberShu = (float) $this->totalMemberShu;
 
         foreach ($activeMembers as $m) {
             $simwa = (float) ($m->simpananWajib ?? 0);
