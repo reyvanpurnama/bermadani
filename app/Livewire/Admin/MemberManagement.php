@@ -23,6 +23,7 @@ class MemberManagement extends Component
     public $filterUnitKerja = '';
     public $filterJoinMonth = '';
     public $filterJoinYear = '';
+    public $showAllStats = false;
 
     // Import properties
     public $showImportModal = false;
@@ -37,6 +38,7 @@ class MemberManagement extends Component
         'filterUnitKerja' => ['except' => ''],
         'filterJoinMonth' => ['except' => ''],
         'filterJoinYear' => ['except' => ''],
+        'showAllStats' => ['except' => false],
     ];
 
     protected $memberService;
@@ -234,7 +236,7 @@ class MemberManagement extends Component
 
     public function getStatsProperty()
     {
-        return $this->memberService->getStats();
+        return $this->memberService->getStats($this->showAllStats);
     }
 
     public function getUnitKerjaListProperty()

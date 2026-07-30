@@ -55,7 +55,22 @@
     {{-- Members List Tab --}}
     @if($activeTab === 'members')
 
-
+        {{-- Stats Header & Toggle --}}
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 mt-2">
+            <h3 class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Ringkasan Statistik Keuangan</h3>
+            <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                <button wire:click="$set('showAllStats', false)" 
+                    class="px-3 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1.5 {{ !$showAllStats ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Anggota Aktif (Default)
+                </button>
+                <button wire:click="$set('showAllStats', true)" 
+                    class="px-3 py-1 rounded-md text-[11px] font-bold transition-all flex items-center gap-1.5 {{ $showAllStats ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-900 dark:hover:text-white' }}">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    Semua Anggota (Akumulasi)
+                </button>
+            </div>
+        </div>
 
         {{-- Stats Cards Group --}}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -95,7 +110,7 @@
 
                 <div class="relative z-10">
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                        <i class='bx bx-wallet text-amber-400'></i> Aset & Poin Loyalty
+                        <i class='bx bx-wallet text-amber-400'></i> Aset & Poin Loyalty ({{ $showAllStats ? 'Semua' : 'Aktif' }})
                     </p>
                     <div class="grid grid-cols-2 gap-4 divide-x divide-slate-700">
                         <div>
@@ -118,21 +133,21 @@
         <div class="grid grid-cols-3 gap-4 mb-6">
             <div
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Pokok</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Pokok ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
                     {{ number_format($stats['simpananPokok'] ?? 0, 0, ',', '.') }}
                 </h4>
             </div>
             <div
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Wajib</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Wajib ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
                     {{ number_format($stats['simpananWajib'] ?? 0, 0, ',', '.') }}
                 </h4>
             </div>
             <div
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
-                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Sukarela</p>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Sukarela ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
                     {{ number_format($stats['simpananSukarela'] ?? 0, 0, ',', '.') }}
                 </h4>

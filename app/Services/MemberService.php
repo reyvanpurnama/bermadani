@@ -349,20 +349,18 @@ class MemberService
      *
      * @return array
      */
-    public function getStats(): array
+    public function getStats(bool $allMembers = false): array
     {
-        // Hanya hitung dana simpanan dari anggota dengan status ACTIVE
-        // (Anggota dibekukan / dinonaktifkan yang menarik simpanannya tidak masuk ke perhitungan aset)
-        $activeMembersQuery = Member::where('status', 'ACTIVE');
+        $baseQuery = $allMembers ? Member::query() : Member::where('status', 'ACTIVE');
 
         return [
             'total' => Member::count(),
-            'active' => (clone $activeMembersQuery)->count(),
-            'totalSimpanan' => (float) (clone $activeMembersQuery)->sum(DB::raw('simpananPokok + simpananWajib + simpananSukarela')),
-            'simpananPokok' => (float) (clone $activeMembersQuery)->sum('simpananPokok'),
-            'simpananWajib' => (float) (clone $activeMembersQuery)->sum('simpananWajib'),
-            'simpananSukarela' => (float) (clone $activeMembersQuery)->sum('simpananSukarela'),
-            'avgPoints' => (float) ((clone $activeMembersQuery)->avg('points') ?? 0),
+            'active' => Member::where('status', 'ACTIVE')->count(),
+            'totalSimpanan' => (float) (clone $baseQuery)->sum(DB::raw('simpananPokok + simpananWajib + simpananSukarela')),
+            'simpananPokok' => (float) (clone $baseQuery)->sum('simpananPokok'),
+            'simpananWajib' => (float) (clone $baseQuery)->sum('simpananWajib'),
+            'simpananSukarela' => (float) (clone $baseQuery)->sum('simpananSukarela'),
+            'avgPoints' => (float) ((clone $baseQuery)->avg('points') ?? 0),
         ];
     }
 
