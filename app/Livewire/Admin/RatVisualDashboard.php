@@ -169,6 +169,6 @@ class RatVisualDashboard extends Component
     {
         return view('livewire.admin.rat-visual-dashboard', [
             'dashboard' => $this->dashboardData,
-        ])->layout('layouts.app');
+        ])->layout('layouts.admin');
     }
 }
