@@ -150,7 +150,7 @@ class RatVisualDashboard extends Component
                 ],
             ],
             'komposisiBeban' => [
-                'labels' => ['Gaji Karyawan (29.8%)', 'Gaji Pengurus (25.8%)', 'Utang Supplier (23.7%)', 'Aset Tetap (9.1%)', 'Lainnya (11.6%)'],
+                'labels' => ['Gaji Staf Toko (29.8%)', 'Honorarium Pengurus (25.8%)', 'Hutang Supplier (23.7%)', 'Aset Tetap (9.1%)', 'Konsumsi & Ops (11.6%)'],
                 'data' => [36.18, 31.25, 28.74, 11.02, 14.02],
             ],
             'trenShu' => [
@@ -159,7 +159,7 @@ class RatVisualDashboard extends Component
             ],
             'npf' => [
                 'val' => '2,3%',
-                'status' => 'Dalam Batas Aman (Sangat Sehat)',
+                'status' => 'Sangat Sehat (Lancar)',
             ],
             'pertumbuhanSimpanan' => [
                 'years' => ['2023', '2024', '2025'],
@@ -190,8 +190,8 @@ class RatVisualDashboard extends Component
                 'totalSimpanan' => number_format($simpokDb + $simwaDb, 0, ',', '.'),
             ],
             'kesehatan' => [
-                ['label' => 'Kecukupan Modal', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
-                ['label' => 'Kualitas Aset (NPF)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Kecukupan Modal (Ekuitas)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Kualitas Pinjaman Anggota (NPF)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
                 ['label' => 'Profitabilitas (Surplus/Kas)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
                 ['label' => 'Likuiditas Kas', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
                 ['label' => 'Efisiensi Operasional', 'status' => 'SANGAT BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
@@ -211,26 +211,26 @@ class RatVisualDashboard extends Component
                     ['nama' => 'Simpanan Pokok (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => '0,4%', 'sumber' => 'Setoran awal pokok anggota baru terinput di CSV'],
                 ],
                 'beban' => [
-                    ['nama' => 'Gaji Karyawan Toko & Staf (CSV)', 'nominal' => 'Rp ' . number_format($gajiKaryawanCsv, 0, ',', '.'), 'pct' => '29,8%', 'sumber' => 'Gaji & insentif staf penjaga minimarket retail Bermadani'],
-                    ['nama' => 'Gaji Pengurus Koperasi (CSV)', 'nominal' => 'Rp ' . number_format($gajiPengurusCsv, 0, ',', '.'), 'pct' => '25,8%', 'sumber' => 'Honorarium pengurus koperasi periode Mei s.d. Desember 2025'],
-                    ['nama' => 'Pembayaran Utang Supplier (CSV)', 'nominal' => 'Rp ' . number_format($utangSupplierCsv, 0, ',', '.'), 'pct' => '23,7%', 'sumber' => 'Pelunasan tagihan pasokan barang minimarket toko'],
+                    ['nama' => 'Beban Gaji Karyawan Toko & Staf (CSV)', 'nominal' => 'Rp ' . number_format($gajiKaryawanCsv, 0, ',', '.'), 'pct' => '29,8%', 'sumber' => 'Gaji & insentif staf penjaga minimarket retail Bermadani'],
+                    ['nama' => 'Honorarium Pengurus Koperasi (CSV)', 'nominal' => 'Rp ' . number_format($gajiPengurusCsv, 0, ',', '.'), 'pct' => '25,8%', 'sumber' => 'Honorarium & insentif pengurus koperasi periode Mei s.d. Desember 2025'],
+                    ['nama' => 'Pelunasan Hutang Usaha Supplier (CSV)', 'nominal' => 'Rp ' . number_format($utangSupplierCsv, 0, ',', '.'), 'pct' => '23,7%', 'sumber' => 'Pelunasan tagihan pasokan barang dagangan minimarket toko'],
                     ['nama' => 'Aset Tetap & Peralatan (CSV)', 'nominal' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '9,1%', 'sumber' => 'Pengadaan barang fisik inventaris toko & kantor'],
                     ['nama' => 'Konsumsi Rapat & Pelaksanaan RAT', 'nominal' => 'Rp ' . number_format($konsumsiRapatCsv, 0, ',', '.'), 'pct' => '3,6%', 'sumber' => 'Biaya konsumsi rapat rutin & konsumsi persiapan RAT'],
                     ['nama' => 'Biaya Kemasan & Operasional Toko', 'nominal' => 'Rp ' . number_format($kemasanCsv, 0, ',', '.'), 'pct' => '2,2%', 'sumber' => 'Pengadaan kantong plastik, dus kemasan, & kebersihan'],
                     ['nama' => 'Operasional Lain-Lain & Admin Bank', 'nominal' => 'Rp ' . number_format($operasionalLainCsv + $adminBankCsv + $adminTransferCsv + $pajakBagiHasilCsv + $atkCsv + $kebersihanCsv, 0, ',', '.'), 'pct' => '5,8%', 'sumber' => 'ATK, admin transfer, pajak bank, & biaya tak terduga'],
                 ],
                 'alokasiShu' => [
-                    ['alokasi' => 'Cadangan Koperasi (40%)', 'nominal' => 'Rp 6.000.000', 'keterangan' => 'Pemupukan modal cadangan koperasi dari SHU Rp 15 Juta'],
-                    ['alokasi' => 'SHU Anggota - Jasa Modal & Usaha (40%)', 'nominal' => 'Rp 6.000.000', 'keterangan' => 'Pembagian SHU simpanan & keaktifan belanja minimarket anggota'],
-                    ['alokasi' => 'Dana Pengurus & Pengawas (10%)', 'nominal' => 'Rp 1.500.000', 'keterangan' => 'Insentif kinerja pengurus & pengawas koperasi'],
-                    ['alokasi' => 'Dana Karyawan / Kesejahteraan (5%)', 'nominal' => 'Rp 750.000', 'keterangan' => 'Bonus & kesejahteraan karyawan toko minimarket'],
-                    ['alokasi' => 'Dana Sosial & Pendidikan (5%)', 'nominal' => 'Rp 750.000', 'keterangan' => 'Alokasi pendidikan anggota & kegiatan sosial kemasyarakatan'],
+                    ['alokasi' => 'Dana Cadangan Koperasi (25%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.25, 0, ',', '.'), 'keterangan' => 'Penambahan modal pemupukan cadangan koperasi dari surplus kas'],
+                    ['alokasi' => 'Jasa Simpanan Anggota (30%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.30, 0, ',', '.'), 'keterangan' => 'Pembagian SHU proporsional saldo simpanan anggota dari surplus kas'],
+                    ['alokasi' => 'Jasa Usaha Anggota (25%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.25, 0, ',', '.'), 'keterangan' => 'Pembagian SHU proporsional keaktifan transaksi & belanja minimarket'],
+                    ['alokasi' => 'Honorarium & Insentif Pengurus (10%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.10, 0, ',', '.'), 'keterangan' => 'Honorarium atas pengawasan & kinerja pengurus'],
+                    ['alokasi' => 'Dana Pendidikan & Sosial (10%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.10, 0, ',', '.'), 'keterangan' => 'Alokasi pelatihan anggota & dana infak sosial'],
                 ],
                 'simpanan' => [
-                    ['nama' => 'Simpanan Pokok (Live Database)', 'nominal' => 'Rp ' . number_format($simpokDb, 0, ',', '.'), 'status' => 'Modal Sendiri (Equity)', 'sumber' => 'Setoran awal wajib keanggotaan (' . $activeMemberCount . ' Anggota Aktif Live)'],
-                    ['nama' => 'Simpanan Wajib (Live Database)', 'nominal' => 'Rp ' . number_format($simwaDb, 0, ',', '.'), 'status' => 'Modal Sendiri (Equity)', 'sumber' => 'Akumulasi 3.839 transaksi iuran bulanan disetujui di database'],
+                    ['nama' => 'Simpanan Pokok (Live Database)', 'nominal' => 'Rp ' . number_format($simpokDb, 0, ',', '.'), 'status' => 'Ekuitas (Modal Sendiri)', 'sumber' => 'Setoran awal wajib keanggotaan (' . $activeMemberCount . ' Anggota Aktif Live)'],
+                    ['nama' => 'Simpanan Wajib (Live Database)', 'nominal' => 'Rp ' . number_format($simwaDb, 0, ',', '.'), 'status' => 'Ekuitas (Modal Sendiri)', 'sumber' => 'Akumulasi 3.839 transaksi iuran bulanan disetujui di database'],
                     ['nama' => 'Simpanan Wajib (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'status' => 'Penerimaan Arus Kas', 'sumber' => 'Total iuran wajib masuk per periode Mei-Desember 2025 di CSV'],
-                    ['nama' => 'Simpanan Sukarela (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'status' => 'Dana Titipan Anggota', 'sumber' => 'Titipan tabungan sukarela wadiah harian anggota terinput di CSV'],
+                    ['nama' => 'Simpanan Sukarela (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'status' => 'Kewajiban / Titipan Anggota', 'sumber' => 'Titipan tabungan sukarela wadiah harian anggota terinput di CSV'],
                 ],
             ],
         ];

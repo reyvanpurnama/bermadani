@@ -131,7 +131,7 @@
                     <i class='bx bx-info-circle text-sm'></i> Asal Pengeluaran Kas (CSV):
                 </div>
                 <p class="text-[10px] text-slate-300">
-                    Gaji Staf (Rp 36,1M) + Gaji Pengurus (Rp 31,2M) + Utang Supplier (Rp 28,7M) + Aset Tetap (Rp 11M) + RAT & Ops (Rp 14M).
+                    Gaji Staf Toko (Rp 36,1M) + Honorarium Pengurus (Rp 31,2M) + Hutang Supplier (Rp 28,7M) + Aset Tetap (Rp 11M) + RAT & Ops (Rp 14M).
                 </p>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
@@ -312,9 +312,9 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Gaji Karyawan Toko:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 36.184.000</span></div>
-                    <div class="flex justify-between"><span>Gaji Pengurus Koperasi:</span><span class="font-bold text-slate-800 dark:text-white">Rp 31.250.000</span></div>
-                    <div class="flex justify-between"><span>Utang Supplier Barang:</span><span class="font-bold text-slate-800 dark:text-white">Rp 28.738.508</span></div>
+                    <div class="flex justify-between"><span>Beban Gaji Staf Toko:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 36.184.000</span></div>
+                    <div class="flex justify-between"><span>Honorarium Pengurus Koperasi:</span><span class="font-bold text-slate-800 dark:text-white">Rp 31.250.000</span></div>
+                    <div class="flex justify-between"><span>Hutang Usaha Supplier:</span><span class="font-bold text-slate-800 dark:text-white">Rp 28.738.508</span></div>
                     <div class="flex justify-between"><span>Pengadaan Aset Tetap:</span><span class="font-bold text-slate-800 dark:text-white">Rp 11.021.000</span></div>
                     <div class="flex justify-between"><span>Konsumsi RAT & Ops:</span><span class="font-bold text-slate-800 dark:text-white">Rp 14.018.752</span></div>
                 </div>
@@ -339,10 +339,10 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Cadangan (25%):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 4.753.763</span></div>
+                    <div class="flex justify-between"><span>Dana Cadangan Koperasi (25%):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 4.753.763</span></div>
                     <div class="flex justify-between"><span>Jasa Simpanan (30%):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 5.704.515</span></div>
-                    <div class="flex justify-between"><span>Jasa Usaha (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 4.753.763</span></div>
-                    <div class="flex justify-between"><span>Pengurus & Pengawas (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
+                    <div class="flex justify-between"><span>Jasa Usaha Anggota (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 4.753.763</span></div>
+                    <div class="flex justify-between"><span>Honorarium Pengurus (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
                     <div class="flex justify-between"><span>Pendidikan & Sosial (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
                 </div>
             </div>
@@ -729,7 +729,7 @@
                         <td colspan="10" class="p-2 uppercase tracking-wider text-[10px]">II. KAS KELUAR (PENGELUARAN)</td>
                     </tr>
                     <tr>
-                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Gaji Pengurus Koperasi</td>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Honorarium Pengurus Koperasi</td>
                         <td class="p-2 text-right">4.000.000</td>
                         <td class="p-2 text-right">4.000.000</td>
                         <td class="p-2 text-right">4.000.000</td>
@@ -741,7 +741,7 @@
                         <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">31.250.000</td>
                     </tr>
                     <tr>
-                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Gaji Karyawan Minimarket</td>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Beban Gaji Karyawan Toko & Staf</td>
                         <td class="p-2 text-right text-slate-500">0</td>
                         <td class="p-2 text-right">2.000.000</td>
                         <td class="p-2 text-right">2.000.000</td>
@@ -753,7 +753,7 @@
                         <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">36.184.000</td>
                     </tr>
                     <tr>
-                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pembayaran Utang Supplier</td>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pelunasan Hutang Usaha Supplier</td>
                         <td class="p-2 text-right text-slate-500">0</td>
                         <td class="p-2 text-right">482.000</td>
                         <td class="p-2 text-right">16.394.008</td>
@@ -915,7 +915,7 @@
             new Chart(ctxBeban, {
                 type: 'bar',
                 data: {
-                    labels: ['Gaji Staf', 'Gaji Pengurus', 'Supplier', 'Aset Tetap', 'RAT & Ops'],
+                    labels: ['Gaji Staf Toko', 'Honor Pengurus', 'Hutang Supplier', 'Aset Tetap', 'RAT & Ops'],
                     datasets: [{
                         data: [36.18, 31.25, 28.74, 11.02, 14.02],
                         backgroundColor: '#8B5CF6',
