@@ -432,13 +432,20 @@
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white">Arus Kas {{ $dashboard['year'] }}</h3>
                 </div>
 
-                <div class="h-44 my-2">
+                <div class="h-32 my-1">
                     <canvas id="chartArusKas"></canvas>
                 </div>
+
+                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>Kas Masuk Internal (CSV):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['arusKasCsv']['kasMasukInternal'] }}</span></div>
+                    <div class="flex justify-between"><span>Kas Keluar (CSV):</span><span class="font-bold text-rose-500">Rp {{ $dashboard['arusKasCsv']['kasKeluar'] }}</span></div>
+                    <div class="flex justify-between"><span>Surplus Kas Bersih:</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['arusKasCsv']['surplusKasInternal'] }}</span></div>
+                    <div class="flex justify-between"><span>Saldo Kas Akhir:</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['arusKasCsv']['saldoKasAkhir'] }}</span></div>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
-                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Kas bersih mengalami kenaikan +Rp 39.8 juta tahun ini.
+            <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                <span class="text-[10px] text-slate-400 font-medium leading-tight block">
+                    Sumber data: <strong class="text-slate-800 dark:text-white">ARUS KAS 25.csv</strong>
                 </span>
             </div>
         </div>
