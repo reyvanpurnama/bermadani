@@ -19,7 +19,7 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
 [SECTION 1: CARDS KPI UTAMA (Top Grid - 4 Card)]
 1. CARD TOTAL SIMPANAN ANGGOTA AKTIF:
    - Icon: Wallet / Coin Stack
-   - Angka: "Rp 200.750.000"
+   - Angka: "Rp 195.190.000"
    - Label: "Total Dana Simpanan Anggota Aktif"
 2. CARD LABA BERSIH (SHU 2025):
    - Icon: Trending Up / Chart
@@ -36,11 +36,11 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
 
 [SECTION 2: VISUALISASI GRAFIK & DIAGRAM (4 Quadrant Grid)]
 - QUADRANT 1 (Komposisi Simpanan Anggota Aktif - Pie/Donut Chart):
-  * Simpanan Wajib Aktif: Rp 176.950.000 (88,1%)
-  * Simpanan Pokok Aktif: Rp 22.600.000 (11,3%)
-  * Simpanan Sukarela Aktif: Rp 1.200.000 (0,6%)
-  * Total Simpanan Aktif: Rp 200.750.000
-  * Catatan: "Simpanan Wajib anggota aktif menjadi basis utama perhitungan pembagian SHU RAT 2025."
+  * Simpanan Wajib Aktif: Rp 156.100.000 (80,0%)
+  * Simpanan Pokok Aktif: Rp 22.100.000 (11,3%)
+  * Simpanan Sukarela Aktif: Rp 16.990.000 (8,7%)
+  * Total Simpanan Aktif: Rp 195.190.000
+  * Catatan: "Simpanan Wajib anggota aktif (Rp 156.100.000) menjadi basis utama perhitungan pembagian SHU RAT 2025."
 
 - QUADRANT 2 (Perbandingan Arus Kas 2025 - Bar Chart):
   * Total Penerimaan Kas: Rp 168.049.500

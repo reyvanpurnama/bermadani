@@ -42,7 +42,7 @@ Grid 3 Aktivitas Arus Kas:
 2. Dasar Penyusunan: Mengacu pada Prinsip Akuntansi Koperasi dan SAK Entitas Tanpa Akuntabilitas Publik.
 3. Kas & Bank: Seluruh kas disimpan dalam rekening korporat yang aman dan transparan.
 4. Piutang Pinjaman: Pengelolaan pembiayaan anggota dengan sistem monitoring kolektibilitas yang sehat.
-5. Simpanan Anggota Aktif: Total Rp 200.750.000 (Simpanan Wajib Rp 176.950.000, Pokok Rp 22.600.000, Sukarela Rp 1.200.000).
+5. Simpanan Anggota Aktif: Total Rp 195.190.000 (Simpanan Wajib Rp 156.100.000, Pokok Rp 22.100.000, Sukarela Rp 16.990.000).
 6. Penentuan SHU: SHU dihasilkan murni dari efisiensi operasional dan partisipasi bisnis anggota.
 7. Alokasi Modal Usaha: Sebesar Rp 15.499.118 disepakati ditahan sebagai cadangan penguatan usaha.
 8. Hak SHU Anggota: Sebesar Rp 15.000.000 disepakati dibagikan secara proporsional ke 113 Anggota Aktif.

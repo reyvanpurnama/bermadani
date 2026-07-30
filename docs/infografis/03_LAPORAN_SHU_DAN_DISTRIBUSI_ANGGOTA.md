@@ -35,7 +35,7 @@ Tampilan visual harus menjelaskan rincian pendapatan, pengeluaran, alokasi SHU, 
 
 [SECTION 3: RUMUS & FORMULA PEMBAGIAN SHU ANGGOTA AKTIF (DIAGRAM FLOW)]
 - Langkah 1: Hitung Porsi Anggota Aktif (%)
-  Formula: (Simpanan Wajib Anggota ÷ Total Simpanan Wajib 113 Anggota Aktif [Rp 176.950.000]) × 100%
+  Formula: (Simpanan Wajib Anggota ÷ Total Simpanan Wajib 113 Anggota Aktif [Rp 156.100.000]) × 100%
 - Langkah 2: Hitung Nominal SHU Anggota (Rp)
   Formula: Porsi Anggota (%) × Total SHU Dibagikan (Rp 15.000.000)
 
@@ -43,9 +43,9 @@ Tampilan visual harus menjelaskan rincian pendapatan, pengeluaran, alokasi SHU, 
 ---------------------------------------------------------------------------------------------------------
 NO | SIMPANAN WAJIB ANGGOTA | PORSI HAK SHU (%) | SHU DITERIMA (Rp) | STATUS PENCAIRAN
 ---------------------------------------------------------------------------------------------------------
-1  | Rp 5.000.000           | 2,826%            | Rp 423.854        | Ready / Siap Dicairkan
-2  | Rp 2.500.000           | 1,413%            | Rp 211.927        | Ready / Siap Dicairkan
-3  | Rp 1.000.000           | 0,565%            | Rp  84.771        | Ready / Siap Dicairkan
+1  | Rp 5.000.000           | 3,203%            | Rp 480.461        | Ready / Siap Dicairkan
+2  | Rp 2.500.000           | 1,602%            | Rp 240.231        | Ready / Siap Dicairkan
+3  | Rp 1.000.000           | 0,641%            | Rp  96.092        | Ready / Siap Dicairkan
 ---------------------------------------------------------------------------------------------------------
 Catatan: "Hanya Anggota Aktif yang tercantum dalam rekapitulasi penerima SHU RAT 2025."
 
