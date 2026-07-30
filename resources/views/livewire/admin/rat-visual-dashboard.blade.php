@@ -477,9 +477,28 @@
                 <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">
                     Status: Koperasi Sehat & Berkelanjutan.
                 </span>
+    </div>
+
+    {{-- BANNER SEGMENTASI PENERIMAAN BMT ITQAN --}}
+    <div class="p-4 rounded-2xl bg-slate-800 text-white border border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center shrink-0 text-xl font-bold">
+                <i class='bx bx-git-repo-forked'></i>
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h4 class="text-sm font-bold text-white">Pemisahan Segmentasi Pembiayaan Channeling BMT ITQAN</h4>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-400/30">Audit RAT Terpisah</span>
+                </div>
+                <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                    Pendapatan dari BMT ITQAN sebesar <strong class="text-amber-300">Rp 11.484.067</strong> merupakan hasil pembiayaan channeling eksternal. Sesuai standar akuntabilitas audit RAT, penerimaan ini dipisahkan dari kas internal murni Bermadani (<strong class="text-emerald-400">Rp 140,2M</strong>).
+                </p>
             </div>
         </div>
-
+        <div class="text-right shrink-0 bg-slate-900/60 px-4 py-2 rounded-xl border border-slate-700/80">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Penerimaan ITQAN 2025</span>
+            <span class="text-sm font-extrabold text-amber-300">Rp 11.484.067</span>
+        </div>
     </div>
 
     {{-- INTERACTIVE DETAIL RINCIAN ALOKASI NOMINAL PANEL --}}
