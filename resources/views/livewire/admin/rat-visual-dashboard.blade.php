@@ -189,13 +189,13 @@
             </div>
         </div>
 
-        {{-- KPI 5: SHU CADANGAN KOPERASI --}}
+        {{-- KPI 5: DANA CADANGAN KOPERASI --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-shield-quarter'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">SHU Cadangan (25%)</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Dana Cadangan</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['shuCadangan']['val'] }} Jt
                 </h3>
@@ -208,7 +208,7 @@
                     <i class='bx bx-info-circle text-sm'></i> Dana Cadangan Koperasi:
                 </div>
                 <p class="text-[10px] text-slate-300">
-                    Alokasi 25% SHU Bersih yang dipupuk sebagai Dana Cadangan Modal Koperasi Bermadani.
+                    Sisa Surplus Kas & Dana Cadangan Operasional Koperasi (Sama persis Lembar 4 Infografis: Rp {{ $dashboard['kpi']['shuCadangan']['raw'] }}).
                 </p>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
@@ -269,7 +269,7 @@
                     <canvas id="chartKomposisiPendapatan"></canvas>
                     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                         <span class="text-[9px] font-bold text-slate-400 uppercase">TOTAL</span>
-                        <span class="text-sm font-bold text-slate-800 dark:text-white">Rp 140,2 Jt</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['komposisiPendapatan']['total'] }} Jt</span>
                     </div>
                 </div>
 
@@ -290,7 +290,7 @@
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Penerimaan terbesar berasal dari omzet toko minimarket (67.6%).
+                    Total Kas Masuk (CSV) = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiPendapatan']['totalRaw'] }}</strong>.
                 </span>
             </div>
         </div>
@@ -889,10 +889,10 @@
             new Chart(ctxPendapatan, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pendapatan Toko', 'Simpanan Wajib', 'Simpanan Sukarela', 'Simpanan Pokok'],
+                    labels: ['Pendapatan Toko', 'Simpanan Wajib', 'BMT ITQAN', 'Simpanan Sukarela', 'Simpanan Pokok'],
                     datasets: [{
-                        data: [94.78, 38.40, 6.45, 0.60],
-                        backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#8B5CF6'],
+                        data: [94.78, 38.40, 11.48, 6.45, 0.60],
+                        backgroundColor: ['#10B981', '#3B82F6', '#EC4899', '#F59E0B', '#8B5CF6'],
                         borderWidth: 0,
                     }]
                 },

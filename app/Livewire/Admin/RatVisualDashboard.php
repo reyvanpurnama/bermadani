@@ -164,6 +164,7 @@ class RatVisualDashboard extends Component
 
         $asetTetap = $asetTetapCsv;
         $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani;
+        $retainedModal = max(0, $saldoKasAkhirCsv - 15000000); // Rp 15.499.118 (Sama dengan RatInfographic Lembar 4)
 
         return [
             'year' => $year,
@@ -189,9 +190,9 @@ class RatVisualDashboard extends Component
                     'growth' => 'SHU Bersih Dibagikan (2025)',
                 ],
                 'shuCadangan' => [
-                    'val' => '3,75',
-                    'raw' => '3.750.000',
-                    'growth' => 'Pemupukan Dana Cadangan (25%)',
+                    'val' => number_format($retainedModal / 1000000, 1, ',', '.'),
+                    'raw' => number_format($retainedModal, 0, ',', '.'),
+                    'growth' => 'Dana Cadangan Operasional Koperasi',
                 ],
             ],
             'komposisiAset' => [
@@ -204,12 +205,13 @@ class RatVisualDashboard extends Component
                 ],
             ],
             'komposisiPendapatan' => [
-                'total' => '140,2',
+                'total' => number_format($totalKasMasukFull / 1000000, 1, ',', '.'),
                 'items' => [
-                    ['label' => 'Pendapatan Toko Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => '67,6%', 'color' => '#10B981'],
-                    ['label' => 'Simpanan Wajib Anggota', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => '27,4%', 'color' => '#3B82F6'],
-                    ['label' => 'Simpanan Sukarela Anggota', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => '4,6%', 'color' => '#F59E0B'],
-                    ['label' => 'Simpanan Pokok Anggota', 'val' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => '0,4%', 'color' => '#8B5CF6'],
+                    ['label' => 'Pendapatan Toko Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
+                    ['label' => 'Simpanan Wajib Anggota', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
+                    ['label' => 'Pendapatan dari BMT ITQAN', 'val' => 'Rp ' . number_format($bmtItqanCsv, 0, ',', '.'), 'pct' => round(($bmtItqanCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#EC4899'],
+                    ['label' => 'Simpanan Sukarela Anggota', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => round(($simsukarelaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#F59E0B'],
+                    ['label' => 'Simpanan Pokok Anggota', 'val' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => round(($simpokCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#8B5CF6'],
                 ],
             ],
             'komposisiBeban' => [
