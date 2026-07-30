@@ -184,7 +184,10 @@
                                 <span class="w-2 h-2 rounded-full shrink-0" style="background-color: {{ $item['color'] }}"></span>
                                 {{ $item['label'] }}
                             </span>
-                            <span class="font-semibold text-slate-800 dark:text-white shrink-0 ml-1">{{ $item['pct'] }}</span>
+                            <div class="text-right shrink-0 ml-1">
+                                <span class="font-bold text-slate-800 dark:text-white">{{ $item['val'] }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium ml-0.5">({{ $item['pct'] }})</span>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -219,7 +222,10 @@
                                 <span class="w-2 h-2 rounded-full shrink-0" style="background-color: {{ $item['color'] }}"></span>
                                 {{ $item['label'] }}
                             </span>
-                            <span class="font-semibold text-slate-800 dark:text-white shrink-0 ml-1">{{ $item['pct'] }}</span>
+                            <div class="text-right shrink-0 ml-1">
+                                <span class="font-bold text-slate-800 dark:text-white">{{ $item['val'] }}</span>
+                                <span class="text-[10px] text-slate-400 font-medium ml-0.5">({{ $item['pct'] }})</span>
+                            </div>
                         </div>
                     @endforeach
                 </div>
@@ -239,32 +245,48 @@
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white">Beban Operasional</h3>
                 </div>
 
-                <div class="h-44 my-2">
+                <div class="h-32 my-1">
                     <canvas id="chartKomposisiBeban"></canvas>
                 </div>
+
+                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>Gaji Pengurus/Staf:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 20.000.000</span></div>
+                    <div class="flex justify-between"><span>Operasional & RAT:</span><span class="font-bold text-slate-800 dark:text-white">Rp 17.500.000</span></div>
+                    <div class="flex justify-between"><span>Penyusutan Inventaris:</span><span class="font-bold text-slate-800 dark:text-white">Rp 3.000.000</span></div>
+                    <div class="flex justify-between"><span>ATK & Cetak:</span><span class="font-bold text-slate-800 dark:text-white">Rp 2.500.000</span></div>
+                    <div class="flex justify-between"><span>Listrik & Air:</span><span class="font-bold text-slate-800 dark:text-white">Rp 2.000.000</span></div>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
-                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Beban terbesar ada pada alokasi gaji (44.4%) & operasional.
+            <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                <span class="text-[10px] text-slate-400 font-medium leading-tight block">
+                    Total Beban: <strong class="text-slate-800 dark:text-white">Rp 45.000.000</strong>
                 </span>
             </div>
         </div>
 
-        {{-- CARD 4: TREN SHU 5 TAHUN --}}
+        {{-- CARD 4: TREN SHU & DISTRIBUSI --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs">4</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tren SHU 5 Tahun</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tren SHU & Alokasi</h3>
                 </div>
 
-                <div class="h-44 my-2">
+                <div class="h-32 my-1">
                     <canvas id="chartTrenShu"></canvas>
                 </div>
+
+                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>Cadangan (25%):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 2.500.000</span></div>
+                    <div class="flex justify-between"><span>Jasa Simpanan (30%):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 3.000.000</span></div>
+                    <div class="flex justify-between"><span>Jasa Usaha (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 2.500.000</span></div>
+                    <div class="flex justify-between"><span>Pengurus & Pengawas (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.000.000</span></div>
+                    <div class="flex justify-between"><span>Pendidikan & Sosial (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.000.000</span></div>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
-                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    SHU tumbuh positif setiap tahun dari Rp 5.2M hingga Rp 10M.
+            <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                <span class="text-[10px] text-slate-400 font-medium leading-tight block">
+                    Total SHU Bersih: <strong class="text-emerald-600 dark:text-emerald-400">Rp 10.000.000</strong>
                 </span>
             </div>
         </div>
@@ -325,13 +347,20 @@
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white">Pertumbuhan Simpanan</h3>
                 </div>
 
-                <div class="h-44 my-2">
+                <div class="h-32 my-1">
                     <canvas id="chartPertumbuhanSimpanan"></canvas>
                 </div>
+
+                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>Simpanan Pokok:</span><span class="font-bold text-slate-800 dark:text-white">Rp 35.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Wajib:</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp 28.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Sukarela:</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Berjangka:</span><span class="font-bold text-indigo-600 dark:text-indigo-400">Rp 67.000.000</span></div>
+                </div>
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
-                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Simpanan sukarela & berjangka terus bertumbuh secara konsisten.
+            <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                <span class="text-[10px] text-slate-400 font-medium leading-tight block">
+                    Total Simpanan: <strong class="text-emerald-600 dark:text-emerald-400">Rp 250.000.000</strong>
                 </span>
             </div>
         </div>
