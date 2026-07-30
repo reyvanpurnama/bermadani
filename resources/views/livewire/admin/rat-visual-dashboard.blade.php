@@ -254,7 +254,7 @@
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Mayoritas aset disalurkan untuk pembiayaan anggota (80.5%).
+                    Total Kas Likuid (Awal Rp 6,96M + Surplus Rp 30,5M) = <strong class="text-emerald-600 dark:text-emerald-400">Rp 37.463.977</strong>.
                 </span>
             </div>
         </div>
