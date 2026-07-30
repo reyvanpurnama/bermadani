@@ -63,8 +63,54 @@ class Dashboard extends Component
         $this->showBalance = !$this->showBalance;
     }
 
+    public function getShuInfoProperty()
+    {
+        if (!$this->member) return null;
+
+        // Try to fetch finalized RAT session distribution
+        $latestSession = \App\Models\RatSession::where('status', 'FINALIZED')->orderByDesc('year')->first();
+
+        if ($latestSession) {
+            $dist = \App\Models\MemberShuDistribution::where('rat_session_id', $latestSession->id)
+                ->where('member_id', $this->member->id)
+                ->first();
+
+            if ($dist) {
+                return [
+                    'year' => $latestSession->year,
+                    'title' => $latestSession->title,
+                    'isFinalized' => true,
+                    'shuAmount' => (float) $dist->shu_amount,
+                    'portionPercentage' => (float) $dist->portion_percentage,
+                    'simpananWajib' => (float) $dist->simpanan_wajib_amount,
+                    'isDisbursed' => $dist->is_disbursed,
+                ];
+            }
+        }
+
+        // Live calculation estimate for 2025 RAT
+        $totalSimwa = (float) Member::where('status', 'ACTIVE')->sum('simpananWajib');
+        $totalSimwa = max(1, $totalSimwa);
+        $memberSimwa = (float) ($this->member->simpananWajib ?? 0);
+        $portion = ($memberSimwa / $totalSimwa);
+        $estimatedTotalShu = 30499118; // Default 2025 net profit
+        $estimatedShu = round($portion * $estimatedTotalShu, 2);
+
+        return [
+            'year' => 2025,
+            'title' => 'RAT Tahun Buku 2025',
+            'isFinalized' => false,
+            'shuAmount' => $estimatedShu,
+            'portionPercentage' => round($portion * 100, 4),
+            'simpananWajib' => $memberSimwa,
+            'isDisbursed' => false,
+        ];
+    }
+
     public function render()
     {
-        return view('livewire.member.dashboard');
+        return view('livewire.member.dashboard', [
+            'shuInfo' => $this->shuInfo,
+        ]);
     }
 }

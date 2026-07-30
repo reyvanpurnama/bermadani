@@ -161,8 +161,49 @@
                     <span class="text-[9px] px-2 py-0.5 rounded bg-white/10 border border-white/5 text-slate-300">{{ $member->tier ?? 'Bronze' }}</span>
                 </div>
             </div>
+    {{-- SHU Card Widget --}}
+    @if($shuInfo)
+        <div class="mt-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xl border border-emerald-400/30 relative overflow-hidden group mb-8">
+            <div class="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+
+            <div class="flex items-start justify-between relative z-10">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-white/20 uppercase tracking-wider backdrop-blur-sm">
+                            🎁 SHU {{ $shuInfo['title'] }}
+                        </span>
+                        @if($shuInfo['isFinalized'])
+                            <span class="text-[9px] font-bold bg-emerald-400 text-emerald-950 px-2 py-0.5 rounded-full">Resmi Disahkan</span>
+                        @else
+                            <span class="text-[9px] font-bold bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full">Estimasi Perhitungan</span>
+                        @endif
+                    </div>
+                    <p class="text-[10px] text-emerald-100 mb-1">Hasil Pembagian Sisa Hasil Usaha (SHU)</p>
+                    <h3 class="text-2xl font-bold tracking-tight text-white">
+                        Rp {{ number_format($shuInfo['shuAmount'], 0, ',', '.') }}
+                    </h3>
+                    <p class="text-[10px] text-emerald-100/90 mt-1 font-medium">
+                        Porsi Simpanan Wajib: <span class="font-bold text-white">{{ number_format($shuInfo['portionPercentage'], 3, ',', '.') }}%</span> (Rp {{ number_format($shuInfo['simpananWajib'], 0, ',', '.') }})
+                    </p>
+                </div>
+
+                <div class="text-right flex flex-col items-end justify-between self-stretch">
+                    <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-xl text-white">
+                        <i class='bx bx-gift'></i>
+                    </div>
+                    @if($shuInfo['isDisbursed'])
+                        <span class="text-[10px] bg-white text-emerald-700 font-bold px-3 py-1 rounded-full shadow-sm mt-2">
+                            ✓ Telah Dicairkan
+                        </span>
+                    @else
+                        <span class="text-[10px] bg-white/20 text-white font-medium px-3 py-1 rounded-full backdrop-blur-sm mt-2">
+                            Siap Dicairkan
+                        </span>
+                    @endif
+                </div>
+            </div>
         </div>
-    </div>
+    @endif
 
     <div>
         <h3 class="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4 px-1">Menu Utama</h3>
