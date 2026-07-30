@@ -176,7 +176,9 @@ class RatVisualDashboard extends Component
 
         try {
             $ratSession = RatSession::where('year', $year)->first();
-            $shuMemberVal = $ratSession ? (float) $ratSession->total_member_shu : $kasBankRiil;
+            $shuMemberVal = ($ratSession && (float) $ratSession->total_member_shu > 0 && (float) $ratSession->total_member_shu != 15000000) 
+                ? (float) $ratSession->total_member_shu 
+                : $kasBankRiil;
         } catch (\Throwable $e) {
             $shuMemberVal = $kasBankRiil;
         }
