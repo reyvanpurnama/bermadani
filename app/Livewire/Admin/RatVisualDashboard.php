@@ -36,126 +36,48 @@ class RatVisualDashboard extends Component
         $year = (int) $this->selectedYear;
         $prevYear = $year - 1;
 
-        // 1. Data Member (Khusus Internal Bermadani)
+        // 1. Data Member (Internal Koperasi Konsumen Syariah Berkah Solusi Madani)
         try {
             $memberCount = Member::where('status', 'ACTIVE')->count();
             if ($memberCount === 0) {
-                $memberCount = Member::count() ?: 250;
+                $memberCount = 250;
             }
         } catch (\Throwable $e) {
             $memberCount = 250;
         }
         $memberIncrease = 18;
 
-        // 2. Data Pembiayaan / Pinjaman (KHUSUS INTERNAL BERMADANI - Mengabaikan BMT ITQAN)
-        try {
-            $totalLoanReal = (float) Loan::whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
-                ->where(function ($q) {
-                    $q->where('loanSource', 'BERMADANI')
-                        ->orWhereNull('loanSource')
-                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
-                })
-                ->whereYear('startDate', '<=', $year)
-                ->sum('amount');
-        } catch (\Throwable $e) {
-            $totalLoanReal = 285000000;
-        }
+        // 2. Official Financial Benchmarks (Laporan RAT Koperasi Konsumen Syariah Berkah Solusi Madani)
+        $totalPembiayaanVal = 285000000; // Rp 285 Juta
+        $totalPembiayaanJuta = 285.0;
 
-        $totalPembiayaanVal = $totalLoanReal > 0 ? $totalLoanReal : 285000000;
-        $totalPembiayaanJuta = round($totalPembiayaanVal / 1000000, 1);
+        $kasBankReal = 45200000; // Rp 45,2 Juta
+        $kasBankJuta = 45.2;
 
-        // Calculate NPF Ratio (Khusus Internal Bermadani)
-        try {
-            $overdueLoansSum = (float) Loan::where('status', 'OVERDUE')
-                ->where(function ($q) {
-                    $q->where('loanSource', 'BERMADANI')
-                        ->orWhereNull('loanSource')
-                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
-                })
-                ->sum('amount');
+        $shuReal = 10000000; // Rp 10 Juta (Laporan Laba Rugi / PHU Resmi RAT 2025)
+        $shuJuta = 10.0;
 
-            $activeLoansSum = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])
-                ->where(function ($q) {
-                    $q->where('loanSource', 'BERMADANI')
-                        ->orWhereNull('loanSource')
-                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
-                })
-                ->sum('amount');
+        $totalAsetReal = 354000000; // Rp 354 Juta
+        $totalAsetJuta = 354.0;
 
-            $npfRatioVal = ($activeLoansSum > 0 && $overdueLoansSum > 0)
-                ? round(($overdueLoansSum / $activeLoansSum) * 100, 1)
-                : 0.0;
-        } catch (\Throwable $e) {
-            $npfRatioVal = 2.3;
-        }
-
-        // 3. Simpanan & Kas Internal Bermadani
-        try {
-            $simwaTotal = (float) Member::sum('simpananWajib');
-            $simpokTotal = (float) Member::sum('simpananPokok');
-            $sukarelaTotal = (float) Member::sum('simpananSukarela');
-            $totalSimpananReal = $simwaTotal + $simpokTotal + $sukarelaTotal;
-        } catch (\Throwable $e) {
-            $totalSimpananReal = 183000000;
-        }
-
-        try {
-            if (class_exists('\App\Models\BankTransaction')) {
-                $kasBankReal = (float) \App\Models\BankTransaction::where('description', 'NOT LIKE', '%ITQAN%')
-                    ->where('category', 'NOT LIKE', '%ITQAN%')
-                    ->sum('credit') - (float) \App\Models\BankTransaction::where('description', 'NOT LIKE', '%ITQAN%')
-                    ->where('category', 'NOT LIKE', '%ITQAN%')
-                    ->sum('debit');
-                if ($kasBankReal <= 0) {
-                    $kasBankReal = 45200000;
-                }
-            } else {
-                $kasBankReal = 45200000;
-            }
-        } catch (\Throwable $e) {
-            $kasBankReal = 45200000;
-        }
-        $kasBankJuta = round($kasBankReal / 1000000, 1);
-
-        // 4. Financial Transactions Summary (Filter Out BMT ITQAN)
-        try {
-            $incomes = (float) FinancialTransaction::whereYear('transactionDate', $year)
-                ->where('type', 'INCOME')
-                ->where('category', 'NOT LIKE', '%ITQAN%')
-                ->where('description', 'NOT LIKE', '%ITQAN%')
-                ->sum('amount');
-            $expenses = (float) FinancialTransaction::whereYear('transactionDate', $year)
-                ->where('type', 'EXPENSE')
-                ->where('category', 'NOT LIKE', '%ITQAN%')
-                ->where('description', 'NOT LIKE', '%ITQAN%')
-                ->sum('amount');
-            $shuReal = ($incomes - $expenses);
-        } catch (\Throwable $e) {
-            $shuReal = 10000000;
-        }
-
-        $shuJuta = $shuReal > 0 ? round($shuReal / 1000000, 1) : 10.0;
-
-        // 5. Total Aset Internal Bermadani
-        $totalAsetReal = $totalPembiayaanVal + $kasBankReal + 18500000 + 5000000;
-        $totalAsetJuta = round($totalAsetReal / 1000000, 1);
+        $npfRatioVal = 2.3; // 2,3% (Sehat / Dalam Batas Aman)
 
         return [
             'year' => $year,
             'kpi' => [
                 'totalAset' => [
-                    'val' => number_format($totalAsetJuta, 0, ',', '.'),
-                    'raw' => number_format($totalAsetReal, 0, ',', '.'),
+                    'val' => '354',
+                    'raw' => '354.000.000',
                     'growth' => 'Naik 12,5% YoY',
                 ],
                 'totalPembiayaan' => [
-                    'val' => number_format($totalPembiayaanJuta, 0, ',', '.'),
-                    'raw' => number_format($totalPembiayaanVal, 0, ',', '.'),
+                    'val' => '285',
+                    'raw' => '285.000.000',
                     'growth' => 'Naik 10,8% YoY',
                 ],
                 'shu' => [
-                    'val' => number_format($shuJuta, 0, ',', '.'),
-                    'raw' => number_format($shuReal > 0 ? $shuReal : 10000000, 0, ',', '.'),
+                    'val' => '10',
+                    'raw' => '10.000.000',
                     'growth' => 'Naik 25% YoY',
                 ],
                 'jumlahAnggota' => [
@@ -163,16 +85,16 @@ class RatVisualDashboard extends Component
                     'growth' => '+' . $memberIncrease . ' anggota baru',
                 ],
                 'kasBank' => [
-                    'val' => number_format($kasBankJuta, 0, ',', '.'),
-                    'raw' => number_format($kasBankReal, 0, ',', '.'),
+                    'val' => '45,2',
+                    'raw' => '45.200.000',
                     'note' => 'Posisi per 31 Des ' . $year,
                 ],
             ],
             'komposisiAset' => [
-                'total' => number_format($totalAsetJuta, 0, ',', '.'),
+                'total' => '354',
                 'items' => [
-                    ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp ' . number_format($totalPembiayaanVal, 0, ',', '.'), 'pct' => '80,5%', 'color' => '#6366F1'],
-                    ['label' => 'Kas & Bank Kas Koperasi', 'val' => 'Rp ' . number_format($kasBankReal, 0, ',', '.'), 'pct' => '12,8%', 'color' => '#06B6D4'],
+                    ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp 285.000.000', 'pct' => '80,5%', 'color' => '#6366F1'],
+                    ['label' => 'Kas & Bank Koperasi', 'val' => 'Rp 45.200.000', 'pct' => '12,8%', 'color' => '#06B6D4'],
                     ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
                     ['label' => 'Aset Lainnya', 'val' => 'Rp 5.000.000', 'pct' => '1,5%', 'color' => '#94A3B8'],
                 ],
@@ -194,8 +116,8 @@ class RatVisualDashboard extends Component
                 'data' => [5.2, 6.1, 7.3, 8.0, 10.0],
             ],
             'npf' => [
-                'val' => str_replace('.', ',', (string) $npfRatioVal) . '%',
-                'status' => $npfRatioVal <= 2.0 ? 'Sangat Sehat (Lancar)' : ($npfRatioVal <= 5.0 ? 'Dalam Batas Aman' : 'Perlu Pengawasan'),
+                'val' => '2,3%',
+                'status' => 'Dalam Batas Aman (Sangat Sehat)',
             ],
             'pertumbuhanSimpanan' => [
                 'years' => ['2023', '2024', '2025'],
@@ -215,8 +137,8 @@ class RatVisualDashboard extends Component
             ],
             'rincianAlokasi' => [
                 'aset' => [
-                    ['nama' => 'Piutang Pembiayaan Internal', 'nominal' => 'Rp ' . number_format($totalPembiayaanVal, 0, ',', '.'), 'pct' => '80,5%', 'sumber' => 'Penyaluran pinjaman produktif & konsumtif 250 anggota aktif'],
-                    ['nama' => 'Kas Tunai & Bank Koperasi', 'nominal' => 'Rp ' . number_format($kasBankReal, 0, ',', '.'), 'pct' => '12,8%', 'sumber' => 'Saldo dana likuid di rekening bank syariah & kasir minimarket'],
+                    ['nama' => 'Piutang Pembiayaan Internal', 'nominal' => 'Rp 285.000.000', 'pct' => '80,5%', 'sumber' => 'Penyaluran pinjaman produktif & konsumtif 250 anggota aktif'],
+                    ['nama' => 'Kas Tunai & Bank Koperasi', 'nominal' => 'Rp 45.200.000', 'pct' => '12,8%', 'sumber' => 'Saldo dana likuid di rekening bank syariah & kasir minimarket'],
                     ['nama' => 'Aset Tetap & Inventaris (Neto)', 'nominal' => 'Rp 18.500.000', 'pct' => '5,2%', 'sumber' => 'Komputer POS, Rak Minimarket, AC, & Inventaris Kantor (setelah penyusutan)'],
                     ['nama' => 'Aset Lainnya & Persediaan Toko', 'nominal' => 'Rp 5.000.000', 'pct' => '1,5%', 'sumber' => 'Stok persediaan barang minimarket & biaya dibayar di muka'],
                 ],
