@@ -207,7 +207,7 @@
                         <th class="py-3 px-3">No. Anggota</th>
                         <th class="py-3 px-3">Nama Anggota</th>
                         <th class="py-3 px-3">Unit Kerja</th>
-                        <th class="py-3 px-3 text-right">Total Simpanan (Rp)</th>
+                        <th class="py-3 px-3 text-right">Simpanan Pokok + Wajib (Rp)</th>
                         <th class="py-3 px-3 text-center">Porsi (%)</th>
                         <th class="py-3 px-3 text-right">Nominal SHU (Rp)</th>
                         <th class="py-3 px-3 text-center no-print">Status Pencairan</th>
@@ -219,7 +219,7 @@
                         @php
                             $isModel = $item instanceof \App\Models\MemberShuDistribution;
                             $member = $isModel ? $item->member : $item;
-                            $simwa = (float) ($isModel ? $item->simpanan_wajib_amount : (($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0) + ($member->simpananSukarela ?? 0)));
+                            $simwa = (float) ($isModel ? $item->simpanan_wajib_amount : (($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0)));
                             $portion = (float) ($isModel ? $item->portion_percentage : (($simwa / max(1, $summary['totalSimwa'])) * 100));
                             $shu = (float) ($isModel ? $item->shu_amount : ($portion / 100) * (float) $totalMemberShu);
                             $isDisbursed = $isModel ? $item->is_disbursed : false;

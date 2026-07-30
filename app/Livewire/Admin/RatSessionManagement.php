@@ -94,10 +94,10 @@ class RatSessionManagement extends Component
 
     public function getShuSummaryProperty()
     {
-        // Calculate active members total simpanan (Pokok + Wajib + Sukarela)
+        // Calculate active members total modal sendiri (Simpanan Pokok + Wajib)
         $activeMembers = Member::where('status', 'ACTIVE')->get();
         $totalSimwa = (float) $activeMembers->sum(function ($m) {
-            return (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0) + (float) ($m->simpananSukarela ?? 0);
+            return (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0);
         });
         $totalSimwa = max(1, $totalSimwa); // avoid div by 0
 
@@ -143,13 +143,13 @@ class RatSessionManagement extends Component
 
         $this->selectedSessionId = $session->id;
 
-        // Generate / Update distributions for active members based on Total Simpanan (Pokok + Wajib + Sukarela)
+        // Generate / Update distributions for active members based on Modal Sendiri (Pokok + Wajib)
         $activeMembers = Member::where('status', 'ACTIVE')->get();
         $totalSimwa = $summary['totalSimwa'];
         $totalMemberShu = (float) $this->totalMemberShu;
 
         foreach ($activeMembers as $m) {
-            $totalSimpananMember = (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0) + (float) ($m->simpananSukarela ?? 0);
+            $totalSimpananMember = (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0);
             $portion = ($totalSimpananMember / $totalSimwa);
             $shuAmount = round($portion * $totalMemberShu, 2);
 
