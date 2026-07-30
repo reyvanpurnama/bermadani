@@ -131,14 +131,13 @@ class RatVisualDashboard extends Component
                 ],
             ],
             'komposisiAset' => [
-                'total' => '248,6',
-                'totalRaw' => '248.561.028',
+                'total' => '37,0',
+                'totalRaw' => '37.000.910',
                 'items' => [
-                    ['label' => 'Simpanan Terhimpun (Live DB)', 'val' => 'Rp ' . number_format($simpokDb + $simwaDb, 0, ',', '.'), 'pct' => '85,1%', 'color' => '#6366F1'],
-                    ['label' => 'Surplus Kas Bersih (SHU)', 'val' => 'Rp ' . number_format($surplusKasBersihBermadani, 0, ',', '.'), 'pct' => '6,0%', 'color' => '#06B6D4'],
-                    ['label' => 'Pengadaan Aset Tetap Toko', 'val' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '4,4%', 'color' => '#F59E0B'],
-                    ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp ' . number_format($saldoKasAwalCsv, 0, ',', '.'), 'pct' => '2,8%', 'color' => '#10B981'],
-                    ['label' => 'Persediaan Barang Dagangan', 'val' => 'Rp ' . number_format($persediaanBarangDagangan, 0, ',', '.'), 'pct' => '1,6%', 'color' => '#EC4899'],
+                    ['label' => 'Surplus Kas Bersih (SHU)', 'val' => 'Rp ' . number_format($surplusKasBersihBermadani, 0, ',', '.'), 'pct' => '40,5%', 'color' => '#06B6D4'],
+                    ['label' => 'Pengadaan Aset Tetap Toko', 'val' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '29,8%', 'color' => '#F59E0B'],
+                    ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp ' . number_format($saldoKasAwalCsv, 0, ',', '.'), 'pct' => '18,8%', 'color' => '#10B981'],
+                    ['label' => 'Persediaan Barang Dagangan', 'val' => 'Rp ' . number_format($persediaanBarangDagangan, 0, ',', '.'), 'pct' => '10,9%', 'color' => '#EC4899'],
                 ],
             ],
             'komposisiPendapatan' => [

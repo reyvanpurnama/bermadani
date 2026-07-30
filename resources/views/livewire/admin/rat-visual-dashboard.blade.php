@@ -871,10 +871,10 @@
             new Chart(ctxAset, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Simpanan Live DB', 'Surplus Kas (SHU)', 'Aset Tetap Toko', 'Kas Awal Periode', 'Persediaan Dagangan'],
+                    labels: ['Surplus Kas (SHU)', 'Aset Tetap Toko', 'Saldo Kas Awal', 'Persediaan Dagangan'],
                     datasets: [{
-                        data: [211.60, 15.00, 11.02, 6.96, 4.02],
-                        backgroundColor: ['#6366F1', '#06B6D4', '#F59E0B', '#10B981', '#EC4899'],
+                        data: [15.00, 11.02, 6.96, 4.02],
+                        backgroundColor: ['#06B6D4', '#F59E0B', '#10B981', '#EC4899'],
                         borderWidth: 0,
                     }]
                 },
