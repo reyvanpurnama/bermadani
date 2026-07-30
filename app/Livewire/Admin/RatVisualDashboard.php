@@ -131,6 +131,15 @@ class RatVisualDashboard extends Component
                     'note' => 'Posisi Saldo Kas per 31 Des ' . $year,
                 ],
             ],
+            'komposisiAset' => [
+                'total' => '354',
+                'items' => [
+                    ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp 285.000.000', 'pct' => '80,5%', 'color' => '#6366F1'],
+                    ['label' => 'Kas & Bank Koperasi (CSV)', 'val' => 'Rp 37.463.977', 'pct' => '10,6%', 'color' => '#06B6D4'],
+                    ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
+                    ['label' => 'Aset Lainnya', 'val' => 'Rp 5.000.000', 'pct' => '1,4%', 'color' => '#94A3B8'],
+                ],
+            ],
             'komposisiPendapatan' => [
                 'total' => '140,2',
                 'items' => [
