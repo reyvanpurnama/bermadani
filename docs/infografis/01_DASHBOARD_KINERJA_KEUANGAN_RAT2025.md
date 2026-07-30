@@ -17,10 +17,10 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
 - Slogan: "Bersama Anggota, Koperasi Kuat, Manfaat Nyata"
 
 [SECTION 1: CARDS KPI UTAMA (Top Grid - 4 Card)]
-1. CARD TOTAL SIMPANAN:
+1. CARD TOTAL SIMPANAN ANGGOTA AKTIF:
    - Icon: Wallet / Coin Stack
-   - Angka: "Rp 222.440.000"
-   - Label: "Total Dana Simpanan Anggota"
+   - Angka: "Rp 200.750.000"
+   - Label: "Total Dana Simpanan Anggota Aktif"
 2. CARD LABA BERSIH (SHU 2025):
    - Icon: Trending Up / Chart
    - Angka: "Rp 30.499.118"
@@ -32,14 +32,15 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
 4. CARD KEANGGOTAAN:
    - Icon: Users / People
    - Angka: "113 Anggota"
-   - Label: "Anggota Aktif Berhak SHU (Dari 145 Total)"
+   - Label: "Anggota Aktif Berhak SHU"
 
 [SECTION 2: VISUALISASI GRAFIK & DIAGRAM (4 Quadrant Grid)]
-- QUADRANT 1 (Komposisi Simpanan Anggota - Pie/Donut Chart):
-  * Simpanan Wajib: Rp 176.950.000 (79.5%)
-  * Simpanan Pokok: Rp 28.500.000 (12.8%)
-  * Simpanan Sukarela: Rp 16.990.000 (7.6%)
-  * Catatan: "Simpanan wajib menjadi porsi utama partisipasi modal anggota."
+- QUADRANT 1 (Komposisi Simpanan Anggota Aktif - Pie/Donut Chart):
+  * Simpanan Wajib Aktif: Rp 176.950.000 (88,1%)
+  * Simpanan Pokok Aktif: Rp 22.600.000 (11,3%)
+  * Simpanan Sukarela Aktif: Rp 1.200.000 (0,6%)
+  * Total Simpanan Aktif: Rp 200.750.000
+  * Catatan: "Simpanan Wajib anggota aktif menjadi basis utama perhitungan pembagian SHU RAT 2025."
 
 - QUADRANT 2 (Perbandingan Arus Kas 2025 - Bar Chart):
   * Total Penerimaan Kas: Rp 168.049.500
@@ -52,13 +53,13 @@ Desain harus terlihat modern, sangat bersih, profesional, elegan dengan tema war
   * Catatan: "Alokasi modal ditahan disiapkan untuk penguatan operasional bulan depan."
 
 - QUADRANT 4 (Indikator Kesehatan Koperasi - Gauge Status):
-  * Kecukupan Modal: BAIK & SEHAT (Hijau)
+  * Kecukupan Modal Aktif: BAIK & SEHAT (Hijau)
   * Likuiditas & Kas: SANGAT BAIK (Hijau)
   * Efisiensi Operasional: EFISIEN (Hijau)
   * Kualitas Pengelolaan: BAIK (Hijau)
 
 [FOOTER BANNER]
-- Keterangan: "Data bersumber dari Sistem Pembukuan Resmi Koperasi Bermadani Per 31 Desember 2025."
+- Keterangan: "Data bersumber dari Sistem Pembukuan Resmi Koperasi Bermadani Per 31 Desember 2025 (Fokus Anggota Aktif)."
 - Pengurus Koperasi: Ridlo Abdillah (Ketua Koperasi)
 - Tanggal Pelaksanaan RAT: 31 Juli 2026
 ```

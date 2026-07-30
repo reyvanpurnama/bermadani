@@ -8,12 +8,12 @@
 
 ```text
 Buatkan lembar infografis keempat berukuran A4 Portrait dengan judul "Siklus Akuntansi, Laporan Arus Kas, dan Catatan Atas Laporan Keuangan (CALK)" Koperasi Bermadani.
-Layout menggabungkan Diagram Alur Siklus Akuntansi di bagian atas, Ringkasan Arus Kas di tengah, dan Poin CALK Organisasi di bagian bawah.
+Layout menggabungkan Diagram Alur Siklus Akuntansi di bagian atas, Ringkasan Arus Kas di tengah, dan Poin CALK Organisasi di bagian bawah (Fokus 113 Anggota Aktif).
 
 [HEADER ATAS]
 - Header: "KOPERASI BERMADANI - RAT TAHUN BUKU 2025"
 - Judul Utama: "SIKLUS AKUNTANSI, ARUS KAS & CATATAN ORGANISASI"
-- Sub-judul: "Transparansi Tata Kelola dan Akuntabilitas Laporan Keuangan"
+- Sub-judul: "Transparansi Tata Kelola dan Akuntabilitas Laporan Keuangan Anggota Aktif"
 
 [SECTION 1: SIKLUS AKUNTANSI KOPERASI (DIAGRAM FLOWCHART HORISONTAL)]
 Alur 5 Tahapan Akuntansi:
@@ -38,14 +38,14 @@ Grid 3 Aktivitas Arus Kas:
 * Kenaikan Bersih Kas Tahun 2025: Rp 30.499.118
 
 [SECTION 3: CATATAN ATAS LAPORAN KEUANGAN - CALK (10 POIN PENTING)]
-1. Profil Organisasi: Koperasi Bermadani berdiri untuk meningkatkan kesejahteraan ekonomi anggota.
+1. Profil Organisasi: Koperasi Bermadani berdiri untuk meningkatkan kesejahteraan ekonomi 113 Anggota Aktif.
 2. Dasar Penyusunan: Mengacu pada Prinsip Akuntansi Koperasi dan SAK Entitas Tanpa Akuntabilitas Publik.
 3. Kas & Bank: Seluruh kas disimpan dalam rekening korporat yang aman dan transparan.
 4. Piutang Pinjaman: Pengelolaan pembiayaan anggota dengan sistem monitoring kolektibilitas yang sehat.
-5. Simpanan Anggota: Terdiri dari Simpanan Pokok, Simpanan Wajib, dan Simpanan Sukarela yang tercatat akurat.
+5. Simpanan Anggota Aktif: Total Rp 200.750.000 (Simpanan Wajib Rp 176.950.000, Pokok Rp 22.600.000, Sukarela Rp 1.200.000).
 6. Penentuan SHU: SHU dihasilkan murni dari efisiensi operasional dan partisipasi bisnis anggota.
 7. Alokasi Modal Usaha: Sebesar Rp 15.499.118 disepakati ditahan sebagai cadangan penguatan usaha.
-8. Hak SHU Anggota: Sebesar Rp 15.000.000 disepakati dibagikan secara proporsional.
+8. Hak SHU Anggota: Sebesar Rp 15.000.000 disepakati dibagikan secara proporsional ke 113 Anggota Aktif.
 9. Manajemen Risiko: Tidak terdapat piutang macet yang mengganggu likuiditas keuangan koperasi.
 10. Kejadian Setelah Neraca: Tidak ada kejadian material negatif pasca 31 Desember 2025.
 
