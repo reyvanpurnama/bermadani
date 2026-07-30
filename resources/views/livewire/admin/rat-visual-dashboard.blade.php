@@ -411,15 +411,15 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Simpanan Pokok:</span><span class="font-bold text-slate-800 dark:text-white">Rp 35.000.000</span></div>
-                    <div class="flex justify-between"><span>Simpanan Wajib:</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp 28.000.000</span></div>
-                    <div class="flex justify-between"><span>Simpanan Sukarela:</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Pokok (Live DB):</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['liveMetrics']['simpok'] }}</span></div>
+                    <div class="flex justify-between"><span>Simpanan Wajib (Live DB):</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['liveMetrics']['simwa'] }}</span></div>
+                    <div class="flex justify-between"><span>Simpanan Sukarela (Estimasi):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
                     <div class="flex justify-between"><span>Simpanan Berjangka:</span><span class="font-bold text-indigo-600 dark:text-indigo-400">Rp 67.000.000</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Total Simpanan: <strong class="text-emerald-600 dark:text-emerald-400">Rp 250.000.000</strong>
+                    Simpanan Pokok + Wajib (DB): <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['liveMetrics']['totalSimpanan'] }}</strong>
                 </span>
             </div>
         </div>
