@@ -206,6 +206,7 @@ class RatVisualDashboard extends Component
             ],
             'komposisiPendapatan' => [
                 'total' => number_format($totalKasMasukFull / 1000000, 1, ',', '.'),
+                'totalRaw' => number_format($totalKasMasukFull, 0, ',', '.'),
                 'items' => [
                     ['label' => 'Pendapatan Toko Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
                     ['label' => 'Simpanan Wajib Anggota', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
