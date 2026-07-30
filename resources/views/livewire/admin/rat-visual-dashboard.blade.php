@@ -51,7 +51,7 @@
             <div>
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Dashboard Keuangan RAT {{ $dashboard['year'] }}</h1>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
-                    KSPPS Berkah Madani — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
+                    Koperasi Konsumen Syariah Berkah Solusi Madani — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
                 </p>
             </div>
         </div>
