@@ -36,7 +36,7 @@ class RatVisualDashboard extends Component
         $year = (int) $this->selectedYear;
         $prevYear = $year - 1;
 
-        // 1. Data Member
+        // 1. Data Member (Khusus Internal Bermadani)
         try {
             $memberCount = Member::where('status', 'ACTIVE')->count();
             if ($memberCount === 0) {
@@ -47,9 +47,14 @@ class RatVisualDashboard extends Component
         }
         $memberIncrease = 18;
 
-        // 2. Data Pembiayaan / Pinjaman
+        // 2. Data Pembiayaan / Pinjaman (KHUSUS INTERNAL BERMADANI - Mengabaikan BMT ITQAN)
         try {
             $totalLoanReal = (float) Loan::whereIn('status', ['ACTIVE', 'COMPLETED', 'OVERDUE'])
+                ->where(function ($q) {
+                    $q->where('loanSource', 'BERMADANI')
+                        ->orWhereNull('loanSource')
+                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
+                })
                 ->whereYear('startDate', '<=', $year)
                 ->sum('amount');
         } catch (\Throwable $e) {
@@ -59,10 +64,24 @@ class RatVisualDashboard extends Component
         $totalPembiayaanVal = $totalLoanReal > 0 ? $totalLoanReal : 285000000;
         $totalPembiayaanJuta = round($totalPembiayaanVal / 1000000, 1);
 
-        // Calculate NPF Ratio
+        // Calculate NPF Ratio (Khusus Internal Bermadani)
         try {
-            $overdueLoansSum = (float) Loan::where('status', 'OVERDUE')->sum('amount');
-            $activeLoansSum = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('amount');
+            $overdueLoansSum = (float) Loan::where('status', 'OVERDUE')
+                ->where(function ($q) {
+                    $q->where('loanSource', 'BERMADANI')
+                        ->orWhereNull('loanSource')
+                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
+                })
+                ->sum('amount');
+
+            $activeLoansSum = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])
+                ->where(function ($q) {
+                    $q->where('loanSource', 'BERMADANI')
+                        ->orWhereNull('loanSource')
+                        ->orWhere('loanSource', '!=', 'BMT_ITQAN');
+                })
+                ->sum('amount');
+
             $npfRatioVal = ($activeLoansSum > 0 && $overdueLoansSum > 0)
                 ? round(($overdueLoansSum / $activeLoansSum) * 100, 1)
                 : 0.0;
@@ -70,7 +89,7 @@ class RatVisualDashboard extends Component
             $npfRatioVal = 2.3;
         }
 
-        // 3. Simpanan & Kas
+        // 3. Simpanan & Kas Internal Bermadani
         try {
             $simwaTotal = (float) Member::sum('simpananWajib');
             $simpokTotal = (float) Member::sum('simpananPokok');
@@ -82,7 +101,11 @@ class RatVisualDashboard extends Component
 
         try {
             if (class_exists('\App\Models\BankTransaction')) {
-                $kasBankReal = (float) \App\Models\BankTransaction::sum('credit') - (float) \App\Models\BankTransaction::sum('debit');
+                $kasBankReal = (float) \App\Models\BankTransaction::where('description', 'NOT LIKE', '%ITQAN%')
+                    ->where('category', 'NOT LIKE', '%ITQAN%')
+                    ->sum('credit') - (float) \App\Models\BankTransaction::where('description', 'NOT LIKE', '%ITQAN%')
+                    ->where('category', 'NOT LIKE', '%ITQAN%')
+                    ->sum('debit');
                 if ($kasBankReal <= 0) {
                     $kasBankReal = 45200000;
                 }
@@ -94,13 +117,17 @@ class RatVisualDashboard extends Component
         }
         $kasBankJuta = round($kasBankReal / 1000000, 1);
 
-        // 4. Financial Transactions Summary for Year (SHU & Arus Kas)
+        // 4. Financial Transactions Summary (Filter Out BMT ITQAN)
         try {
             $incomes = (float) FinancialTransaction::whereYear('transactionDate', $year)
                 ->where('type', 'INCOME')
+                ->where('category', 'NOT LIKE', '%ITQAN%')
+                ->where('description', 'NOT LIKE', '%ITQAN%')
                 ->sum('amount');
             $expenses = (float) FinancialTransaction::whereYear('transactionDate', $year)
                 ->where('type', 'EXPENSE')
+                ->where('category', 'NOT LIKE', '%ITQAN%')
+                ->where('description', 'NOT LIKE', '%ITQAN%')
                 ->sum('amount');
             $shuReal = ($incomes - $expenses);
         } catch (\Throwable $e) {
@@ -109,7 +136,7 @@ class RatVisualDashboard extends Component
 
         $shuJuta = $shuReal > 0 ? round($shuReal / 1000000, 1) : 10.0;
 
-        // 5. Total Aset
+        // 5. Total Aset Internal Bermadani
         $totalAsetReal = $totalPembiayaanVal + $kasBankReal + 18500000 + 5000000;
         $totalAsetJuta = round($totalAsetReal / 1000000, 1);
 
@@ -144,8 +171,8 @@ class RatVisualDashboard extends Component
             'komposisiAset' => [
                 'total' => number_format($totalAsetJuta, 0, ',', '.'),
                 'items' => [
-                    ['label' => 'Piutang Pembiayaan', 'val' => 'Rp ' . number_format($totalPembiayaanVal, 0, ',', '.'), 'pct' => '80,5%', 'color' => '#6366F1'],
-                    ['label' => 'Kas & Bank', 'val' => 'Rp ' . number_format($kasBankReal, 0, ',', '.'), 'pct' => '12,8%', 'color' => '#06B6D4'],
+                    ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp ' . number_format($totalPembiayaanVal, 0, ',', '.'), 'pct' => '80,5%', 'color' => '#6366F1'],
+                    ['label' => 'Kas & Bank Kas Koperasi', 'val' => 'Rp ' . number_format($kasBankReal, 0, ',', '.'), 'pct' => '12,8%', 'color' => '#06B6D4'],
                     ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
                     ['label' => 'Aset Lainnya', 'val' => 'Rp 5.000.000', 'pct' => '1,5%', 'color' => '#94A3B8'],
                 ],
@@ -153,9 +180,9 @@ class RatVisualDashboard extends Component
             'komposisiPendapatan' => [
                 'total' => '55',
                 'items' => [
-                    ['label' => 'Margin Pembiayaan', 'val' => 'Rp 48.000.000', 'pct' => '87,3%', 'color' => '#10B981'],
+                    ['label' => 'Margin Pembiayaan Internal', 'val' => 'Rp 48.000.000', 'pct' => '87,3%', 'color' => '#10B981'],
                     ['label' => 'Pendapatan Administrasi', 'val' => 'Rp 5.000.000', 'pct' => '9,1%', 'color' => '#3B82F6'],
-                    ['label' => 'Pendapatan Lain-lain', 'val' => 'Rp 2.000.000', 'pct' => '3,6%', 'color' => '#F97316'],
+                    ['label' => 'Pendapatan Toko & Operasional', 'val' => 'Rp 2.000.000', 'pct' => '3,6%', 'color' => '#F97316'],
                 ],
             ],
             'komposisiBeban' => [
