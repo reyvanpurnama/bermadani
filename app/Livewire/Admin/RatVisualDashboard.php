@@ -133,13 +133,12 @@ class RatVisualDashboard extends Component
                 ],
             ],
             'komposisiAset' => [
-                'total' => '354',
+                'total' => '260',
                 'items' => [
-                    ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp 285.000.000', 'pct' => '80,5%', 'color' => '#6366F1'],
-                    ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp 6.964.859', 'pct' => '2,0%', 'color' => '#10B981'],
-                    ['label' => 'Surplus Kas Internal Bermadani', 'val' => 'Rp 19.015.051', 'pct' => '5,4%', 'color' => '#06B6D4'],
-                    ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
-                    ['label' => 'Persediaan & Aset Lainnya', 'val' => 'Rp 24.520.090', 'pct' => '6,9%', 'color' => '#94A3B8'],
+                    ['label' => 'Simpanan Terhimpun (Live DB)', 'val' => 'Rp ' . number_format($simpokDb + $simwaDb, 0, ',', '.'), 'pct' => '81,4%', 'color' => '#6366F1'],
+                    ['label' => 'Surplus Kas 2025 (CSV)', 'val' => 'Rp ' . number_format($surplusKasBersihFull, 0, ',', '.'), 'pct' => '11,7%', 'color' => '#06B6D4'],
+                    ['label' => 'Pengadaan Aset Tetap Toko', 'val' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '4,2%', 'color' => '#F59E0B'],
+                    ['label' => 'Saldo Kas Awal (Mei 2025)', 'val' => 'Rp ' . number_format($saldoKasAwalCsv, 0, ',', '.'), 'pct' => '2,7%', 'color' => '#10B981'],
                 ],
             ],
             'komposisiPendapatan' => [
