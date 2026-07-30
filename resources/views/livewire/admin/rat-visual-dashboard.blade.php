@@ -514,4 +514,18 @@
 
     document.addEventListener('livewire:navigated', renderRatDashboardCharts);
     document.addEventListener('DOMContentLoaded', renderRatDashboardCharts);
+
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('rat-charts-reload', () => {
+            setTimeout(renderRatDashboardCharts, 100);
+        });
+    });
+
+    if (window.Livewire) {
+        Livewire.hook('commit', ({ respond, succeed }) => {
+            succeed(() => {
+                setTimeout(renderRatDashboardCharts, 100);
+            });
+        });
+    }
 </script>

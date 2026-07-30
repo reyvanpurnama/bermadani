@@ -26,6 +26,11 @@ class RatVisualDashboard extends Component
         $this->availableYears = $years;
     }
 
+    public function updatedSelectedYear()
+    {
+        $this->dispatch('rat-charts-reload');
+    }
+
     public function getDashboardDataProperty()
     {
         $year = (int) $this->selectedYear;
