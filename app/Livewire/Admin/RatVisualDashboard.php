@@ -162,6 +162,15 @@ class RatVisualDashboard extends Component
             $outstandingPinjamanBermadani = 1233333;
         }
 
+        // Dynamic NPF (Non-Performing Financing) calculation from Database
+        try {
+            $totalLoanPortfolio = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('remainingAmount');
+            $overdueLoanPortfolio = (float) Loan::where('status', 'OVERDUE')->sum('remainingAmount');
+            $npfPercentage = $totalLoanPortfolio > 0 ? round(($overdueLoanPortfolio / $totalLoanPortfolio) * 100, 1) : 0.0;
+        } catch (\Throwable $e) {
+            $npfPercentage = 0.0;
+        }
+        $npfStatus = $npfPercentage < 5.0 ? 'Sangat Sehat (Lancar)' : ($npfPercentage < 8.0 ? 'Cukup Sehat' : 'Perlu Perhatian');
         $asetTetap = $asetTetapCsv;
         $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani;
         $retainedModal = max(0, $saldoKasAkhirCsv - 15000000); // Rp 15.499.118 (Sama dengan RatInfographic Lembar 4)
@@ -224,8 +233,8 @@ class RatVisualDashboard extends Component
                 'data' => [5.2, 6.1, 7.3, 12.0, 19.01],
             ],
             'npf' => [
-                'val' => '2,3%',
-                'status' => 'Sangat Sehat (Lancar)',
+                'val' => number_format($npfPercentage, 1, ',', '.') . '%',
+                'status' => $npfStatus,
             ],
             'pertumbuhanSimpanan' => [
                 'years' => ['2023', '2024', '2025'],
