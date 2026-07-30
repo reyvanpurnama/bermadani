@@ -511,6 +511,9 @@
                 <button @click="tab = 'shu'" :class="tab === 'shu' ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all">
                     Distribusi SHU
                 </button>
+                <button @click="tab = 'aruskas'" :class="tab === 'aruskas' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1">
+                    <i class='bx bx-table text-sm'></i> Arus Kas Bulanan (CSV)
+                </button>
             </div>
         </div>
 
@@ -632,6 +635,229 @@
                             <td class="p-3 text-slate-500 dark:text-slate-400">{{ $row['keterangan'] }}</td>
                         </tr>
                     @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- TAB 6: LAPORAN ARUS KAS BULANAN (FULL CSV TABLE MEI - DES 2025) --}}
+        <div x-show="tab === 'aruskas'" class="overflow-x-auto" style="display: none;">
+            <table class="w-full text-[11px] text-left border-collapse min-w-[800px]">
+                <thead>
+                    <tr class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold border-b border-slate-200 dark:border-slate-700">
+                        <th class="p-2.5">Pos Transaksi Arus Kas</th>
+                        <th class="p-2.5 text-right">Mei</th>
+                        <th class="p-2.5 text-right">Juni</th>
+                        <th class="p-2.5 text-right">Juli</th>
+                        <th class="p-2.5 text-right">Agustus</th>
+                        <th class="p-2.5 text-right">September</th>
+                        <th class="p-2.5 text-right">Oktober</th>
+                        <th class="p-2.5 text-right">November</th>
+                        <th class="p-2.5 text-right">Desember</th>
+                        <th class="p-2.5 text-right bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400">Total 2025</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    {{-- HEADER KAS MASUK --}}
+                    <tr class="bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 font-bold">
+                        <td colspan="10" class="p-2 uppercase tracking-wider text-[10px]">I. KAS MASUK</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Simpanan Wajib</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">4.400.000</td>
+                        <td class="p-2 text-right">5.650.000</td>
+                        <td class="p-2 text-right">5.500.000</td>
+                        <td class="p-2 text-right">6.000.000</td>
+                        <td class="p-2 text-right">5.650.000</td>
+                        <td class="p-2 text-right">5.650.000</td>
+                        <td class="p-2 text-right">5.550.000</td>
+                        <td class="p-2 text-right font-bold text-emerald-600 dark:text-emerald-400">38.400.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Simpanan Pokok</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">200.000</td>
+                        <td class="p-2 text-right">200.000</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">200.000</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right font-bold text-emerald-600 dark:text-emerald-400">600.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Simpanan Sukarela</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">400.000</td>
+                        <td class="p-2 text-right">400.000</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">400.000</td>
+                        <td class="p-2 text-right font-bold text-emerald-600 dark:text-emerald-400">6.450.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pendapatan Bersih Toko Minimarket</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">115.000</td>
+                        <td class="p-2 text-right">785.000</td>
+                        <td class="p-2 text-right">1.902.500</td>
+                        <td class="p-2 text-right">7.838.414</td>
+                        <td class="p-2 text-right">34.815.401</td>
+                        <td class="p-2 text-right">28.289.851</td>
+                        <td class="p-2 text-right">21.031.145</td>
+                        <td class="p-2 text-right font-bold text-emerald-600 dark:text-emerald-400">94.777.311</td>
+                    </tr>
+                    <tr class="bg-slate-50 dark:bg-slate-800/80 font-bold border-t border-b border-emerald-200 dark:border-emerald-800/50">
+                        <td class="p-2 text-emerald-700 dark:text-emerald-300">TOTAL KAS MASUK INTERNAL BERMADANI</td>
+                        <td class="p-2 text-right">1.050.000</td>
+                        <td class="p-2 text-right">5.765.000</td>
+                        <td class="p-2 text-right">7.685.000</td>
+                        <td class="p-2 text-right">7.802.500</td>
+                        <td class="p-2 text-right">14.238.414</td>
+                        <td class="p-2 text-right">41.715.401</td>
+                        <td class="p-2 text-right">34.989.851</td>
+                        <td class="p-2 text-right">26.981.145</td>
+                        <td class="p-2 text-right text-emerald-600 dark:text-emerald-400">140.227.311</td>
+                    </tr>
+                    <tr class="text-slate-400 italic">
+                        <td class="p-2 pl-4">Pendapatan Eksternal BMT ITQAN (Terpisah)</td>
+                        <td class="p-2 text-right">1.650.128</td>
+                        <td class="p-2 text-right">1.633.783</td>
+                        <td class="p-2 text-right">1.496.947</td>
+                        <td class="p-2 text-right">1.341.732</td>
+                        <td class="p-2 text-right">1.596.114</td>
+                        <td class="p-2 text-right">1.160.807</td>
+                        <td class="p-2 text-right">1.373.988</td>
+                        <td class="p-2 text-right">1.230.568</td>
+                        <td class="p-2 text-right font-semibold">11.484.067</td>
+                    </tr>
+
+                    {{-- HEADER KAS KELUAR --}}
+                    <tr class="bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold">
+                        <td colspan="10" class="p-2 uppercase tracking-wider text-[10px]">II. KAS KELUAR (PENGELUARAN)</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Gaji Pengurus Koperasi</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">4.000.000</td>
+                        <td class="p-2 text-right">3.250.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">31.250.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Gaji Karyawan Minimarket</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">2.000.000</td>
+                        <td class="p-2 text-right">2.000.000</td>
+                        <td class="p-2 text-right">3.000.000</td>
+                        <td class="p-2 text-right">3.000.000</td>
+                        <td class="p-2 text-right">8.728.000</td>
+                        <td class="p-2 text-right">8.728.000</td>
+                        <td class="p-2 text-right">8.728.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">36.184.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pembayaran Utang Supplier</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">482.000</td>
+                        <td class="p-2 text-right">16.394.008</td>
+                        <td class="p-2 text-right">2.762.000</td>
+                        <td class="p-2 text-right">2.936.500</td>
+                        <td class="p-2 text-right">3.682.000</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">2.482.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">28.738.508</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pengadaan Aset Tetap</td>
+                        <td class="p-2 text-right">9.021.000</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">2.000.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">11.021.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Biaya Kemasan & Kantong</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">148.000</td>
+                        <td class="p-2 text-right">1.028.000</td>
+                        <td class="p-2 text-right">753.000</td>
+                        <td class="p-2 text-right">733.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">2.662.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Konsumsi Rapat & Pelaksanaan RAT</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">1.440.000</td>
+                        <td class="p-2 text-right">1.440.000</td>
+                        <td class="p-2 text-right">1.440.000</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">4.320.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">Pengembalian Simpanan Anggota</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right">4.300.000</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right text-slate-500">0</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">4.300.000</td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 pl-4 text-slate-700 dark:text-slate-300">ATK, Admin Bank, Transfer & Lainnya</td>
+                        <td class="p-2 text-right">447.000</td>
+                        <td class="p-2 text-right">182.652</td>
+                        <td class="p-2 text-right">211.892</td>
+                        <td class="p-2 text-right">296.258</td>
+                        <td class="p-2 text-right">306.604</td>
+                        <td class="p-2 text-right">600.546</td>
+                        <td class="p-2 text-right">376.900</td>
+                        <td class="p-2 text-right">304.900</td>
+                        <td class="p-2 text-right font-bold text-rose-600 dark:text-rose-400">2.736.752</td>
+                    </tr>
+                    <tr class="bg-rose-50 dark:bg-rose-950/40 font-bold border-t border-b border-rose-200 dark:border-rose-800">
+                        <td class="p-2 text-rose-700 dark:text-rose-300">TOTAL KAS KELUAR (PENGELUARAN)</td>
+                        <td class="p-2 text-right">13.468.000</td>
+                        <td class="p-2 text-right">6.664.652</td>
+                        <td class="p-2 text-right">22.605.900</td>
+                        <td class="p-2 text-right">14.358.258</td>
+                        <td class="p-2 text-right">10.391.104</td>
+                        <td class="p-2 text-right">19.538.546</td>
+                        <td class="p-2 text-right">15.297.900</td>
+                        <td class="p-2 text-right">18.947.900</td>
+                        <td class="p-2 text-right text-rose-600 dark:text-rose-400">121.212.260</td>
+                    </tr>
+
+                    {{-- RINGKASAN REKAPITULASI --}}
+                    <tr class="bg-slate-100 dark:bg-slate-800 font-extrabold text-slate-800 dark:text-white">
+                        <td class="p-2.5">SURPLUS / REKAPITULASI KAS BERSIH</td>
+                        <td colspan="8" class="p-2.5 text-slate-500 font-normal">Saldo Kas Awal (Mei): Rp 6.964.859</td>
+                        <td class="p-2.5 text-right text-blue-600 dark:text-blue-400">Rp 19.015.051</td>
+                    </tr>
+                    <tr class="bg-emerald-600 text-white font-extrabold text-xs">
+                        <td class="p-2.5">SALDO KAS AKHIR PERIODE (31 DESEMBER 2025)</td>
+                        <td colspan="8" class="p-2.5 text-emerald-100 font-normal">Saldo Kas Awal (Rp 6,9M) + Total Surplus Kas CSV (Rp 30,5M)</td>
+                        <td class="p-2.5 text-right text-amber-300 text-sm">Rp 37.463.977</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
