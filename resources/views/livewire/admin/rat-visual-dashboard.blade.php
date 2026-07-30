@@ -721,18 +721,6 @@
                         <td class="p-2 text-right">26.981.145</td>
                         <td class="p-2 text-right text-emerald-600 dark:text-emerald-400">140.227.311</td>
                     </tr>
-                    <tr class="text-slate-400 italic">
-                        <td class="p-2 pl-4">Pendapatan Eksternal BMT ITQAN (Terpisah)</td>
-                        <td class="p-2 text-right">1.650.128</td>
-                        <td class="p-2 text-right">1.633.783</td>
-                        <td class="p-2 text-right">1.496.947</td>
-                        <td class="p-2 text-right">1.341.732</td>
-                        <td class="p-2 text-right">1.596.114</td>
-                        <td class="p-2 text-right">1.160.807</td>
-                        <td class="p-2 text-right">1.373.988</td>
-                        <td class="p-2 text-right">1.230.568</td>
-                        <td class="p-2 text-right font-semibold">11.484.067</td>
-                    </tr>
 
                     {{-- HEADER KAS KELUAR --}}
                     <tr class="bg-rose-50/50 dark:bg-rose-950/20 text-rose-800 dark:text-rose-300 font-bold">
@@ -848,15 +836,10 @@
                     </tr>
 
                     {{-- RINGKASAN REKAPITULASI --}}
-                    <tr class="bg-slate-100 dark:bg-slate-800 font-extrabold text-slate-800 dark:text-white">
-                        <td class="p-2.5">SURPLUS KAS BERSIH INTERNAL (BERMADANI)</td>
-                        <td colspan="8" class="p-2.5 text-slate-500 font-normal">Penerimaan Internal (140,2M) - Kas Keluar (121,2M)</td>
-                        <td class="p-2.5 text-right text-blue-600 dark:text-blue-400">Rp 19.015.051</td>
-                    </tr>
                     <tr class="bg-emerald-600 text-white font-extrabold text-xs">
-                        <td class="p-2.5">SALDO KAS AKHIR PERIODE (31 DESEMBER 2025)</td>
-                        <td colspan="8" class="p-2.5 text-emerald-100 font-normal">Total Kas Masuk CSV (151,7M) - Total Kas Keluar (121,2M) [Tanpa Saldo Awal]</td>
-                        <td class="p-2.5 text-right text-amber-300 text-sm">Rp 30.499.118</td>
+                        <td class="p-2.5">SURPLUS KAS BERSIH BERMADANI 2025</td>
+                        <td colspan="8" class="p-2.5 text-emerald-100 font-normal">Total Kas Masuk Internal (140,2M) - Total Kas Keluar (121,2M)</td>
+                        <td class="p-2.5 text-right text-amber-300 text-sm">Rp 19.015.051</td>
                     </tr>
                 </tbody>
             </table>
