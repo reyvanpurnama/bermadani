@@ -39,11 +39,19 @@ class RatInfographic extends Component
             $totalSimpanan = 195190000;
         }
 
-        // 2. Database Query: Outstanding Pinjaman Anggota Real-time (AKTIVA - ASET)
-        $outstandingPinjaman = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('remainingAmount');
-        if ($outstandingPinjaman == 0) {
-            $outstandingPinjaman = 142847491.0;
+        // 2. Database Query: Outstanding Pinjaman Internal BERMADANI (AKTIVA - ASET)
+        $outstandingPinjamanBermadani = (float) Loan::where('loanSource', 'BERMADANI')
+            ->whereIn('status', ['ACTIVE', 'OVERDUE'])
+            ->sum('remainingAmount');
+
+        if ($outstandingPinjamanBermadani <= 0) {
+            $outstandingPinjamanBermadani = 1233333.0; // Fallback 5 pinjaman aktif Bermadani
         }
+
+        // Outstanding BMT Itqan (Sebagai Referensi Opsional)
+        $outstandingBmtItqan = (float) Loan::where('loanSource', 'BMT_ITQAN')
+            ->whereIn('status', ['ACTIVE', 'OVERDUE'])
+            ->sum('remainingAmount');
 
         // 3. CSV Parser: Parse docs/data/ARUS KAS 25.csv (KAS & ASET TETAP)
         $kasMasuk = 151711378.0;
@@ -81,12 +89,12 @@ class RatInfographic extends Component
 
         $surplusKas = $kasBankRiil;
 
-        // 4. KALKULASI ASET (AKTIVA) VS PASIVA (SIMPANAN)
-        // Total Aset Aktiva Real = Kas (30.499.118) + Aset Tetap (11.021.000) + Pinjaman Real DB (142.847.491) = Rp 184.367.609
-        $totalAsetReal = $kasBankRiil + $asetTetap + $outstandingPinjaman; // 184.367.609
+        // 4. KALKULASI ASET REAL BERMADANI VS SIMPANAN PASIVA
+        // Total Aset Real Bermadani = Kas (30.499.118) + Aset Tetap (11.021.000) + Pinjaman Bermadani (1.233.333) = Rp 42.753.451
+        $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani; // 42.753.451
 
-        // Defisit / Selisih modal = Total Simpanan (195.190.000) - Total Aset (184.367.609) = Rp 10.822.391
-        $defisitModal = $totalSimpanan - $totalAsetReal; // 10.822.391
+        // Defisit modal Bermadani = Total Simpanan (195.190.000) - Total Aset Real Bermadani (42.753.451) = Rp 152.436.549
+        $defisitModal = $totalSimpanan - $totalAsetBermadani; // 152.436.549
 
         // 5. RAT Session & SHU
         $ratSession = RatSession::where('year', 2025)->first();
@@ -99,14 +107,15 @@ class RatInfographic extends Component
             'simpok' => $simpok,
             'simsuka' => $simsuka,
             'totalSimpanan' => $totalSimpanan,
-            'outstandingPinjaman' => $outstandingPinjaman,
+            'outstandingPinjamanBermadani' => $outstandingPinjamanBermadani,
+            'outstandingBmtItqan' => $outstandingBmtItqan,
             'kasMasuk' => $kasMasuk,
             'kasKeluar' => $kasKeluar,
             'saldoKasAwal' => $saldoKasAwal,
             'surplusKas' => $surplusKas,
             'kasBankRiil' => $kasBankRiil,
             'asetTetap' => $asetTetap,
-            'totalAsetReal' => $totalAsetReal,
+            'totalAsetBermadani' => $totalAsetBermadani,
             'defisitModal' => $defisitModal,
             'shuMember' => $shuMember,
             'retainedModal' => $retainedModal,
