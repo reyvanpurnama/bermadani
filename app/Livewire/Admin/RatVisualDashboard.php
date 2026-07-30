@@ -99,6 +99,7 @@ class RatVisualDashboard extends Component
         $saldoKasAwalCsv = 6964859;                // Rp 6.964.859 (Saldo Awal Terpisah)
         $saldoKasAkhirCsv = 30499118;              // Rp 30.499.118 (Surplus Kas Akhir CSV)
         $kasBankAkhirTotal = $saldoKasAwalCsv + $saldoKasAkhirCsv; // Rp 37.463.977
+        $surplusKasBersihFull = $totalKasMasukFull - $totalKasKeluarCsv; // Rp 30.499.118
         $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv; // Rp 19.015.051
 
         // Outstanding Pinjaman Internal Bermadani DB
