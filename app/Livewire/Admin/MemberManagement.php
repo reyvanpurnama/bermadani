@@ -162,6 +162,7 @@ class MemberManagement extends Component
     {
         $members = Member::query()
             ->where('isMemberKoperasi', true)
+            ->where('status', 'ACTIVE')
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('nomorAnggota', 'LIKE', '%' . $this->search . '%')
@@ -170,7 +171,6 @@ class MemberManagement extends Component
                         ->orWhere('unitKerja', 'LIKE', '%' . $this->search . '%');
                 });
             })
-            ->when($this->filterStatus, fn($q) => $q->where('status', $this->filterStatus))
             ->when($this->filterTier, fn($q) => $q->where('tier', $this->filterTier))
             ->when($this->filterUnitKerja, fn($q) => $q->where('unitKerja', $this->filterUnitKerja))
             ->when($this->filterJoinMonth, fn($q) => $q->whereMonth('joinDate', $this->filterJoinMonth))
@@ -187,7 +187,7 @@ class MemberManagement extends Component
             'members'     => $members,
             'filters'     => [
                 'search'         => $this->search,
-                'filterStatus'   => $this->filterStatus,
+                'filterStatus'   => 'ACTIVE',
                 'filterTier'     => $this->filterTier,
                 'filterUnitKerja'=> $this->filterUnitKerja,
                 'filterJoinMonth'=> $this->filterJoinMonth,
