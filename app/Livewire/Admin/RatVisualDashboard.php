@@ -208,24 +208,24 @@ class RatVisualDashboard extends Component
                 'total' => '42,75',
                 'totalRaw' => number_format($totalAsetBermadani, 0, ',', '.'),
                 'items' => [
-                    ['label' => 'Kas & Bank Akhir (CSV Line 28)', 'val' => 'Rp ' . number_format($kasBankRiil, 0, ',', '.'), 'pct' => round(($kasBankRiil / $totalAsetBermadani)*100, 1) . '%', 'color' => '#10B981'],
-                    ['label' => 'Aset Tetap & Inventaris Toko', 'val' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'color' => '#F59E0B'],
-                    ['label' => 'Piutang Pinjaman Bermadani DB', 'val' => 'Rp ' . number_format($outstandingPinjamanBermadani, 0, ',', '.'), 'pct' => round(($outstandingPinjamanBermadani / $totalAsetBermadani)*100, 1) . '%', 'color' => '#6366F1'],
+                    ['label' => 'Kas & Setara Kas (Bank)', 'val' => 'Rp ' . number_format($kasBankRiil, 0, ',', '.'), 'pct' => round(($kasBankRiil / $totalAsetBermadani)*100, 1) . '%', 'color' => '#10B981'],
+                    ['label' => 'Aset Tetap & Inventaris', 'val' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'color' => '#F59E0B'],
+                    ['label' => 'Piutang Pinjaman Anggota (DB)', 'val' => 'Rp ' . number_format($outstandingPinjamanBermadani, 0, ',', '.'), 'pct' => round(($outstandingPinjamanBermadani / $totalAsetBermadani)*100, 1) . '%', 'color' => '#6366F1'],
                 ],
             ],
             'komposisiPendapatan' => [
                 'total' => number_format($totalKasMasukFull / 1000000, 1, ',', '.'),
                 'totalRaw' => number_format($totalKasMasukFull, 0, ',', '.'),
                 'items' => [
-                    ['label' => 'Pendapatan Toko Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
-                    ['label' => 'Simpanan Wajib Anggota', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
-                    ['label' => 'Pendapatan dari BMT ITQAN', 'val' => 'Rp ' . number_format($bmtItqanCsv, 0, ',', '.'), 'pct' => round(($bmtItqanCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#EC4899'],
-                    ['label' => 'Simpanan Sukarela Anggota', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => round(($simsukarelaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#F59E0B'],
-                    ['label' => 'Simpanan Pokok Anggota', 'val' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => round(($simpokCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#8B5CF6'],
+                    ['label' => 'Pendapatan Usaha Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
+                    ['label' => 'Penerimaan Simpanan Wajib', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
+                    ['label' => 'Pendapatan Pembiayaan BMT', 'val' => 'Rp ' . number_format($bmtItqanCsv, 0, ',', '.'), 'pct' => round(($bmtItqanCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#EC4899'],
+                    ['label' => 'Penerimaan Simpanan Sukarela', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => round(($simsukarelaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#F59E0B'],
+                    ['label' => 'Penerimaan Simpanan Pokok', 'val' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => round(($simpokCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#8B5CF6'],
                 ],
             ],
             'komposisiBeban' => [
-                'labels' => ['Gaji Staf Toko (29.8%)', 'Honorarium Pengurus (25.8%)', 'Hutang Supplier (23.7%)', 'Aset Tetap (9.1%)', 'Konsumsi & Ops (11.6%)'],
+                'labels' => ['Gaji Staf (29.8%)', 'Honor Pengurus (25.8%)', 'Utang Supplier (23.7%)', 'Aset Tetap (9.1%)', 'Beban Ops & RAT (11.6%)'],
                 'data' => [36.18, 31.25, 28.74, 11.02, 14.02],
             ],
             'trenShu' => [

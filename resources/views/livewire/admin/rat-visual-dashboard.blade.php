@@ -220,18 +220,21 @@
     {{-- 8 MODUL VISUALISASI GRID (2 ROWS X 4 COLS) --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         
-        {{-- CARD 1: KOMPOSISI ASET --}}
+    {{-- 8 MODUL VISUALISASI GRID (2 ROWS X 4 COLS) --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        {{-- CARD 1: KOMPOSISI ASET KOPERASI (AKTIVA) --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">1</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Aset</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Aset (Aktiva)</h3>
                 </div>
 
                 <div class="h-36 relative flex items-center justify-center my-2">
                     <canvas id="chartKomposisiAset"></canvas>
                     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">ASET REAL</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">TOTAL AKTIVA</span>
                         <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['komposisiAset']['total'] }} Jt</span>
                     </div>
                 </div>
@@ -253,23 +256,23 @@
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Total Aset Real Bermadani = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiAset']['totalRaw'] }}</strong>.
+                    Total Aktiva Real Koperasi = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiAset']['totalRaw'] }}</strong>.
                 </span>
             </div>
         </div>
 
-        {{-- CARD 2: KOMPOSISI KAS MASUK --}}
+        {{-- CARD 2: KOMPOSISI PENERIMAAN KAS --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">2</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Kas Masuk</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Penerimaan Kas</h3>
                 </div>
 
                 <div class="h-36 relative flex items-center justify-center my-2">
                     <canvas id="chartKomposisiPendapatan"></canvas>
                     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">TOTAL</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">TOTAL KAS MASUK</span>
                         <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['komposisiPendapatan']['total'] }} Jt</span>
                     </div>
                 </div>
@@ -291,7 +294,7 @@
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Total Kas Masuk (CSV) = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiPendapatan']['totalRaw'] }}</strong>.
+                    Total Arus Kas Masuk (CSV) = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiPendapatan']['totalRaw'] }}</strong>.
                 </span>
             </div>
         </div>
@@ -301,7 +304,7 @@
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-xs">3</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Beban & Pengeluaran</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Beban & Pengeluaran</h3>
                 </div>
 
                 <div class="h-32 my-1">
@@ -309,26 +312,26 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Beban Gaji Staf Toko:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 36.184.000</span></div>
-                    <div class="flex justify-between"><span>Honorarium Pengurus Koperasi:</span><span class="font-bold text-slate-800 dark:text-white">Rp 31.250.000</span></div>
-                    <div class="flex justify-between"><span>Hutang Usaha Supplier:</span><span class="font-bold text-slate-800 dark:text-white">Rp 28.738.508</span></div>
+                    <div class="flex justify-between"><span>Beban Gaji & Upah Staf Toko:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 36.184.000</span></div>
+                    <div class="flex justify-between"><span>Honorarium Pengurus & Pengawas:</span><span class="font-bold text-slate-800 dark:text-white">Rp 31.250.000</span></div>
+                    <div class="flex justify-between"><span>Pembayaran Utang Usaha (Supplier):</span><span class="font-bold text-slate-800 dark:text-white">Rp 28.738.508</span></div>
                     <div class="flex justify-between"><span>Pengadaan Aset Tetap:</span><span class="font-bold text-slate-800 dark:text-white">Rp 11.021.000</span></div>
-                    <div class="flex justify-between"><span>Konsumsi RAT & Ops:</span><span class="font-bold text-slate-800 dark:text-white">Rp 14.018.752</span></div>
+                    <div class="flex justify-between"><span>Beban Operasional & RAT:</span><span class="font-bold text-slate-800 dark:text-white">Rp 14.018.752</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Total Kas Keluar (CSV): <strong class="text-rose-600 dark:text-rose-400">Rp 121.212.260</strong>
+                    Total Arus Kas Keluar (CSV): <strong class="text-rose-600 dark:text-rose-400">Rp 121.212.260</strong>
                 </span>
             </div>
         </div>
 
-        {{-- CARD 4: SURPLUS KAS & ALOKASI SHU --}}
+        {{-- CARD 4: PEMBAGIAN SISA HASIL USAHA (SHU) --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs">4</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Surplus Kas & Alokasi</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Pembagian SHU RAT</h3>
                 </div>
 
                 <div class="h-32 my-1">
@@ -337,26 +340,26 @@
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
                     <div class="flex justify-between"><span>Dana Cadangan Koperasi (25%):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 4.753.763</span></div>
-                    <div class="flex justify-between"><span>Jasa Simpanan (30%):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 5.704.515</span></div>
-                    <div class="flex justify-between"><span>Jasa Usaha Anggota (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 4.753.763</span></div>
-                    <div class="flex justify-between"><span>Honorarium Pengurus (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
-                    <div class="flex justify-between"><span>Pendidikan & Sosial (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
+                    <div class="flex justify-between"><span>SHU Jasa Simpanan (30%):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 5.704.515</span></div>
+                    <div class="flex justify-between"><span>SHU Jasa Usaha / Transaksi (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 4.753.763</span></div>
+                    <div class="flex justify-between"><span>Dana Pengurus & Pengawas (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
+                    <div class="flex justify-between"><span>Dana Pendidikan & Sosial (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Surplus Kas Internal: <strong class="text-emerald-600 dark:text-emerald-400">Rp 19.015.051</strong>
+                    Sisa Hasil Usaha (SHU) Bersih: <strong class="text-emerald-600 dark:text-emerald-400">Rp 19.015.051</strong>
                 </span>
             </div>
         </div>
 
-        {{-- CARD 5: RASIO PEMBIAYAAN BERMASALAH (NPF) - SLEEK MODULAR DESIGN --}}
+        {{-- CARD 5: TINGKAT KESEHATAN PIUTANG (NPF) --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
                         <span class="w-7 h-7 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs">5</span>
-                        <h3 class="text-sm font-bold text-slate-800 dark:text-white">Rasio NPF</h3>
+                        <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tingkat Kesehatan NPF</h3>
                     </div>
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/40">
                         {{ $dashboard['npf']['status'] }}
@@ -368,7 +371,7 @@
                     <div class="text-3xl font-extrabold text-slate-800 dark:text-white mb-1">
                         {{ $dashboard['npf']['val'] }}
                     </div>
-                    <p class="text-xs text-slate-400 font-medium">Pembiayaan Bermasalah (Target &lt; 5%)</p>
+                    <p class="text-xs text-slate-400 font-medium">Pinjaman Bermasalah (Target NPF &lt; 5%)</p>
 
                     {{-- Segmented Risk Indicator Bar --}}
                     <div class="mt-4 space-y-2">
@@ -376,7 +379,7 @@
                             <div class="h-full w-[25%] bg-emerald-500 rounded-l-full relative" title="Lancar (0-2%)">
                                 <div class="absolute -right-1 -top-1 w-2.5 h-2.5 bg-slate-900 ring-2 ring-white rounded-full"></div>
                             </div>
-                            <div class="h-full w-[25%] bg-amber-400" title="Kurang Lancar (2-5%)"></div>
+                            <div class="h-full w-[25%] bg-amber-400" title="K.Lancar (2-5%)"></div>
                             <div class="h-full w-[25%] bg-orange-500" title="Diragukan (5-8%)"></div>
                             <div class="h-full w-[25%] bg-rose-500 rounded-r-full" title="Macet (>8%)"></div>
                         </div>
@@ -393,7 +396,7 @@
 
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Kualitas pembiayaan terjaga sehat jauh di bawah ambang batas risiko.
+                    Kualitas pembiayaan/pinjaman anggota sangat sehat & aman.
                 </span>
             </div>
         </div>
@@ -411,25 +414,25 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Simpanan Pokok (Live DB):</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['liveMetrics']['simpok'] }}</span></div>
-                    <div class="flex justify-between"><span>Simpanan Wajib (Live DB):</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['liveMetrics']['simwa'] }}</span></div>
-                    <div class="flex justify-between"><span>Simpanan Sukarela (Estimasi):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
-                    <div class="flex justify-between"><span>Simpanan Berjangka:</span><span class="font-bold text-indigo-600 dark:text-indigo-400">Rp 67.000.000</span></div>
+                    <div class="flex justify-between"><span>Ekuitas Simpanan Pokok (DB):</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['liveMetrics']['simpok'] }}</span></div>
+                    <div class="flex justify-between"><span>Ekuitas Simpanan Wajib (DB):</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['liveMetrics']['simwa'] }}</span></div>
+                    <div class="flex justify-between"><span>Simpanan Sukarela Anggota:</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Berjangka / Investasi:</span><span class="font-bold text-indigo-600 dark:text-indigo-400">Rp 67.000.000</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Simpanan Pokok + Wajib (DB): <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['liveMetrics']['totalSimpanan'] }}</strong>
+                    Total Modal Sendiri (Pokok + Wajib): <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['liveMetrics']['totalSimpanan'] }}</strong>
                 </span>
             </div>
         </div>
 
-        {{-- CARD 7: ARUS KAS TAHUN 2025 --}}
+        {{-- CARD 7: RINGKASAN LAPORAN ARUS KAS --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold text-xs">7</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Arus Kas {{ $dashboard['year'] }}</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Laporan Arus Kas</h3>
                 </div>
 
                 <div class="h-32 my-1">
@@ -437,31 +440,31 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Kas Masuk Internal (CSV):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['arusKasCsv']['kasMasukInternal'] }}</span></div>
-                    <div class="flex justify-between"><span>Kas Keluar (CSV):</span><span class="font-bold text-rose-500">Rp {{ $dashboard['arusKasCsv']['kasKeluar'] }}</span></div>
-                    <div class="flex justify-between"><span>Surplus Kas Bersih:</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['arusKasCsv']['surplusKasInternal'] }}</span></div>
-                    <div class="flex justify-between"><span>Saldo Kas Akhir:</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['arusKasCsv']['saldoKasAkhir'] }}</span></div>
+                    <div class="flex justify-between"><span>Total Arus Kas Masuk (CSV):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['arusKasCsv']['kasMasukFull'] }}</span></div>
+                    <div class="flex justify-between"><span>Total Arus Kas Keluar (CSV):</span><span class="font-bold text-rose-500">Rp {{ $dashboard['arusKasCsv']['kasKeluar'] }}</span></div>
+                    <div class="flex justify-between"><span>Surplus Kas Operasional:</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['arusKasCsv']['saldoKasAkhir'] }}</span></div>
+                    <div class="flex justify-between"><span>Saldo Kas & Bank Akhir:</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['arusKasCsv']['saldoKasAkhir'] }}</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Sumber data: <strong class="text-slate-800 dark:text-white">ARUS KAS 25.csv</strong>
+                    Sumber Data: <strong class="text-slate-800 dark:text-white">Laporan Arus Kas (CSV)</strong>
                 </span>
             </div>
         </div>
 
-        {{-- CARD 8: RINGKASAN KESEHATAN KOPERASI --}}
+        {{-- CARD 8: TINGKAT KESEHATAN KOPERASI --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 flex items-center justify-center font-bold text-xs">8</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Kesehatan Koperasi</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Tingkat Kesehatan</h3>
                 </div>
 
                 <div class="space-y-2 my-2 text-xs">
                     @foreach($dashboard['kesehatan'] as $item)
                         <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/50">
-                            <span class="font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                            <span class="font-medium text-slate-600 dark:text-slate-300 flex items-center gap-1.5 text-[11px]">
                                 <i class='bx bx-check-shield text-emerald-500 text-base'></i>
                                 {{ $item['label'] }}
                             </span>
@@ -474,7 +477,7 @@
             </div>
             <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold block">
-                    Status: Koperasi Sehat & Berkelanjutan.
+                    Predikat: Koperasi Sehat & Berkelanjutan.
                 </span>
             </div>
         </div>
