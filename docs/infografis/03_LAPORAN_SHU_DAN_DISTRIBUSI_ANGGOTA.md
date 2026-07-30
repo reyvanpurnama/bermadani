@@ -29,9 +29,9 @@ Tampilan visual harus menjelaskan rincian pendapatan, pengeluaran, alokasi SHU, 
 1. DIBAGIKAN KE ANGGOTA AKTIF (49,18%):
    - Nominal: Rp 15.000.000
    - Peruntukan: Hak bagi hasil untuk 113 Anggota Aktif berdasarkan proporsi Simpanan Wajib.
-2. DITAHAN UNTUK MODAL USAHA & LIKUIDITAS (50,82%):
+2. ALOKASI DANA CADANGAN KOPERASI (50,82%):
    - Nominal: Rp 15.499.118
-   - Peruntukan: Cadangan modal usaha & penguatan kas operasional bulan depan.
+   - Peruntukan: Pemupukan Dana Cadangan Koperasi & penguatan kas operasional.
 
 [SECTION 3: RUMUS & FORMULA PEMBAGIAN SHU ANGGOTA AKTIF (DIAGRAM FLOW)]
 - Langkah 1: Hitung Porsi Anggota Aktif (%)

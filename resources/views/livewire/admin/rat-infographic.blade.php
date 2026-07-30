@@ -251,7 +251,7 @@
                             <p class="text-[9px] text-emerald-700/80 mt-1 font-semibold">Hak {{ $activeCount }} Anggota</p>
                         </div>
                         <div class="p-4 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-200 text-center">
-                            <p class="text-[10px] font-bold text-blue-700 uppercase">Modal Ditahan</p>
+                            <p class="text-[10px] font-bold text-blue-700 uppercase">Dana Cadangan</p>
                             <h4 class="text-sm font-extrabold text-blue-600 mt-1">Rp {{ number_format($retainedModal, 0, ',', '.') }}</h4>
                             <p class="text-[9px] text-blue-700/80 mt-1 font-semibold">Cadangan Operasional</p>
                         </div>
@@ -380,9 +380,9 @@
                 </div>
 
                 <div class="p-4 bg-blue-50 dark:bg-blue-950/40 rounded-2xl border border-blue-200 dark:border-blue-800 text-center">
-                    <p class="text-[10px] font-bold text-blue-700 uppercase">Modal Ditahan</p>
+                    <p class="text-[10px] font-bold text-blue-700 uppercase">Dana Cadangan</p>
                     <h3 class="text-xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">Rp {{ number_format($retainedModal, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] text-slate-500 mt-1">Sisa Kas Ditahan</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Alokasi Cadangan Koperasi</p>
                 </div>
             </div>
 
