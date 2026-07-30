@@ -405,29 +405,65 @@
                 <p class="text-xs text-slate-500">Transparansi Pembukuan & Tata Kelola Koperasi Bermadani</p>
             </div>
 
-            {{-- Flowchart Siklus --}}
-            <div class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
-                <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase mb-4">Tahapan Siklus Akuntansi Digital Koperasi</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-                    <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold inline-flex items-center justify-center text-xs mb-1">1</span>
-                        <p class="font-bold text-slate-800 dark:text-white">Transaksi</p>
+            {{-- Flowchart Siklus Akuntansi Digital --}}
+            <div class="p-5 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase flex items-center gap-2">
+                        <i class='bx bx-git-commit text-base text-emerald-600'></i> Tahapan Siklus Akuntansi Digital Koperasi (100% Selesai)
+                    </h3>
+                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 flex items-center gap-1">
+                        <i class='bx bx-check-double text-sm'></i> 5 / 5 Tahapan Terintegrasi
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3 text-center text-xs">
+                    {{-- Step 1 --}}
+                    <div class="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-emerald-300 dark:border-emerald-700 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                        <span class="w-7 h-7 rounded-full bg-emerald-500 text-white font-extrabold inline-flex items-center justify-center text-xs mb-1.5 shadow-sm">1</span>
+                        <p class="font-bold text-slate-800 dark:text-white">Input Transaksi</p>
+                        <p class="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center justify-center gap-0.5">
+                            <i class='bx bx-check'></i> Real-time DB
+                        </p>
                     </div>
-                    <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold inline-flex items-center justify-center text-xs mb-1">2</span>
+
+                    {{-- Step 2 --}}
+                    <div class="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-emerald-300 dark:border-emerald-700 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                        <span class="w-7 h-7 rounded-full bg-emerald-500 text-white font-extrabold inline-flex items-center justify-center text-xs mb-1.5 shadow-sm">2</span>
                         <p class="font-bold text-slate-800 dark:text-white">Jurnal Umum</p>
+                        <p class="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center justify-center gap-0.5">
+                            <i class='bx bx-check'></i> Otomatis
+                        </p>
                     </div>
-                    <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold inline-flex items-center justify-center text-xs mb-1">3</span>
+
+                    {{-- Step 3 --}}
+                    <div class="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-emerald-300 dark:border-emerald-700 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                        <span class="w-7 h-7 rounded-full bg-emerald-500 text-white font-extrabold inline-flex items-center justify-center text-xs mb-1.5 shadow-sm">3</span>
                         <p class="font-bold text-slate-800 dark:text-white">Buku Besar</p>
+                        <p class="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center justify-center gap-0.5">
+                            <i class='bx bx-check'></i> Terposting
+                        </p>
                     </div>
-                    <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-                        <span class="w-6 h-6 rounded-full bg-indigo-100 text-indigo-600 font-bold inline-flex items-center justify-center text-xs mb-1">4</span>
+
+                    {{-- Step 4 --}}
+                    <div class="p-3.5 bg-white dark:bg-slate-800 rounded-xl border border-emerald-300 dark:border-emerald-700 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                        <span class="w-7 h-7 rounded-full bg-emerald-500 text-white font-extrabold inline-flex items-center justify-center text-xs mb-1.5 shadow-sm">4</span>
                         <p class="font-bold text-slate-800 dark:text-white">Neraca Saldo</p>
+                        <p class="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold mt-1 flex items-center justify-center gap-0.5">
+                            <i class='bx bx-check'></i> Terverifikasi
+                        </p>
                     </div>
-                    <div class="p-3 bg-emerald-600 text-white rounded-xl font-bold shadow-sm col-span-2 sm:col-span-1">
-                        <span class="w-6 h-6 rounded-full bg-white/20 text-white font-bold inline-flex items-center justify-center text-xs mb-1">5</span>
-                        <p>RAT 2025</p>
+
+                    {{-- Step 5 --}}
+                    <div class="p-3.5 bg-emerald-600 text-white rounded-xl font-bold shadow-md relative overflow-hidden col-span-1 border border-emerald-500">
+                        <span class="w-7 h-7 rounded-full bg-white text-emerald-700 font-extrabold inline-flex items-center justify-center text-xs mb-1.5 shadow-sm">5</span>
+                        <p class="text-white">Laporan RAT 2025</p>
+                        <p class="text-[9px] text-emerald-100 font-semibold mt-1 flex items-center justify-center gap-0.5">
+                            <i class='bx bx-check-circle'></i> SIAP RAT
+                        </p>
                     </div>
                 </div>
             </div>
