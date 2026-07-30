@@ -173,7 +173,14 @@ class RatVisualDashboard extends Component
         $npfStatus = $npfPercentage < 5.0 ? 'Sangat Sehat (Lancar)' : ($npfPercentage < 8.0 ? 'Cukup Sehat' : 'Perlu Perhatian');
         $asetTetap = $asetTetapCsv;
         $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani;
-        $retainedModal = max(0, $saldoKasAkhirCsv - 15000000); // Rp 15.499.118 (Sama dengan RatInfographic Lembar 4)
+
+        try {
+            $ratSession = RatSession::where('year', $year)->first();
+            $shuMemberVal = $ratSession ? (float) $ratSession->total_member_shu : $kasBankRiil;
+        } catch (\Throwable $e) {
+            $shuMemberVal = $kasBankRiil;
+        }
+        $retainedModal = max(0, $kasBankRiil - $shuMemberVal);
 
         return [
             'year' => $year,
@@ -194,8 +201,8 @@ class RatVisualDashboard extends Component
                     'note' => 'Saldo Kas Akhir & Surplus Kas (CSV Line 28)',
                 ],
                 'shuDibagikan' => [
-                    'val' => '15,0',
-                    'raw' => '15.000.000',
+                    'val' => number_format($shuMemberVal / 1000000, 1, ',', '.'),
+                    'raw' => number_format($shuMemberVal, 0, ',', '.'),
                     'growth' => 'SHU Bersih Dibagikan (2025)',
                 ],
                 'shuCadangan' => [
