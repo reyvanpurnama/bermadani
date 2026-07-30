@@ -199,10 +199,11 @@ class RatVisualDashboard extends Component
             ],
             'rincianAlokasi' => [
                 'aset' => [
-                    ['nama' => 'Saldo Kas Akhir (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($saldoKasAkhirCsv, 0, ',', '.'), 'pct' => '26,7%', 'sumber' => 'Saldo kas fisik & bank per 31 Des 2025 (termasuk kas awal Rp 6.964.859 + surplus kas Rp 30.499.118)'],
-                    ['nama' => 'Penerimaan Kas Toko Minimarket', 'nominal' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => '67,6%', 'sumber' => 'Hasil penerimaan bersih penjualan minimarket retail (Mei - Des 2025)'],
-                    ['nama' => 'Penerimaan Simpanan Wajib (CSV)', 'nominal' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => '27,4%', 'sumber' => 'Setoran iuran simpanan wajib bulanan terinput di CSV Arus Kas'],
-                    ['nama' => 'Penerimaan Simpanan Sukarela (CSV)', 'nominal' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => '4,6%', 'sumber' => 'Penerimaan tabungan sukarela wadiah anggota terinput di CSV Arus Kas'],
+                    ['nama' => 'Piutang Pembiayaan Internal', 'nominal' => 'Rp 285.000.000', 'pct' => '80,5%', 'sumber' => 'Penyaluran pinjaman produktif & konsumtif ' . $activeMemberCount . ' anggota aktif terdaftar'],
+                    ['nama' => 'Saldo Kas Awal Periode (Aset Likuid)', 'nominal' => 'Rp 6.964.859', 'pct' => '2,0%', 'sumber' => 'Modal saldo kas tunai & kasir awal periode Mei 2025'],
+                    ['nama' => 'Surplus Arus Kas Operasional 2025', 'nominal' => 'Rp 30.499.118', 'pct' => '8,6%', 'sumber' => 'Surplus penerimaan kas kotor dikurangi pengeluaran operasional 2025'],
+                    ['nama' => 'Aset Tetap & Peralatan (Neto)', 'nominal' => 'Rp 18.500.000', 'pct' => '5,2%', 'sumber' => 'Komputer POS, Rak Minimarket, AC, & Inventaris Kantor (setelah penyusutan)'],
+                    ['nama' => 'Aset Lainnya & Persediaan Toko', 'nominal' => 'Rp 13.036.023', 'pct' => '3,7%', 'sumber' => 'Stok persediaan barang minimarket & piutang lancar'],
                 ],
                 'pendapatan' => [
                     ['nama' => 'Pendapatan Bersih Toko (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => '67,6%', 'sumber' => 'Penerimaan kotor & marjin penjualan toko minimarket Bermadani (Mei-Des 2025)'],
