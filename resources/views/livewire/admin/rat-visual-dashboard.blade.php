@@ -85,49 +85,85 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         
         {{-- KPI 1: TOTAL ASET --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative overflow-hidden group">
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-line-chart'></i>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Aset</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['totalAset']['raw'] }}">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['totalAset']['val'] }} Jt
                 </h3>
                 <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['totalAset']['raw'] }}</span>
             </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-indigo-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Asal Sumber Total Aset:
+                </div>
+                <ul class="space-y-1 text-[10px] text-slate-300">
+                    <li>• Pembiayaan Anggota: <strong>Rp 285 Jt</strong> (80.5%)</li>
+                    <li>• Kas & Bank Koperasi: <strong>Rp 45.2 Jt</strong> (12.8%)</li>
+                    <li>• Aset Tetap Neto: <strong>Rp 18.5 Jt</strong> (5.2%)</li>
+                    <li>• Persediaan Toko/Lain: <strong>Rp 5 Jt</strong> (1.5%)</li>
+                </ul>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
         </div>
 
         {{-- KPI 2: TOTAL PEMBIAYAAN --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative overflow-hidden group">
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-handshake'></i>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Pembiayaan</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['totalPembiayaan']['raw'] }}">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['totalPembiayaan']['val'] }} Jt
                 </h3>
                 <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['totalPembiayaan']['raw'] }}</span>
             </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-emerald-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Asal Sumber Pembiayaan:
+                </div>
+                <p class="text-[10px] text-slate-300">
+                    Akumulasi penyaluran pinjaman produktif & konsumtif syariah kepada 250 anggota aktif Bermadani (80,5% dari Aset).
+                </p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
         </div>
 
         {{-- KPI 3: SISA HASIL USAHA --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative overflow-hidden group">
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-coin-stack'></i>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">SHU Tahun Ini</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['shu']['raw'] }}">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['shu']['val'] }} Jt
                 </h3>
                 <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['shu']['raw'] }}</span>
             </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-amber-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Asal Perhitungan SHU:
+                </div>
+                <p class="text-[10px] text-slate-300">
+                    Sisa Hasil Usaha Bersih = Total Pendapatan Operasional (Rp 55 Jt) dikurangi Total Beban Operasional (Rp 45 Jt).
+                </p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
         </div>
 
         {{-- KPI 4: JUMLAH ANGGOTA --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative overflow-hidden group">
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-group'></i>
             </div>
@@ -138,21 +174,44 @@
                 </h3>
                 <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">{{ $dashboard['kpi']['jumlahAnggota']['growth'] }}</span>
             </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-purple-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Asal Sumber Anggota:
+                </div>
+                <p class="text-[10px] text-slate-300">
+                    Anggota aktif terdaftar Koperasi Konsumen Syariah Berkah Solusi Madani (+18 anggota baru tahun 2025).
+                </p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
         </div>
 
         {{-- KPI 5: KAS & BANK --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative overflow-hidden group">
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-wallet'></i>
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Kas & Bank</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['kasBank']['raw'] }}">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['kasBank']['val'] }} Jt
                 </h3>
                 <span class="text-[10px] text-slate-400 font-medium block">
                     Rp {{ $dashboard['kpi']['kasBank']['raw'] }}
                 </span>
+            </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-teal-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Asal Sumber Kas & Bank:
+                </div>
+                <ul class="space-y-1 text-[10px] text-slate-300">
+                    <li>• Bank Syariah: <strong>Rp 38.235.141</strong></li>
+                    <li>• Kas Tunai Toko/Kasir: <strong>Rp 6.964.859</strong></li>
+                </ul>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
         </div>
 
