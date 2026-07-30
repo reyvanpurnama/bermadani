@@ -226,11 +226,11 @@ class RatVisualDashboard extends Component
                 'total' => number_format($totalKasMasukFull / 1000000, 1, ',', '.'),
                 'totalRaw' => number_format($totalKasMasukFull, 0, ',', '.'),
                 'items' => [
-                    ['label' => 'Pendapatan Usaha Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
-                    ['label' => 'Penerimaan Simpanan Wajib', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
-                    ['label' => 'Pendapatan Pembiayaan BMT', 'val' => 'Rp ' . number_format($bmtItqanCsv, 0, ',', '.'), 'pct' => round(($bmtItqanCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#EC4899'],
-                    ['label' => 'Penerimaan Simpanan Sukarela', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => round(($simsukarelaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#F59E0B'],
                     ['label' => 'Penerimaan Simpanan Pokok', 'val' => 'Rp ' . number_format($simpokCsv, 0, ',', '.'), 'pct' => round(($simpokCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#8B5CF6'],
+                    ['label' => 'Penerimaan Simpanan Wajib', 'val' => 'Rp ' . number_format($simwaCsv, 0, ',', '.'), 'pct' => round(($simwaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#3B82F6'],
+                    ['label' => 'Penerimaan Simpanan Sukarela', 'val' => 'Rp ' . number_format($simsukarelaCsv, 0, ',', '.'), 'pct' => round(($simsukarelaCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#F59E0B'],
+                    ['label' => 'Pendapatan Usaha Minimarket', 'val' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => round(($pendapatanTokoCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#10B981'],
+                    ['label' => 'Pendapatan Bagi Hasil Pembiayaan BMT ITQAN', 'val' => 'Rp ' . number_format($bmtItqanCsv, 0, ',', '.'), 'pct' => round(($bmtItqanCsv / $totalKasMasukFull)*100, 1) . '%', 'color' => '#EC4899'],
                 ],
             ],
             'komposisiBeban' => [
@@ -238,16 +238,16 @@ class RatVisualDashboard extends Component
                 'data' => [36.18, 31.25, 28.74, 11.02, 14.02],
             ],
             'trenShu' => [
-                'years' => ['2021', '2022', '2023', '2024', '2025'],
-                'data' => [5.2, 6.1, 7.3, 12.0, 19.01],
+                'years' => ['SHU Dibagikan', 'Dana Cadangan'],
+                'data' => [15.0, 15.5],
             ],
             'npf' => [
                 'val' => number_format($npfPercentage, 1, ',', '.') . '%',
                 'status' => $npfStatus,
             ],
             'pertumbuhanSimpanan' => [
-                'years' => ['2023', '2024', '2025'],
-                'categories' => ['Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela', 'Simpanan Berjangka'],
+                'years' => ['2025'],
+                'categories' => ['Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela'],
             ],
             'arusKasCsv' => [
                 'kasMasukFull' => number_format($totalKasMasukFull, 0, ',', '.'),

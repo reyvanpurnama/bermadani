@@ -51,7 +51,7 @@
             <div>
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Dashboard Keuangan RAT {{ $dashboard['year'] }}</h1>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Koperasi Konsumen Syariah Berkah Solusi Madani — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
+                    Koperasi Konsumen Syariah Berkah Solusi Madani Universitas Muhammadiyah Bandung — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
                 </p>
             </div>
         </div>
@@ -328,24 +328,25 @@
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs">4</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Pembagian SHU RAT</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Alokasi SHU & Cadangan</h3>
                 </div>
 
-                <div class="h-32 my-1">
+                <div class="h-36 relative flex items-center justify-center my-2">
                     <canvas id="chartTrenShu"></canvas>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">TOTAL SHU</span>
+                        <span class="text-sm font-bold text-slate-800 dark:text-white">Rp 30,5 Jt</span>
+                    </div>
                 </div>
 
-                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Dana Cadangan Koperasi (25%):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 4.753.763</span></div>
-                    <div class="flex justify-between"><span>SHU Jasa Simpanan (30%):</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 5.704.515</span></div>
-                    <div class="flex justify-between"><span>SHU Jasa Usaha / Transaksi (25%):</span><span class="font-bold text-sky-600 dark:text-sky-400">Rp 4.753.763</span></div>
-                    <div class="flex justify-between"><span>Dana Pengurus & Pengawas (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
-                    <div class="flex justify-between"><span>Dana Pendidikan & Sosial (10%):</span><span class="font-bold text-slate-800 dark:text-white">Rp 1.901.505</span></div>
+                <div class="space-y-1.5 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>SHU Dibagikan (Hak Anggota):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp {{ $dashboard['kpi']['shuDibagikan']['raw'] }}</span></div>
+                    <div class="flex justify-between"><span>Dana Cadangan Koperasi:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp {{ $dashboard['kpi']['shuCadangan']['raw'] }}</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Sisa Hasil Usaha (SHU) Bersih: <strong class="text-emerald-600 dark:text-emerald-400">Rp 19.015.051</strong>
+                    Total Surplus Sisa Hasil Usaha (SHU): <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['kpi']['kasBank']['raw'] }}</strong>
                 </span>
             </div>
         </div>
@@ -403,7 +404,7 @@
             <div>
                 <div class="flex items-center gap-2 mb-3">
                     <span class="w-7 h-7 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">6</span>
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Pertumbuhan Simpanan</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white">Komposisi Simpanan</h3>
                 </div>
 
                 <div class="h-32 my-1">
@@ -411,15 +412,14 @@
                 </div>
 
                 <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>Ekuitas Simpanan Pokok (DB):</span><span class="font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['liveMetrics']['simpok'] }}</span></div>
-                    <div class="flex justify-between"><span>Ekuitas Simpanan Wajib (DB):</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['liveMetrics']['simwa'] }}</span></div>
-                    <div class="flex justify-between"><span>Simpanan Sukarela Anggota:</span><span class="font-bold text-emerald-600 dark:text-emerald-400">Rp 120.000.000</span></div>
-                    <div class="flex justify-between"><span>Simpanan Berjangka / Investasi:</span><span class="font-bold text-indigo-600 dark:text-indigo-400">Rp 67.000.000</span></div>
+                    <div class="flex justify-between"><span>Simpanan Pokok (Modal Sendiri):</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp {{ $dashboard['liveMetrics']['simpok'] }}</span></div>
+                    <div class="flex justify-between"><span>Simpanan Wajib (Modal Sendiri):</span><span class="font-bold text-blue-600 dark:text-blue-400">Rp {{ $dashboard['liveMetrics']['simwa'] }}</span></div>
+                    <div class="flex justify-between"><span>Simpanan Sukarela Anggota:</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 16.990.000</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[10px] text-slate-400 font-medium leading-tight block">
-                    Total Modal Sendiri (Pokok + Wajib): <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['liveMetrics']['totalSimpanan'] }}</strong>
+                    Total Pasiva Simpanan Anggota: <strong class="text-emerald-600 dark:text-emerald-400">Rp 195.190.000</strong>
                 </span>
             </div>
         </div>
@@ -890,10 +890,10 @@
             new Chart(ctxPendapatan, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Pendapatan Toko', 'Simpanan Wajib', 'BMT ITQAN', 'Simpanan Sukarela', 'Simpanan Pokok'],
+                    labels: ['Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela', 'Pendapatan Toko', 'Bagi Hasil BMT ITQAN'],
                     datasets: [{
-                        data: [94.78, 38.40, 11.48, 6.45, 0.60],
-                        backgroundColor: ['#10B981', '#3B82F6', '#EC4899', '#F59E0B', '#8B5CF6'],
+                        data: [0.60, 38.40, 6.45, 94.78, 11.48],
+                        backgroundColor: ['#8B5CF6', '#3B82F6', '#F59E0B', '#10B981', '#EC4899'],
                         borderWidth: 0,
                     }]
                 },
@@ -932,37 +932,29 @@
             });
         }
 
-        // 4. Chart Tren SHU / Surplus (Line)
+        // 4. Chart Alokasi SHU & Cadangan (Donut)
         const ctxTrenShu = document.getElementById('chartTrenShu')?.getContext('2d');
         if (ctxTrenShu) {
             new Chart(ctxTrenShu, {
-                type: 'line',
+                type: 'doughnut',
                 data: {
-                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    labels: ['SHU Dibagikan', 'Dana Cadangan'],
                     datasets: [{
-                        label: 'Surplus (Jt)',
-                        data: [5.2, 6.1, 7.3, 12.0, 15.0],
-                        borderColor: '#0284C7',
-                        backgroundColor: 'rgba(2, 132, 199, 0.1)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#0284C7'
+                        data: [15.00, 15.50],
+                        backgroundColor: ['#F59E0B', '#8B5CF6'],
+                        borderWidth: 0,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9, weight: 'bold' } } },
-                        y: { border: { display: false }, ticks: { color: textColor, font: { size: 9 } } }
-                    }
+                    cutout: '76%',
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // 6. Chart Pertumbuhan Simpanan (Grouped Bar)
+        // 6. Chart Komposisi Simpanan (Bar)
         const ctxSimpanan = document.getElementById('chartPertumbuhanSimpanan')?.getContext('2d');
         if (ctxSimpanan) {
             new Chart(ctxSimpanan, {
@@ -970,14 +962,18 @@
                 data: {
                     labels: ['Pokok', 'Wajib', 'Sukarela'],
                     datasets: [
-                        { label: 'Live Database', data: [26.2, 185.4, 0], backgroundColor: '#6366F1', borderRadius: 4 },
-                        { label: 'CSV Arus Kas', data: [0.6, 38.4, 6.45], backgroundColor: '#10B981', borderRadius: 4 },
+                        {
+                            label: 'Simpanan (Jt)',
+                            data: [22.1, 156.1, 16.99],
+                            backgroundColor: ['#8B5CF6', '#3B82F6', '#F59E0B'],
+                            borderRadius: 4
+                        }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { position: 'top', labels: { boxWidth: 8, color: textColor, font: { size: 9, weight: 'bold' } } } },
+                    plugins: { legend: { display: false } },
                     scales: {
                         x: { grid: { display: false }, ticks: { color: textColor, font: { size: 9, weight: 'bold' } } },
                         y: { border: { display: false }, ticks: { color: textColor, font: { size: 9 } } }
