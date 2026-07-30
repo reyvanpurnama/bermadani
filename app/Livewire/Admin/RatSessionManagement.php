@@ -18,8 +18,8 @@ class RatSessionManagement extends Component
     public $eventDate;
     public $title = 'RAT Koperasi Bermadani Tahun Buku 2025';
     public $totalNetProfit = 30499118;
-    public $totalMemberShu = 15000000; // Default 15 juta dibagikan ke anggota
-    public $memberAllocationPercentage = 49.18;
+    public $totalMemberShu = 30499118; // Default 100% laba bersih
+    public $memberAllocationPercentage = 100;
     public $notes;
 
     public $selectedSessionId;
@@ -41,30 +41,33 @@ class RatSessionManagement extends Component
             $net = $income - $expense;
             if ($net > 0) {
                 $this->totalNetProfit = (float) $net;
-                $this->totalMemberShu = 15000000;
-                $this->memberAllocationPercentage = round((15000000 / $this->totalNetProfit) * 100, 2);
+                $this->totalMemberShu = (float) $net;
+                $this->memberAllocationPercentage = 100.0;
             }
         }
     }
 
     public function updatedTotalMemberShu($value)
     {
-        $val = (float) $value;
-        if ($this->totalNetProfit > 0) {
-            $this->memberAllocationPercentage = round(($val / $this->totalNetProfit) * 100, 2);
+        $val = (float) ($value ?: 0);
+        $net = (float) ($this->totalNetProfit ?: 0);
+        if ($net > 0) {
+            $this->memberAllocationPercentage = round(($val / $net) * 100, 2);
         }
     }
 
     public function updatedMemberAllocationPercentage($value)
     {
-        $val = (float) $value;
-        $this->totalMemberShu = round($this->totalNetProfit * ($val / 100), 0);
+        $val = (float) ($value ?: 0);
+        $net = (float) ($this->totalNetProfit ?: 0);
+        $this->totalMemberShu = round($net * ($val / 100), 0);
     }
 
     public function updatedTotalNetProfit($value)
     {
-        $val = (float) $value;
-        $this->totalMemberShu = round($val * ($this->memberAllocationPercentage / 100), 0);
+        $val = (float) ($value ?: 0);
+        $pct = (float) ($this->memberAllocationPercentage ?: 0);
+        $this->totalMemberShu = round($val * ($pct / 100), 0);
     }
 
     public function loadSession(RatSession $session)
@@ -74,7 +77,7 @@ class RatSessionManagement extends Component
         $this->eventDate = $session->event_date->format('Y-m-d');
         $this->title = $session->title;
         $this->totalNetProfit = (float) $session->total_net_profit;
-        $this->totalMemberShu = (float) ($session->total_member_shu ?? 0);
+        $this->totalMemberShu = (float) ($session->total_member_shu ?? $session->total_net_profit);
         $this->memberAllocationPercentage = (float) $session->member_allocation_percentage;
         $this->notes = $session->notes;
     }
@@ -91,8 +94,9 @@ class RatSessionManagement extends Component
         $totalSimwa = (float) $activeMembers->sum('simpananWajib');
         $totalSimwa = max(1, $totalSimwa); // avoid div by 0
 
-        $totalMemberShu = (float) $this->totalMemberShu;
-        $retainedAmount = max(0, (float) $this->totalNetProfit - $totalMemberShu);
+        $totalMemberShu = (float) ($this->totalMemberShu ?: 0);
+        $totalNetProfit = (float) ($this->totalNetProfit ?: 0);
+        $retainedAmount = max(0, $totalNetProfit - $totalMemberShu);
 
         return [
             'activeMemberCount' => $activeMembers->count(),
@@ -120,9 +124,9 @@ class RatSessionManagement extends Component
             [
                 'event_date' => $this->eventDate,
                 'title' => $this->title,
-                'total_net_profit' => $this->totalNetProfit,
-                'member_allocation_percentage' => $this->memberAllocationPercentage,
-                'total_member_shu' => $this->totalMemberShu,
+                'total_net_profit' => (float) $this->totalNetProfit,
+                'member_allocation_percentage' => (float) $this->memberAllocationPercentage,
+                'total_member_shu' => (float) $this->totalMemberShu,
                 'total_simpanan_wajib_snapshot' => $summary['totalSimwa'],
                 'status' => 'DRAFT',
                 'notes' => $this->notes,

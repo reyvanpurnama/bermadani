@@ -67,7 +67,7 @@
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Laba Bersih</p>
             <h3 class="text-xl font-bold text-slate-800 dark:text-white">
-                Rp {{ number_format($totalNetProfit, 0, ',', '.') }}
+                Rp {{ number_format((float) ($totalNetProfit ?: 0), 0, ',', '.') }}
             </h3>
             <p class="text-[10px] text-slate-400 mt-1">Tahun Buku {{ $year }}</p>
         </div>
@@ -76,16 +76,16 @@
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-1">Total SHU Dibagikan</p>
             <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">
-                Rp {{ number_format($totalMemberShu, 0, ',', '.') }}
+                Rp {{ number_format((float) ($totalMemberShu ?: 0), 0, ',', '.') }}
             </h3>
-            <p class="text-[10px] text-emerald-600/80 font-medium mt-1">{{ number_format($memberAllocationPercentage, 2) }}% dari Laba Bersih</p>
+            <p class="text-[10px] text-emerald-600/80 font-medium mt-1">{{ number_format((float) ($memberAllocationPercentage ?: 0), 2) }}% dari Laba Bersih</p>
         </div>
 
         {{-- Modal Usaha / Cadangan Koperasi --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
             <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Modal Usaha / Cadangan</p>
             <h3 class="text-xl font-bold text-blue-600 dark:text-blue-400">
-                Rp {{ number_format($summary['retainedAmount'], 0, ',', '.') }}
+                Rp {{ number_format((float) ($summary['retainedAmount'] ?: 0), 0, ',', '.') }}
             </h3>
             <p class="text-[10px] text-slate-400 mt-1">Ditahan untuk Operasional / Modal</p>
         </div>
@@ -186,9 +186,9 @@
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">DAFTAR PEMBAGIAN SHU ANGGOTA KOPERASI BERMADANI</h2>
                 <p class="text-xs text-slate-500">{{ $title }} • Tanggal Pelaksanaan: {{ \Carbon\Carbon::parse($eventDate)->format('d F Y') }}</p>
                 <p class="text-xs text-slate-500 font-semibold mt-0.5">
-                    Total Laba Bersih: Rp {{ number_format($totalNetProfit, 0, ',', '.') }} | 
-                    SHU Dibagikan: <span class="text-emerald-600 font-bold">Rp {{ number_format($totalMemberShu, 0, ',', '.') }}</span> |
-                    Modal Usaha Ditahan: <span class="text-blue-600 font-bold">Rp {{ number_format($summary['retainedAmount'], 0, ',', '.') }}</span>
+                    Total Laba Bersih: Rp {{ number_format((float) ($totalNetProfit ?: 0), 0, ',', '.') }} | 
+                    SHU Dibagikan: <span class="text-emerald-600 font-bold">Rp {{ number_format((float) ($totalMemberShu ?: 0), 0, ',', '.') }}</span> |
+                    Modal Usaha Ditahan: <span class="text-blue-600 font-bold">Rp {{ number_format((float) ($summary['retainedAmount'] ?: 0), 0, ',', '.') }}</span>
                 </p>
             </div>
             <div class="no-print">
@@ -219,9 +219,9 @@
                         @php
                             $isModel = $item instanceof \App\Models\MemberShuDistribution;
                             $member = $isModel ? $item->member : $item;
-                            $simwa = $isModel ? $item->simpanan_wajib_amount : ($member->simpananWajib ?? 0);
-                            $portion = $isModel ? $item->portion_percentage : (($simwa / $summary['totalSimwa']) * 100);
-                            $shu = $isModel ? $item->shu_amount : ($portion / 100) * $summary['totalMemberShu'];
+                            $simwa = (float) ($isModel ? $item->simpanan_wajib_amount : ($member->simpananWajib ?? 0));
+                            $portion = (float) ($isModel ? $item->portion_percentage : (($simwa / max(1, $summary['totalSimwa'])) * 100));
+                            $shu = (float) ($isModel ? $item->shu_amount : ($portion / 100) * (float) $totalMemberShu);
                             $isDisbursed = $isModel ? $item->is_disbursed : false;
                         @endphp
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
