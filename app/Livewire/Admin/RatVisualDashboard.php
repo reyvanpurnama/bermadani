@@ -192,6 +192,13 @@ class RatVisualDashboard extends Component
                 'simwa' => number_format($simwaDb, 0, ',', '.'),
                 'totalSimpanan' => number_format($simpokDb + $simwaDb, 0, ',', '.'),
             ],
+            'kesehatan' => [
+                ['label' => 'Kecukupan Modal', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Kualitas Aset (NPF)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Profitabilitas (SHU/Aset)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Likuiditas (Kas/Total Aset)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
+                ['label' => 'Efisiensi Operasional', 'status' => 'CUKUP', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400'],
+            ],
             'rincianAlokasi' => [
                 'aset' => [
                     ['nama' => 'Piutang Pembiayaan Internal', 'nominal' => 'Rp 285.000.000', 'pct' => '80,5%', 'sumber' => 'Penyaluran pinjaman produktif & konsumtif ' . $activeMemberCount . ' anggota aktif terdaftar'],
@@ -235,6 +242,7 @@ class RatVisualDashboard extends Component
     {
         return view('livewire.admin.rat-visual-dashboard', [
             'dashboard' => $this->dashboardData,
+            'availableYears' => $this->availableYears,
         ])->layout('layouts.admin');
     }
 }
