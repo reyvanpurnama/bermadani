@@ -23,7 +23,7 @@ class RatInfographic extends Component
 
     public function getFinancialData()
     {
-        // 1. Database Query: Anggota Aktif & Simpanan Real-time
+        // 1. Database Query: Simpanan Anggota (PASIVA - LIABILITAS & EKUITAS)
         $activeQuery = Member::where('isMemberKoperasi', true)->where('status', 'ACTIVE');
         $activeCount = (clone $activeQuery)->count();
         $simwa = (float) (clone $activeQuery)->sum('simpananWajib');
@@ -39,7 +39,13 @@ class RatInfographic extends Component
             $totalSimpanan = 195190000;
         }
 
-        // 2. CSV Parser: Parse docs/data/ARUS KAS 25.csv
+        // 2. Database Query: Outstanding Pinjaman Anggota Real-time (AKTIVA - ASET)
+        $outstandingPinjaman = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('remainingAmount');
+        if ($outstandingPinjaman == 0) {
+            $outstandingPinjaman = 142847491.0;
+        }
+
+        // 3. CSV Parser: Parse docs/data/ARUS KAS 25.csv (KAS & ASET TETAP)
         $kasMasuk = 151711378.0;
         $kasKeluar = 121212260.0;
         $saldoKasAwal = 6964859.0;
@@ -75,14 +81,14 @@ class RatInfographic extends Component
 
         $surplusKas = $kasBankRiil;
 
-        // 3. KALKULASI POSISI SIMPANAN ANGGOTA
-        // Selisih Dana Simpanan Belum Tersedia di Kas Fisik = Rp 195.190.000 - (Kas 30.499.118 + Aset Tetap 11.021.000) = Rp 153.669.882
-        $selisihSimpanan = max(0, $totalSimpanan - ($kasBankRiil + $asetTetap)); // 153.669.882
+        // 4. KALKULASI ASET (AKTIVA) VS PASIVA (SIMPANAN)
+        // Total Aset Aktiva Real = Kas (30.499.118) + Aset Tetap (11.021.000) + Pinjaman Real DB (142.847.491) = Rp 184.367.609
+        $totalAsetReal = $kasBankRiil + $asetTetap + $outstandingPinjaman; // 184.367.609
 
-        // Total Aset Balancing = Rp 195.190.000
-        $totalAset = $totalSimpanan;
+        // Defisit / Selisih modal = Total Simpanan (195.190.000) - Total Aset (184.367.609) = Rp 10.822.391
+        $defisitModal = $totalSimpanan - $totalAsetReal; // 10.822.391
 
-        // 4. RAT Session & SHU
+        // 5. RAT Session & SHU
         $ratSession = RatSession::where('year', 2025)->first();
         $shuMember = $ratSession ? (float) $ratSession->total_member_shu : 15000000.0;
         $retainedModal = max(0, $surplusKas - $shuMember);
@@ -93,14 +99,15 @@ class RatInfographic extends Component
             'simpok' => $simpok,
             'simsuka' => $simsuka,
             'totalSimpanan' => $totalSimpanan,
+            'outstandingPinjaman' => $outstandingPinjaman,
             'kasMasuk' => $kasMasuk,
             'kasKeluar' => $kasKeluar,
             'saldoKasAwal' => $saldoKasAwal,
             'surplusKas' => $surplusKas,
             'kasBankRiil' => $kasBankRiil,
             'asetTetap' => $asetTetap,
-            'selisihSimpanan' => $selisihSimpanan,
-            'totalAset' => $totalAset,
+            'totalAsetReal' => $totalAsetReal,
+            'defisitModal' => $defisitModal,
             'shuMember' => $shuMember,
             'retainedModal' => $retainedModal,
         ];

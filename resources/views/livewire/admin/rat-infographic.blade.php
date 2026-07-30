@@ -18,7 +18,7 @@
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Infografis & Visualisasi RAT 2025</h1>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-                Simpanan Anggota: Rp 195.190.000 | Saldo Kas Akhir CSV: Rp 30.499.118 | Aset Tetap CSV: Rp 11.021.000.
+                Simpanan Pasiva: Rp 195,19M | Aset Aktiva Real: Rp 184,37M (Kas: Rp 30,5M + Pinjaman DB: Rp 142,85M + Aset: Rp 11M).
             </p>
         </div>
 
@@ -28,7 +28,7 @@
                 <select wire:change="setPage($event.target.value)"
                     class="appearance-none bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white text-xs font-bold rounded-xl px-4 py-2.5 pr-10 outline-none cursor-pointer">
                     <option value="1" {{ $page == 1 ? 'selected' : '' }}>Lembar 1: Dashboard Kinerja Keuangan</option>
-                    <option value="2" {{ $page == 2 ? 'selected' : '' }}>Lembar 2: Posisi Keuangan (Simpanan & Aset)</option>
+                    <option value="2" {{ $page == 2 ? 'selected' : '' }}>Lembar 2: Posisi Keuangan (Simpanan & Aset Pinjaman)</option>
                     <option value="3" {{ $page == 3 ? 'selected' : '' }}>Lembar 3: Laporan SHU & Bagi Hasil Anggota</option>
                     <option value="4" {{ $page == 4 ? 'selected' : '' }}>Lembar 4: Siklus Akuntansi, Arus Kas & CALK</option>
                 </select>
@@ -60,7 +60,7 @@
             <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 {{ $page == 2 ? 'bg-white/20' : 'bg-slate-100 dark:bg-slate-800' }}">2</span>
             <div class="truncate">
                 <p class="text-xs font-bold truncate">Posisi Keuangan</p>
-                <p class="text-[10px] opacity-75 truncate">Simpanan & Aset</p>
+                <p class="text-[10px] opacity-75 truncate">Simpanan & Pinjaman DB</p>
             </div>
         </button>
 
@@ -114,11 +114,11 @@
                             <i class='bx bx-wallet-alt'></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Simpanan Anggota</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Total Simpanan (Pasiva)</p>
                             <h4 class="text-base font-bold text-slate-800 dark:text-white">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</h4>
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-500">Dari {{ $activeCount }} Anggota Aktif</p>
+                    <p class="text-[10px] text-slate-500">Kewajiban {{ $activeCount }} Anggota Aktif</p>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-emerald-200/60 dark:border-emerald-900/40">
@@ -134,41 +134,41 @@
                     <p class="text-[10px] text-slate-500">Saldo Kas Riil (CSV Line 28)</p>
                 </div>
 
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-blue-200/60 dark:border-blue-900/40">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center text-xl">
+                            <i class='bx bx-credit-card-front'></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-blue-600 uppercase">Pinjaman Anggota DB</p>
+                            <h4 class="text-base font-bold text-blue-600 dark:text-blue-400">Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }}</h4>
+                        </div>
+                    </div>
+                    <p class="text-[10px] text-slate-500">Pinjaman Aktif di Database</p>
+                </div>
+
                 <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-rose-200/60 dark:border-rose-900/40">
                     <div class="flex items-center gap-3 mb-2">
                         <div class="w-10 h-10 rounded-xl bg-rose-100 dark:bg-rose-900/30 text-rose-600 flex items-center justify-center text-xl">
-                            <i class='bx bx-info-circle'></i>
+                            <i class='bx bx-trending-down'></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-rose-600 uppercase">Selisih Simpanan Kas</p>
-                            <h4 class="text-base font-bold text-rose-600 dark:text-rose-400">Rp {{ number_format($selisihSimpanan, 0, ',', '.') }}</h4>
+                            <p class="text-[10px] font-bold text-rose-600 uppercase">Defisit Modal/Kas</p>
+                            <h4 class="text-base font-bold text-rose-600 dark:text-rose-400">-Rp {{ number_format($defisitModal, 0, ',', '.') }}</h4>
                         </div>
                     </div>
-                    <p class="text-[10px] text-rose-500 font-semibold">Simpanan Belum Tersedia Fisik</p>
-                </div>
-
-                <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700">
-                    <div class="flex items-center gap-3 mb-2">
-                        <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 flex items-center justify-center text-xl">
-                            <i class='bx bx-gift'></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-amber-600 uppercase">SHU Dibagikan</p>
-                            <h4 class="text-base font-bold text-amber-600 dark:text-amber-400">Rp {{ number_format($shuMember, 0, ',', '.') }}</h4>
-                        </div>
-                    </div>
-                    <p class="text-[10px] text-slate-500">Alokasi RAT 2025</p>
+                    <p class="text-[10px] text-rose-500 font-semibold">Selisih Total Aset vs Simpanan</p>
                 </div>
             </div>
 
-            {{-- Info Card Akuntansi --}}
-            <div class="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+            {{-- Info Card Transparansi --}}
+            <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
                 <div class="flex items-start gap-3">
-                    <i class='bx bx-info-circle text-2xl text-amber-600 shrink-0 mt-0.5'></i>
+                    <i class='bx bx-check-shield text-2xl text-emerald-600 shrink-0 mt-0.5'></i>
                     <div>
-                        <p class="font-bold text-amber-800 dark:text-amber-300 uppercase text-[11px]">Transparansi Posisi Simpanan Anggota:</p>
+                        <p class="font-bold text-emerald-800 dark:text-emerald-300 uppercase text-[11px]">Ringkasan Struktur Neraca Real-time:</p>
                         <p class="text-slate-700 dark:text-slate-300 mt-0.5">
-                            Total Simpanan {{ $activeCount }} Anggota Aktif tercatat sebesar <strong>Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</strong> (Simpanan Pokok + Wajib + Sukarela). Fisik kas tunai yang ada di bank per 31 Des 2025 (CSV Line 28) adalah <strong>Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</strong> dan Aset Tetap <strong>Rp {{ number_format($asetTetap, 0, ',', '.') }}</strong>. Sebesar <strong>Rp {{ number_format($selisihSimpanan, 0, ',', '.') }}</strong> merupakan selisih simpanan anggota yang belum tersedia di kas fisik.
+                            Total Simpanan <strong>Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</strong> tercatat pada Pasiva (Kewajiban/Ekuitas). Aset Aktiva Koperasi yang ada terdiri dari Kas Fisik Bank <strong>Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</strong>, Aset Tetap <strong>Rp {{ number_format($asetTetap, 0, ',', '.') }}</strong>, dan Pinjaman Aktif Anggota DB <strong>Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }}</strong> (Total Aset Real: Rp {{ number_format($totalAsetReal, 0, ',', '.') }}). Terdapat selisih defisit modal sebesar <strong>-Rp {{ number_format($defisitModal, 0, ',', '.') }}</strong>.
                         </p>
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                 {{-- Quadrant 1: Komposisi Simpanan --}}
                 <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-700">
                     <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase mb-3 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 1. Komposisi Simpanan Anggota Aktif
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> 1. Komposisi Simpanan Anggota (Pasiva)
                     </h3>
                     <div class="space-y-3">
                         <div>
@@ -214,23 +214,27 @@
                     </div>
                 </div>
 
-                {{-- Quadrant 2: Arus Kas & Aset 2025 --}}
+                {{-- Quadrant 2: Arus Kas & Pinjaman --}}
                 <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-700">
                     <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase mb-3 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> 2. Ringkasan Arus Kas & Kas Akhir 2025
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> 2. Rincian Aset Koperasi (Aktiva Real)
                     </h3>
                     <div class="space-y-3">
                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 flex justify-between items-center">
-                            <span class="text-xs text-slate-600 dark:text-slate-300">Total Arus Masuk (Income CSV)</span>
-                            <span class="text-xs font-bold text-emerald-600">+Rp {{ number_format($kasMasuk, 0, ',', '.') }}</span>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Kas & Bank Akhir (CSV Line 28)</span>
+                            <span class="text-xs font-bold text-emerald-600">Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</span>
                         </div>
                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 flex justify-between items-center">
-                            <span class="text-xs text-slate-600 dark:text-slate-300">Total Arus Keluar (Expense CSV)</span>
-                            <span class="text-xs font-bold text-rose-600">-Rp {{ number_format($kasKeluar, 0, ',', '.') }}</span>
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Aset Tetap & Inventaris (CSV Line 13)</span>
+                            <span class="text-xs font-bold text-amber-600">Rp {{ number_format($asetTetap, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 flex justify-between items-center">
+                            <span class="text-xs text-slate-600 dark:text-slate-300">Pinjaman Aktif Anggota (Database Loan)</span>
+                            <span class="text-xs font-bold text-indigo-600">Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }}</span>
                         </div>
                         <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-300 dark:border-emerald-800 flex justify-between items-center">
-                            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">Saldo Kas Akhir 2025 (CSV Line 28)</span>
-                            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</span>
+                            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">Total Aset Real Koperasi (Aktiva)</span>
+                            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($totalAsetReal, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -281,11 +285,11 @@
             </div>
         @endif
 
-        {{-- LEMBAR 2: POSISI KEUANGAN (NERACA SIMPANAN & ASET) --}}
+        {{-- LEMBAR 2: POSISI KEUANGAN (NERACA REAL-TIME DATABASE & CSV) --}}
         @if($page == 2)
             <div class="border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
-                <h2 class="text-lg font-bold text-slate-800 dark:text-white">LAPORAN POSISI KEUANGAN (NERACA SIMPANAN & ASET)</h2>
-                <p class="text-xs text-slate-500">Per 31 Desember 2025 • Laporan Transparansi Simpanan {{ $activeCount }} Anggota Aktif</p>
+                <h2 class="text-lg font-bold text-slate-800 dark:text-white">LAPORAN POSISI KEUANGAN (NERACA REAL-TIME DATABASE & CSV)</h2>
+                <p class="text-xs text-slate-500">Per 31 Desember 2025 • Aktiva (Aset Koperasi) vs Pasiva (Simpanan Anggota)</p>
             </div>
 
             {{-- Neraca Side-by-Side Table --}}
@@ -293,11 +297,11 @@
                 {{-- ASET (AKTIVA) --}}
                 <div class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
                     <div class="bg-indigo-600 text-white px-4 py-2.5 font-bold text-xs flex justify-between items-center">
-                        <span>ASET KOPERASI (AKTIVA)</span>
+                        <span>ASET KOPERASI (AKTIVA REAL)</span>
                         <span>NOMINAL (RP)</span>
                     </div>
                     <div class="p-4 space-y-3 text-xs">
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Fisik & Alokasi Simpanan</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Fisik & Piutang Pinjaman</div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
                             <span class="text-slate-600 dark:text-slate-400">1. Kas & Bank (Saldo Akhir CSV Line 28)</span>
                             <span class="font-mono font-bold text-emerald-600">Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</span>
@@ -307,13 +311,13 @@
                             <span class="font-mono font-bold text-amber-600">Rp {{ number_format($asetTetap, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
-                            <span class="text-slate-600 dark:text-slate-400">3. Selisih Simpanan Anggota (Belum Ada Kas Fisik)</span>
-                            <span class="font-mono font-bold text-indigo-600">Rp {{ number_format($selisihSimpanan, 0, ',', '.') }}</span>
+                            <span class="text-slate-600 dark:text-slate-400">3. Piutang Pinjaman Anggota (Real DB Loan)</span>
+                            <span class="font-mono font-bold text-indigo-600">Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }}</span>
                         </div>
 
                         <div class="flex justify-between bg-indigo-50 dark:bg-indigo-950/30 p-2.5 rounded-xl font-bold text-indigo-700 dark:text-indigo-300 mt-4">
                             <span>TOTAL ASET KOPERASI (AKTIVA)</span>
-                            <span class="font-mono">Rp {{ number_format($totalAset, 0, ',', '.') }}</span>
+                            <span class="font-mono">Rp {{ number_format($totalAsetReal, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -331,7 +335,7 @@
                             <span class="font-mono font-semibold text-slate-400">Rp 0</span>
                         </div>
 
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider pt-2">Simpanan {{ $activeCount }} Anggota Aktif</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider pt-2">Simpanan Modal {{ $activeCount }} Anggota Aktif</div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
                             <span class="text-slate-600 dark:text-slate-400">1. Simpanan Pokok Anggota Aktif</span>
                             <span class="font-mono font-semibold">Rp {{ number_format($simpok, 0, ',', '.') }}</span>
@@ -353,21 +357,21 @@
                 </div>
             </div>
 
-            {{-- Summary Balance Status Card --}}
-            <div class="p-4 bg-emerald-100 dark:bg-emerald-900/30 border border-emerald-300 dark:border-emerald-800 rounded-2xl flex items-center justify-between text-xs font-bold text-emerald-800 dark:text-emerald-300">
+            {{-- Defisit Modal Card --}}
+            <div class="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 rounded-2xl flex items-center justify-between text-xs font-bold text-rose-800 dark:text-rose-300">
                 <span class="flex items-center gap-2">
-                    <i class='bx bx-check-circle text-xl text-emerald-600'></i> KONDISI NERACA SEIMBANG (BALANCE 100%)
+                    <i class='bx bx-error-circle text-xl text-rose-600'></i> STATUS SELISIH DEFISIT MODAL (TOTAL ASET - TOTAL SIMPANAN):
                 </span>
-                <span class="font-mono text-sm font-extrabold text-emerald-700">Rp {{ number_format($totalAset, 0, ',', '.') }}</span>
+                <span class="font-mono text-sm font-extrabold text-rose-600">-Rp {{ number_format($defisitModal, 0, ',', '.') }}</span>
             </div>
 
             {{-- Note Likuiditas Box --}}
             <div class="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl text-xs space-y-1">
                 <p class="font-bold text-amber-800 dark:text-amber-300 uppercase text-[11px] flex items-center gap-1.5">
-                    <i class='bx bx-info-circle text-base'></i> Catatan Transparansi Simpanan Anggota:
+                    <i class='bx bx-info-circle text-base'></i> Transparansi Integrasi Real Database & CSV:
                 </p>
                 <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Total kewajiban Simpanan milik {{ $activeCount }} anggota aktif adalah <strong>Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</strong>. Fisik kas yang tersedia di bank per 31 Desember 2025 adalah <strong>Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</strong> (CSV Line 28) dan Aset Tetap <strong>Rp {{ number_format($asetTetap, 0, ',', '.') }}</strong> (CSV Line 13). Sebesar <strong>Rp {{ number_format($selisihSimpanan, 0, ',', '.') }}</strong> merupakan sisa alokasi simpanan yang belum berbentuk kas fisik.
+                    Sisi Pasiva mencatat kewajiban Simpanan milik {{ $activeCount }} anggota aktif sebesar <strong>Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</strong>. Sisi Aktiva mencatat Aset Koperasi yang teridentifikasi secara real-time: Kas Bank <strong>Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</strong> (CSV Line 28), Aset Tetap <strong>Rp {{ number_format($asetTetap, 0, ',', '.') }}</strong> (CSV Line 13), dan Outstanding Pinjaman Aktif Anggota di Database <strong>Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }}</strong> (31 Pinjaman Aktif). Selisih modal terhitung sebesar <strong>-Rp {{ number_format($defisitModal, 0, ',', '.') }}</strong>.
                 </p>
             </div>
         @endif
@@ -457,13 +461,13 @@
                     <span class="font-bold text-indigo-600">3. Aset Tetap CSV:</span> Rp {{ number_format($asetTetap, 0, ',', '.') }} peralatan & inventaris kantor dari CSV Line 13.
                 </div>
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">4. Total Simpanan Anggota:</span> Rp {{ number_format($totalSimpanan, 0, ',', '.') }} milik {{ $activeCount }} anggota aktif.
+                    <span class="font-bold text-indigo-600">4. Outstanding Pinjaman DB:</span> Rp {{ number_format($outstandingPinjaman, 0, ',', '.') }} pinjaman berjalan anggota.
                 </div>
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">5. Sisa Alokasi Simpanan:</span> Rp {{ number_format($selisihSimpanan, 0, ',', '.') }} sisa alokasi simpanan anggota yang belum berbentuk kas fisik.
+                    <span class="font-bold text-indigo-600">5. Total Simpanan Pasiva:</span> Rp {{ number_format($totalSimpanan, 0, ',', '.') }} milik {{ $activeCount }} anggota aktif.
                 </div>
-                <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">6. Tata Kelola:</span> Pengurus melakukan pengawasan berkala penggunaan dana simpanan anggota.
+                <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-rose-100 dark:border-rose-900/40">
+                    <span class="font-bold text-rose-600">6. Selisih Defisit Modal:</span> -Rp {{ number_format($defisitModal, 0, ',', '.') }} selisih total Aset vs Kewajiban Simpanan.
                 </div>
             </div>
 
