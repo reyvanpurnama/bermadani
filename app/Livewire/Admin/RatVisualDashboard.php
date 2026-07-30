@@ -176,13 +176,13 @@ class RatVisualDashboard extends Component
 
         try {
             $ratSession = RatSession::where('year', $year)->first();
-            $shuMemberVal = ($ratSession && (float) $ratSession->total_member_shu > 0 && (float) $ratSession->total_member_shu != 15000000) 
+            $shuMemberVal = ($ratSession && (float) $ratSession->total_member_shu > 0) 
                 ? (float) $ratSession->total_member_shu 
-                : $kasBankRiil;
+                : 15000000.0;
         } catch (\Throwable $e) {
-            $shuMemberVal = $kasBankRiil;
+            $shuMemberVal = 15000000.0;
         }
-        $retainedModal = max(0, $kasBankRiil - $shuMemberVal);
+        $retainedModal = max(0, $kasBankRiil - $shuMemberVal); // Rp 15.499.118 (Dana Cadangan Lembar 4)
 
         return [
             'year' => $year,

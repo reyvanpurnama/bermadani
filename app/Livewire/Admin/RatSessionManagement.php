@@ -18,8 +18,8 @@ class RatSessionManagement extends Component
     public $eventDate;
     public $title = 'RAT Koperasi Bermadani Tahun Buku 2025';
     public $totalNetProfit = 30499118;
-    public $totalMemberShu = 30499118; // Default 100% laba bersih
-    public $memberAllocationPercentage = 100;
+    public $totalMemberShu = 15000000; // SHU Dibagikan Lembar 4 CALK Poin 8
+    public $memberAllocationPercentage = 49.18;
     public $notes;
 
     public $selectedSessionId;
@@ -47,17 +47,17 @@ class RatSessionManagement extends Component
                 $net = (float) ($income - $expense);
                 if ($net > 0) {
                     $this->totalNetProfit = $net;
-                    $this->totalMemberShu = $net;
-                    $this->memberAllocationPercentage = 100.0;
+                    $this->totalMemberShu = 15000000;
+                    $this->memberAllocationPercentage = round((15000000 / $net) * 100, 2);
                 } else {
                     $this->totalNetProfit = 30499118;
-                    $this->totalMemberShu = 30499118;
-                    $this->memberAllocationPercentage = 100.0;
+                    $this->totalMemberShu = 15000000;
+                    $this->memberAllocationPercentage = 49.18;
                 }
             } catch (\Throwable $e) {
                 $this->totalNetProfit = 30499118;
-                $this->totalMemberShu = 30499118;
-                $this->memberAllocationPercentage = 100.0;
+                $this->totalMemberShu = 15000000;
+                $this->memberAllocationPercentage = 49.18;
             }
         }
     }
