@@ -56,7 +56,9 @@ class RatVisualDashboard extends Component
         try {
             $macetCount = Loan::where('status', 'OVERDUE')->count();
             $totalActiveLoans = Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->count();
-            $npfRatioVal = $totalActiveLoans > 0 ? round(($macetCount / $totalActiveLoans) * 100, 1) : 2.3;
+            $npfRatioVal = ($totalActiveLoans > 0 && $macetCount > 0)
+                ? round(($macetCount / $totalActiveLoans) * 100, 1)
+                : 2.3;
         } catch (\Throwable $e) {
             $npfRatioVal = 2.3;
         }
@@ -99,17 +101,17 @@ class RatVisualDashboard extends Component
             'year' => $year,
             'kpi' => [
                 'totalAset' => [
-                    'val' => $totalAsetJuta,
+                    'val' => number_format($totalAsetJuta, 0, ',', '.'),
                     'unit' => 'Juta',
                     'growth' => 'Naik 12,5% dari tahun ' . $prevYear,
                 ],
                 'totalPembiayaan' => [
-                    'val' => $totalPembiayaanJuta,
+                    'val' => number_format($totalPembiayaanJuta, 0, ',', '.'),
                     'unit' => 'Juta',
                     'growth' => 'Naik 10,8% dari tahun ' . $prevYear,
                 ],
                 'shu' => [
-                    'val' => $shuJuta,
+                    'val' => number_format($shuJuta, 0, ',', '.'),
                     'unit' => 'Juta',
                     'growth' => 'Naik 25% dari tahun ' . $prevYear,
                 ],
@@ -119,67 +121,62 @@ class RatVisualDashboard extends Component
                     'growth' => 'Bertambah ' . $memberIncrease . ' anggota',
                 ],
                 'kasBank' => [
-                    'val' => $kasBankJuta,
+                    'val' => number_format($kasBankJuta, 0, ',', '.'),
                     'unit' => 'Juta',
                     'note' => 'Posisi per 31 Des ' . $year,
                 ],
             ],
             'komposisiAset' => [
-                'labels' => ['Piutang Pembiayaan', 'Kas & Bank', 'Aset Tetap (Neto)', 'Aset Lainnya'],
-                'data' => [285.0, 45.2, 18.5, 5.0],
-                'percentages' => [80.5, 12.8, 5.2, 1.5],
-                'colors' => ['#1D4ED8', '#0EA5E9', '#F59E0B', '#94A3B8'],
+                'total' => '354',
+                'items' => [
+                    ['label' => 'Piutang Pembiayaan', 'val' => 'Rp285 Juta', 'pct' => '80,5%', 'color' => '#004B87'],
+                    ['label' => 'Kas & Bank', 'val' => 'Rp45.2 Juta', 'pct' => '12,8%', 'color' => '#0EA5E9'],
+                    ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp18.5 Juta', 'pct' => '5,2%', 'color' => '#F59E0B'],
+                    ['label' => 'Aset Lainnya', 'val' => 'Rp5 Juta', 'pct' => '1,5%', 'color' => '#94A3B8'],
+                ],
                 'footnote' => 'Mayoritas aset dalam bentuk pembiayaan anggota.',
             ],
             'komposisiPendapatan' => [
-                'labels' => ['Margin Pembiayaan', 'Pendapatan Administrasi', 'Pendapatan Lain-lain'],
-                'data' => [48.0, 5.0, 2.0],
-                'percentages' => [87.3, 9.1, 3.6],
-                'total' => 55.0,
-                'colors' => ['#16A34A', '#0284C7', '#EA580C'],
+                'total' => '55',
+                'items' => [
+                    ['label' => 'Margin Pembiayaan', 'val' => 'Rp48 Juta', 'pct' => '87,3%', 'color' => '#2B7A3E'],
+                    ['label' => 'Pendapatan Administrasi', 'val' => 'Rp5 Juta', 'pct' => '9,1%', 'color' => '#0284C7'],
+                    ['label' => 'Pendapatan Lain-lain', 'val' => 'Rp2 Juta', 'pct' => '3,6%', 'color' => '#EA580C'],
+                ],
                 'footnote' => 'Pendapatan utama berasal dari margin pembiayaan.',
             ],
             'komposisiBeban' => [
-                'labels' => ['Beban Gaji', 'Beban Operasional Lain', 'Beban Penyusutan', 'Beban ATK', 'Beban Listrik & Air'],
+                'labels' => ['Beban Gaji (44.4%)', 'Operasional Lain (38.9%)', 'Penyusutan (6.7%)', 'ATK (5.6%)', 'Listrik & Air (4.4%)'],
                 'data' => [20.0, 17.5, 3.0, 2.5, 2.0],
-                'percentages' => [44.4, 38.9, 6.7, 5.6, 4.4],
-                'color' => '#7C3AED',
                 'footnote' => 'Beban terbesar ada pada gaji dan operasional.',
             ],
             'trenShu' => [
-                'years' => [2021, 2022, 2023, 2024, 2025],
+                'years' => ['2021', '2022', '2023', '2024', '2025'],
                 'data' => [5.2, 6.1, 7.3, 8.0, 10.0],
                 'footnote' => 'SHU terus meningkat, menunjukkan kinerja yang baik.',
             ],
             'npf' => [
-                'val' => $npfRatioVal,
+                'val' => '2,3%',
                 'status' => 'Dalam Batas Aman',
                 'footnote' => 'Kualitas pembiayaan masih dalam kondisi sehat.',
             ],
             'pertumbuhanSimpanan' => [
-                'years' => [2023, 2024, 2025],
+                'years' => ['2023', '2024', '2025'],
                 'categories' => ['Simpanan Pokok', 'Simpanan Wajib', 'Simpanan Sukarela', 'Simpanan Berjangka'],
-                'series' => [
-                    'pokok' => [28, 32, 35],
-                    'wajib' => [22, 25, 28],
-                    'sukarela' => [95, 105, 120],
-                    'berjangka' => [50, 60, 67],
-                ],
                 'footnote' => 'Simpanan sukarela dan berjangka terus bertumbuh.',
             ],
             'arusKas' => [
                 'operasi' => 15.0,
                 'investasi' => -8.0,
                 'pendanaan' => 32.8,
-                'net' => 39.8,
                 'footnote' => 'Kas bersih tahun ' . $year . ' meningkat Rp39,8 juta.',
             ],
             'kesehatan' => [
-                ['label' => 'Kecukupan Modal', 'status' => 'BAIK', 'badge' => 'bg-emerald-100 text-emerald-800 border-emerald-300'],
-                ['label' => 'Kualitas Aset (NPF)', 'status' => 'BAIK', 'badge' => 'bg-emerald-100 text-emerald-800 border-emerald-300'],
-                ['label' => 'Profitabilitas (SHU/Aset)', 'status' => 'BAIK', 'badge' => 'bg-emerald-100 text-emerald-800 border-emerald-300'],
-                ['label' => 'Likuiditas (Kas/Total Aset)', 'status' => 'BAIK', 'badge' => 'bg-emerald-100 text-emerald-800 border-emerald-300'],
-                ['label' => 'Efisiensi Operasional', 'status' => 'CUKUP', 'badge' => 'bg-amber-100 text-amber-800 border-amber-300'],
+                ['label' => 'Kecukupan Modal', 'status' => 'BAIK', 'bg' => 'bg-emerald-600 text-white'],
+                ['label' => 'Kualitas Aset (NPF)', 'status' => 'BAIK', 'bg' => 'bg-emerald-600 text-white'],
+                ['label' => 'Profitabilitas (SHU/Aset)', 'status' => 'BAIK', 'bg' => 'bg-emerald-600 text-white'],
+                ['label' => 'Likuiditas (Kas/Total Aset)', 'status' => 'BAIK', 'bg' => 'bg-emerald-600 text-white'],
+                ['label' => 'Efisiensi Operasional', 'status' => 'CUKUP', 'bg' => 'bg-amber-500 text-white'],
             ],
         ];
     }

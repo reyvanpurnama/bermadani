@@ -1,6 +1,6 @@
 <div class="space-y-4 font-sans text-slate-800 dark:text-slate-100">
     
-    {{-- TOP ACTION TOOLBAR (Pilih Tahun & Export) --}}
+    {{-- TOP ACTION TOOLBAR --}}
     <div class="bg-white dark:bg-slate-800 p-3 sm:p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-3 print:hidden">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-lg flex items-center justify-center font-bold">
@@ -158,12 +158,27 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">Per 31 Desember {{ $dashboard['year'] }}</span>
-                        <div class="h-44 relative flex items-center justify-center">
-                            <canvas id="chartKomposisiAset"></canvas>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span class="text-[9px] font-black text-slate-400 uppercase">TOTAL ASET</span>
-                                <span class="text-sm font-black text-slate-900 dark:text-white">Rp{{ $dashboard['kpi']['totalAset']['val'] }}</span>
-                                <span class="text-[9px] font-bold text-slate-500">Juta</span>
+                        
+                        {{-- SIDE BY SIDE: DONUT + HTML LEGEND (NO OVERLAP!) --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center my-2">
+                            <div class="sm:col-span-5 h-36 relative flex items-center justify-center">
+                                <canvas id="chartKomposisiAset"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-[8px] font-black text-slate-400 uppercase">TOTAL ASET</span>
+                                    <span class="text-xs font-black text-slate-900 dark:text-white">Rp{{ $dashboard['komposisiAset']['total'] }}</span>
+                                    <span class="text-[8px] font-bold text-slate-500">Juta</span>
+                                </div>
+                            </div>
+                            <div class="sm:col-span-7 space-y-1 text-[10px] font-bold">
+                                @foreach($dashboard['komposisiAset']['items'] as $item)
+                                    <div class="flex items-center gap-1.5 leading-tight">
+                                        <span class="w-2.5 h-2.5 rounded shrink-0" style="background-color: {{ $item['color'] }}"></span>
+                                        <div class="min-w-0">
+                                            <span class="text-slate-700 dark:text-slate-300 block truncate">{{ $item['label'] }}</span>
+                                            <span class="text-slate-900 dark:text-white font-extrabold">{{ $item['val'] }} ({{ $item['pct'] }})</span>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -183,12 +198,27 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">Untuk Tahun Berakhir 31 Des {{ $dashboard['year'] }}</span>
-                        <div class="h-44 relative flex items-center justify-center">
-                            <canvas id="chartKomposisiPendapatan"></canvas>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span class="text-[9px] font-black text-slate-400 uppercase">TOTAL PENDAPATAN</span>
-                                <span class="text-sm font-black text-slate-900 dark:text-white">Rp{{ $dashboard['komposisiPendapatan']['total'] }}</span>
-                                <span class="text-[9px] font-bold text-slate-500">Juta</span>
+                        
+                        {{-- SIDE BY SIDE: DONUT + HTML LEGEND (NO OVERLAP!) --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center my-2">
+                            <div class="sm:col-span-5 h-36 relative flex items-center justify-center">
+                                <canvas id="chartKomposisiPendapatan"></canvas>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span class="text-[8px] font-black text-slate-400 uppercase">TOTAL</span>
+                                    <span class="text-xs font-black text-slate-900 dark:text-white">Rp{{ $dashboard['komposisiPendapatan']['total'] }}</span>
+                                    <span class="text-[8px] font-bold text-slate-500">Juta</span>
+                                </div>
+                            </div>
+                            <div class="sm:col-span-7 space-y-1.5 text-[10px] font-bold">
+                                @foreach($dashboard['komposisiPendapatan']['items'] as $item)
+                                    <div class="flex items-center gap-1.5 leading-tight">
+                                        <span class="w-2.5 h-2.5 rounded shrink-0" style="background-color: {{ $item['color'] }}"></span>
+                                        <div class="min-w-0">
+                                            <span class="text-slate-700 dark:text-slate-300 block truncate">{{ $item['label'] }}</span>
+                                            <span class="text-slate-900 dark:text-white font-extrabold">{{ $item['val'] }} ({{ $item['pct'] }})</span>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -208,7 +238,7 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">Untuk Tahun Berakhir 31 Des {{ $dashboard['year'] }}</span>
-                        <div class="h-44">
+                        <div class="h-40">
                             <canvas id="chartKomposisiBeban"></canvas>
                         </div>
                     </div>
@@ -228,7 +258,7 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">(Dalam Juta Rupiah)</span>
-                        <div class="h-44">
+                        <div class="h-40">
                             <canvas id="chartTrenShu"></canvas>
                         </div>
                     </div>
@@ -249,23 +279,23 @@
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">Per 31 Desember {{ $dashboard['year'] }}</span>
                         
-                        {{-- EXACT SVG GAUGE SPEEDOMETER --}}
+                        {{-- GAUGE SPEEDOMETER WITH NEEDLE POINTING TO 2,3% --}}
                         <div class="flex flex-col items-center justify-center my-1 relative">
-                            <svg viewBox="0 0 200 110" class="w-48 h-24">
+                            <svg viewBox="0 0 200 110" class="w-44 h-24">
                                 <!-- Gauge Slices -->
                                 <path d="M 20 100 A 80 80 0 0 1 65 35" fill="none" stroke="#22C55E" stroke-width="22" />
                                 <path d="M 65 35 A 80 80 0 0 1 100 20" fill="none" stroke="#EAB308" stroke-width="22" />
                                 <path d="M 100 20 A 80 80 0 0 1 135 35" fill="none" stroke="#F97316" stroke-width="22" />
                                 <path d="M 135 35 A 80 80 0 0 1 180 100" fill="none" stroke="#EF4444" stroke-width="22" />
                                 
-                                <!-- Needle -->
-                                <g transform="rotate(-65 100 100)">
-                                    <line x1="100" y1="100" x2="38" y2="100" stroke="#0F172A" stroke-width="5" stroke-linecap="round" />
+                                <!-- Needle (-62 deg points to 2,3% in Green zone) -->
+                                <g transform="rotate(-62 100 100)">
+                                    <line x1="100" y1="100" x2="35" y2="100" stroke="#0F172A" stroke-width="4.5" stroke-linecap="round" />
                                     <circle cx="100" cy="100" r="7" fill="#0F172A" />
                                 </g>
                             </svg>
 
-                            <div class="w-full flex justify-between px-2 text-[9px] font-extrabold text-slate-600 dark:text-slate-300 text-center">
+                            <div class="w-full flex justify-between px-1 text-[9px] font-black text-slate-600 dark:text-slate-300 text-center">
                                 <span>Lancar<br>(0-2%)</span>
                                 <span>Kurang Lancar<br>(2-5%)</span>
                                 <span>Diragukan<br>(5-8%)</span>
@@ -273,8 +303,8 @@
                             </div>
 
                             <div class="text-center mt-1">
-                                <span class="text-xl font-black text-slate-900 dark:text-white">{{ $dashboard['npf']['val'] }}%</span>
-                                <span class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 block">({{ $dashboard['npf']['status'] }})</span>
+                                <span class="text-2xl font-black text-slate-900 dark:text-white">{{ $dashboard['npf']['val'] }}</span>
+                                <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block">({{ $dashboard['npf']['status'] }})</span>
                             </div>
                         </div>
                     </div>
@@ -294,7 +324,7 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">(Dalam Juta Rupiah)</span>
-                        <div class="h-44">
+                        <div class="h-40">
                             <canvas id="chartPertumbuhanSimpanan"></canvas>
                         </div>
                     </div>
@@ -314,7 +344,7 @@
                     </div>
                     <div class="p-3">
                         <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 text-center block mb-1">(Dalam Juta Rupiah)</span>
-                        <div class="h-44">
+                        <div class="h-40">
                             <canvas id="chartArusKas"></canvas>
                         </div>
                     </div>
@@ -338,7 +368,7 @@
                                 <span class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1">
                                     <i class='bx bx-check-circle text-emerald-600 text-sm'></i> {{ $item['label'] }}
                                 </span>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase {{ $item['badge'] }}">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-black uppercase {{ $item['bg'] }}">
                                     {{ $item['status'] }}
                                 </span>
                             </div>
@@ -414,13 +444,13 @@
             if (chartExist) chartExist.destroy();
         });
 
-        // 1. Chart Komposisi Aset (Donut)
+        // 1. Chart Komposisi Aset (Donut without Legend to prevent overlap)
         const ctxAset = document.getElementById('chartKomposisiAset')?.getContext('2d');
         if (ctxAset) {
             new Chart(ctxAset, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Piutang Pembiayaan (80,5%)', 'Kas & Bank (12,8%)', 'Aset Tetap (5,2%)', 'Aset Lainnya (1,5%)'],
+                    labels: ['Piutang Pembiayaan', 'Kas & Bank', 'Aset Tetap', 'Aset Lainnya'],
                     datasets: [{
                         data: [285.0, 45.2, 18.5, 5.0],
                         backgroundColor: ['#004B87', '#0EA5E9', '#F59E0B', '#94A3B8'],
@@ -430,21 +460,19 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '68%',
-                    plugins: {
-                        legend: { position: 'right', labels: { boxWidth: 10, font: { size: 9, weight: 'bold' } } }
-                    }
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
                 }
             });
         }
 
-        // 2. Chart Komposisi Pendapatan (Donut)
+        // 2. Chart Komposisi Pendapatan (Donut without Legend)
         const ctxPendapatan = document.getElementById('chartKomposisiPendapatan')?.getContext('2d');
         if (ctxPendapatan) {
             new Chart(ctxPendapatan, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Margin Pembiayaan (87,3%)', 'Pendapatan Administrasi (9,1%)', 'Lain-lain (3,6%)'],
+                    labels: ['Margin Pembiayaan', 'Pendapatan Administrasi', 'Lain-lain'],
                     datasets: [{
                         data: [48.0, 5.0, 2.0],
                         backgroundColor: ['#2B7A3E', '#0284C7', '#EA580C'],
@@ -454,10 +482,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '68%',
-                    plugins: {
-                        legend: { position: 'right', labels: { boxWidth: 10, font: { size: 9, weight: 'bold' } } }
-                    }
+                    cutout: '72%',
+                    plugins: { legend: { display: false } }
                 }
             });
         }
@@ -468,9 +494,9 @@
             new Chart(ctxBeban, {
                 type: 'bar',
                 data: {
-                    labels: ['Gaji (44,4%)', 'Operasional Lain (38,9%)', 'Penyusutan (6,7%)', 'ATK (5,6%)', 'Listrik & Air (4,4%)'],
+                    labels: @json($dashboard['komposisiBeban']['labels']),
                     datasets: [{
-                        data: [20.0, 17.5, 3.0, 2.5, 2.0],
+                        data: @json($dashboard['komposisiBeban']['data']),
                         backgroundColor: '#6B3BA7',
                         borderRadius: 4,
                     }]
@@ -494,10 +520,10 @@
             new Chart(ctxTrenShu, {
                 type: 'line',
                 data: {
-                    labels: ['2021', '2022', '2023', '2024', '2025'],
+                    labels: @json($dashboard['trenShu']['years']),
                     datasets: [{
                         label: 'SHU (Juta Rp)',
-                        data: [5.2, 6.1, 7.3, 8.0, 10.0],
+                        data: @json($dashboard['trenShu']['data']),
                         borderColor: '#1D70B8',
                         backgroundColor: 'rgba(29, 112, 184, 0.15)',
                         fill: true,
@@ -525,7 +551,7 @@
             new Chart(ctxSimpanan, {
                 type: 'bar',
                 data: {
-                    labels: ['Pokok', 'Wajib', 'Sukarela', 'Berjangka'],
+                    labels: @json($dashboard['pertumbuhanSimpanan']['categories']),
                     datasets: [
                         { label: '2023', data: [28, 22, 95, 50], backgroundColor: '#94A3B8' },
                         { label: '2024', data: [32, 25, 105, 60], backgroundColor: '#1D4ED8' },
