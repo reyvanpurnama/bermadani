@@ -339,9 +339,12 @@
                     </div>
                 </div>
 
-                <div class="space-y-1.5 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
-                    <div class="flex justify-between"><span>SHU Dibagikan (Hak Anggota):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp {{ $dashboard['kpi']['shuDibagikan']['raw'] }}</span></div>
-                    <div class="flex justify-between"><span>Dana Cadangan Koperasi:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp {{ $dashboard['kpi']['shuCadangan']['raw'] }}</span></div>
+                <div class="space-y-1 mt-2 text-[10px] font-medium text-slate-600 dark:text-slate-300 border-t border-slate-100 dark:border-slate-800 pt-2">
+                    <div class="flex justify-between"><span>Dana Cadangan Koperasi:</span><span class="font-bold text-purple-600 dark:text-purple-400">Rp 15.499.118</span></div>
+                    <div class="flex justify-between"><span>SHU Jasa Simpanan (Dibagikan):</span><span class="font-bold text-amber-600 dark:text-amber-400">Rp 15.000.000</span></div>
+                    <div class="flex justify-between"><span>SHU Jasa Usaha / Transaksi:</span><span class="font-bold text-slate-400">Rp 0 (0%)</span></div>
+                    <div class="flex justify-between"><span>Dana Pengurus & Pengawas:</span><span class="font-bold text-slate-400">Rp 0 (0%)</span></div>
+                    <div class="flex justify-between"><span>Dana Pendidikan & Sosial:</span><span class="font-bold text-slate-400">Rp 0 (0%)</span></div>
                 </div>
             </div>
             <div class="mt-3 pt-2 border-t border-slate-100 dark:border-slate-700/60">
