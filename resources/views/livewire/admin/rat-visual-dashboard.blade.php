@@ -386,6 +386,130 @@
 
     </div>
 
+    {{-- INTERACTIVE DETAIL RINCIAN ALOKASI NOMINAL PANEL --}}
+    <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 space-y-4" x-data="{ tab: 'aset' }">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-100 dark:border-slate-700">
+            <div>
+                <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                    <i class='bx bx-list-check text-emerald-600 text-xl'></i> Matriks Rincian & Sumber Alokasi Keuangan RAT
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Transparansi rincian alokasi dana internal Koperasi Konsumen Syariah Berkah Solusi Madani (Tahun Buku {{ $dashboard['year'] }})
+                </p>
+            </div>
+            
+            {{-- Tab Switcher --}}
+            <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-bold gap-1">
+                <button @click="tab = 'aset'" :class="tab === 'aset' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all">
+                    Alokasi Aset
+                </button>
+                <button @click="tab = 'pendapatan'" :class="tab === 'pendapatan' ? 'bg-white dark:bg-slate-700 text-emerald-600 dark:text-emerald-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all">
+                    Pendapatan
+                </button>
+                <button @click="tab = 'beban'" :class="tab === 'beban' ? 'bg-white dark:bg-slate-700 text-purple-600 dark:text-purple-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all">
+                    Beban Operasional
+                </button>
+                <button @click="tab = 'shu'" :class="tab === 'shu' ? 'bg-white dark:bg-slate-700 text-amber-600 dark:text-amber-400 shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-3 py-1.5 rounded-lg transition-all">
+                    Distribusi SHU
+                </button>
+            </div>
+        </div>
+
+        {{-- TAB 1: RINCIAN ALOKASI ASET --}}
+        <div x-show="tab === 'aset'" class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="p-3">Elemen Aset</th>
+                        <th class="p-3 text-right">Nominal Rp</th>
+                        <th class="p-3 text-center">Porsi (%)</th>
+                        <th class="p-3">Sumber & Deskripsi Alokasi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    @foreach($dashboard['rincianAlokasi']['aset'] as $row)
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                            <td class="p-3 font-bold text-slate-800 dark:text-white">{{ $row['nama'] }}</td>
+                            <td class="p-3 text-right font-bold text-indigo-600 dark:text-indigo-400">{{ $row['nominal'] }}</td>
+                            <td class="p-3 text-center font-bold text-slate-700 dark:text-slate-300">{{ $row['pct'] }}</td>
+                            <td class="p-3 text-slate-500 dark:text-slate-400">{{ $row['sumber'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- TAB 2: RINCIAN PENDAPATAN --}}
+        <div x-show="tab === 'pendapatan'" class="overflow-x-auto" style="display: none;">
+            <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="p-3">Sumber Pendapatan</th>
+                        <th class="p-3 text-right">Nominal Rp</th>
+                        <th class="p-3 text-center">Kontribusi (%)</th>
+                        <th class="p-3">Deskripsi Alokasi Sumber</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    @foreach($dashboard['rincianAlokasi']['pendapatan'] as $row)
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                            <td class="p-3 font-bold text-slate-800 dark:text-white">{{ $row['nama'] }}</td>
+                            <td class="p-3 text-right font-bold text-emerald-600 dark:text-emerald-400">{{ $row['nominal'] }}</td>
+                            <td class="p-3 text-center font-bold text-slate-700 dark:text-slate-300">{{ $row['pct'] }}</td>
+                            <td class="p-3 text-slate-500 dark:text-slate-400">{{ $row['sumber'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- TAB 3: RINCIAN BEBAN --}}
+        <div x-show="tab === 'beban'" class="overflow-x-auto" style="display: none;">
+            <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="p-3">Kategori Beban</th>
+                        <th class="p-3 text-right">Nominal Rp</th>
+                        <th class="p-3 text-center">Porsi (%)</th>
+                        <th class="p-3">Rincian Pengeluaran</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    @foreach($dashboard['rincianAlokasi']['beban'] as $row)
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                            <td class="p-3 font-bold text-slate-800 dark:text-white">{{ $row['nama'] }}</td>
+                            <td class="p-3 text-right font-bold text-purple-600 dark:text-purple-400">{{ $row['nominal'] }}</td>
+                            <td class="p-3 text-center font-bold text-slate-700 dark:text-slate-300">{{ $row['pct'] }}</td>
+                            <td class="p-3 text-slate-500 dark:text-slate-400">{{ $row['sumber'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        {{-- TAB 4: RINCIAN DISTRIBUSI SHU --}}
+        <div x-show="tab === 'shu'" class="overflow-x-auto" style="display: none;">
+            <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+                        <th class="p-3">Pos Alokasi SHU</th>
+                        <th class="p-3 text-right">Nominal Rp</th>
+                        <th class="p-3">Ketentuan AD/ART & Tujuan Alokasi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+                    @foreach($dashboard['rincianAlokasi']['alokasiShu'] as $row)
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/40">
+                            <td class="p-3 font-bold text-slate-800 dark:text-white">{{ $row['alokasi'] }}</td>
+                            <td class="p-3 text-right font-bold text-amber-600 dark:text-amber-400">{{ $row['nominal'] }}</td>
+                            <td class="p-3 text-slate-500 dark:text-slate-400">{{ $row['keterangan'] }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 </div>
 
 {{-- CHART.JS INTEGRATION SCRIPT --}}

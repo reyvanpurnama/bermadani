@@ -213,6 +213,33 @@ class RatVisualDashboard extends Component
                 ['label' => 'Likuiditas (Kas/Total Aset)', 'status' => 'BAIK', 'bg' => 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400'],
                 ['label' => 'Efisiensi Operasional', 'status' => 'CUKUP', 'bg' => 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400'],
             ],
+            'rincianAlokasi' => [
+                'aset' => [
+                    ['nama' => 'Piutang Pembiayaan Internal', 'nominal' => 'Rp ' . number_format($totalPembiayaanVal, 0, ',', '.'), 'pct' => '80,5%', 'sumber' => 'Penyaluran pinjaman produktif & konsumtif 250 anggota aktif'],
+                    ['nama' => 'Kas Tunai & Bank Koperasi', 'nominal' => 'Rp ' . number_format($kasBankReal, 0, ',', '.'), 'pct' => '12,8%', 'sumber' => 'Saldo dana likuid di rekening bank syariah & kasir minimarket'],
+                    ['nama' => 'Aset Tetap & Inventaris (Neto)', 'nominal' => 'Rp 18.500.000', 'pct' => '5,2%', 'sumber' => 'Komputer POS, Rak Minimarket, AC, & Inventaris Kantor (setelah penyusutan)'],
+                    ['nama' => 'Aset Lainnya & Persediaan Toko', 'nominal' => 'Rp 5.000.000', 'pct' => '1,5%', 'sumber' => 'Stok persediaan barang minimarket & biaya dibayar di muka'],
+                ],
+                'pendapatan' => [
+                    ['nama' => 'Margin Pembiayaan Internal', 'nominal' => 'Rp 48.000.000', 'pct' => '87,3%', 'sumber' => 'Nisbah bagi hasil & margin jual beli akad pembiayaan anggota internal'],
+                    ['nama' => 'Pendapatan Administrasi', 'nominal' => 'Rp 5.000.000', 'pct' => '9,1%', 'sumber' => 'Biaya registrasi anggota baru, provisi akad pembiayaan, & cetak buku'],
+                    ['nama' => 'Pendapatan Toko & Operasional', 'nominal' => 'Rp 2.000.000', 'pct' => '3,6%', 'sumber' => 'Laba bersih operasional minimarket retail Bermadani & tabungan'],
+                ],
+                'beban' => [
+                    ['nama' => 'Gaji Pengurus & Karyawan', 'nominal' => 'Rp 20.000.000', 'pct' => '44,4%', 'sumber' => 'Gaji pengurus koperasi (Mei-Des) & gaji karyawan minimarket'],
+                    ['nama' => 'Operasional & Konsumsi RAT', 'nominal' => 'Rp 17.500.000', 'pct' => '38,9%', 'sumber' => 'Biaya konsumsi rapat, sewa tempat, kemasan, & kebersihan'],
+                    ['nama' => 'Penyusutan Inventaris', 'nominal' => 'Rp 3.000.000', 'pct' => '6,7%', 'sumber' => 'Beban penyusutan tahunan perangkat POS & peralatan toko'],
+                    ['nama' => 'Alat Tulis Kantor (ATK) & Cetak', 'nominal' => 'Rp 2.500.000', 'pct' => '5,6%', 'sumber' => 'Kertas thermal POS, tinta printer, & cetak buku laporan RAT'],
+                    ['nama' => 'Utilitas (Listrik & Air)', 'nominal' => 'Rp 2.000.000', 'pct' => '4,4%', 'sumber' => 'Tagihan daya listrik & air bersih kantor + minimarket'],
+                ],
+                'alokasiShu' => [
+                    ['alokasi' => 'Cadangan Koperasi (25%)', 'nominal' => 'Rp 2.500.000', 'keterangan' => 'Penambahan modal pemupukan cadangan koperasi'],
+                    ['alokasi' => 'Jasa Simpanan Anggota (30%)', 'nominal' => 'Rp 3.000.000', 'keterangan' => 'Pembagian SHU proporsional saldo simpanan anggota'],
+                    ['alokasi' => 'Jasa Pembiayaan / Usaha (25%)', 'nominal' => 'Rp 2.500.000', 'keterangan' => 'Pembagian SHU proporsional keaktifan transaksi & pinjaman'],
+                    ['alokasi' => 'Dana Pengurus & Pengawas (10%)', 'nominal' => 'Rp 1.000.000', 'keterangan' => 'Insentif atas pengawasan & kinerja pengurus'],
+                    ['alokasi' => 'Dana Pendidikan & Sosial (10%)', 'nominal' => 'Rp 1.000.000', 'keterangan' => 'Alokasi pelatihan anggota & dana infak sosial'],
+                ],
+            ],
         ];
     }
 
