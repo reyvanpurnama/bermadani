@@ -871,7 +871,7 @@
                 data: {
                     labels: ['Kas & Bank Akhir', 'Aset Tetap Toko', 'Piutang Pinjaman Bermadani'],
                     datasets: [{
-                        data: [37.46, 11.02, 1.23],
+                        data: [30.50, 11.02, 1.23],
                         backgroundColor: ['#10B981', '#F59E0B', '#6366F1'],
                         borderWidth: 0,
                     }]

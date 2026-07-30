@@ -95,10 +95,10 @@ class RatVisualDashboard extends Component
         $operasionalLainCsv = 1910000;    // Rp 1.910.000
         $totalKasKeluarCsv = 121212260;   // Rp 121.212.260
 
-        // Saldo Kas & Surplus (Exact Breakdown: Kas Awal + Surplus = Kas Akhir)
+        // Saldo Kas & Surplus (Matching RatInfographic.php logic exactly)
         $saldoKasAwalCsv = 6964859;                // Rp 6.964.859 (Saldo Awal Terpisah)
-        $saldoKasAkhirCsv = 30499118;              // Rp 30.499.118 (Surplus Kas Akhir CSV)
-        $kasBankAkhirTotal = $saldoKasAwalCsv + $saldoKasAkhirCsv; // Rp 37.463.977
+        $saldoKasAkhirCsv = 30499118;              // Rp 30.499.118 (Saldo Kas Akhir CSV Line 28)
+        $kasBankRiil = $saldoKasAkhirCsv;          // Rp 30.499.118 (Kas Bank Riil Infografis)
         $surplusKasBersihFull = $totalKasMasukFull - $totalKasKeluarCsv; // Rp 30.499.118
         $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv; // Rp 19.015.051
 
@@ -115,7 +115,7 @@ class RatVisualDashboard extends Component
         }
 
         $asetTetap = 11021000;   // CSV Line 13
-        $totalAsetBermadani = $kasBankAkhirTotal + $asetTetap + $outstandingPinjamanBermadani; // Rp 49.718.310
+        $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani; // Rp 42.753.451 (Sama persis RatInfographic)
 
         return [
             'year' => $year,
@@ -136,9 +136,9 @@ class RatVisualDashboard extends Component
                     'growth' => 'Surplus Kas Bersih 2025',
                 ],
                 'kasBank' => [
-                    'val' => '37,5',
-                    'raw' => number_format($kasBankAkhirTotal, 0, ',', '.'),
-                    'note' => 'Kas Awal (Rp 6,96M) + Surplus (Rp 30,5M)',
+                    'val' => '30,5',
+                    'raw' => number_format($kasBankRiil, 0, ',', '.'),
+                    'note' => 'Saldo Kas Akhir (CSV Line 28)',
                 ],
                 'jumlahAnggota' => [
                     'val' => $activeMemberCount,
@@ -146,10 +146,10 @@ class RatVisualDashboard extends Component
                 ],
             ],
             'komposisiAset' => [
-                'total' => '49,72',
+                'total' => '42,75',
                 'totalRaw' => number_format($totalAsetBermadani, 0, ',', '.'),
                 'items' => [
-                    ['label' => 'Kas & Bank Akhir (CSV)', 'val' => 'Rp ' . number_format($kasBankAkhirTotal, 0, ',', '.'), 'pct' => round(($kasBankAkhirTotal / $totalAsetBermadani)*100, 1) . '%', 'color' => '#10B981'],
+                    ['label' => 'Kas & Bank Akhir (CSV Line 28)', 'val' => 'Rp ' . number_format($kasBankRiil, 0, ',', '.'), 'pct' => round(($kasBankRiil / $totalAsetBermadani)*100, 1) . '%', 'color' => '#10B981'],
                     ['label' => 'Aset Tetap & Inventaris Toko', 'val' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'color' => '#F59E0B'],
                     ['label' => 'Piutang Pinjaman Bermadani DB', 'val' => 'Rp ' . number_format($outstandingPinjamanBermadani, 0, ',', '.'), 'pct' => round(($outstandingPinjamanBermadani / $totalAsetBermadani)*100, 1) . '%', 'color' => '#6366F1'],
                 ],
@@ -212,8 +212,8 @@ class RatVisualDashboard extends Component
             ],
             'rincianAlokasi' => [
                 'aset' => [
-                    ['nama' => 'Kas & Bank Akhir (CSV Line 28 + Saldo Awal)', 'nominal' => 'Rp ' . number_format($kasBankAkhirTotal, 0, ',', '.'), 'pct' => round(($kasBankAkhirTotal / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Saldo Kas Awal (Rp 6,96M) + Surplus Kas 2025 (Rp 30,5M) per 31 Des 2025'],
-                    ['nama' => 'Aset Tetap & Inventaris Toko (CSV Line 13)', 'nominal' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Peralatan minimarket & inventaris fisik (Arus Kas CSV Line 13)'],
+                    ['nama' => 'Kas & Bank Akhir (CSV Line 28)', 'nominal' => 'Rp ' . number_format($kasBankRiil, 0, ',', '.'), 'pct' => round(($kasBankRiil / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Saldo kas likuid di bank/kasir per 31 Desember 2025 (CSV Line 28)'],
+                    ['nama' => 'Aset Tetap & Inventaris Toko (CSV Line 13)', 'nominal' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Peralatan fisik toko minimarket & inventaris kantor (CSV Line 13)'],
                     ['nama' => 'Piutang Pinjaman Internal Bermadani DB', 'nominal' => 'Rp ' . number_format($outstandingPinjamanBermadani, 0, ',', '.'), 'pct' => round(($outstandingPinjamanBermadani / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Total sisa pokok pinjaman internal Bermadani (Loan DB loanSource = BERMADANI)'],
                 ],
                 'pendapatan' => [
