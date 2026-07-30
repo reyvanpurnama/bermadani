@@ -219,7 +219,12 @@
                         @php
                             $isModel = $item instanceof \App\Models\MemberShuDistribution;
                             $member = $isModel ? $item->member : $item;
-                            $simwa = (float) ($isModel ? $item->simpanan_wajib_amount : (($member->simpananPokok ?? 0) + ($member->simpananWajib ?? 0)));
+                            $pokok = (float) ($member->simpananPokok ?? 0);
+                            $wajib = (float) ($member->simpananWajib ?? 0);
+                            $simwa = $pokok + $wajib;
+                            if ($simwa <= 0 && $isModel) {
+                                $simwa = (float) $item->simpanan_wajib_amount;
+                            }
                             $portion = (float) ($isModel ? $item->portion_percentage : (($simwa / max(1, $summary['totalSimwa'])) * 100));
                             $shu = (float) ($isModel ? $item->shu_amount : ($portion / 100) * (float) $totalMemberShu);
                             $isDisbursed = $isModel ? $item->is_disbursed : false;
