@@ -1,14 +1,19 @@
 <div class="space-y-6">
     {{-- Header --}}
-    {{-- Header --}}
-    <div class="flex items-center gap-3">
-        <a href="{{ route('admin.transactions') }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
-            <i class='bx bx-arrow-back text-xl'></i>
-        </a>
-        <div>
-            <h1 class="text-xl font-bold text-slate-800 dark:text-white">Catat Keuangan</h1>
-            <p class="text-sm text-slate-500">Input pemasukan & pengeluaran operasional</p>
+    <div class="flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+            <a href="{{ route('admin.transactions') }}" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 transition-colors">
+                <i class='bx bx-arrow-back text-xl'></i>
+            </a>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Catat Keuangan</h1>
+                <p class="text-sm text-slate-500">Input pemasukan & pengeluaran operasional</p>
+            </div>
         </div>
+        <a href="{{ route('admin.cash-flow-visualization') }}" class="bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-xs font-bold px-4 py-2 rounded-xl transition-colors flex items-center gap-2 border border-indigo-200 dark:border-indigo-800">
+            <i class='bx bx-bar-chart-alt-2 text-base'></i>
+            <span>Visualisasi Arus Kas</span>
+        </a>
     </div>
 
     @if (session()->has('success'))

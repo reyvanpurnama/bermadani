@@ -225,6 +225,8 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.transactions.index');
     })->name('admin.transactions');
 
+    Route::get('/transaksi/visualisasi', \App\Livewire\Admin\CashFlowVisualization::class)->name('admin.cash-flow-visualization');
+
     // Manual Transaction (Income/Expense) - HARUS DI ATAS {id}
     Route::get('/transaksi/manual', function () {
         return view('admin.manual-transaction');
