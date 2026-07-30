@@ -96,9 +96,9 @@ class RatVisualDashboard extends Component
         $totalKasKeluarCsv = 121212260;   // Rp 121.212.260
 
         // Saldo Kas (Exact from CSV)
-        $saldoKasAwalCsv = 6964859;       // Rp 6.964.859
-        $saldoKasAkhirCsv = 37463977;     // Rp 37.463.977
-        $surplusKasBersihFull = $totalKasMasukFull - $totalKasKeluarCsv; // Rp 30.499.118
+        $saldoKasAwalCsv = 6964859;       // Rp 6.964.859 (Saldo Awal Terpisah)
+        $saldoKasAkhirCsv = 30499118;     // Rp 30.499.118 (Kas Masuk 151,7M - Kas Keluar 121,2M)
+        $surplusKasBersihFull = 30499118; // Rp 30.499.118
         $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv; // Rp 19.015.051
 
         return [
@@ -126,16 +126,17 @@ class RatVisualDashboard extends Component
                     'growth' => '131 Anggota Aktif Terdaftar (Live DB)',
                 ],
                 'kasBank' => [
-                    'val' => '37,5',
+                    'val' => '30,5',
                     'raw' => number_format($saldoKasAkhirCsv, 0, ',', '.'),
-                    'note' => 'Posisi Saldo Kas per 31 Des ' . $year,
+                    'internal' => number_format($surplusKasBersihBermadani, 0, ',', '.'),
+                    'note' => 'Saldo Kas Akhir CSV (Tanpa Saldo Awal)',
                 ],
             ],
             'komposisiAset' => [
                 'total' => '354',
                 'items' => [
                     ['label' => 'Piutang Pembiayaan Internal', 'val' => 'Rp 285.000.000', 'pct' => '80,5%', 'color' => '#6366F1'],
-                    ['label' => 'Kas & Bank Koperasi (CSV)', 'val' => 'Rp 37.463.977', 'pct' => '10,6%', 'color' => '#06B6D4'],
+                    ['label' => 'Saldo Kas Akhir (CSV)', 'val' => 'Rp 30.499.118', 'pct' => '8,6%', 'color' => '#06B6D4'],
                     ['label' => 'Aset Tetap (Neto)', 'val' => 'Rp 18.500.000', 'pct' => '5,2%', 'color' => '#F59E0B'],
                     ['label' => 'Aset Lainnya', 'val' => 'Rp 5.000.000', 'pct' => '1,4%', 'color' => '#94A3B8'],
                 ],
