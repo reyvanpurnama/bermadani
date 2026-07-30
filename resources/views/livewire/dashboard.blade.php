@@ -33,11 +33,13 @@
         </div>
 
         <div class="lg:col-span-4 h-full grid grid-cols-2 lg:flex lg:flex-col gap-4">
-            <div
-                class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group relative">
+            <a href="{{ route('admin.cash-flow-visualization') }}"
+                class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 hover:border-emerald-500/50 hover:shadow-md transition-all flex items-center justify-between group relative cursor-pointer">
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Total Laba Bersih
-                    </p>
+                    <div class="flex items-center gap-1 mb-0.5">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total Laba Bersih</p>
+                        <i class='bx bx-right-arrow-alt text-xs text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-500 transition-all'></i>
+                    </div>
                     <div class="flex items-end gap-2">
                         <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Rp
                             {{ number_format($this->allTimeProfit, 0, ',', '.') }}
@@ -45,9 +47,9 @@
                     </div>
                     <p class="text-[9px] text-slate-400 mt-0.5">Sejak {{ $this->firstTransactionDate }}</p>
                 </div>
-                <div class="bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg text-emerald-500"><i
+                <div class="bg-emerald-50 dark:bg-emerald-500/10 p-2 rounded-lg text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all"><i
                         class='bx bx-line-chart text-lg'></i></div>
-            </div>
+            </a>
 
             <div
                 class="flex-1 bg-card dark:bg-darkCard px-5 py-3 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center justify-between group relative">
