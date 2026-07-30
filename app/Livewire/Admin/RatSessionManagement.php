@@ -26,6 +26,11 @@ class RatSessionManagement extends Component
     public $searchMember = '';
     public $filterStatus = 'ALL'; // ALL, ACTIVE
 
+    public function updatingSearchMember()
+    {
+        $this->resetPage();
+    }
+
     public function mount()
     {
         $this->eventDate = date('Y-m-d');

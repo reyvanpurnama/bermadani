@@ -225,7 +225,7 @@
                             $isDisbursed = $isModel ? $item->is_disbursed : false;
                         @endphp
                         <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                            <td class="py-2.5 px-3 font-mono text-slate-400">{{ $index + 1 }}</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-400">{{ method_exists($distributions, 'firstItem') ? ($distributions->firstItem() + $index) : ($index + 1) }}</td>
                             <td class="py-2.5 px-3 font-mono font-bold text-slate-700 dark:text-slate-300">
                                 {{ $member->nomorAnggota ?? '-' }}
                             </td>
