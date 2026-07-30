@@ -8,6 +8,11 @@
         toggleRatDropdown() {
             this.ratDropdown = !this.ratDropdown;
             localStorage.setItem('sidebar_rat_dropdown', this.ratDropdown);
+        },
+        infografisDropdown: localStorage.getItem('sidebar_infografis_dropdown') === 'true' || {{ request()->routeIs('admin.rat-infographic') ? 'true' : 'false' }},
+        toggleInfografisDropdown() {
+            this.infografisDropdown = !this.infografisDropdown;
+            localStorage.setItem('sidebar_infografis_dropdown', this.infografisDropdown);
         }
     }"
     class="fixed inset-y-0 left-0 bg-white dark:bg-darkCard w-[180px] border-r border-slate-200 dark:border-slate-700 flex flex-col z-50 transition-all duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none overflow-hidden group/sidebar">
@@ -272,6 +277,34 @@
                         <a href="{{ route('admin.rat-retail-report') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-retail-report') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">Neraca Hasil Usaha</span>
+                        </a>
+                    </div>
+                {{-- Dropdown Infografis RAT (4 Lembar) --}}
+                <div class="space-y-0.5 mt-1">
+                    <button @click="toggleInfografisDropdown()"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+                        <div class="flex items-center">
+                            <i class='bx bx-slideshow text-sm mr-2 opacity-70 group-hover:opacity-100 text-indigo-500 dark:text-indigo-400'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Infografis RAT (4 Page)</span>
+                        </div>
+                        <i class='bx text-xs transition-transform duration-200 mr-1 opacity-70 group-hover:opacity-100' :class="infografisDropdown ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="infografisDropdown" x-transition class="pl-4 space-y-0.5">
+                        <a href="{{ route('admin.rat-infographic', ['page' => 1]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page', 1) == 1 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Dashboard Kinerja</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 2]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 2 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Posisi Keuangan</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 3]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 3 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. SHU & Bagi Hasil</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 4]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 4 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Siklus & CALK</span>
                         </a>
                     </div>
                 </div>
