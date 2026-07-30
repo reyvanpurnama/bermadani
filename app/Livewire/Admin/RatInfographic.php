@@ -23,7 +23,7 @@ class RatInfographic extends Component
 
     public function getFinancialData()
     {
-        // 1. Database Query: Anggota Aktif & Simpanan Real-time (Pasiva)
+        // 1. Database Query: Anggota Aktif & Simpanan Real-time
         $activeQuery = Member::where('isMemberKoperasi', true)->where('status', 'ACTIVE');
         $activeCount = (clone $activeQuery)->count();
         $simwa = (float) (clone $activeQuery)->sum('simpananWajib');
@@ -75,15 +75,12 @@ class RatInfographic extends Component
 
         $surplusKas = $kasBankRiil;
 
-        // 3. KALKULASI AKUNTANSI ASET (AKTIVA)
-        // Piutang Pinjaman Anggota = Total Simpanan (195.190.000) - (Kas 30.499.118 + Aset Tetap 11.021.000) = Rp 153.669.882
-        $piutangPinjaman = max(0, $totalSimpanan - ($kasBankRiil + $asetTetap)); // 153.669.882
+        // 3. KALKULASI POSISI SIMPANAN ANGGOTA
+        // Selisih Dana Simpanan Belum Tersedia di Kas Fisik = Rp 195.190.000 - (Kas 30.499.118 + Aset Tetap 11.021.000) = Rp 153.669.882
+        $selisihSimpanan = max(0, $totalSimpanan - ($kasBankRiil + $asetTetap)); // 153.669.882
 
-        // Total Aset Aktiva (Kas + Aset Tetap + Piutang) = Rp 195.190.000
-        $totalAset = $kasBankRiil + $asetTetap + $piutangPinjaman; // 195.190.000
-
-        // Subtotal Aset Fisik Kas & Inventaris
-        $asetFisikLikuid = $kasBankRiil + $asetTetap; // 41.520.118
+        // Total Aset Balancing = Rp 195.190.000
+        $totalAset = $totalSimpanan;
 
         // 4. RAT Session & SHU
         $ratSession = RatSession::where('year', 2025)->first();
@@ -102,8 +99,7 @@ class RatInfographic extends Component
             'surplusKas' => $surplusKas,
             'kasBankRiil' => $kasBankRiil,
             'asetTetap' => $asetTetap,
-            'piutangPinjaman' => $piutangPinjaman,
-            'asetFisikLikuid' => $asetFisikLikuid,
+            'selisihSimpanan' => $selisihSimpanan,
             'totalAset' => $totalAset,
             'shuMember' => $shuMember,
             'retainedModal' => $retainedModal,
