@@ -94,9 +94,11 @@ class RatSessionManagement extends Component
 
     public function getShuSummaryProperty()
     {
-        // Calculate active members simpanan wajib total
+        // Calculate active members total simpanan (Pokok + Wajib + Sukarela)
         $activeMembers = Member::where('status', 'ACTIVE')->get();
-        $totalSimwa = (float) $activeMembers->sum('simpananWajib');
+        $totalSimwa = (float) $activeMembers->sum(function ($m) {
+            return (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0) + (float) ($m->simpananSukarela ?? 0);
+        });
         $totalSimwa = max(1, $totalSimwa); // avoid div by 0
 
         $totalMemberShu = (float) ($this->totalMemberShu ?: 0);
@@ -141,14 +143,14 @@ class RatSessionManagement extends Component
 
         $this->selectedSessionId = $session->id;
 
-        // Generate / Update distributions for active members
+        // Generate / Update distributions for active members based on Total Simpanan (Pokok + Wajib + Sukarela)
         $activeMembers = Member::where('status', 'ACTIVE')->get();
         $totalSimwa = $summary['totalSimwa'];
         $totalMemberShu = (float) $this->totalMemberShu;
 
         foreach ($activeMembers as $m) {
-            $simwa = (float) ($m->simpananWajib ?? 0);
-            $portion = ($simwa / $totalSimwa);
+            $totalSimpananMember = (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0) + (float) ($m->simpananSukarela ?? 0);
+            $portion = ($totalSimpananMember / $totalSimwa);
             $shuAmount = round($portion * $totalMemberShu, 2);
 
             MemberShuDistribution::updateOrCreate(
@@ -157,7 +159,7 @@ class RatSessionManagement extends Component
                     'member_id' => $m->id,
                 ],
                 [
-                    'simpanan_wajib_amount' => $simwa,
+                    'simpanan_wajib_amount' => $totalSimpananMember,
                     'portion_percentage' => round($portion * 100, 4),
                     'shu_amount' => $shuAmount,
                 ]
