@@ -357,23 +357,6 @@
                 </div>
             </div>
 
-            {{-- Defisit Modal Card --}}
-            <div class="p-4 bg-rose-50 dark:bg-rose-950/40 border border-rose-300 dark:border-rose-800 rounded-2xl flex items-center justify-between text-xs font-bold text-rose-800 dark:text-rose-300">
-                <span class="flex items-center gap-2">
-                    <i class='bx bx-error-circle text-xl text-rose-600'></i> KONDISI DEFISIT ASET REAL BERMADANI VS SIMPANAN:
-                </span>
-                <span class="font-mono text-sm font-extrabold text-rose-600">-Rp {{ number_format($defisitModal, 0, ',', '.') }}</span>
-            </div>
-
-            {{-- Note Likuiditas Box --}}
-            <div class="p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl text-xs space-y-1">
-                <p class="font-bold text-amber-800 dark:text-amber-300 uppercase text-[11px] flex items-center gap-1.5">
-                    <i class='bx bx-info-circle text-base'></i> Transparansi Posisi Keuangan Bermadani:
-                </p>
-                <p class="text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Kewajiban Simpanan {{ $activeCount }} Anggota Aktif adalah <strong>Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</strong> (Pasiva). Aset internal Bermadani mencakup Kas Fisik Bank <strong>Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</strong> (CSV Line 28), Aset Tetap <strong>Rp {{ number_format($asetTetap, 0, ',', '.') }}</strong> (CSV Line 13), dan Pinjaman Internal Bermadani DB <strong>Rp {{ number_format($outstandingPinjamanBermadani, 0, ',', '.') }}</strong>. Defisit aset modal Bermadani tercatat sebesar <strong>-Rp {{ number_format($defisitModal, 0, ',', '.') }}</strong>.
-                </p>
-            </div>
         @endif
 
         {{-- LEMBAR 3: LAPORAN SHU & DISTRIBUSI BAGI HASIL --}}

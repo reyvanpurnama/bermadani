@@ -37,9 +37,6 @@ KOLOM KANAN: SIMPANAN ANGGOTA & LIABILITAS (PASIVA)
   * Simpanan Sukarela Anggota Aktif        : Rp  16.990.000
 ------------------------------------------------------
 - TOTAL SIMPANAN ANGGOTA (PASIVA)          : Rp 195.190.000
-------------------------------------------------------
-KONDISI DEFISIT ASET REAL BERMADANI VS SIMPANAN: "-Rp 152.436.549 (Total Simpanan Pasiva Rp 195,19M - Total Aset Real Bermadani Rp 42,75M)"
-
 [SECTION 2: TABEL PERUBAHAN EKUITAS ANGGOTA AKTIF 2025]
 Tabel Rincian Ekuitas Simpanan Anggota Aktif:
 ---------------------------------------------------------------------------------------------
@@ -51,12 +48,6 @@ Penarikan/Pengurangan   | Rp          0  | Rp           0 | Rp           0    | 
 ---------------------------------------------------------------------------------------------
 SALDO PER 31 DES 2025   | Rp 22.100.000  | Rp 156.100.000 | Rp  16.990.000    | Rp 195.190.000
 ---------------------------------------------------------------------------------------------
-
-[SECTION 3: HIGHLIGHT INTEGRASI KHUSUS INTERNAL BERMADANI]
-- Card Highlight:
-  * "Total Kewajiban Simpanan {{ $activeCount }} Anggota Aktif (Pasiva): Rp 195.190.000."
-  * "Total Aset Real Bermadani (Aktiva): Rp 42.753.451 (Kas: Rp 30,5M + Aset Tetap: Rp 11,02M + Pinjaman Bermadani DB: Rp 1,23M)."
-  * "Status Defisit Modal Internal Bermadani: -Rp 152.436.549."
 
 [FOOTER BANNER]
 - Disusun oleh: Pengurus Koperasi Bermadani
