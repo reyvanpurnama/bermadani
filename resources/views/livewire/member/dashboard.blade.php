@@ -161,6 +161,9 @@
                     <span class="text-[9px] px-2 py-0.5 rounded bg-white/10 border border-white/5 text-slate-300">{{ $member->tier ?? 'Bronze' }}</span>
                 </div>
             </div>
+        </div>
+    </div>
+
     {{-- SHU Card Widget --}}
     @if($shuInfo)
         <div class="mt-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xl border border-emerald-400/30 relative overflow-hidden group mb-8">
