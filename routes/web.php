@@ -184,6 +184,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     })->name('admin.pos');
 
     // Laporan RAT
+    Route::get('/rat-dashboard', \App\Livewire\Admin\RatVisualDashboard::class)->name('admin.rat-dashboard');
     Route::get('/laporan-rat', \App\Livewire\Admin\RatReport::class)->name('admin.rat-report');
     Route::get('/laporan-rat-detail', \App\Livewire\Admin\RatDetailReport::class)->name('admin.rat-detail');
     Route::get('/laporan-rat-retail', \App\Livewire\Admin\RatRetailReport::class)->name('admin.rat-retail-report');
