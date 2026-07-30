@@ -133,7 +133,7 @@
                 <label class="block text-[11px] font-bold text-emerald-600 mb-1">Total SHU Dibagikan (Rp)</label>
                 <input type="number" wire:model.live.debounce.300ms="totalMemberShu"
                     class="w-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-600 outline-none"
-                    placeholder="Misal: 15000000">
+                    placeholder="Misal: 30499118">
             </div>
 
             <div>
