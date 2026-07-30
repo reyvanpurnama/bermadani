@@ -49,12 +49,10 @@
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Aset</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['totalAset']['raw'] }}">
                     Rp {{ $dashboard['kpi']['totalAset']['val'] }} Jt
                 </h3>
-                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                    <i class='bx bx-trending-up'></i> {{ $dashboard['kpi']['totalAset']['growth'] }}
-                </span>
+                <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['totalAset']['raw'] }}</span>
             </div>
         </div>
 
@@ -65,12 +63,10 @@
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Total Pembiayaan</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['totalPembiayaan']['raw'] }}">
                     Rp {{ $dashboard['kpi']['totalPembiayaan']['val'] }} Jt
                 </h3>
-                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                    <i class='bx bx-trending-up'></i> {{ $dashboard['kpi']['totalPembiayaan']['growth'] }}
-                </span>
+                <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['totalPembiayaan']['raw'] }}</span>
             </div>
         </div>
 
@@ -81,12 +77,10 @@
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">SHU Tahun Ini</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['shu']['raw'] }}">
                     Rp {{ $dashboard['kpi']['shu']['val'] }} Jt
                 </h3>
-                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                    <i class='bx bx-trending-up'></i> {{ $dashboard['kpi']['shu']['growth'] }}
-                </span>
+                <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['shu']['raw'] }}</span>
             </div>
         </div>
 
@@ -100,9 +94,7 @@
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     {{ $dashboard['kpi']['jumlahAnggota']['val'] }} Orang
                 </h3>
-                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-0.5">
-                    <i class='bx bx-user-plus'></i> {{ $dashboard['kpi']['jumlahAnggota']['growth'] }}
-                </span>
+                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">{{ $dashboard['kpi']['jumlahAnggota']['growth'] }}</span>
             </div>
         </div>
 
@@ -113,11 +105,11 @@
             </div>
             <div>
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Kas & Bank</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white" title="Rp {{ $dashboard['kpi']['kasBank']['raw'] }}">
                     Rp {{ $dashboard['kpi']['kasBank']['val'] }} Jt
                 </h3>
-                <span class="text-[10px] text-slate-400 font-medium">
-                    Posisi 31 Des {{ $dashboard['year'] }}
+                <span class="text-[10px] text-slate-400 font-medium block">
+                    Rp {{ $dashboard['kpi']['kasBank']['raw'] }}
                 </span>
             </div>
         </div>
