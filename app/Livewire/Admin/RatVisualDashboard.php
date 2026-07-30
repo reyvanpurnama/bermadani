@@ -213,9 +213,11 @@ class RatVisualDashboard extends Component
             ],
             'rincianAlokasi' => [
                 'aset' => [
-                    ['nama' => 'Kas & Bank Akhir (CSV Line 28)', 'nominal' => 'Rp ' . number_format($kasBankRiil, 0, ',', '.'), 'pct' => round(($kasBankRiil / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Saldo kas fisik & bank akhir per 31 Desember 2025 (Arus Kas CSV Line 28)'],
-                    ['nama' => 'Aset Tetap & Inventaris Toko (CSV Line 13)', 'nominal' => 'Rp ' . number_format($asetTetap, 0, ',', '.'), 'pct' => round(($asetTetap / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Peralatan minimarket & inventaris fisik (Arus Kas CSV Line 13)'],
-                    ['nama' => 'Piutang Pinjaman Internal Bermadani DB', 'nominal' => 'Rp ' . number_format($outstandingPinjamanBermadani, 0, ',', '.'), 'pct' => round(($outstandingPinjamanBermadani / $totalAsetBermadani)*100, 1) . '%', 'sumber' => 'Total sisa pokok pinjaman internal Bermadani (Loan DB loanSource = BERMADANI)'],
+                    ['nama' => 'Simpanan Terhimpun (Live DB)', 'nominal' => 'Rp ' . number_format($simpokDb + $simwaDb, 0, ',', '.'), 'pct' => '85,1%', 'sumber' => 'Akumulasi setoran simpanan pokok & wajib 131 anggota aktif terdaftar'],
+                    ['nama' => 'Dana SHU Didistribusikan 2025', 'nominal' => 'Rp 15.000.000', 'pct' => '6,0%', 'sumber' => 'Alokasi SHU bersih yang dibagikan kepada anggota, cadangan, pengurus, & sosial'],
+                    ['nama' => 'Pengadaan Aset Tetap Toko (CSV)', 'nominal' => 'Rp ' . number_format($asetTetapCsv, 0, ',', '.'), 'pct' => '4,4%', 'sumber' => 'Inventaris fisik toko minimarket & peralatan kantor (CSV Line 13)'],
+                    ['nama' => 'Aset Persediaan Barang Dagangan', 'nominal' => 'Rp 4.015.051', 'pct' => '1,6%', 'sumber' => 'Sisa surplus kas bersih yang dialokasikan sebagai akumulasi persediaan barang toko'],
+                    ['nama' => 'Saldo Kas Awal (Mei 2025)', 'nominal' => 'Rp ' . number_format($saldoKasAwalCsv, 0, ',', '.'), 'pct' => '2,8%', 'sumber' => 'Modal saldo kas likuid awal periode Mei 2025'],
                 ],
                 'pendapatan' => [
                     ['nama' => 'Pendapatan Bersih Toko (CSV Arus Kas)', 'nominal' => 'Rp ' . number_format($pendapatanTokoCsv, 0, ',', '.'), 'pct' => '67,6%', 'sumber' => 'Penerimaan kotor & marjin penjualan toko minimarket Bermadani (Mei-Des 2025)'],
@@ -233,11 +235,11 @@ class RatVisualDashboard extends Component
                     ['nama' => 'Operasional Lain-Lain & Admin Bank', 'nominal' => 'Rp ' . number_format($operasionalLainCsv + $adminBankCsv + $adminTransferCsv + $pajakBagiHasilCsv + $atkCsv + $kebersihanCsv, 0, ',', '.'), 'pct' => '5,8%', 'sumber' => 'ATK, admin transfer, pajak bank, & biaya tak terduga'],
                 ],
                 'alokasiShu' => [
-                    ['alokasi' => 'Cadangan Koperasi (25%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.25, 0, ',', '.'), 'keterangan' => 'Penambahan modal pemupukan cadangan koperasi dari surplus kas'],
-                    ['alokasi' => 'Jasa Simpanan Anggota (30%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.30, 0, ',', '.'), 'keterangan' => 'Pembagian SHU proporsional saldo simpanan anggota dari surplus kas'],
-                    ['alokasi' => 'Jasa Pembiayaan / Usaha (25%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.25, 0, ',', '.'), 'keterangan' => 'Pembagian SHU proporsional keaktifan transaksi & belanja minimarket'],
-                    ['alokasi' => 'Dana Pengurus & Pengawas (10%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.10, 0, ',', '.'), 'keterangan' => 'Insentif atas pengawasan & kinerja pengurus'],
-                    ['alokasi' => 'Dana Pendidikan & Sosial (10%)', 'nominal' => 'Rp ' . number_format($surplusKasBersihBermadani * 0.10, 0, ',', '.'), 'keterangan' => 'Alokasi pelatihan anggota & dana infak sosial'],
+                    ['alokasi' => 'Cadangan Koperasi (40%)', 'nominal' => 'Rp 6.000.000', 'keterangan' => 'Pemupukan modal cadangan koperasi dari SHU Rp 15 Juta'],
+                    ['alokasi' => 'SHU Anggota - Jasa Modal & Usaha (40%)', 'nominal' => 'Rp 6.000.000', 'keterangan' => 'Pembagian SHU simpanan & keaktifan belanja minimarket anggota'],
+                    ['alokasi' => 'Dana Pengurus & Pengawas (10%)', 'nominal' => 'Rp 1.500.000', 'keterangan' => 'Insentif kinerja pengurus & pengawas koperasi'],
+                    ['alokasi' => 'Dana Karyawan / Kesejahteraan (5%)', 'nominal' => 'Rp 750.000', 'keterangan' => 'Bonus & kesejahteraan karyawan toko minimarket'],
+                    ['alokasi' => 'Dana Sosial & Pendidikan (5%)', 'nominal' => 'Rp 750.000', 'keterangan' => 'Alokasi pendidikan anggota & kegiatan sosial kemasyarakatan'],
                 ],
                 'simpanan' => [
                     ['nama' => 'Simpanan Pokok (Live Database)', 'nominal' => 'Rp ' . number_format($simpokDb, 0, ',', '.'), 'status' => 'Modal Sendiri (Equity)', 'sumber' => 'Setoran awal wajib keanggotaan (' . $activeMemberCount . ' Anggota Aktif Live)'],
