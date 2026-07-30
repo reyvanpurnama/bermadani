@@ -239,6 +239,12 @@ class RatVisualDashboard extends Component
                     ['alokasi' => 'Dana Pengurus & Pengawas (10%)', 'nominal' => 'Rp 1.000.000', 'keterangan' => 'Insentif atas pengawasan & kinerja pengurus'],
                     ['alokasi' => 'Dana Pendidikan & Sosial (10%)', 'nominal' => 'Rp 1.000.000', 'keterangan' => 'Alokasi pelatihan anggota & dana infak sosial'],
                 ],
+                'simpanan' => [
+                    ['nama' => 'Simpanan Pokok Anggota', 'nominal' => 'Rp 35.000.000', 'status' => 'Modal Sendiri (Equity)', 'sumber' => 'Setoran awal wajib keanggotaan sekali seumur hidup (250 Anggota)'],
+                    ['nama' => 'Simpanan Wajib Anggota', 'nominal' => 'Rp 28.000.000', 'status' => 'Modal Sendiri (Equity)', 'sumber' => 'Akumulasi setoran iuran bulanan rutin anggota aktif (potong gaji UMB)'],
+                    ['nama' => 'Simpanan Sukarela (Wadiah)', 'nominal' => 'Rp 120.000.000', 'status' => 'Dana Titipan Anggota', 'sumber' => 'Titipan tabungan sukarela harian anggota yang fleksibel ditarik'],
+                    ['nama' => 'Simpanan Berjangka (Mudharabah)', 'nominal' => 'Rp 67.000.000', 'status' => 'Investasi Anggota', 'sumber' => 'Investasi deposito syariah berjangka anggota dengan nisbah bagi hasil'],
+                ],
             ],
         ];
     }
