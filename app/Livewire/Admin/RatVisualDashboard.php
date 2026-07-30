@@ -69,38 +69,86 @@ class RatVisualDashboard extends Component
             $simwaDb = 185400000;
         }
 
-        // 3. EXACT DATA DARI ARUS KAS 25.csv (Full Breakdown Mei - Des 2025)
-        $simwaCsv = 38400000;           // Rp 38.400.000
-        $simpokCsv = 600000;            // Rp 600.000
-        $simsukarelaCsv = 6450000;       // Rp 6.450.000
-        $pendapatanTokoCsv = 94777311;   // Rp 94.777.311
-        $bmtItqanCsv = 11484067;        // Rp 11.484.067 (Eksternal)
+        // 3. DYNAMIC PARSER DARI ARUS KAS 25.csv (docs/data/ARUS KAS 25.csv)
+        $simwaCsv = 38400000;
+        $simpokCsv = 600000;
+        $simsukarelaCsv = 6450000;
+        $pendapatanTokoCsv = 94777311;
+        $bmtItqanCsv = 11484067;
+        $totalKasMasukFull = 151711378;
 
-        $totalKasMasukFull = 151711378; // Rp 151.711.378
-        $totalKasMasukBermadaniOnly = $totalKasMasukFull - $bmtItqanCsv; // Rp 140.227.311
+        $gajiPengurusCsv = 31250000;
+        $gajiKaryawanCsv = 36184000;
+        $utangSupplierCsv = 28738508;
+        $asetTetapCsv = 11021000;
+        $atkCsv = 437000;
+        $kemasanCsv = 2662000;
+        $konsumsiRapatCsv = 4320000;
+        $pengembalianSimpananCsv = 4300000;
+        $kebersihanCsv = 250000;
+        $adminBankCsv = 80000;
+        $adminTransferCsv = 49000;
+        $pajakBagiHasilCsv = 10752;
+        $operasionalLainCsv = 1910000;
+        $totalKasKeluarCsv = 121212260;
 
-        // Kas Keluar (Exact from CSV)
-        $gajiPengurusCsv = 31250000;      // Rp 31.250.000
-        $gajiKaryawanCsv = 36184000;      // Rp 36.184.000
-        $utangSupplierCsv = 28738508;     // Rp 28.738.508
-        $asetTetapCsv = 11021000;         // Rp 11.021.000
-        $atkCsv = 437000;                 // Rp 437.000
-        $kemasanCsv = 2662000;            // Rp 2.662.000
-        $konsumsiRapatCsv = 4320000;      // Rp 4.320.000
-        $pengembalianSimpananCsv = 4300000; // Rp 4.300.000
-        $kebersihanCsv = 250000;          // Rp 250.000
-        $adminBankCsv = 80000;            // Rp 80.000
-        $adminTransferCsv = 49000;        // Rp 49.000
-        $pajakBagiHasilCsv = 10752;       // Rp 10.752
-        $operasionalLainCsv = 1910000;    // Rp 1.910.000
-        $totalKasKeluarCsv = 121212260;   // Rp 121.212.260
+        $saldoKasAwalCsv = 6964859;
+        $saldoKasAkhirCsv = 30499118;
 
-        // Saldo Kas & Surplus (Matching RatInfographic.php logic exactly)
-        $saldoKasAwalCsv = 6964859;                // Rp 6.964.859 (Saldo Awal Terpisah)
-        $saldoKasAkhirCsv = 30499118;              // Rp 30.499.118 (Saldo Kas Akhir CSV Line 28)
-        $kasBankRiil = $saldoKasAkhirCsv;          // Rp 30.499.118 (Kas Bank Riil Infografis)
-        $surplusKasBersihFull = $totalKasMasukFull - $totalKasKeluarCsv; // Rp 30.499.118
-        $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv; // Rp 19.015.051
+        $csvPath = base_path('docs/data/ARUS KAS 25.csv');
+        if (file_exists($csvPath)) {
+            $lines = file($csvPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                $cols = str_getcsv($line);
+                $label = strtoupper(trim($cols[0] ?? ''));
+
+                $parseVal = function($str) {
+                    return (float) preg_replace('/[^0-9]/', '', $str);
+                };
+
+                $totalCol = end($cols);
+                if (empty($totalCol) && count($cols) > 1) {
+                    $totalCol = $cols[count($cols) - 2] ?? '';
+                }
+                $valTotal = $parseVal($totalCol);
+                $valCol1 = $parseVal($cols[1] ?? '');
+
+                if (str_contains($label, 'SIMPANAN WAJIB')) {
+                    if ($valTotal > 0) $simwaCsv = $valTotal;
+                } elseif (str_contains($label, 'SIMPANAN POKOK')) {
+                    if ($valTotal > 0) $simpokCsv = $valTotal;
+                } elseif (str_contains($label, 'SIMPANAN SUKARELA')) {
+                    if ($valTotal > 0) $simsukarelaCsv = $valTotal;
+                } elseif (str_contains($label, 'PENDAPATAN BERSIH TOKO')) {
+                    if ($valTotal > 0) $pendapatanTokoCsv = $valTotal;
+                } elseif (str_contains($label, 'PENDAPATAN DARI BMT ITQAN')) {
+                    if ($valTotal > 0) $bmtItqanCsv = $valTotal;
+                } elseif (str_contains($label, 'GAJI PENGURUS')) {
+                    if ($valTotal > 0) $gajiPengurusCsv = $valTotal;
+                } elseif (str_contains($label, 'GAJI KARYAWAN')) {
+                    if ($valTotal > 0) $gajiKaryawanCsv = $valTotal;
+                } elseif (str_contains($label, 'PEMBAYARAN UTANG SUPPLIER')) {
+                    if ($valTotal > 0) $utangSupplierCsv = $valTotal;
+                } elseif (str_contains($label, 'ASET TETAP')) {
+                    if ($valTotal > 0) $asetTetapCsv = $valTotal;
+                } elseif (str_contains($label, 'TOTAL KAS KELUAR')) {
+                    $v = $valCol1 > 0 ? $valCol1 : $valTotal;
+                    if ($v > 0) $totalKasKeluarCsv = $v;
+                } elseif (str_contains($label, 'TOTAL KAS MASUK')) {
+                    $v = $valCol1 > 0 ? $valCol1 : $valTotal;
+                    if ($v > 0) $totalKasMasukFull = $v;
+                } elseif (str_contains($label, 'SALDO KAS AWAL')) {
+                    if ($valCol1 > 0) $saldoKasAwalCsv = $valCol1;
+                } elseif (str_contains($label, 'SALDO KAS AKHIR')) {
+                    if ($valCol1 > 0) $saldoKasAkhirCsv = $valCol1;
+                }
+            }
+        }
+
+        $totalKasMasukBermadaniOnly = $totalKasMasukFull - $bmtItqanCsv;
+        $kasBankRiil = $saldoKasAkhirCsv;
+        $surplusKasBersihFull = $totalKasMasukFull - $totalKasKeluarCsv;
+        $surplusKasBersihBermadani = $totalKasMasukBermadaniOnly - $totalKasKeluarCsv;
 
         // Outstanding Pinjaman Internal Bermadani DB
         try {
@@ -114,35 +162,35 @@ class RatVisualDashboard extends Component
             $outstandingPinjamanBermadani = 1233333;
         }
 
-        $asetTetap = 11021000;   // CSV Line 13
-        $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani; // Rp 42.753.451 (Sama persis RatInfographic)
+        $asetTetap = $asetTetapCsv;
+        $totalAsetBermadani = $kasBankRiil + $asetTetap + $outstandingPinjamanBermadani;
 
         return [
             'year' => $year,
             'kpi' => [
                 'totalKasMasuk' => [
-                    'val' => '140,2',
-                    'raw' => number_format($totalKasMasukBermadaniOnly, 0, ',', '.'),
-                    'growth' => 'Penerimaan Kas Internal 2025',
+                    'val' => number_format($totalKasMasukFull / 1000000, 1, ',', '.'),
+                    'raw' => number_format($totalKasMasukFull, 0, ',', '.'),
+                    'growth' => 'Total Kas Masuk (Arus Kas CSV)',
                 ],
                 'totalKasKeluar' => [
-                    'val' => '121,2',
+                    'val' => number_format($totalKasKeluarCsv / 1000000, 1, ',', '.'),
                     'raw' => number_format($totalKasKeluarCsv, 0, ',', '.'),
-                    'growth' => 'Pengeluaran Operasional & Usaha',
+                    'growth' => 'Total Kas Keluar (Arus Kas CSV)',
                 ],
                 'surplusKas' => [
-                    'val' => '19,0',
-                    'raw' => number_format($surplusKasBersihBermadani, 0, ',', '.'),
-                    'growth' => 'Surplus Kas Bersih 2025',
+                    'val' => number_format($surplusKasBersihFull / 1000000, 1, ',', '.'),
+                    'raw' => number_format($surplusKasBersihFull, 0, ',', '.'),
+                    'growth' => 'Surplus Operasional Kas 2025',
                 ],
                 'kasBank' => [
-                    'val' => '30,5',
+                    'val' => number_format($kasBankRiil / 1000000, 1, ',', '.'),
                     'raw' => number_format($kasBankRiil, 0, ',', '.'),
                     'note' => 'Saldo Kas Akhir (CSV Line 28)',
                 ],
                 'jumlahAnggota' => [
                     'val' => $activeMemberCount,
-                    'growth' => '131 Anggota Aktif Terdaftar (Live DB)',
+                    'growth' => $activeMemberCount . ' Anggota Aktif Terdaftar (Live DB)',
                 ],
             ],
             'komposisiAset' => [
