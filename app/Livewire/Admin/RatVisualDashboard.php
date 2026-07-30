@@ -178,19 +178,20 @@ class RatVisualDashboard extends Component
                     'raw' => number_format($totalKasKeluarCsv, 0, ',', '.'),
                     'growth' => 'Total Kas Keluar (Arus Kas CSV)',
                 ],
-                'surplusKas' => [
-                    'val' => number_format($surplusKasBersihFull / 1000000, 1, ',', '.'),
-                    'raw' => number_format($surplusKasBersihFull, 0, ',', '.'),
-                    'growth' => 'Surplus Operasional Kas 2025',
-                ],
                 'kasBank' => [
                     'val' => number_format($kasBankRiil / 1000000, 1, ',', '.'),
                     'raw' => number_format($kasBankRiil, 0, ',', '.'),
-                    'note' => 'Saldo Kas Akhir (CSV Line 28)',
+                    'note' => 'Saldo Kas Akhir & Surplus Kas (CSV Line 28)',
                 ],
-                'jumlahAnggota' => [
-                    'val' => $activeMemberCount,
-                    'growth' => $activeMemberCount . ' Anggota Aktif Terdaftar (Live DB)',
+                'shuDibagikan' => [
+                    'val' => '15,0',
+                    'raw' => '15.000.000',
+                    'growth' => 'SHU Bersih Dibagikan (2025)',
+                ],
+                'shuCadangan' => [
+                    'val' => '3,75',
+                    'raw' => '3.750.000',
+                    'growth' => 'Pemupukan Dana Cadangan (25%)',
                 ],
             ],
             'komposisiAset' => [

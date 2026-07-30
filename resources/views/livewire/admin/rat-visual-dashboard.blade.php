@@ -137,38 +137,13 @@
             </div>
         </div>
 
-        {{-- KPI 3: SURPLUS KAS BERSIH --}}
-        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
-            <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
-                <i class='bx bx-coin-stack'></i>
-            </div>
-            <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Surplus Kas Bersih</p>
-                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                    Rp {{ $dashboard['kpi']['surplusKas']['val'] }} Jt
-                </h3>
-                <span class="text-[10px] text-slate-400 block font-medium">Rp {{ $dashboard['kpi']['surplusKas']['raw'] }}</span>
-            </div>
-
-            {{-- Floating Hover Tooltip --}}
-            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
-                <div class="font-bold text-amber-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
-                    <i class='bx bx-info-circle text-sm'></i> Surplus Kas Bersih:
-                </div>
-                <p class="text-[10px] text-slate-300">
-                    Kas Masuk Internal (Rp 140,2 Jt) dikurangi Total Kas Keluar (Rp 121,2 Jt) = Surplus Kas Bersih Rp 19.015.051.
-                </p>
-                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
-            </div>
-        </div>
-
-        {{-- KPI 4: SALDO KAS AKHIR --}}
+        {{-- KPI 3: SALDO KAS AKHIR & SURPLUS --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
             <div class="w-12 h-12 rounded-xl bg-teal-50 dark:bg-teal-500/10 flex items-center justify-center text-teal-600 dark:text-teal-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
                 <i class='bx bx-wallet'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Saldo Kas Akhir</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Saldo Kas Akhir & Surplus</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
                     Rp {{ $dashboard['kpi']['kasBank']['val'] }} Jt
                 </h3>
@@ -180,37 +155,60 @@
             {{-- Floating Hover Tooltip --}}
             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
                 <div class="font-bold text-teal-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
-                    <i class='bx bx-info-circle text-sm'></i> Asal Saldo Kas Akhir (CSV):
+                    <i class='bx bx-info-circle text-sm'></i> Saldo Kas Akhir & Surplus Kas:
                 </div>
-                <ul class="space-y-1 text-[10px] text-slate-300">
-                    <li>• Saldo Kas Awal (Mei): <strong>Rp 6.964.859</strong></li>
-                    <li>• Total Surplus Kas: <strong>Rp 30.499.118</strong></li>
-                    <li class="border-t border-slate-700 pt-1 text-teal-300 font-bold">• Total Kas Akhir (Desember): <strong>Rp 37.463.977</strong></li>
-                </ul>
+                <p class="text-[10px] text-slate-300">
+                    Total Saldo Kas Akhir & Surplus Operasional Kas (Arus Kas CSV Line 28) per 31 Desember 2025: <strong>Rp 30.499.118</strong>.
+                </p>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
         </div>
 
-        {{-- KPI 5: JUMLAH ANGGOTA --}}
+        {{-- KPI 4: SHU DIBAGIKAN --}}
         <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
-            <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
-                <i class='bx bx-group'></i>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
+                <i class='bx bx-gift'></i>
             </div>
             <div>
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Jumlah Anggota</p>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">SHU Dibagikan</p>
                 <h3 class="text-lg font-bold text-slate-800 dark:text-white">
-                    {{ $dashboard['kpi']['jumlahAnggota']['val'] }} Orang
+                    Rp {{ $dashboard['kpi']['shuDibagikan']['val'] }} Jt
                 </h3>
-                <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">{{ $dashboard['kpi']['jumlahAnggota']['growth'] }}</span>
+                <span class="text-[10px] text-amber-600 dark:text-amber-400 font-semibold">Rp {{ $dashboard['kpi']['shuDibagikan']['raw'] }}</span>
+            </div>
+
+            {{-- Floating Hover Tooltip --}}
+            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
+                <div class="font-bold text-amber-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
+                    <i class='bx bx-info-circle text-sm'></i> Alokasi SHU Dibagikan:
+                </div>
+                <p class="text-[10px] text-slate-300">
+                    Total SHU Bersih 2025 yang dibagikan kepada anggota (30% simpanan & 25% jasa usaha), pengurus (10%), serta dana pendidikan & sosial (10%).
+                </p>
+                <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
+            </div>
+        </div>
+
+        {{-- KPI 5: SHU CADANGAN KOPERASI --}}
+        <div class="bg-white dark:bg-darkCard p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-4 relative group cursor-pointer">
+            <div class="w-12 h-12 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600 dark:text-purple-400 text-2xl shrink-0 group-hover:scale-110 transition-transform">
+                <i class='bx bx-shield-quarter'></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">SHU Cadangan (25%)</p>
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                    Rp {{ $dashboard['kpi']['shuCadangan']['val'] }} Jt
+                </h3>
+                <span class="text-[10px] text-purple-600 dark:text-purple-400 font-semibold">Rp {{ $dashboard['kpi']['shuCadangan']['raw'] }}</span>
             </div>
 
             {{-- Floating Hover Tooltip --}}
             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[11px] rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none z-50">
                 <div class="font-bold text-purple-300 border-b border-slate-700 pb-1 mb-1.5 flex items-center gap-1">
-                    <i class='bx bx-info-circle text-sm'></i> Asal Sumber Anggota:
+                    <i class='bx bx-info-circle text-sm'></i> Dana Cadangan Koperasi:
                 </div>
                 <p class="text-[10px] text-slate-300">
-                    Data 131 anggota aktif terdaftar Koperasi Konsumen Syariah Berkah Solusi Madani (Live System Database).
+                    Alokasi 25% SHU Bersih yang dipupuk sebagai Dana Cadangan Modal Koperasi Bermadani.
                 </p>
                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
             </div>
