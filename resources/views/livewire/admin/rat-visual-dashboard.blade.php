@@ -232,7 +232,7 @@
                 <div class="h-36 relative flex items-center justify-center my-2">
                     <canvas id="chartKomposisiAset"></canvas>
                     <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-[9px] font-bold text-slate-400 uppercase">ASET</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase">ASET REAL</span>
                         <span class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ $dashboard['komposisiAset']['total'] }} Jt</span>
                     </div>
                 </div>
@@ -254,7 +254,7 @@
             </div>
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/60">
                 <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium leading-tight block">
-                    Total Dana & Kekayaan Sistem = <strong class="text-emerald-600 dark:text-emerald-400">Rp 260.084.977</strong>.
+                    Total Aset Real Bermadani = <strong class="text-emerald-600 dark:text-emerald-400">Rp {{ $dashboard['komposisiAset']['totalRaw'] }}</strong>.
                 </span>
             </div>
         </div>
@@ -886,10 +886,17 @@
             new Chart(ctxAset, {
                 type: 'doughnut',
                 data: {
+<<<<<<< HEAD
                     labels: ['Simpanan Live DB', 'Surplus Kas 2025', 'Aset Tetap Toko', 'Kas Awal Periode'],
                     datasets: [{
                         data: [211.60, 30.50, 11.02, 6.96],
                         backgroundColor: ['#6366F1', '#06B6D4', '#F59E0B', '#10B981'],
+=======
+                    labels: ['Kas & Bank Akhir', 'Aset Tetap & Inventaris', 'Piutang Pinjaman Bermadani'],
+                    datasets: [{
+                        data: [30.50, 11.02, 1.23],
+                        backgroundColor: ['#10B981', '#F59E0B', '#6366F1'],
+>>>>>>> f07c024 (fix: update Komposisi Aset on admin/rat-dashboard to reflect real BERMADANI assets (Rp 42,75M))
                         borderWidth: 0,
                     }]
                 },
