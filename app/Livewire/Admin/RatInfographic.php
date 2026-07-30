@@ -39,12 +39,12 @@ class RatInfographic extends Component
             $totalSimpanan = 195190000;
         }
 
-        // 2. CSV Parser: Parse docs/data/ARUS KAS 25.csv (EXACT VALUES)
+        // 2. CSV Parser: Parse docs/data/ARUS KAS 25.csv
         $kasMasuk = 151711378.0;
         $kasKeluar = 121212260.0;
         $saldoKasAwal = 6964859.0;
-        $kasBankRiil = 30499118.0; // EXACT SALDO KAS AKHIR CSV LINE 28
-        $asetTetap = 11021000.0;
+        $kasBankRiil = 30499118.0; // SALDO KAS AKHIR CSV LINE 28
+        $asetTetap = 11021000.0;   // ASET TETAP CSV LINE 13
 
         $csvPath = base_path('docs/data/ARUS KAS 25.csv');
         if (file_exists($csvPath)) {
@@ -56,29 +56,36 @@ class RatInfographic extends Component
                 if (str_contains($label, 'SALDO KAS AKHIR')) {
                     $val = (float) preg_replace('/[^0-9]/', '', $cols[1] ?? '');
                     if ($val > 0) $kasBankRiil = $val;
+                } elseif (str_contains($label, 'ASET TETAP')) {
+                    $raw = end($cols);
+                    if (empty($raw)) {
+                        $raw = $cols[count($cols) - 2] ?? '';
+                    }
+                    $val = (float) preg_replace('/[^0-9]/', '', $raw);
+                    if ($val > 0) $asetTetap = $val;
                 } elseif (str_contains($label, 'TOTAL KAS MASUK')) {
                     $val = (float) preg_replace('/[^0-9]/', '', $cols[1] ?? '');
                     if ($val > 0) $kasMasuk = $val;
                 } elseif (str_contains($label, 'TOTAL KAS KELUAR')) {
                     $val = (float) preg_replace('/[^0-9]/', '', $cols[1] ?? '');
                     if ($val > 0) $kasKeluar = $val;
-                } elseif (str_contains($label, 'SALDO KAS AWAL')) {
-                    $val = (float) preg_replace('/[^0-9]/', '', $cols[1] ?? '');
-                    if ($val > 0) $saldoKasAwal = $val;
                 }
             }
         }
 
-        $surplusKas = $kasBankRiil; // 30.499.118
+        $surplusKas = $kasBankRiil;
 
-        // 3. MINUS / SELISIH KAS (DANAN TIDAK ADA / PIUTANG BERJALAN ANGGOTA)
-        // Total Simpanan (Rp 195.190.000) - Saldo Kas Akhir (Rp 30.499.118) = Rp 164.690.882
-        $selisihMinus = $totalSimpanan - $kasBankRiil; // 164.690.882
+        // 3. KALKULASI ASET RIIL & DEFISIT MINUS
+        // Total Aset Riil Fisik (Kas + Inventaris Aset Tetap CSV) = Rp 30.499.118 + Rp 11.021.000 = Rp 41.520.118
+        $totalAsetRiil = $kasBankRiil + $asetTetap; // 41.520.118
 
-        // Aset Seimbang = Kas Riil (30.499.118) + Selisih Minus / Piutang (164.690.882) = 195.190.000
-        $totalAset = $kasBankRiil + $selisihMinus;
+        // Defisit Kas / Dana Minus = Total Simpanan (195.190.000) - Total Aset Riil (41.520.118) = Rp 153.669.882
+        $defisitMinus = $totalSimpanan - $totalAsetRiil; // 153.669.882
 
-        // 4. RAT Session & SHU Distribution
+        // Balance Total Assets (termasuk piutang pinjaman) = 195.190.000
+        $totalAsetBalancing = $totalSimpanan;
+
+        // 4. RAT Session & SHU
         $ratSession = RatSession::where('year', 2025)->first();
         $shuMember = $ratSession ? (float) $ratSession->total_member_shu : 15000000.0;
         $retainedModal = max(0, $surplusKas - $shuMember);
@@ -95,8 +102,9 @@ class RatInfographic extends Component
             'surplusKas' => $surplusKas,
             'kasBankRiil' => $kasBankRiil,
             'asetTetap' => $asetTetap,
-            'selisihMinus' => $selisihMinus,
-            'totalAset' => $totalAset,
+            'totalAsetRiil' => $totalAsetRiil,
+            'defisitMinus' => $defisitMinus,
+            'totalAsetBalancing' => $totalAsetBalancing,
             'shuMember' => $shuMember,
             'retainedModal' => $retainedModal,
         ];
