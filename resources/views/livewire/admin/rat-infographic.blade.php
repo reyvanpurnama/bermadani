@@ -18,7 +18,7 @@
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Infografis & Visualisasi RAT 2025</h1>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">
-                Visualisasi data laporan keuangan 4 lembar berukuran A4 untuk presentasi Rapat Anggota Tahunan Koperasi Bermadani.
+                Visualisasi data laporan keuangan 4 lembar A4 berbasis data real-time database & CSV Arus Kas 2025 Koperasi Bermadani.
             </p>
         </div>
 
@@ -97,7 +97,7 @@
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-800 dark:text-white uppercase tracking-tight">KOPERASI BERMADANI</h2>
                         <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400">DASHBOARD KINERJA KEUANGAN TAHUN 2025</p>
-                        <p class="text-[10px] text-slate-500">Ringkasan Laporan RAT • 31 Juli 2026</p>
+                        <p class="text-[10px] text-slate-500">Ringkasan Laporan RAT Real-time • 31 Juli 2026</p>
                     </div>
                 </div>
                 <div class="text-left md:text-right bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800">
@@ -114,11 +114,11 @@
                             <i class='bx bx-wallet-alt'></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase">Simpanan Aktif</p>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Simpanan Anggota</p>
                             <h4 class="text-base font-bold text-slate-800 dark:text-white">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</h4>
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-500">Dari {{ $activeCount }} Anggota Aktif</p>
+                    <p class="text-[10px] text-slate-500">Dari {{ $activeCount }} Anggota Aktif DB</p>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700">
@@ -127,11 +127,11 @@
                             <i class='bx bx-trending-up'></i>
                         </div>
                         <div>
-                            <p class="text-[10px] font-bold text-emerald-600 uppercase">Laba Bersih 2025</p>
-                            <h4 class="text-base font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($netProfit, 0, ',', '.') }}</h4>
+                            <p class="text-[10px] font-bold text-emerald-600 uppercase">Laba Operasional 2025</p>
+                            <h4 class="text-base font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($surplusKas, 0, ',', '.') }}</h4>
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-500">Hasil Operasional Koperasi</p>
+                    <p class="text-[10px] text-slate-500">Surplus Arus Kas 2025</p>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700">
@@ -144,7 +144,7 @@
                             <h4 class="text-base font-bold text-amber-600 dark:text-amber-400">Rp {{ number_format($shuMember, 0, ',', '.') }}</h4>
                         </div>
                     </div>
-                    <p class="text-[10px] text-slate-500">49,18% dari Laba Bersih</p>
+                    <p class="text-[10px] text-slate-500">{{ round(($shuMember / max(1, $surplusKas)) * 100, 1) }}% dari Laba Bersih</p>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200/60 dark:border-slate-700">
@@ -172,30 +172,30 @@
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="font-medium text-slate-600 dark:text-slate-300">Simpanan Wajib (Basis SHU)</span>
-                                <span class="font-bold text-emerald-600">Rp {{ number_format($simwa, 0, ',', '.') }} (80,0%)</span>
+                                <span class="font-bold text-emerald-600">Rp {{ number_format($simwa, 0, ',', '.') }} ({{ round(($simwa/$totalSimpanan)*100, 1) }}%)</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: 80%"></div>
+                                <div class="bg-emerald-500 h-2.5 rounded-full" style="width: {{ round(($simwa/$totalSimpanan)*100, 1) }}%"></div>
                             </div>
                         </div>
 
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="font-medium text-slate-600 dark:text-slate-300">Simpanan Pokok</span>
-                                <span class="font-bold text-indigo-600">Rp {{ number_format($simpok, 0, ',', '.') }} (11,3%)</span>
+                                <span class="font-bold text-indigo-600">Rp {{ number_format($simpok, 0, ',', '.') }} ({{ round(($simpok/$totalSimpanan)*100, 1) }}%)</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-indigo-500 h-2.5 rounded-full" style="width: 11.3%"></div>
+                                <div class="bg-indigo-500 h-2.5 rounded-full" style="width: {{ round(($simpok/$totalSimpanan)*100, 1) }}%"></div>
                             </div>
                         </div>
 
                         <div>
                             <div class="flex justify-between text-xs mb-1">
                                 <span class="font-medium text-slate-600 dark:text-slate-300">Simpanan Sukarela</span>
-                                <span class="font-bold text-amber-600">Rp {{ number_format($simsuka, 0, ',', '.') }} (8,7%)</span>
+                                <span class="font-bold text-amber-600">Rp {{ number_format($simsuka, 0, ',', '.') }} ({{ round(($simsuka/$totalSimpanan)*100, 1) }}%)</span>
                             </div>
                             <div class="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-amber-500 h-2.5 rounded-full" style="width: 8.7%"></div>
+                                <div class="bg-amber-500 h-2.5 rounded-full" style="width: {{ round(($simsuka/$totalSimpanan)*100, 1) }}%"></div>
                             </div>
                         </div>
                     </div>
@@ -204,20 +204,20 @@
                 {{-- Quadrant 2: Arus Kas 2025 --}}
                 <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200/60 dark:border-slate-700">
                     <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase mb-3 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> 2. Ringkasan Arus Kas 2025
+                        <span class="w-2 h-2 rounded-full bg-blue-500"></span> 2. Ringkasan Arus Kas 2025 (CSV Real)
                     </h3>
                     <div class="space-y-3">
                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 flex justify-between items-center">
                             <span class="text-xs text-slate-600 dark:text-slate-300">Total Arus Masuk (Income)</span>
-                            <span class="text-xs font-bold text-emerald-600">+Rp {{ number_format($income, 0, ',', '.') }}</span>
+                            <span class="text-xs font-bold text-emerald-600">+Rp {{ number_format($kasMasuk, 0, ',', '.') }}</span>
                         </div>
                         <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-200/60 dark:border-slate-700 flex justify-between items-center">
                             <span class="text-xs text-slate-600 dark:text-slate-300">Total Arus Keluar (Expense)</span>
-                            <span class="text-xs font-bold text-rose-600">-Rp {{ number_format($expense, 0, ',', '.') }}</span>
+                            <span class="text-xs font-bold text-rose-600">-Rp {{ number_format($kasKeluar, 0, ',', '.') }}</span>
                         </div>
                         <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-300 dark:border-emerald-800 flex justify-between items-center">
-                            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">Surplus Kas Bersih</span>
-                            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($netProfit, 0, ',', '.') }}</span>
+                            <span class="text-xs font-bold text-emerald-800 dark:text-emerald-300">Surplus Kas Bersih 2025</span>
+                            <span class="text-xs font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($surplusKas, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -231,12 +231,12 @@
                         <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-200 text-center">
                             <p class="text-[10px] font-bold text-emerald-700 uppercase">SHU Dibagikan</p>
                             <h4 class="text-sm font-extrabold text-emerald-600 mt-1">Rp {{ number_format($shuMember, 0, ',', '.') }}</h4>
-                            <p class="text-[9px] text-emerald-700/80 mt-1 font-semibold">49,18% ke Anggota</p>
+                            <p class="text-[9px] text-emerald-700/80 mt-1 font-semibold">{{ round(($shuMember/max(1, $surplusKas))*100, 1) }}% ke Anggota</p>
                         </div>
                         <div class="p-4 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-200 text-center">
                             <p class="text-[10px] font-bold text-blue-700 uppercase">Modal Ditahan</p>
                             <h4 class="text-sm font-extrabold text-blue-600 mt-1">Rp {{ number_format($retainedModal, 0, ',', '.') }}</h4>
-                            <p class="text-[9px] text-blue-700/80 mt-1 font-semibold">50,82% Modal Usaha</p>
+                            <p class="text-[9px] text-blue-700/80 mt-1 font-semibold">{{ round(($retainedModal/max(1, $surplusKas))*100, 1) }}% Modal Usaha</p>
                         </div>
                     </div>
                 </div>
@@ -272,7 +272,7 @@
         @if($page == 2)
             <div class="border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">LAPORAN POSISI KEUANGAN (NERACA) & EKUITAS ANGGOTA AKTIF</h2>
-                <p class="text-xs text-slate-500">Per 31 Desember 2025 • Fokus 113 Anggota Aktif Terdaftar</p>
+                <p class="text-xs text-slate-500">Per 31 Desember 2025 • Real-time Query Database & CSV Arus Kas</p>
             </div>
 
             {{-- Neraca Side-by-Side Table --}}
@@ -280,22 +280,26 @@
                 {{-- ASET --}}
                 <div class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
                     <div class="bg-indigo-600 text-white px-4 py-2.5 font-bold text-xs flex justify-between items-center">
-                        <span>ASET KOPERASI</span>
+                        <span>ASET KOPERASI (AKTIVA)</span>
                         <span>NOMINAL (RP)</span>
                     </div>
                     <div class="p-4 space-y-3 text-xs">
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Lancar (Aktiva)</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider">Aset Lancar & Aset Tetap</div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
-                            <span class="text-slate-600 dark:text-slate-400">Kas & Bank (Uang Tunai Riil)</span>
-                            <span class="font-mono font-bold text-emerald-600">Rp 35.190.000</span>
+                            <span class="text-slate-600 dark:text-slate-400">Kas & Bank (Saldo Akhir CSV)</span>
+                            <span class="font-mono font-bold text-emerald-600">Rp {{ number_format($kasBankRiil, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
-                            <span class="text-slate-600 dark:text-slate-400">Piutang Pinjaman Anggota</span>
-                            <span class="font-mono font-bold text-indigo-600">Rp 160.000.000</span>
+                            <span class="text-slate-600 dark:text-slate-400">Aset Tetap & Inventaris Toko</span>
+                            <span class="font-mono font-bold text-amber-600">Rp {{ number_format($asetTetap, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
+                            <span class="text-slate-600 dark:text-slate-400">Piutang Pinjaman Anggota (DB Loan)</span>
+                            <span class="font-mono font-bold text-indigo-600">Rp {{ number_format($piutangPinjaman, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between bg-indigo-50 dark:bg-indigo-950/30 p-2.5 rounded-xl font-bold text-indigo-700 dark:text-indigo-300 mt-4">
                             <span>TOTAL ASET KOPERASI</span>
-                            <span class="font-mono">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</span>
+                            <span class="font-mono">Rp {{ number_format($totalAset, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
@@ -303,7 +307,7 @@
                 {{-- LIABILITAS & EKUITAS --}}
                 <div class="border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
                     <div class="bg-emerald-600 text-white px-4 py-2.5 font-bold text-xs flex justify-between items-center">
-                        <span>LIABILITAS & EKUITAS</span>
+                        <span>LIABILITAS & EKUITAS (PASIVA)</span>
                         <span>NOMINAL (RP)</span>
                     </div>
                     <div class="p-4 space-y-3 text-xs">
@@ -313,7 +317,7 @@
                             <span class="font-mono font-semibold text-slate-400">Rp 0</span>
                         </div>
 
-                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider pt-2">Ekuitas (Modal Anggota Aktif)</div>
+                        <div class="font-bold text-slate-700 dark:text-slate-300 uppercase text-[10px] tracking-wider pt-2">Ekuitas (Modal {{ $activeCount }} Anggota Aktif)</div>
                         <div class="flex justify-between pl-3 border-b border-slate-100 dark:border-slate-700/50 pb-2">
                             <span class="text-slate-600 dark:text-slate-400">Simpanan Pokok Aktif</span>
                             <span class="font-mono font-semibold">Rp {{ number_format($simpok, 0, ',', '.') }}</span>
@@ -340,7 +344,7 @@
                 <span class="flex items-center gap-2">
                     <i class='bx bx-check-circle text-xl text-emerald-600'></i> KONDISI NERACA SEIMBANG (BALANCE)
                 </span>
-                <span class="font-mono text-sm">Rp {{ number_format($totalSimpanan, 0, ',', '.') }}</span>
+                <span class="font-mono text-sm">Rp {{ number_format($totalAset, 0, ',', '.') }}</span>
             </div>
         @endif
 
@@ -348,26 +352,26 @@
         @if($page == 3)
             <div class="border-b border-slate-200 dark:border-slate-700 pb-4 mb-4">
                 <h2 class="text-lg font-bold text-slate-800 dark:text-white">LAPORAN SHU & TRANSPARANSI DISTRIBUSI BAGI HASIL ANGGOTA</h2>
-                <p class="text-xs text-slate-500">Formula Pembagian Adil Berbasis Simpanan Wajib Anggota Aktif</p>
+                <p class="text-xs text-slate-500">Formula Pembagian Adil Berbasis Simpanan Wajib {{ $activeCount }} Anggota Aktif</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-4 bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-200 dark:border-emerald-800 text-center">
                     <p class="text-[10px] font-bold text-emerald-700 uppercase">Laba Bersih 2025</p>
-                    <h3 class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">Rp {{ number_format($netProfit, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] text-slate-500 mt-1">Surplus Operasional Koperasi</p>
+                    <h3 class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">Rp {{ number_format($surplusKas, 0, ',', '.') }}</h3>
+                    <p class="text-[10px] text-slate-500 mt-1">Surplus Arus Kas Operasional 2025</p>
                 </div>
 
                 <div class="p-4 bg-amber-50 dark:bg-amber-950/40 rounded-2xl border border-amber-200 dark:border-amber-800 text-center">
                     <p class="text-[10px] font-bold text-amber-700 uppercase">SHU Dibagikan</p>
                     <h3 class="text-xl font-extrabold text-amber-600 dark:text-amber-400 mt-1">Rp {{ number_format($shuMember, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] text-slate-500 mt-1">49,18% untuk 113 Anggota</p>
+                    <p class="text-[10px] text-slate-500 mt-1">{{ round(($shuMember/max(1, $surplusKas))*100, 1) }}% untuk {{ $activeCount }} Anggota</p>
                 </div>
 
                 <div class="p-4 bg-blue-50 dark:bg-blue-950/40 rounded-2xl border border-blue-200 dark:border-blue-800 text-center">
                     <p class="text-[10px] font-bold text-blue-700 uppercase">Modal Ditahan</p>
                     <h3 class="text-xl font-extrabold text-blue-600 dark:text-blue-400 mt-1">Rp {{ number_format($retainedModal, 0, ',', '.') }}</h3>
-                    <p class="text-[10px] text-slate-500 mt-1">50,82% Cadangan Usaha</p>
+                    <p class="text-[10px] text-slate-500 mt-1">{{ round(($retainedModal/max(1, $surplusKas))*100, 1) }}% Cadangan Usaha</p>
                 </div>
             </div>
 
@@ -378,7 +382,7 @@
                 </h3>
                 <div class="p-4 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-mono text-slate-700 dark:text-slate-300">
                     <p class="font-bold text-indigo-600 mb-1">SHU Anggota = (Simpanan Wajib Anggota ÷ Rp {{ number_format($simwa, 0, ',', '.') }}) × Rp {{ number_format($shuMember, 0, ',', '.') }}</p>
-                    <p class="text-[11px] text-slate-500 font-sans mt-2">Semakin besar partisipasi simpanan wajib anggota aktif, semakin besar porsi SHU yang diterima.</p>
+                    <p class="text-[11px] text-slate-500 font-sans mt-2">Semakin besar partisipasi simpanan wajib {{ $activeCount }} anggota aktif, semakin besar porsi SHU yang diterima.</p>
                 </div>
             </div>
         @endif
@@ -420,16 +424,22 @@
             {{-- CALK 10 Poin --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">1. Profil:</span> Melayani 113 Anggota Aktif terdaftar.
+                    <span class="font-bold text-indigo-600">1. Profil:</span> Melayani {{ $activeCount }} Anggota Aktif terdaftar.
                 </div>
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
                     <span class="font-bold text-indigo-600">2. Standar:</span> Mengacu pada SAK ETAP Koperasi.
                 </div>
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">3. Kas & Bank:</span> Terpusat di rekening korporat.
+                    <span class="font-bold text-indigo-600">3. Kas & Bank:</span> Rp {{ number_format($kasBankRiil, 0, ',', '.') }} saldo kas akhir dari CSV.
                 </div>
                 <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <span class="font-bold text-indigo-600">4. Modal Aktif:</span> Rp {{ number_format($totalSimpanan, 0, ',', '.') }} total simpanan.
+                    <span class="font-bold text-indigo-600">4. Aset Tetap:</span> Rp {{ number_format($asetTetap, 0, ',', '.') }} inventaris & alat kantor dari CSV.
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <span class="font-bold text-indigo-600">5. Piutang Pinjaman:</span> Rp {{ number_format($piutangPinjaman, 0, ',', '.') }} pinjaman anggota dari DB Loan.
+                </div>
+                <div class="p-3 bg-white dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
+                    <span class="font-bold text-indigo-600">6. Ekuitas Anggota:</span> Rp {{ number_format($totalSimpanan, 0, ',', '.') }} total simpanan anggota aktif.
                 </div>
             </div>
 
