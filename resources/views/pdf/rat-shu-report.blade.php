@@ -224,22 +224,18 @@
     <div class="summary-card">
         <table class="summary-table">
             <tr>
-                <td style="width: 25%;">
+                <td style="width: 33.33%;">
                     <div class="label-sm">Total Laba Bersih RAT</div>
                     <div class="value-lg">Rp {{ number_format($session->total_net_profit, 0, ',', '.') }}</div>
                 </td>
-                <td style="width: 25%;">
+                <td style="width: 33.33%;">
                     <div class="label-sm">Alokasi SHU Anggota</div>
                     <div class="value-lg value-highlight">Rp {{ number_format($session->total_member_shu, 0, ',', '.') }}</div>
                     <div style="font-size: 7.5pt; color: #475569;">({{ $session->total_net_profit > 0 ? round(($session->total_member_shu / $session->total_net_profit) * 100, 1) : 0 }}% dari Laba Bersih)</div>
                 </td>
-                <td style="width: 25%;">
+                <td style="width: 33.33%;">
                     <div class="label-sm">Pool Jasa Simpanan ({{ $session->jasa_simpanan_portion }}%)</div>
                     <div class="value-lg">Rp {{ number_format($totalJasaSimpananPool, 0, ',', '.') }}</div>
-                </td>
-                <td style="width: 25%;">
-                    <div class="label-sm">Pool Jasa Usaha ({{ $session->jasa_usaha_portion }}%)</div>
-                    <div class="value-lg">Rp {{ number_format($totalJasaUsahaPool, 0, ',', '.') }}</div>
                 </td>
             </tr>
         </table>
@@ -250,9 +246,8 @@
         <div class="formula-title">Panduan Rumus Perhitungan SHU (Kaji Validasi)</div>
         <ul class="formula-list">
             <li><strong>Jasa Simpanan (Rp)</strong> = (Total Simpanan Anggota ÷ Total Simpanan Seluruh Anggota Eligible) × Pool Jasa Simpanan.</li>
-            <li><strong>Jasa Usaha (Rp)</strong> = (Total Transaksi Anggota ÷ Total Transaksi Seluruh Anggota Eligible) × Pool Jasa Usaha.</li>
             <li><strong>Porsi (%)</strong> = Persentase kontribusi simpanan individu anggota terhadap total akumulasi simpanan koperasi per 31 Desember {{ $session->year }}.</li>
-            <li><strong>Total SHU Diterima</strong> = Jasa Simpanan + Jasa Usaha.</li>
+            <li><strong>Total SHU Diterima</strong> = Jasa Simpanan.</li>
         </ul>
     </div>
 
@@ -262,15 +257,15 @@
             <tr>
                 <th style="width: 3%;">No</th>
                 <th style="width: 8%;">No. Anggota</th>
-                <th style="width: 18%;">Nama Anggota</th>
-                <th style="width: 13%;">Unit / Prodi</th>
+                <th style="width: 17%;">Nama Anggota</th>
+                <th style="width: 12%;">Unit / Prodi</th>
                 <th style="width: 10%;">Simp. Pokok (Rp)</th>
                 <th style="width: 10%;">Simp. Wajib (Rp)</th>
                 <th style="width: 10%;">Total Simpanan</th>
                 <th style="width: 6%;">Porsi (%)</th>
                 <th style="width: 8%;">Jasa Simpanan</th>
-                <th style="width: 7%;">Jasa Usaha</th>
-                <th style="width: 9%;">TOTAL SHU (Rp)</th>
+                <th style="width: 8%;">TOTAL SHU (Rp)</th>
+                <th style="width: 8%;">Tanda Tangan</th>
             </tr>
         </thead>
         <tbody>
@@ -291,8 +286,10 @@
                     <td class="text-right font-mono font-bold">{{ number_format($totalSimp, 0, ',', '.') }}</td>
                     <td class="text-center font-mono">{{ number_format((float) $dist->portion_percentage, 2, ',', '.') }}%</td>
                     <td class="text-right font-mono">{{ number_format((float) $dist->jasa_simpanan_amount, 0, ',', '.') }}</td>
-                    <td class="text-right font-mono">{{ number_format((float) $dist->jasa_usaha_amount, 0, ',', '.') }}</td>
                     <td class="text-right font-mono font-bold text-emerald">Rp {{ number_format((float) $dist->shu_amount, 0, ',', '.') }}</td>
+                    <td class="font-mono text-muted" style="font-size: 7.5pt; {{ ($index + 1) % 2 === 0 ? 'text-align: right; padding-right: 8px;' : 'text-align: left; padding-left: 8px;' }}">
+                        {{ $index + 1 }}. .........
+                    </td>
                 </tr>
             @empty
                 <tr>
@@ -308,8 +305,8 @@
                 <td class="text-right font-mono">Rp {{ number_format($totalSimpananPool, 0, ',', '.') }}</td>
                 <td class="text-center font-mono">100.00%</td>
                 <td class="text-right font-mono">Rp {{ number_format($totalJasaSimpananPool, 0, ',', '.') }}</td>
-                <td class="text-right font-mono">Rp {{ number_format($totalJasaUsahaPool, 0, ',', '.') }}</td>
                 <td class="text-right font-mono text-emerald">Rp {{ number_format($totalShuPool, 0, ',', '.') }}</td>
+                <td class="text-center font-mono"></td>
             </tr>
         </tfoot>
     </table>
