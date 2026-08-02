@@ -205,7 +205,7 @@
     <table class="header-table">
         <tr>
             <td>
-                <div class="org-title">Koperasi Karyawan Bermadani UMB</div>
+                <div class="org-title">KOPERASI KONSUMEN SYARIAH BERMADANI UNIVERSITAS MUHAMMADIYAH BANDUNG</div>
                 <div class="org-subtitle">Laporan Eksekutif Perhitungan dan Alokasi SHU Anggota</div>
             </td>
             <td style="text-align: right;">
@@ -342,7 +342,7 @@
     </table>
 
     <div class="footer">
-        Dicetak otomatis oleh Sistem Informasi Koperasi Bermadani UMB pada {{ $generatedAt }} WIB • Halaman 1
+        Dicetak otomatis oleh Sistem Informasi Koperasi Konsumen Syariah Bermadani Universitas Muhammadiyah Bandung pada {{ $generatedAt }} WIB
     </div>
 
 </body>
