@@ -22,6 +22,10 @@ class RatSessionManagement extends Component
     public $memberAllocationPercentage = 49.18;
     public $notes;
 
+    public $joinDateCutoff;
+    public $excludedMemberIds = [];
+    public $includedMemberIds = [];
+
     public $selectedSessionId;
     public $searchMember = '';
     public $filterStatus = 'ALL'; // ALL, ACTIVE
@@ -103,6 +107,9 @@ class RatSessionManagement extends Component
         $this->totalMemberShu = $shu;
         $this->memberAllocationPercentage = (float) $session->member_allocation_percentage;
         $this->notes = $session->notes;
+        $this->joinDateCutoff = $session->join_date_cutoff ? $session->join_date_cutoff->format('Y-m-d') : null;
+        $this->excludedMemberIds = $session->excluded_member_ids ?? [];
+        $this->includedMemberIds = $session->included_member_ids ?? [];
     }
 
     public function getActiveSessionProperty()
@@ -112,11 +119,44 @@ class RatSessionManagement extends Component
 
     public function getShuSummaryProperty()
     {
-        // Calculate active members total modal sendiri (Simpanan Pokok + Wajib)
-        $activeMembers = Member::where('status', 'ACTIVE')->get();
-        $totalSimwa = (float) $activeMembers->sum(function ($m) {
-            return (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0);
-        });
+        $session = $this->activeSession;
+
+        if ($session && $session->status === 'FINALIZED') {
+            $totalSimwa = (float) $session->total_simpanan_wajib_snapshot;
+            // For finalized session, calculate the historic breakdown of eligible members
+            $cutoff = $session->join_date_cutoff;
+            $query = Member::whereIn('id', function($q) use ($session) {
+                $q->select('member_id')->from('member_shu_distributions')
+                  ->where('rat_session_id', $session->id)
+                  ->where('portion_percentage', '>', 0);
+            });
+            $eligibleMembers = $query->get();
+
+            $totalSimpok = (float) $eligibleMembers->sum(function ($m) use ($cutoff) {
+                return $this->getMemberSavingsAtCutoff($m, 'POKOK', $cutoff);
+            });
+            $totalSimwaReal = (float) $eligibleMembers->sum(function ($m) use ($cutoff) {
+                return $this->getMemberSavingsAtCutoff($m, 'WAJIB', $cutoff);
+            });
+            $activeCount = MemberShuDistribution::where('rat_session_id', $session->id)
+                ->where('portion_percentage', '>', 0)
+                ->count();
+        } else {
+            // Compute based on eligible members
+            $eligibleMembers = Member::all()->filter(function ($m) {
+                return $this->isMemberEligible($m->id, $m->joinDate, $m->status);
+            });
+
+            $totalSimpok = (float) $eligibleMembers->sum(function ($m) {
+                return $this->getMemberSavingsAtCutoff($m, 'POKOK', $this->joinDateCutoff);
+            });
+            $totalSimwaReal = (float) $eligibleMembers->sum(function ($m) {
+                return $this->getMemberSavingsAtCutoff($m, 'WAJIB', $this->joinDateCutoff);
+            });
+            $totalSimwa = $totalSimpok + $totalSimwaReal;
+            $activeCount = $eligibleMembers->count();
+        }
+
         $totalSimwa = max(1, $totalSimwa); // avoid div by 0
 
         $totalMemberShu = (float) ($this->totalMemberShu ?: 0);
@@ -124,11 +164,92 @@ class RatSessionManagement extends Component
         $retainedAmount = max(0, $totalNetProfit - $totalMemberShu);
 
         return [
-            'activeMemberCount' => $activeMembers->count(),
+            'activeMemberCount' => $activeCount,
             'totalSimwa' => $totalSimwa,
+            'totalSimpok' => $totalSimpok,
+            'totalSimwaReal' => $totalSimwaReal,
             'totalMemberShu' => $totalMemberShu,
             'retainedAmount' => $retainedAmount,
         ];
+    }
+
+    public function isMemberEligible($memberId, $joinDate, $status = 'ACTIVE')
+    {
+        if (in_array($memberId, $this->includedMemberIds)) {
+            return true;
+        }
+        if (in_array($memberId, $this->excludedMemberIds)) {
+            return false;
+        }
+        if ($status !== 'ACTIVE') {
+            return false;
+        }
+        if ($this->joinDateCutoff && $joinDate) {
+            $joinDateTime = \Carbon\Carbon::parse($joinDate);
+            $cutoffDateTime = \Carbon\Carbon::parse($this->joinDateCutoff)->endOfDay();
+            if ($joinDateTime->gt($cutoffDateTime)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getMemberSavingsAtCutoff($member, $type, $cutoffDate = null)
+    {
+        $currentBalance = (float) ($type === 'POKOK' ? $member->simpananPokok : $member->simpananWajib);
+
+        if (!$cutoffDate) {
+            return $currentBalance;
+        }
+
+        $cutoffDateTime = \Carbon\Carbon::parse($cutoffDate)->endOfDay();
+
+        // Sum deposits (SETOR) after the cutoff date
+        $depositsAfter = \App\Models\SimpananTransaction::where('memberId', $member->id)
+            ->where('status', 'APPROVED')
+            ->where('transactionType', 'SETOR')
+            ->where('type', $type)
+            ->where('created_at', '>', $cutoffDateTime)
+            ->sum('amount');
+
+        // Sum withdrawals (TARIK) after the cutoff date
+        $withdrawalsAfter = \App\Models\SimpananTransaction::where('memberId', $member->id)
+            ->where('status', 'APPROVED')
+            ->where('transactionType', 'TARIK')
+            ->where('type', $type)
+            ->where('created_at', '>', $cutoffDateTime)
+            ->sum('amount');
+
+        return max(0, $currentBalance - (float) $depositsAfter + (float) $withdrawalsAfter);
+    }
+
+    public function toggleMemberExclusion($memberId)
+    {
+        $session = $this->activeSession;
+        if ($session && $session->status === 'FINALIZED') {
+            return;
+        }
+
+        $member = Member::find($memberId);
+        if (!$member) return;
+
+        $wasEligible = $this->isMemberEligible($member->id, $member->joinDate, $member->status);
+
+        if ($wasEligible) {
+            $this->includedMemberIds = array_values(array_diff($this->includedMemberIds, [$memberId]));
+            if (!in_array($memberId, $this->excludedMemberIds)) {
+                $this->excludedMemberIds[] = $memberId;
+            }
+        } else {
+            $this->excludedMemberIds = array_values(array_diff($this->excludedMemberIds, [$memberId]));
+            if (!in_array($memberId, $this->includedMemberIds)) {
+                $this->includedMemberIds[] = $memberId;
+            }
+        }
+
+        if ($session) {
+            $this->saveSession();
+        }
     }
 
     public function saveSession()
@@ -140,6 +261,7 @@ class RatSessionManagement extends Component
             'totalNetProfit' => 'required|numeric|min:0',
             'totalMemberShu' => 'required|numeric|min:0',
             'memberAllocationPercentage' => 'required|numeric|min:0|max:100',
+            'joinDateCutoff' => 'nullable|date',
         ]);
 
         $summary = $this->shuSummary;
@@ -156,20 +278,33 @@ class RatSessionManagement extends Component
                 'status' => 'DRAFT',
                 'notes' => $this->notes,
                 'created_by' => auth()->id(),
+                'join_date_cutoff' => $this->joinDateCutoff ?: null,
+                'excluded_member_ids' => $this->excludedMemberIds,
+                'included_member_ids' => $this->includedMemberIds,
             ]
         );
 
         $this->selectedSessionId = $session->id;
 
-        // Generate / Update distributions for active members based on Modal Sendiri (Pokok + Wajib)
-        $activeMembers = Member::where('status', 'ACTIVE')->get();
+        // Query all members
+        $allMembers = Member::all();
         $totalSimwa = $summary['totalSimwa'];
         $totalMemberShu = (float) $this->totalMemberShu;
 
-        foreach ($activeMembers as $m) {
-            $totalSimpananMember = (float) ($m->simpananPokok ?? 0) + (float) ($m->simpananWajib ?? 0);
-            $portion = ($totalSimpananMember / $totalSimwa);
-            $shuAmount = round($portion * $totalMemberShu, 2);
+        foreach ($allMembers as $m) {
+            $isEligible = $this->isMemberEligible($m->id, $m->joinDate, $m->status);
+
+            $simpok = $this->getMemberSavingsAtCutoff($m, 'POKOK', $this->joinDateCutoff);
+            $simwa = $this->getMemberSavingsAtCutoff($m, 'WAJIB', $this->joinDateCutoff);
+            $totalSimpananMember = $simpok + $simwa;
+
+            if ($isEligible) {
+                $portion = ($totalSimpananMember / $totalSimwa);
+                $shuAmount = round($portion * $totalMemberShu, 2);
+            } else {
+                $portion = 0;
+                $shuAmount = 0;
+            }
 
             MemberShuDistribution::updateOrCreate(
                 [
@@ -210,12 +345,38 @@ class RatSessionManagement extends Component
 
     public function toggleDisbursed($distributionId)
     {
-        $dist = MemberShuDistribution::find($distributionId);
+        $dist = MemberShuDistribution::with(['ratSession', 'member'])->find($distributionId);
         if ($dist) {
             $newStatus = !$dist->is_disbursed;
+            
+            $txId = $dist->financial_transaction_id;
+            
+            if ($newStatus) {
+                // If marking as disbursed, create a FinancialTransaction
+                $shuAmount = (float) $dist->shu_amount;
+                if ($shuAmount > 0) {
+                    $tx = \App\Models\FinancialTransaction::create([
+                        'type' => 'EXPENSE',
+                        'category' => 'Pembagian SHU',
+                        'amount' => $shuAmount,
+                        'transactionDate' => now()->toDateString(),
+                        'description' => "Pencairan SHU RAT " . ($dist->ratSession?->year ?? '') . " untuk " . ($dist->member?->name ?? '') . " (" . ($dist->member?->nomorAnggota ?? '') . ")",
+                        'userId' => auth()->id() ?? 1,
+                    ]);
+                    $txId = $tx->id;
+                }
+            } else {
+                // If marking as undisbursed, delete the associated FinancialTransaction
+                if ($txId) {
+                    \App\Models\FinancialTransaction::find($txId)?->delete();
+                    $txId = null;
+                }
+            }
+
             $dist->update([
                 'is_disbursed' => $newStatus,
                 'disbursed_at' => $newStatus ? now() : null,
+                'financial_transaction_id' => $txId,
             ]);
         }
     }
@@ -237,10 +398,11 @@ class RatSessionManagement extends Component
                 });
             }
 
-            $distributions = $query->orderByDesc('shu_amount')->paginate(15);
+            // We order by portion_percentage desc so eligible ones are at the top, followed by 0-SHU/excluded ones.
+            $distributions = $query->orderByDesc('portion_percentage')->paginate(15);
         } else {
             // Live preview if session not saved yet
-            $query = Member::where('status', 'ACTIVE');
+            $query = Member::query();
             if ($this->searchMember) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->searchMember . '%')
@@ -248,7 +410,9 @@ class RatSessionManagement extends Component
                       ->orWhere('unitKerja', 'like', '%' . $this->searchMember . '%');
                 });
             }
-            $distributions = $query->orderByDesc('simpananWajib')->paginate(15);
+            $distributions = $query->orderByRaw("CASE WHEN status = 'ACTIVE' THEN 0 ELSE 1 END")
+                ->orderByDesc(DB::raw('simpananPokok + simpananWajib'))
+                ->paginate(15);
         }
 
         return view('livewire.admin.rat-session-management', [

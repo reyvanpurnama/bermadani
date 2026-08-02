@@ -22,6 +22,10 @@ class Dashboard extends Component
         'Pembayaran Supplier Manual (Non-POS)',
     ];
 
+    private const EQUITY_DISTRIBUTION_CATEGORIES = [
+        'Pembagian SHU',
+    ];
+
     public $filter = 'month'; // Unified filter untuk card DAN chart
     public $startDate;
     public $endDate;
@@ -149,8 +153,9 @@ class Dashboard extends Component
     {
         // Ambil total pengeluaran dari financial_transactions berdasarkan filter
         // EXCLUDE: Pembayaran Supplier Konsinyasi (karena itu COGS, bukan operating expense)
+        // EXCLUDE: Pembagian SHU (karena itu equity distribution)
         $query = FinancialTransaction::expense()
-            ->whereNotIn('category', self::COGS_CATEGORIES);
+            ->whereNotIn('category', array_merge(self::COGS_CATEGORIES, self::EQUITY_DISTRIBUTION_CATEGORIES));
         
         $expenses = match($this->filter) {
             'today' => $query->whereDate('transactionDate', today())->sum('amount'),
@@ -216,14 +221,29 @@ class Dashboard extends Component
         return max(0, $this->grossProfit + $this->otherIncome - $this->consignmentCogs - $this->operatingExpenses);
     }
 
+    public function getEquityOutflowsProperty()
+    {
+        $query = FinancialTransaction::expense()
+            ->whereIn('category', self::EQUITY_DISTRIBUTION_CATEGORIES);
+
+        return match($this->filter) {
+            'today' => $query->whereDate('transactionDate', today())->sum('amount'),
+            'week' => $query->whereBetween('transactionDate', [now()->startOfWeek(), now()->endOfWeek()])->sum('amount'),
+            'month' => $query->whereMonth('transactionDate', now()->month)->whereYear('transactionDate', now()->year)->sum('amount'),
+            'year' => $query->whereYear('transactionDate', now()->year)->sum('amount'),
+            'prev_year' => $query->whereYear('transactionDate', now()->subYear()->year)->sum('amount'),
+            default => $query->whereDate('transactionDate', today())->sum('amount'),
+        } ?? 0;
+    }
+
     // Saldo Kasir = Uang riil di kasir setelah semua transaksi
     public function getCashOnHandProperty()
     {
         // Total Income (POS Sales + Historical Sales + Other Income)
         $totalIncome = $this->totalSales + $this->historicalSales + $this->otherIncome;
         
-        // Total Outflow (COGS Konsinyasi + Operating Expenses)
-        $totalOutflow = $this->consignmentCogs + $this->operatingExpenses;
+        // Total Outflow (COGS Konsinyasi + Operating Expenses + Equity Outflows)
+        $totalOutflow = $this->consignmentCogs + $this->operatingExpenses + $this->equityOutflows;
         
         // Cash on Hand = Total Income - Total Outflow
         return max(0, $totalIncome - $totalOutflow);

@@ -178,9 +178,9 @@ class RatVisualDashboard extends Component
             $ratSession = RatSession::where('year', $year)->first();
             $shuMemberVal = ($ratSession && (float) $ratSession->total_member_shu > 0) 
                 ? (float) $ratSession->total_member_shu 
-                : 15000000.0;
+                : 0;
         } catch (\Throwable $e) {
-            $shuMemberVal = 15000000.0;
+            $shuMemberVal = 0;
         }
         $retainedModal = max(0, $kasBankRiil - $shuMemberVal); // Rp 15.499.118 (Dana Cadangan Lembar 4)
 

@@ -227,7 +227,18 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     })->name('admin.transactions');
 
     Route::get('/transaksi/visualisasi', \App\Livewire\Admin\CashFlowVisualization::class)->name('admin.cash-flow-visualization');
-    Route::get('/rat-sessions', \App\Livewire\Admin\RatSessionManagement::class)->name('admin.rat-sessions');
+
+    // RAT Wizard (4-step flow)
+    Route::get('/rat/setup', \App\Livewire\Admin\RatSetup::class)->name('admin.rat.setup');
+    Route::get('/rat/eligibility/{session}', \App\Livewire\Admin\RatEligibility::class)->name('admin.rat.eligibility');
+    Route::get('/rat/allocation/{session}', \App\Livewire\Admin\RatAllocation::class)->name('admin.rat.allocation');
+    Route::get('/rat/disbursement/{session}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.disbursement');
+
+    // Legacy redirect: old URL → new wizard
+    Route::get('/rat-sessions', function () {
+        return redirect()->route('admin.rat.setup');
+    })->name('admin.rat-sessions');
+
     Route::get('/rat-infographic', \App\Livewire\Admin\RatInfographic::class)->name('admin.rat-infographic');
 
     // Manual Transaction (Income/Expense) - HARUS DI ATAS {id}

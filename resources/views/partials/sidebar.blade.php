@@ -247,11 +247,35 @@
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Dashboard Visual RAT</span>
                 </a>
 
-                <a href="{{ route('admin.rat-sessions') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-sessions') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-gift text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pelaksanaan RAT & SHU</span>
-                </a>
+                {{-- RAT Wizard Dropdown --}}
+                <div class="space-y-0.5">
+                    <button @click="toggleRatDropdown()"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <div class="flex items-center">
+                            <i class='bx bx-gift text-sm mr-2 opacity-70 group-hover:opacity-100 text-emerald-500 dark:text-emerald-400'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pelaksanaan RAT</span>
+                        </div>
+                        <i class='bx text-xs transition-transform duration-200 mr-1 opacity-70 group-hover:opacity-100' :class="ratDropdown ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="ratDropdown" x-transition class="pl-4 space-y-0.5">
+                        <a href="{{ route('admin.rat.setup') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.setup') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Konfigurasi</span>
+                        </a>
+                        <a href="{{ route('admin.rat.setup') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.eligibility') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Anggota</span>
+                        </a>
+                        <a href="{{ route('admin.rat.setup') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.allocation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. Alokasi SHU</span>
+                        </a>
+                        <a href="{{ route('admin.rat.setup') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.disbursement') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Pencairan</span>
+                        </a>
+                    </div>
+                </div>
 
                 {{-- HIDDEN: Laporan RAT & RAT Akuntansi (Dalam Pembaruan / Pengembangan) --}}
                 {{-- Dropdown Infografis RAT (4 Lembar) --}}

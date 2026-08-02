@@ -106,46 +106,107 @@
         </div>
     </div>
 
+    {{-- Row 2: Detail Variabel Perhitungan (Dinamis Berdasarkan Filter/Cutoff) --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {{-- Total Anggota Layak --}}
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                <i class='bx bx-user-check text-lg'></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Anggota Layak SHU</p>
+                <h4 class="text-base font-bold text-slate-800 dark:text-white leading-tight">
+                    {{ $summary['activeMemberCount'] }} Anggota
+                </h4>
+            </div>
+        </div>
+
+        {{-- Total Simpanan Pokok --}}
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500 dark:text-amber-400">
+                <i class='bx bx-coin-stack text-lg'></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Simp. Pokok (Cutoff)</p>
+                <h4 class="text-base font-bold text-slate-800 dark:text-white leading-tight">
+                    Rp {{ number_format((float) ($summary['totalSimpok'] ?: 0), 0, ',', '.') }}
+                </h4>
+            </div>
+        </div>
+
+        {{-- Total Simpanan Wajib --}}
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/40 flex items-center justify-center text-purple-600 dark:text-purple-400">
+                <i class='bx bx-wallet text-lg'></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Simp. Wajib (Cutoff)</p>
+                <h4 class="text-base font-bold text-slate-800 dark:text-white leading-tight">
+                    Rp {{ number_format((float) ($summary['totalSimwaReal'] ?: 0), 0, ',', '.') }}
+                </h4>
+            </div>
+        </div>
+
+        {{-- Total Simpanan Gabungan --}}
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                <i class='bx bx-cabinet text-lg'></i>
+            </div>
+            <div>
+                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Simpanan Gabungan</p>
+                <h4 class="text-base font-bold text-emerald-600 dark:text-emerald-400 leading-tight">
+                    Rp {{ number_format((float) ($summary['totalSimwa'] ?: 0), 0, ',', '.') }}
+                </h4>
+            </div>
+        </div>
+    </div>
+
     {{-- Form Config & Actions --}}
     <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4">Pengaturan Alokasi Laba Bersih & SHU RAT {{ $year }}</h3>
         
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
             <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">Tahun Buku</label>
-                <input type="number" wire:model.blur="year"
+                <input type="number" wire:model.blur="year" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-white outline-none">
             </div>
 
             <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">Tanggal RAT</label>
-                <input type="date" wire:model.blur="eventDate"
+                <input type="date" wire:model.blur="eventDate" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none">
             </div>
 
             <div>
                 <label class="block text-[11px] font-bold text-slate-500 mb-1">Total Laba Bersih (Rp)</label>
-                <input type="number" wire:model.live.debounce.300ms="totalNetProfit"
+                <input type="number" wire:model.live.debounce.300ms="totalNetProfit" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                     class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 dark:text-white outline-none">
             </div>
 
             <div>
                 <label class="block text-[11px] font-bold text-emerald-600 mb-1">Total SHU Dibagikan (Rp)</label>
-                <input type="number" wire:model.live.debounce.300ms="totalMemberShu"
+                <input type="number" wire:model.live.debounce.300ms="totalMemberShu" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                     class="w-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-600 outline-none"
                     placeholder="Misal: 30499118">
             </div>
 
             <div>
                 <label class="block text-[11px] font-bold text-indigo-600 mb-1">Alokasi Anggota (%)</label>
-                <input type="number" wire:model.live.debounce.300ms="memberAllocationPercentage" step="0.01" min="0" max="100"
+                <input type="number" wire:model.live.debounce.300ms="memberAllocationPercentage" step="0.01" min="0" max="100" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                     class="w-full bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-300 dark:border-indigo-700 rounded-xl px-3 py-2 text-xs font-bold text-indigo-600 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-slate-500 mb-1">Tgl Gabung Maksimal</label>
+                <input type="date" wire:model.blur="joinDateCutoff" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
+                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none">
             </div>
         </div>
 
         <div class="mb-4">
             <label class="block text-[11px] font-bold text-slate-500 mb-1">Judul / Tema RAT</label>
-            <input type="text" wire:model.blur="title"
+            <input type="text" wire:model.blur="title" {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
                 class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-800 dark:text-white outline-none"
                 placeholder="Contoh: RAT Koperasi Bermadani Tahun Buku 2025">
         </div>
@@ -207,6 +268,7 @@
                         <th class="py-3 px-3">No. Anggota</th>
                         <th class="py-3 px-3">Nama Anggota</th>
                         <th class="py-3 px-3">Unit Kerja</th>
+                        <th class="py-3 px-3 text-center no-print">Dapat SHU?</th>
                         <th class="py-3 px-3 text-right">Simpanan Pokok + Wajib (Rp)</th>
                         <th class="py-3 px-3 text-center">Porsi (%)</th>
                         <th class="py-3 px-3 text-right">Nominal SHU (Rp)</th>
@@ -219,26 +281,46 @@
                         @php
                             $isModel = $item instanceof \App\Models\MemberShuDistribution;
                             $member = $isModel ? $item->member : $item;
-                            $pokok = (float) ($member->simpananPokok ?? 0);
-                            $wajib = (float) ($member->simpananWajib ?? 0);
-                            $simwa = $pokok + $wajib;
-                            if ($simwa <= 0 && $isModel) {
+                            $isEligible = $this->isMemberEligible($member->id, $member->joinDate, $member->status);
+
+                            if ($isModel) {
                                 $simwa = (float) $item->simpanan_wajib_amount;
+                            } else {
+                                $pokok = $this->getMemberSavingsAtCutoff($member, 'POKOK', $this->joinDateCutoff);
+                                $wajib = $this->getMemberSavingsAtCutoff($member, 'WAJIB', $this->joinDateCutoff);
+                                $simwa = $pokok + $wajib;
                             }
-                            $portion = (float) ($isModel ? $item->portion_percentage : (($simwa / max(1, $summary['totalSimwa'])) * 100));
-                            $shu = (float) ($isModel ? $item->shu_amount : ($portion / 100) * (float) $totalMemberShu);
+
+                            if ($isEligible) {
+                                $portion = (float) ($isModel ? $item->portion_percentage : (($simwa / max(1, $summary['totalSimwa'])) * 100));
+                                $shu = (float) ($isModel ? $item->shu_amount : ($portion / 100) * (float) $totalMemberShu);
+                            } else {
+                                $portion = 0.0;
+                                $shu = 0.0;
+                            }
+
                             $isDisbursed = $isModel ? $item->is_disbursed : false;
                         @endphp
-                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
+                        <tr wire:key="row-{{ $member->id }}-{{ $isEligible ? 'eligible' : 'excluded' }}" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all {{ !$isEligible ? 'opacity-40 bg-slate-50/30 dark:bg-slate-800/10' : '' }}">
                             <td class="py-2.5 px-3 font-mono text-slate-400">{{ method_exists($distributions, 'firstItem') ? ($distributions->firstItem() + $index) : ($index + 1) }}</td>
                             <td class="py-2.5 px-3 font-mono font-bold text-slate-700 dark:text-slate-300">
                                 {{ $member->nomorAnggota ?? '-' }}
                             </td>
                             <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white">
-                                {{ $member->name }}
+                                <div>{{ $member->name }}</div>
+                                <div class="text-[9px] mt-0.5 font-semibold {{ $member->status === 'ACTIVE' ? 'text-emerald-500' : 'text-slate-400' }}">
+                                    {{ $member->status === 'ACTIVE' ? 'Aktif' : 'Non-aktif' }}
+                                </div>
                             </td>
                             <td class="py-2.5 px-3 text-slate-500">
                                 {{ $member->unitKerja ?? '-' }}
+                            </td>
+                            <td class="py-2.5 px-3 text-center no-print">
+                                <input type="checkbox" 
+                                    wire:click="toggleMemberExclusion({{ $member->id }})"
+                                    {{ $isEligible ? 'checked' : '' }}
+                                    {{ $session?->status === 'FINALIZED' ? 'disabled' : '' }}
+                                    class="rounded border-slate-300 dark:border-slate-700 text-indigo-600 focus:ring-indigo-500 cursor-pointer disabled:cursor-not-allowed">
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-300">
                                 Rp {{ number_format($simwa, 0, ',', '.') }}
@@ -250,11 +332,13 @@
                                 Rp {{ number_format($shu, 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-center no-print">
-                                @if($isModel)
+                                @if($isModel && $isEligible)
                                     <button wire:click="toggleDisbursed({{ $item->id }})"
                                         class="px-2.5 py-1 rounded-full text-[10px] font-bold transition-all {{ $isDisbursed ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400' }}">
                                         {{ $isDisbursed ? '✓ Dicairkan' : 'Belum' }}
                                     </button>
+                                @elseif($isModel && !$isEligible)
+                                    <span class="text-[10px] text-slate-400 dark:text-slate-500">N/A (Excluded)</span>
                                 @else
                                     <span class="text-[10px] text-slate-400">Draft</span>
                                 @endif
@@ -265,7 +349,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="py-8 text-center text-slate-400">Tidak ada data anggota aktif.</td>
+                            <td colspan="10" class="py-8 text-center text-slate-400">Tidak ada data anggota aktif.</td>
                         </tr>
                     @endforelse
                 </tbody>

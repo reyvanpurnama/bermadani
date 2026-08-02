@@ -88,21 +88,39 @@ class Dashboard extends Component
             }
         }
 
-        // Live calculation estimate for 2025 RAT
+        // Live calculation estimate from latest draft/configured session
+        $latestDraft = \App\Models\RatSession::whereIn('status', ['DRAFT', 'CONFIGURED', 'MEMBERS_LOCKED'])
+            ->orderByDesc('year')->first();
+
         $totalSimwa = (float) Member::where('status', 'ACTIVE')->sum('simpananWajib');
-        $totalSimwa = max(1, $totalSimwa);
-        $memberSimwa = (float) ($this->member->simpananWajib ?? 0);
-        $portion = ($memberSimwa / $totalSimwa);
-        $estimatedTotalShu = 30499118; // Default 2025 net profit
+        $totalSimpok = (float) Member::where('status', 'ACTIVE')->sum('simpananPokok');
+        $totalSimpanan = max(1, $totalSimwa + $totalSimpok);
+        $memberSimpanan = (float) ($this->member->simpananWajib ?? 0) + (float) ($this->member->simpananPokok ?? 0);
+        $portion = ($memberSimpanan / $totalSimpanan);
+
+        if ($latestDraft && (float) $latestDraft->total_member_shu > 0) {
+            $estimatedTotalShu = (float) $latestDraft->total_member_shu;
+            $estimatedYear = $latestDraft->year;
+            $estimatedTitle = $latestDraft->title ?? 'RAT Tahun Buku ' . $latestDraft->year;
+        } else {
+            // Compute from financial transactions
+            $currentYear = (int) date('Y');
+            $income = (float) \App\Models\FinancialTransaction::whereYear('transactionDate', $currentYear)->where('type', 'INCOME')->sum('amount');
+            $expense = (float) \App\Models\FinancialTransaction::whereYear('transactionDate', $currentYear)->where('type', 'EXPENSE')->sum('amount');
+            $estimatedTotalShu = max(0, $income - $expense);
+            $estimatedYear = $currentYear;
+            $estimatedTitle = 'RAT Tahun Buku ' . $currentYear;
+        }
+
         $estimatedShu = round($portion * $estimatedTotalShu, 2);
 
         return [
-            'year' => 2025,
-            'title' => 'RAT Tahun Buku 2025',
+            'year' => $estimatedYear,
+            'title' => $estimatedTitle,
             'isFinalized' => false,
             'shuAmount' => $estimatedShu,
             'portionPercentage' => round($portion * 100, 4),
-            'simpananWajib' => $memberSimwa,
+            'simpananWajib' => $memberSimpanan,
             'isDisbursed' => false,
         ];
     }

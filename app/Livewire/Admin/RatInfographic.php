@@ -100,7 +100,7 @@ class RatInfographic extends Component
         $ratSession = RatSession::where('year', 2025)->first();
         $shuMember = ($ratSession && (float) $ratSession->total_member_shu > 0)
             ? (float) $ratSession->total_member_shu
-            : 15000000.0;
+            : 0;
         $retainedModal = max(0, $surplusKas - $shuMember); // 15.499.118 (Dana Cadangan)
 
         return [
