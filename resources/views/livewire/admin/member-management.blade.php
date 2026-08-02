@@ -83,7 +83,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Anggota</p>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ number_format($stats['total']) }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ number_format($this->stats['total']) }}</h4>
                 </div>
             </div>
 
@@ -96,7 +96,7 @@
                 </div>
                 <div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Anggota Aktif</p>
-                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ number_format($stats['active']) }}</h4>
+                    <h4 class="text-lg font-bold text-slate-800 dark:text-white">{{ number_format($this->stats['active']) }}</h4>
                 </div>
             </div>
 
@@ -116,12 +116,12 @@
                         <div>
                             <p class="text-[9px] text-slate-400 mb-0.5">Total Dana Simpanan</p>
                             <h3 class="text-lg font-bold text-white">Rp
-                                {{ number_format($stats['totalSimpanan'] ?? 0, 0, ',', '.') }}
+                                {{ number_format($this->stats['totalSimpanan'] ?? 0, 0, ',', '.') }}
                             </h3>
                         </div>
                         <div class="pl-4">
                             <p class="text-[9px] text-slate-400 mb-0.5">Rata-rata Poin</p>
-                            <h3 class="text-lg font-bold text-amber-400">{{ number_format($stats['avgPoints'] ?? 0) }} Pts
+                            <h3 class="text-lg font-bold text-amber-400">{{ number_format($this->stats['avgPoints'] ?? 0) }} Pts
                             </h3>
                         </div>
                     </div>
@@ -135,21 +135,21 @@
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Pokok ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
-                    {{ number_format($stats['simpananPokok'] ?? 0, 0, ',', '.') }}
+                    {{ number_format($this->stats['simpananPokok'] ?? 0, 0, ',', '.') }}
                 </h4>
             </div>
             <div
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Wajib ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
-                    {{ number_format($stats['simpananWajib'] ?? 0, 0, ',', '.') }}
+                    {{ number_format($this->stats['simpananWajib'] ?? 0, 0, ',', '.') }}
                 </h4>
             </div>
             <div
                 class="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700 flex flex-col justify-center text-center">
                 <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Simpanan Sukarela ({{ $showAllStats ? 'Semua' : 'Aktif' }})</p>
                 <h4 class="text-sm font-bold text-slate-700 dark:text-gray-300">Rp
-                    {{ number_format($stats['simpananSukarela'] ?? 0, 0, ',', '.') }}
+                    {{ number_format($this->stats['simpananSukarela'] ?? 0, 0, ',', '.') }}
                 </h4>
             </div>
         </div>
@@ -296,6 +296,11 @@
                                                                                 @endif">
                                             {{ $member->status === 'ACTIVE' ? 'Aktif' : ($member->status === 'INACTIVE' ? 'Non-Aktif' : 'Dibekukan') }}
                                         </span>
+                                        @if($member->status_note)
+                                            <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
+                                                <i class='bx bx-note'></i> {{ $member->status_note }}
+                                            </span>
+                                        @endif
                                         <span class="inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border
                                                                                 @if($member->tier === 'PLATINUM') bg-purple-100 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800
                                                                                 @elseif($member->tier === 'GOLD') bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-200 dark:border-amber-800
@@ -336,7 +341,7 @@
                                     {{ number_format($member->points) }}
                                 </td>
                                 <td class="px-5 py-3.5 text-center align-top">
-                                    <div class="flex items-center justify-center gap-2">
+                                    <div class="flex items-center justify-center gap-1.5">
                                         <a href="{{ route('admin.members.show', $member->id) }}"
                                             class="text-slate-400 hover:text-primary transition-colors p-1" title="Detail">
                                             <i class='bx bx-show text-lg'></i>
@@ -345,18 +350,15 @@
                                             class="text-slate-400 hover:text-indigo-600 transition-colors p-1" title="Edit">
                                             <i class='bx bx-edit text-lg'></i>
                                         </a>
-                                        @if($member->status === 'ACTIVE')
-                                            <button wire:click="suspendMember({{ $member->id }})"
-                                                class="text-slate-400 hover:text-rose-500 transition-colors p-1" title="Bekukan">
-                                                <i class='bx bx-block text-lg'></i>
-                                            </button>
-                                        @else
-                                            <button wire:click="activateMember({{ $member->id }})"
-                                                class="text-slate-400 hover:text-emerald-500 transition-colors p-1"
-                                                title="Aktifkan">
-                                                <i class='bx bx-check-circle text-lg'></i>
-                                            </button>
-                                        @endif
+                                        <button wire:click="openFreezeModal({{ $member->id }})"
+                                            class="text-slate-400 hover:text-amber-500 transition-colors p-1" title="Bekukan / Set Keterangan">
+                                            <i class='bx bx-block text-lg'></i>
+                                        </button>
+                                        <button wire:click="deleteMember({{ $member->id }})"
+                                            wire:confirm="Yakin ingin menghapus anggota {{ $member->name }} secara permanen?"
+                                            class="text-slate-400 hover:text-rose-600 transition-colors p-1" title="Hapus Anggota">
+                                            <i class='bx bx-trash text-lg'></i>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -479,6 +481,58 @@
                         <button wire:click="closeImportModal" type="button"
                             class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-darkCard text-sm font-bold text-slate-700 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none sm:mt-0 sm:w-auto">
                             Tutup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Freeze / Set Note Modal --}}
+    @if($showFreezeModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-slate-900 bg-opacity-75 transition-opacity" wire:click="closeFreezeModal"></div>
+
+                <div class="inline-block align-bottom bg-white dark:bg-darkCard rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                    <div class="bg-white dark:bg-darkCard px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="flex-shrink-0 flex items-center justify-center h-10 w-10 rounded-full bg-amber-100 dark:bg-amber-500/10">
+                                <i class='bx bx-user-x text-2xl text-amber-600'></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-bold text-slate-900 dark:text-white">Ubah Status & Keterangan</h3>
+                                <p class="text-[11px] text-slate-500">{{ $selectedMemberName }}</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1">Status Keanggotaan</label>
+                                <select wire:model="freezeStatus" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-white cursor-pointer">
+                                    <option value="ACTIVE">Aktif</option>
+                                    <option value="INACTIVE">Non-Aktif</option>
+                                    <option value="SUSPENDED">Dibekukan</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-700 dark:text-slate-300 block mb-1">Keterangan Status (Opsional)</label>
+                                <input type="text" wire:model="statusNote" placeholder="Contoh: Sudah dicairkan, Mengundurkan diri, dll."
+                                    class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 rounded-lg px-3 py-2 text-xs text-slate-800 dark:text-white">
+                                <p class="text-[10px] text-slate-400 mt-1">Keterangan ini akan tampil di samping badge status anggota.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                        <button wire:click="freezeWithNote" type="button"
+                            class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-amber-600 text-xs font-bold text-white hover:bg-amber-700 sm:ml-3 sm:w-auto">
+                            Simpan Perubahan
+                        </button>
+                        <button wire:click="closeFreezeModal" type="button"
+                            class="mt-3 w-full inline-flex justify-center rounded-lg border border-slate-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-darkCard text-xs font-bold text-slate-700 dark:text-white hover:bg-slate-50 sm:mt-0 sm:w-auto">
+                            Batal
                         </button>
                     </div>
                 </div>

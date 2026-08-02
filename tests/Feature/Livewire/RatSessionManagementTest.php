@@ -120,8 +120,8 @@ class RatSessionManagementTest extends TestCase
             'title' => 'RAT 2025',
             'total_net_profit' => 20000000,
             'total_member_shu' => 10000000,
-            'jasa_simpanan_percentage' => 30,
-            'jasa_usaha_percentage' => 25,
+            'jasa_simpanan_portion' => 50,
+            'jasa_usaha_portion' => 50,
             'status' => RatSession::STATUS_MEMBERS_LOCKED,
         ]);
 
@@ -159,7 +159,7 @@ class RatSessionManagementTest extends TestCase
 
         Livewire::actingAs($admin)
             ->test(RatDisbursement::class, ['session' => $session->id])
-            ->call('toggleDisbursed', $dist->id);
+            ->call('disburseSingle', $dist->id);
 
         $dist->refresh();
         $this->assertTrue($dist->is_disbursed);

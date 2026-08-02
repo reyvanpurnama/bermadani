@@ -236,7 +236,8 @@ class MemberManagement extends Component
 
     public function getStatsProperty()
     {
-        return $this->memberService->getStats($this->showAllStats);
+        $service = $this->memberService ?? app(MemberService::class);
+        return $service->getStats($this->showAllStats);
     }
 
     public function getUnitKerjaListProperty()
@@ -245,6 +246,53 @@ class MemberManagement extends Component
             ->distinct()
             ->orderBy('unitKerja')
             ->pluck('unitKerja');
+    }
+
+    // Freeze with Note Modal properties
+    public $showFreezeModal = false;
+    public $selectedMemberId = null;
+    public $selectedMemberName = '';
+    public $freezeStatus = 'SUSPENDED'; // SUSPENDED, INACTIVE, KELUAR
+    public $statusNote = 'Sudah dicairkan';
+
+    public function openFreezeModal($memberId)
+    {
+        $member = Member::findOrFail($memberId);
+        $this->selectedMemberId = $member->id;
+        $this->selectedMemberName = $member->name;
+        $this->freezeStatus = $member->status === 'ACTIVE' ? 'SUSPENDED' : $member->status;
+        $this->statusNote = $member->status_note ?? 'Sudah dicairkan';
+        $this->showFreezeModal = true;
+    }
+
+    public function closeFreezeModal()
+    {
+        $this->showFreezeModal = false;
+        $this->reset(['selectedMemberId', 'selectedMemberName', 'statusNote']);
+    }
+
+    public function freezeWithNote()
+    {
+        if (!$this->selectedMemberId) return;
+
+        $member = Member::findOrFail($this->selectedMemberId);
+        $member->update([
+            'status' => $this->freezeStatus,
+            'status_note' => $this->statusNote,
+        ]);
+
+        session()->flash('success', "Status anggota {$member->name} berhasil diubah menjadi {$member->status} dengan keterangan '{$member->status_note}'.");
+        $this->closeFreezeModal();
+    }
+
+    public function deleteMember($memberId)
+    {
+        $member = Member::findOrFail($memberId);
+        $memberName = $member->name;
+        $member->delete();
+
+        session()->flash('success', "Anggota {$memberName} berhasil dihapus permanen dari sistem.");
+        $this->resetPage();
     }
 
     public function suspendMember($memberId)
@@ -258,7 +306,7 @@ class MemberManagement extends Component
     public function activateMember($memberId)
     {
         $member = Member::findOrFail($memberId);
-        $member->update(['status' => 'ACTIVE']);
+        $member->update(['status' => 'ACTIVE', 'status_note' => null]);
         
         session()->flash('success', "Member {$member->name} berhasil diaktifkan kembali.");
     }

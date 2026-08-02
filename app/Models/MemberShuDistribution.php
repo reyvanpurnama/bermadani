@@ -53,4 +53,39 @@ class MemberShuDistribution extends Model
     {
         return $this->belongsTo(FinancialTransaction::class, 'financial_transaction_id');
     }
+
+    public function markAsDisbursed()
+    {
+        if ($this->is_disbursed) return;
+
+        $transaction = FinancialTransaction::create([
+            'transactionDate' => now(),
+            'type' => 'EXPENSE',
+            'category' => 'Pembagian SHU',
+            'amount' => $this->shu_amount,
+            'description' => "Pencairan SHU RAT {$this->ratSession?->year} untuk anggota {$this->member?->name} ({$this->member?->nomorAnggota})",
+            'userId' => auth()->id(),
+        ]);
+
+        $this->update([
+            'is_disbursed' => true,
+            'disbursed_at' => now(),
+            'financial_transaction_id' => $transaction->id,
+        ]);
+    }
+
+    public function markAsPending()
+    {
+        if (!$this->is_disbursed) return;
+
+        if ($this->financial_transaction_id) {
+            FinancialTransaction::where('id', $this->financial_transaction_id)->delete();
+        }
+
+        $this->update([
+            'is_disbursed' => false,
+            'disbursed_at' => null,
+            'financial_transaction_id' => null,
+        ]);
+    }
 }
