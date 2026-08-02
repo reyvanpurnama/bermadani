@@ -67,8 +67,9 @@ class Dashboard extends Component
     {
         if (!$this->member) return null;
 
-        // Try to fetch finalized RAT session distribution
-        $latestSession = \App\Models\RatSession::where('status', 'FINALIZED')->orderByDesc('year')->first();
+        // 1. Try to fetch finalized/disbursing/completed RAT session distribution
+        $latestSession = \App\Models\RatSession::whereIn('status', ['FINALIZED', 'DISBURSING', 'COMPLETED'])
+            ->orderByDesc('year')->first();
 
         if ($latestSession) {
             $dist = \App\Models\MemberShuDistribution::where('rat_session_id', $latestSession->id)
@@ -81,46 +82,58 @@ class Dashboard extends Component
                     'title' => $latestSession->title,
                     'isFinalized' => true,
                     'shuAmount' => (float) $dist->shu_amount,
+                    'jasaSimpanan' => (float) $dist->jasa_simpanan_amount,
+                    'jasaUsaha' => (float) $dist->jasa_usaha_amount,
                     'portionPercentage' => (float) $dist->portion_percentage,
-                    'simpananWajib' => (float) $dist->simpanan_wajib_amount,
-                    'isDisbursed' => $dist->is_disbursed,
+                    'totalSimpanan' => (float) ($dist->total_simpanan_amount > 0 ? $dist->total_simpanan_amount : ((float)$dist->simpanan_pokok_snapshot + (float)$dist->simpanan_wajib_snapshot)),
+                    'totalTransaksi' => (float) $dist->total_transaksi_amount,
+                    'isDisbursed' => (bool) $dist->is_disbursed,
                 ];
             }
         }
 
-        // Live calculation estimate from latest draft/configured session
-        $latestDraft = \App\Models\RatSession::whereIn('status', ['DRAFT', 'CONFIGURED', 'MEMBERS_LOCKED'])
-            ->orderByDesc('year')->first();
+        // 2. Try to fetch latest draft/configured session distribution for live preview
+        $latestDraft = \App\Models\RatSession::orderByDesc('year')->first();
 
+        if ($latestDraft) {
+            $dist = \App\Models\MemberShuDistribution::where('rat_session_id', $latestDraft->id)
+                ->where('member_id', $this->member->id)
+                ->first();
+
+            if ($dist) {
+                return [
+                    'year' => $latestDraft->year,
+                    'title' => $latestDraft->title,
+                    'isFinalized' => false,
+                    'shuAmount' => (float) $dist->shu_amount,
+                    'jasaSimpanan' => (float) $dist->jasa_simpanan_amount,
+                    'jasaUsaha' => (float) $dist->jasa_usaha_amount,
+                    'portionPercentage' => (float) $dist->portion_percentage,
+                    'totalSimpanan' => (float) ($dist->total_simpanan_amount > 0 ? $dist->total_simpanan_amount : ((float)$dist->simpanan_pokok_snapshot + (float)$dist->simpanan_wajib_snapshot)),
+                    'totalTransaksi' => (float) $dist->total_transaksi_amount,
+                    'isDisbursed' => (bool) $dist->is_disbursed,
+                ];
+            }
+        }
+
+        // 3. Fallback estimate if no session distribution exists
+        $currentYear = (int) date('Y');
         $totalSimwa = (float) Member::where('status', 'ACTIVE')->sum('simpananWajib');
         $totalSimpok = (float) Member::where('status', 'ACTIVE')->sum('simpananPokok');
         $totalSimpanan = max(1, $totalSimwa + $totalSimpok);
         $memberSimpanan = (float) ($this->member->simpananWajib ?? 0) + (float) ($this->member->simpananPokok ?? 0);
         $portion = ($memberSimpanan / $totalSimpanan);
 
-        if ($latestDraft && (float) $latestDraft->total_member_shu > 0) {
-            $estimatedTotalShu = (float) $latestDraft->total_member_shu;
-            $estimatedYear = $latestDraft->year;
-            $estimatedTitle = $latestDraft->title ?? 'RAT Tahun Buku ' . $latestDraft->year;
-        } else {
-            // Compute from financial transactions
-            $currentYear = (int) date('Y');
-            $income = (float) \App\Models\FinancialTransaction::whereYear('transactionDate', $currentYear)->where('type', 'INCOME')->sum('amount');
-            $expense = (float) \App\Models\FinancialTransaction::whereYear('transactionDate', $currentYear)->where('type', 'EXPENSE')->sum('amount');
-            $estimatedTotalShu = max(0, $income - $expense);
-            $estimatedYear = $currentYear;
-            $estimatedTitle = 'RAT Tahun Buku ' . $currentYear;
-        }
-
-        $estimatedShu = round($portion * $estimatedTotalShu, 2);
-
         return [
-            'year' => $estimatedYear,
-            'title' => $estimatedTitle,
+            'year' => $currentYear,
+            'title' => 'RAT Tahun Buku ' . $currentYear,
             'isFinalized' => false,
-            'shuAmount' => $estimatedShu,
+            'shuAmount' => 0,
+            'jasaSimpanan' => 0,
+            'jasaUsaha' => 0,
             'portionPercentage' => round($portion * 100, 4),
-            'simpananWajib' => $memberSimpanan,
+            'totalSimpanan' => $memberSimpanan,
+            'totalTransaksi' => 0,
             'isDisbursed' => false,
         ];
     }

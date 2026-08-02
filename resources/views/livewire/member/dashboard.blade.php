@@ -186,7 +186,7 @@
                         Rp {{ number_format($shuInfo['shuAmount'], 0, ',', '.') }}
                     </h3>
                     <p class="text-[10px] text-emerald-100/90 mt-1 font-medium">
-                        Porsi Simpanan: <span class="font-bold text-white">{{ number_format($shuInfo['portionPercentage'], 3, ',', '.') }}%</span> (Rp {{ number_format($shuInfo['simpananWajib'], 0, ',', '.') }})
+                        Porsi SHU: <span class="font-bold text-white">{{ number_format($shuInfo['portionPercentage'], 3, ',', '.') }}%</span> dari Rp 15 Juta | Basis Simpanan: Rp {{ number_format($shuInfo['totalSimpanan'] ?? 0, 0, ',', '.') }}
                     </p>
                     <button @click="showMemberFormula = !showMemberFormula" 
                         class="mt-2 text-[10px] bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-lg font-bold backdrop-blur-sm transition-all flex items-center gap-1">
