@@ -22,16 +22,19 @@ class SimpananManagement extends Component
     public $activeTab = 'wajib';
 
     // Modals
+    public $showPokokModal = false;
     public $showWajibModal = false;
     public $showSetorModal = false;
     public $showTarikModal = false;
 
     // Form inputs
+    public $pokokAmount = 200000;
     public $wajibAmount = 50000;
     public $setorAmount;
     public $tarikAmount;
     public $notes;
     public $buktiTransfer;
+    public $selectedYear;
 
     // Bill payment inputs (migrated from PaymentForm)
     public $unpaidBills = [];
@@ -49,6 +52,7 @@ class SimpananManagement extends Component
     public function mount($id)
     {
         $this->memberId = $id;
+        $this->selectedYear = (int) date('Y');
         $this->paymentDate = now()->format('Y-m-d');
         $this->loadMember();
         $this->refreshUnpaidBills();
@@ -96,17 +100,75 @@ class SimpananManagement extends Component
         $this->resetPage();
     }
 
+    // Simpanan Pokok
+    public function openPokokModal()
+    {
+        $this->showPokokModal = true;
+        $this->pokokAmount = 200000;
+        $this->notes = 'Setoran Simpanan Pokok';
+    }
+
+    public function closePokokModal()
+    {
+        $this->showPokokModal = false;
+        $this->reset(['pokokAmount', 'notes', 'buktiTransfer']);
+    }
+
+    public function submitPokok()
+    {
+        $this->validate([
+            'pokokAmount' => 'required|numeric|min:1',
+            'buktiTransfer' => 'nullable|image|max:2048',
+        ]);
+
+        try {
+            $memberService = app(MemberService::class);
+
+            $buktiPath = null;
+            if ($this->buktiTransfer) {
+                $buktiPath = $this->buktiTransfer->store('bukti-simpanan', 'public');
+            }
+
+            $memberService->addSimpanan(
+                $this->memberId,
+                'POKOK',
+                $this->pokokAmount,
+                $this->notes ?? 'Setoran Simpanan Pokok',
+                $buktiPath,
+                Auth::id()
+            );
+
+            $this->loadMember();
+            $this->refreshUnpaidBills();
+            $this->closePokokModal();
+
+            session()->flash('message', 'Setoran Simpanan Pokok sebesar Rp ' . number_format($this->pokokAmount, 0, ',', '.') . ' berhasil dicatat.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
     // Simpanan Wajib
-    public function openWajibModal()
+    public function openWajibModal($monthName = null, $periodKey = null)
     {
         $this->showWajibModal = true;
         $this->wajibAmount = 50000; // Default monthly amount
+        if ($monthName) {
+            $this->notes = 'Setoran Wajib - ' . $monthName;
+        } else {
+            $this->notes = 'Setoran Wajib Bulanan';
+        }
     }
 
     public function closeWajibModal()
     {
         $this->showWajibModal = false;
         $this->reset(['wajibAmount', 'notes', 'buktiTransfer']);
+    }
+
+    public function changeYear($year)
+    {
+        $this->selectedYear = (int) $year;
     }
 
     public function submitWajib()
@@ -362,12 +424,103 @@ class SimpananManagement extends Component
             ->get();
     }
 
+    public function getSimwaGridProperty()
+    {
+        if (!$this->member) return [];
+
+        $grid = [];
+        $today = Carbon::now();
+        $joinDate = $this->member->joinDate ? Carbon::parse($this->member->joinDate)->startOfMonth() : $today->startOfMonth();
+        $selectedYear = (int) ($this->selectedYear ?? date('Y'));
+
+        $txs = SimpananTransaction::where('memberId', $this->memberId)
+            ->where('type', 'WAJIB')
+            ->where('status', 'APPROVED')
+            ->get();
+
+        $imports = DB::table('audit_simwa_imports')
+            ->where('matched_member_id', $this->memberId)
+            ->where('raw_uraian', 'LIKE', '%SIMWA%')
+            ->get();
+
+        $monthsName = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
+
+        for ($i = 1; $i <= 12; $i++) {
+            $currentMonthDate = Carbon::createFromDate($selectedYear, $i, 1)->endOfMonth();
+            $periodKey = sprintf('%s-%02d', $selectedYear, $i);
+            $monthName = $monthsName[$i];
+
+            $hasTx = $txs->filter(function ($t) use ($selectedYear, $i, $periodKey, $monthName) {
+                if ($t->created_at->format('Y') == $selectedYear && $t->created_at->format('n') == $i) {
+                    return true;
+                }
+                if ($t->billingMonth === $periodKey) {
+                    return true;
+                }
+                if (!empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName))) {
+                    // if year is explicitly in notes or match selectedYear
+                    if (str_contains($t->notes, (string)$selectedYear) || $t->created_at->format('Y') == $selectedYear) {
+                        return true;
+                    }
+                }
+                return false;
+            })->first();
+
+            $hasImport = $imports->firstWhere('period', $periodKey);
+
+            $status = 'UNPAID';
+            $paidDate = null;
+            $paidAmount = 0;
+
+            if ($hasTx) {
+                $status = 'PAID';
+                $paidDate = $hasTx->created_at->format('d M Y');
+                $paidAmount = (float) $hasTx->amount;
+            } elseif ($hasImport) {
+                $status = 'PAID';
+                $paidDate = 'Payroll / Import';
+                $paidAmount = (float) $hasImport->amount;
+            } elseif ($currentMonthDate->isFuture() && $currentMonthDate->format('Y-m') > $today->format('Y-m')) {
+                $status = 'FUTURE';
+            } elseif ($currentMonthDate->lt($joinDate)) {
+                $status = 'NOT_MEMBER';
+            }
+
+            $grid[$i] = [
+                'monthNum' => $i,
+                'monthName' => Carbon::create()->month($i)->translatedFormat('M'),
+                'fullName' => $monthName,
+                'periodKey' => $periodKey,
+                'status' => $status,
+                'paidDate' => $paidDate,
+                'paidAmount' => $paidAmount,
+            ];
+        }
+
+        return $grid;
+    }
+
+    public function getAvailableYearsProperty()
+    {
+        $joinYear = $this->member->joinDate ? (int) Carbon::parse($this->member->joinDate)->format('Y') : (int) date('Y');
+        $currentYear = (int) date('Y');
+        $years = range(min($joinYear, 2024), max($currentYear + 1, 2026));
+        rsort($years);
+        return array_values(array_unique($years));
+    }
+
     public function render()
     {
         return view('livewire.admin.simpanan-management', [
             'wajibTransactions' => $this->wajibTransactions,
             'sukarelaTransactions' => $this->sukarelaTransactions,
             'pokokTransactions' => $this->pokokTransactions,
+            'simwaGrid' => $this->simwaGrid,
+            'availableYears' => $this->availableYears,
         ]);
     }
 }

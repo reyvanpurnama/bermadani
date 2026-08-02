@@ -72,39 +72,60 @@ class Simpanan extends Component
 
         $grid = [];
         $today = Carbon::now();
-        $joinDate = $this->member->joinDate ? Carbon::parse($this->member->joinDate) : $today;
+        $joinDate = $this->member->joinDate ? Carbon::parse($this->member->joinDate)->startOfMonth() : $today->startOfMonth();
+        $selectedYear = (int) ($this->selectedYear ?? date('Y'));
 
-        // Fetch WAJIB transactions for the selected year
-        $transactions = SimpananTransaction::where('memberId', $this->member->id)
+        $txs = SimpananTransaction::where('memberId', $this->member->id)
             ->where('type', 'WAJIB')
             ->where('status', 'APPROVED')
-            ->whereYear('created_at', $this->selectedYear)
-            ->get()
-            ->groupBy(function ($item) {
-                // Group by month index (1-12)
-                return (int) $item->created_at->format('n');
-            });
+            ->get();
+
+        $imports = \DB::table('audit_simwa_imports')
+            ->where('matched_member_id', $this->member->id)
+            ->where('raw_uraian', 'LIKE', '%SIMWA%')
+            ->get();
+
+        $monthsName = [
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
+            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
+            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+        ];
 
         for ($i = 1; $i <= 12; $i++) {
-            $currentMonthDate = Carbon::createFromDate($this->selectedYear, $i, 1)->endOfMonth();
+            $currentMonthDate = Carbon::createFromDate($selectedYear, $i, 1)->endOfMonth();
+            $periodKey = sprintf('%s-%02d', $selectedYear, $i);
+            $monthName = $monthsName[$i];
+
+            $hasTx = $txs->filter(function ($t) use ($selectedYear, $i, $periodKey, $monthName) {
+                if ($t->created_at->format('Y') == $selectedYear && $t->created_at->format('n') == $i) {
+                    return true;
+                }
+                if ($t->billingMonth === $periodKey) {
+                    return true;
+                }
+                if (!empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName))) {
+                    if (str_contains($t->notes, (string)$selectedYear) || $t->created_at->format('Y') == $selectedYear) {
+                        return true;
+                    }
+                }
+                return false;
+            })->first();
+
+            $hasImport = $imports->firstWhere('period', $periodKey);
+
             $status = 'UNPAID';
 
-            // Check if already paid
-            if (isset($transactions[$i])) {
+            if ($hasTx || $hasImport) {
                 $status = 'PAID';
-            }
-            // Check if future
-            elseif ($currentMonthDate->isFuture() && $currentMonthDate->format('Y-m') > $today->format('Y-m')) {
+            } elseif ($currentMonthDate->isFuture() && $currentMonthDate->format('Y-m') > $today->format('Y-m')) {
                 $status = 'FUTURE';
-            }
-            // Check if before join
-            elseif ($currentMonthDate->lt($joinDate->startOfMonth())) {
+            } elseif ($currentMonthDate->lt($joinDate)) {
                 $status = 'NOT_MEMBER';
             }
 
             $grid[$i] = [
                 'monthName' => Carbon::create()->month($i)->translatedFormat('M'),
-                'fullName' => Carbon::create()->month($i)->translatedFormat('F'),
+                'fullName' => $monthName,
                 'status' => $status,
             ];
         }

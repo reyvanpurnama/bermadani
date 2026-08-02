@@ -30,13 +30,22 @@
 
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30">
-            <div class="flex justify-between items-start mb-2">
-                <span class="text-[10px] font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-widest">S. Pokok</span>
-                <i class='bx bxs-lock-alt text-indigo-400 text-lg'></i>
+        <div class="bg-indigo-50 dark:bg-indigo-900/10 p-4 rounded-xl border border-indigo-100 dark:border-indigo-800/30 flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-[10px] font-bold text-indigo-800 dark:text-indigo-300 uppercase tracking-widest">S. Pokok</span>
+                    @if($member->simpananPokok > 0)
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">Lunas</span>
+                    @else
+                        <span class="px-2 py-0.5 text-[9px] font-bold rounded bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400">Belum Lunas</span>
+                    @endif
+                </div>
+                <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</h4>
+                <p class="text-[10px] text-slate-500">Sekali Bayar</p>
             </div>
-            <h4 class="text-lg font-bold text-slate-800 dark:text-white">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</h4>
-            <p class="text-[10px] text-slate-500">Sekali Bayar</p>
+            <button wire:click="openPokokModal" class="mt-3 text-xs font-bold text-primary hover:text-indigo-700 dark:text-indigo-400 inline-flex items-center gap-1">
+                <i class='bx bx-plus-circle'></i> {{ $member->simpananPokok > 0 ? 'Tambah Setoran' : 'Setor Simpok' }}
+            </button>
         </div>
         <div class="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-100 dark:border-blue-800/30">
             <div class="flex justify-between items-start mb-2">
@@ -218,6 +227,78 @@
         <!-- Tab Content: Wajib -->
         @if($activeTab === 'wajib')
             <div class="p-6">
+                <!-- Kartu Kontrol Simpanan Wajib Matrix -->
+                <div class="bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-slate-200 dark:border-slate-700 p-5 mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                <i class='bx bx-calendar-check text-blue-600 dark:text-blue-400 text-lg'></i>
+                                Kartu Kontrol Simpanan Wajib
+                            </h3>
+                            <p class="text-xs text-slate-500">Monitoring status setoran bulanan anggota per periode tahun</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <label class="text-xs font-bold text-slate-500">Tahun:</label>
+                            <select wire:change="changeYear($event.target.value)" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                        @foreach($simwaGrid as $month => $data)
+                            @php
+                                $colorClass = match($data['status']) {
+                                    'PAID' => 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400',
+                                    'UNPAID' => 'bg-rose-50 border-rose-200 text-rose-700 dark:bg-rose-900/20 dark:border-rose-800 dark:text-rose-400',
+                                    'FUTURE' => 'bg-slate-100 border-slate-200 text-slate-400 dark:bg-slate-800/50 dark:border-slate-700 dark:text-slate-500',
+                                    'NOT_MEMBER' => 'bg-slate-100/60 border-slate-200 text-slate-400 dark:bg-slate-800/30 dark:border-slate-800 dark:text-slate-600',
+                                };
+                            @endphp
+                            <div class="relative border rounded-xl p-3 flex flex-col items-center justify-between text-center min-h-[110px] {{ $colorClass }}">
+                                <div class="w-full text-center">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider block mb-1">{{ $data['fullName'] }}</span>
+                                    @if($data['status'] === 'PAID')
+                                        <i class='bx bx-check-circle text-2xl text-emerald-600 dark:text-emerald-400 mb-1'></i>
+                                        <span class="text-[11px] font-bold block">LUNAS</span>
+                                        <span class="text-[9px] text-emerald-600/80 dark:text-emerald-400/80 block">{{ $data['paidDate'] }}</span>
+                                    @elseif($data['status'] === 'UNPAID')
+                                        <i class='bx bx-x-circle text-2xl text-rose-500 mb-1'></i>
+                                        <span class="text-[11px] font-bold block mb-1">BELUM BAYAR</span>
+                                        <button wire:click="openWajibModal('{{ $data['fullName'] }} {{ $selectedYear }}', '{{ $data['periodKey'] }}')" class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold shadow-sm transition-colors w-full">
+                                            + Setor
+                                        </button>
+                                    @elseif($data['status'] === 'FUTURE')
+                                        <i class='bx bx-time text-2xl text-slate-400 mb-1'></i>
+                                        <span class="text-[10px] font-medium block">Belum Waktunya</span>
+                                    @else
+                                        <i class='bx bx-minus-circle text-2xl text-slate-300 dark:text-slate-600 mb-1'></i>
+                                        <span class="text-[10px] font-medium block">Belum Anggota</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="flex gap-4 mt-4 pt-3 border-t border-slate-200 dark:border-slate-700/60 justify-center flex-wrap">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">Lunas</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                            <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">Belum Bayar (Tunggakan)</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span>
+                            <span class="text-[11px] text-slate-600 dark:text-slate-400 font-medium">Belum Waktunya</span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div class="flex items-center gap-4">
                         <div class="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-blue-600">
@@ -349,32 +430,105 @@
         <!-- Tab Content: Pokok -->
         @if($activeTab === 'pokok')
             <div class="p-6 text-center">
-                <div class="max-w-md mx-auto py-10">
-                    <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/20 text-primary rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
-                        <i class='bx bxs-lock'></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">Simpanan Pokok Terbayar</h3>
-                    <p class="text-sm text-slate-500 mt-2 mb-6">
-                        Anggota ini telah melunasi simpanan pokok pada saat pendaftaran. Dana ini tidak dapat ditarik kecuali anggota mengundurkan diri.
-                    </p>
-                    <div class="inline-block bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-xl">
-                        <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Nominal</span>
-                        <p class="text-2xl font-bold text-slate-800 dark:text-white mt-1">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</p>
-                    </div>
+                <div class="max-w-md mx-auto py-8">
+                    @if($member->simpananPokok == 0)
+                        <div class="w-16 h-16 bg-rose-50 dark:bg-rose-900/20 text-rose-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                            <i class='bx bx-error-circle'></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Simpanan Pokok Belum Lunas (Rp 0)</h3>
+                        <p class="text-sm text-slate-500 mt-2 mb-6">
+                            Anggota ini belum melakukan pembayaran simpanan pokok (Rp 200.000). Silakan catat setoran simpanan pokok di bawah ini.
+                        </p>
+                        <div class="inline-block bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-xl mb-6">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Status Simpanan Pokok</span>
+                            <p class="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">Belum Terbayar</p>
+                        </div>
+                        <div>
+                            <button wire:click="openPokokModal" class="bg-primary hover:bg-indigo-700 text-white px-6 py-3 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center gap-2 mx-auto">
+                                <i class='bx bx-plus-circle text-lg'></i> + Input Setoran Simpanan Pokok
+                            </button>
+                        </div>
+                    @else
+                        <div class="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                            <i class='bx bx-check-circle'></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white">Simpanan Pokok Terbayar</h3>
+                        <p class="text-sm text-slate-500 mt-2 mb-6">
+                            Anggota ini telah melunasi simpanan pokok. Dana ini bersifat tidak dapat ditarik kecuali anggota mengundurkan diri.
+                        </p>
+                        <div class="inline-block bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-xl mb-6">
+                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Saldo Simpanan Pokok</span>
+                            <p class="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">Rp {{ number_format($member->simpananPokok, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <button wire:click="openPokokModal" class="bg-slate-800 hover:bg-slate-900 text-white px-5 py-2.5 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-2">
+                                <i class='bx bx-plus-circle'></i> + Tambah Setoran Pokok
+                            </button>
+                        </div>
+                    @endif
 
                     @if($pokokTransactions->count() > 0)
-                        <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700">
-                            <p class="text-xs text-slate-400 mb-2">Riwayat Transaksi</p>
-                            @foreach($pokokTransactions as $trx)
-                                <div class="text-xs text-slate-600 dark:text-slate-400">
-                                    {{ $trx->created_at->format('d M Y') }} - Rp {{ number_format($trx->amount, 0, ',', '.') }}
-                                </div>
-                            @endforeach
+                        <div class="mt-8 pt-8 border-t border-slate-100 dark:border-slate-700 text-left">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Riwayat Transaksi Simpanan Pokok</p>
+                            <div class="space-y-2">
+                                @foreach($pokokTransactions as $trx)
+                                    <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-xs">
+                                        <div>
+                                            <p class="font-bold text-slate-800 dark:text-white">{{ $trx->notes ?? 'Setoran Simpanan Pokok' }}</p>
+                                            <p class="text-[10px] text-slate-400">{{ $trx->created_at->format('d M Y, H:i') }}</p>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="font-bold font-mono text-emerald-600">+ Rp {{ number_format($trx->amount, 0, ',', '.') }}</p>
+                                            <p class="text-[10px] text-slate-400">Petugas: {{ $trx->processor->name ?? 'System' }}</p>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
                 </div>
             </div>
         @endif
+    </div>
+
+    <!-- Modal: Pokok -->
+    @if($showPokokModal)
+        <div class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-darkCard w-full max-w-sm rounded-xl p-6 shadow-2xl">
+                <h3 class="font-bold text-lg mb-4 dark:text-white">Input Setoran Simpanan Pokok</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">Nominal (Rp)</label>
+                        <input type="number" wire:model="pokokAmount"
+                            class="w-full border rounded-lg p-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white">
+                        @error('pokokAmount') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">Keterangan (Opsional)</label>
+                        <textarea wire:model="notes" rows="2"
+                            class="w-full border rounded-lg p-2 text-sm dark:bg-slate-800 dark:border-slate-600 dark:text-white"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">Bukti Transfer (Opsional)</label>
+                        <input type="file" wire:model="buktiTransfer" accept="image/*"
+                            class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200">
+                        @error('buktiTransfer') <span class="text-xs text-rose-500 mt-1">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-end mt-4">
+                    <button wire:click="closePokokModal"
+                        class="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg">Batal</button>
+                    <button wire:click="submitPokok" wire:loading.attr="disabled"
+                        class="px-4 py-2 text-sm font-bold text-white bg-primary hover:bg-indigo-700 rounded-lg disabled:opacity-50">
+                        <span wire:loading.remove wire:target="submitPokok">Simpan</span>
+                        <span wire:loading wire:target="submitPokok">Menyimpan...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
     </div>
 
     <!-- Modal: Wajib -->
