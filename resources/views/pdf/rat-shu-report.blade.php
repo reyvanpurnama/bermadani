@@ -277,9 +277,9 @@
             @forelse($distributions as $index => $dist)
                 @php
                     $member = $dist->member;
-                    $simPokok = (float) ($dist->simpanan_pokok_snapshot ?? $member?->simpananPokok ?? 0);
-                    $simWajib = (float) ($dist->simpanan_wajib_snapshot ?? $member?->simpananWajib ?? 0);
-                    $totalSimp = (float) ($dist->total_simpanan_amount ?? ($simPokok + $simWajib));
+                    $simPokok = (float) (($dist->simpanan_pokok_snapshot > 0) ? $dist->simpanan_pokok_snapshot : ($member?->simpananPokok ?? 0));
+                    $simWajib = (float) (($dist->simpanan_wajib_snapshot > 0) ? $dist->simpanan_wajib_snapshot : ($member?->simpananWajib ?? 0));
+                    $totalSimp = (float) (($dist->total_simpanan_amount > 0) ? $dist->total_simpanan_amount : ($simPokok + $simWajib));
                 @endphp
                 <tr>
                     <td class="text-center font-mono">{{ $index + 1 }}</td>
