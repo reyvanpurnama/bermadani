@@ -14,7 +14,11 @@ class RatReportPdfController extends Controller
     {
         $distributions = MemberShuDistribution::with('member')
             ->where('rat_session_id', $session->id)
+            ->where('shu_amount', '>', 0)
             ->get()
+            ->filter(function ($dist) {
+                return $dist->member && $dist->member->status === 'ACTIVE' && $dist->member->isMemberKoperasi;
+            })
             ->sortBy(function ($dist) {
                 return $dist->member?->name ?? 'ZZZ';
             })
