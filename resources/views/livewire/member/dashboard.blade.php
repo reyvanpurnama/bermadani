@@ -166,7 +166,7 @@
 
     {{-- SHU Card Widget --}}
     @if($shuInfo)
-        <div class="mt-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xl border border-emerald-400/30 relative overflow-hidden group mb-8">
+        <div x-data="{ showMemberFormula: false }" class="mt-4 bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-700 text-white p-5 rounded-2xl shadow-xl border border-emerald-400/30 relative overflow-hidden group mb-8">
             <div class="absolute top-0 right-0 w-36 h-36 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
 
             <div class="flex items-start justify-between relative z-10">
@@ -186,8 +186,12 @@
                         Rp {{ number_format($shuInfo['shuAmount'], 0, ',', '.') }}
                     </h3>
                     <p class="text-[10px] text-emerald-100/90 mt-1 font-medium">
-                        Porsi Simpanan Wajib: <span class="font-bold text-white">{{ number_format($shuInfo['portionPercentage'], 3, ',', '.') }}%</span> (Rp {{ number_format($shuInfo['simpananWajib'], 0, ',', '.') }})
+                        Porsi Simpanan: <span class="font-bold text-white">{{ number_format($shuInfo['portionPercentage'], 3, ',', '.') }}%</span> (Rp {{ number_format($shuInfo['simpananWajib'], 0, ',', '.') }})
                     </p>
+                    <button @click="showMemberFormula = !showMemberFormula" 
+                        class="mt-2 text-[10px] bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-lg font-bold backdrop-blur-sm transition-all flex items-center gap-1">
+                        <i class='bx bx-info-circle'></i> <span x-text="showMemberFormula ? 'Sembunyikan Rumus' : 'Lihat Cara Perhitungan SHU Saya'"></span>
+                    </button>
                 </div>
 
                 <div class="text-right flex flex-col items-end justify-between self-stretch">
@@ -204,6 +208,17 @@
                         </span>
                     @endif
                 </div>
+            </div>
+
+            {{-- Transparent Formula Accordion inside Card --}}
+            <div x-show="showMemberFormula" x-transition class="mt-4 pt-4 border-t border-white/20 text-xs space-y-2 relative z-10">
+                <p class="font-bold text-white text-[11px]">📐 Rumus Pembagian SHU Anda:</p>
+                <div class="bg-black/20 p-3 rounded-xl space-y-1.5 text-[10px] font-mono text-emerald-50">
+                    <p>1. <strong>Jasa Simpanan</strong> = (Simpanan Anda ÷ Total Simpanan Koperasi) × Pool Jasa Simpanan</p>
+                    <p>2. <strong>Jasa Usaha</strong> = (Total Belanja Anda ÷ Total Belanja Koperasi) × Pool Jasa Usaha</p>
+                    <p class="text-white font-bold font-sans mt-1"> Total SHU = Jasa Simpanan + Jasa Usaha</p>
+                </div>
+                <p class="text-[9px] text-emerald-100 italic">*Perhitungan hanya menghitung akumulasi simpanan s/d 31 Des 2025.</p>
             </div>
         </div>
     @endif

@@ -124,6 +124,65 @@
         </div>
     @endif
 
+    {{-- Formula Info Card (Panduan Rumus Transparan Admin) --}}
+    <div x-data="{ openFormula: false }" class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        <button @click="openFormula = !openFormula" 
+            class="w-full p-4 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/50 transition-all text-left">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                    <i class='bx bx-help-circle text-lg'></i>
+                </div>
+                <div>
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-white">💡 Panduan Rumus Perhitungan SHU (Gunakan ini saat Menjelaskan ke Anggota)</h3>
+                    <p class="text-[10px] text-slate-500">Klik untuk melihat rumus transparan pembagian SHU Jasa Simpanan & Jasa Usaha</p>
+                </div>
+            </div>
+            <i class='bx text-slate-400 text-lg transition-transform duration-200' :class="openFormula ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+        </button>
+
+        <div x-show="openFormula" x-transition class="p-6 border-t border-slate-100 dark:border-slate-700 space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {{-- Jasa Simpanan Formula --}}
+                <div class="bg-emerald-50/60 dark:bg-emerald-950/20 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/40">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class='bx bx-coin-stack text-emerald-600 text-base'></i>
+                        <h4 class="text-xs font-bold text-emerald-800 dark:text-emerald-300">1. Rumus Jasa Simpanan</h4>
+                    </div>
+                    <div class="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-emerald-100 dark:border-emerald-900 font-mono text-[11px] text-slate-700 dark:text-slate-300 mb-2">
+                        Jasa Simpanan = (Total Simpanan Anggota ÷ Total Simpanan Seluruh Anggota) × Pool Jasa Simpanan
+                    </div>
+                    <ul class="text-[10px] text-emerald-700 dark:text-emerald-400 space-y-1">
+                        <li>• <strong>Simpanan Anggota</strong> = Simpanan Pokok + Simpanan Wajib s/d Cutoff (31 Des 2025).</li>
+                        <li>• Setoran di tahun 2026 <strong>TIDAK dihitung</strong> dalam pembagian RAT 2025.</li>
+                    </ul>
+                </div>
+
+                {{-- Jasa Usaha Formula --}}
+                <div class="bg-amber-50/60 dark:bg-amber-950/20 p-4 rounded-xl border border-amber-200 dark:border-amber-800/40">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class='bx bx-shopping-bag text-amber-600 text-base'></i>
+                        <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300">2. Rumus Jasa Usaha (Belanja POS)</h4>
+                    </div>
+                    <div class="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-amber-100 dark:border-amber-900 font-mono text-[11px] text-slate-700 dark:text-slate-300 mb-2">
+                        Jasa Usaha = (Total Belanja Anggota ÷ Total Belanja Seluruh Anggota) × Pool Jasa Usaha
+                    </div>
+                    <ul class="text-[10px] text-amber-700 dark:text-amber-400 space-y-1">
+                        <li>• <strong>Belanja Anggota</strong> = Akumulasi transaksi belanja di Minimarket Koperasi selama 2025.</li>
+                        <li>• Anggota yang lebih sering belanja mendapat bagian Jasa Usaha lebih besar.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                    <i class='bx bx-calculator text-indigo-500 text-xl'></i>
+                    <span class="text-xs font-bold text-slate-800 dark:text-white">Total SHU Akhir Anggota = Jasa Simpanan + Jasa Usaha</span>
+                </div>
+                <span class="text-[10px] text-slate-500 italic">Transparan • Sesuai Standar Akuntansi Koperasi</span>
+            </div>
+        </div>
+    </div>
+
     {{-- Distribution Table --}}
     <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         <div class="flex items-center justify-between mb-4">

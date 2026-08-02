@@ -62,12 +62,11 @@ class RatSetup extends Component
         $this->memberAllocationPercentage = (float) $session->member_allocation_percentage;
         $this->notes = $session->notes;
 
-        $hasAllocation = ((float) $session->jasa_simpanan_percentage + (float) $session->jasa_usaha_percentage) > 0;
-        $this->cadanganPercentage = $hasAllocation ? (float) $session->cadangan_percentage : 25.00;
-        $this->jasaSimpananPercentage = $hasAllocation ? (float) $session->jasa_simpanan_percentage : 30.00;
-        $this->jasaUsahaPercentage = $hasAllocation ? (float) $session->jasa_usaha_percentage : 25.00;
-        $this->pengurusPercentage = $hasAllocation ? (float) $session->pengurus_percentage : 10.00;
-        $this->danaSosialPercentage = $hasAllocation ? (float) $session->dana_sosial_percentage : 10.00;
+        $this->cadanganPercentage = (float) $session->cadangan_percentage;
+        $this->jasaSimpananPercentage = (float) $session->jasa_simpanan_percentage;
+        $this->jasaUsahaPercentage = (float) $session->jasa_usaha_percentage;
+        $this->pengurusPercentage = (float) $session->pengurus_percentage;
+        $this->danaSosialPercentage = (float) $session->dana_sosial_percentage;
     }
 
     public function loadSessionById($sessionId)
