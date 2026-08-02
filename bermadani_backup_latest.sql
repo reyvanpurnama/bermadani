@@ -1,0 +1,1 @@
+bash: line 1: mysqldump: command not found

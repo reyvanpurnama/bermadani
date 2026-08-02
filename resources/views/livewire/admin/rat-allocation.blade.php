@@ -16,6 +16,12 @@
             </p>
         </div>
         <div class="flex items-center gap-2">
+            @if($ratSession)
+                <a href="{{ route('admin.rat.pdf-report', $ratSession->id) }}" target="_blank"
+                    class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center gap-2">
+                    <i class='bx bxs-file-pdf text-lg'></i> Download PDF Laporan Lengkap
+                </a>
+            @endif
             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold {{ $ratSession?->isFinalized() ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' }}">
                 {{ $ratSession?->status_label ?? 'N/A' }}
             </span>

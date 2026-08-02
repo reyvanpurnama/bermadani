@@ -233,6 +233,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::get('/rat/eligibility/{session}', \App\Livewire\Admin\RatEligibility::class)->name('admin.rat.eligibility');
     Route::get('/rat/allocation/{session}', \App\Livewire\Admin\RatAllocation::class)->name('admin.rat.allocation');
     Route::get('/rat/disbursement/{session}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.disbursement');
+    Route::get('/rat/pdf-report/{session}', [\App\Http\Controllers\Admin\RatReportPdfController::class, 'downloadPdf'])->name('admin.rat.pdf-report');
 
     // Legacy redirect: old URL → new wizard
     Route::get('/rat-sessions', function () {
