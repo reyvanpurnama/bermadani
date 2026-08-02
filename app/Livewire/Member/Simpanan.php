@@ -76,13 +76,11 @@ class Simpanan extends Component
         $selectedYear = (int) ($this->selectedYear ?? date('Y'));
 
         $txs = SimpananTransaction::where('memberId', $this->member->id)
-            ->where('type', 'WAJIB')
             ->where('status', 'APPROVED')
             ->get();
 
         $imports = \DB::table('audit_simwa_imports')
             ->where('matched_member_id', $this->member->id)
-            ->where('raw_uraian', 'LIKE', '%SIMWA%')
             ->get();
 
         $monthsName = [
@@ -97,21 +95,29 @@ class Simpanan extends Component
             $monthName = $monthsName[$i];
 
             $hasTx = $txs->filter(function ($t) use ($selectedYear, $i, $periodKey, $monthName) {
-                if ($t->created_at->format('Y') == $selectedYear && $t->created_at->format('n') == $i) {
-                    return true;
+                if ($t->billingMonth === $periodKey) return true;
+
+                $dateMatch = ($t->created_at->format('Y') == $selectedYear && $t->created_at->format('n') == $i);
+                $notesMatch = !empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName)) && (str_contains($t->notes, (string)$selectedYear) || $t->created_at->format('Y') == $selectedYear);
+
+                if ($t->type === 'WAJIB') {
+                    return $dateMatch || $notesMatch;
                 }
-                if ($t->billingMonth === $periodKey) {
-                    return true;
+
+                if ($t->type === 'SUKARELA' && (!empty($t->notes) && (str_contains(strtolower($t->notes), 'payroll') || str_contains(strtolower($t->notes), 'tabungan')))) {
+                    return $dateMatch || $notesMatch;
                 }
-                if (!empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName))) {
-                    if (str_contains($t->notes, (string)$selectedYear) || $t->created_at->format('Y') == $selectedYear) {
-                        return true;
-                    }
-                }
+
                 return false;
             })->first();
 
-            $hasImport = $imports->firstWhere('period', $periodKey);
+            $hasImport = $imports->filter(function ($imp) use ($periodKey) {
+                return $imp->period === $periodKey && (
+                    str_contains(strtoupper($imp->raw_uraian), 'SIMWA') || 
+                    str_contains(strtoupper($imp->raw_uraian), 'TABUNGAN') || 
+                    str_contains(strtoupper($imp->raw_uraian), 'SUKARELA')
+                );
+            })->first();
 
             $status = 'UNPAID';
 
