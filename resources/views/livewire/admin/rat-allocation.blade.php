@@ -173,6 +173,19 @@
                 </div>
             </div>
 
+            <div class="bg-indigo-50/60 dark:bg-indigo-950/20 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800/40">
+                <div class="flex items-center gap-2 mb-2">
+                    <i class='bx bx-pie-chart-alt text-indigo-600 text-base'></i>
+                    <h4 class="text-xs font-bold text-indigo-800 dark:text-indigo-300">3. Maksud Kolom Porsi (%)</h4>
+                </div>
+                <div class="p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-indigo-100 dark:border-indigo-900 font-mono text-[11px] text-slate-700 dark:text-slate-300 mb-2">
+                    Porsi (%) = (Total SHU Diterima Anggota ÷ Total SHU Anggota [Rp 15 Juta]) × 100%
+                </div>
+                <p class="text-[10px] text-indigo-700 dark:text-indigo-400">
+                    Menunjukkan berapa persen potongan "kue" SHU yang didapatkan oleh 1 orang anggota dari total Rp 15 Juta. Total seluruh porsi anggota jika dijumlahkan tepat <strong>100.00%</strong>.
+                </p>
+            </div>
+
             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2">
                     <i class='bx bx-calculator text-indigo-500 text-xl'></i>

@@ -216,7 +216,8 @@
                 <div class="bg-black/20 p-3 rounded-xl space-y-1.5 text-[10px] font-mono text-emerald-50">
                     <p>1. <strong>Jasa Simpanan</strong> = (Simpanan Anda ÷ Total Simpanan Koperasi) × Pool Jasa Simpanan</p>
                     <p>2. <strong>Jasa Usaha</strong> = (Total Belanja Anda ÷ Total Belanja Koperasi) × Pool Jasa Usaha</p>
-                    <p class="text-white font-bold font-sans mt-1"> Total SHU = Jasa Simpanan + Jasa Usaha</p>
+                    <p>3. <strong>Porsi (%)</strong> = (SHU Anda ÷ Total SHU Anggota) × 100%</p>
+                    <p class="text-white font-bold font-sans mt-1"> Total SHU Diterima = Jasa Simpanan + Jasa Usaha</p>
                 </div>
                 <p class="text-[9px] text-emerald-100 italic">*Perhitungan hanya menghitung akumulasi simpanan s/d 31 Des 2025.</p>
             </div>
