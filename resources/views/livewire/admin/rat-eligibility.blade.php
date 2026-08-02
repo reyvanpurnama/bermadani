@@ -160,10 +160,10 @@
                                 {{ $member->joinDate?->format('d/m/Y') ?? '-' }}
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-300">
-                                Rp {{ number_format((float) $member->simpananPokok, 0, ',', '.') }}
+                                Rp {{ number_format((float) app(\App\Services\ShuCalculationService::class)->getMemberSavingsAtCutoff($member, 'POKOK', $joinDateCutoff), 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-700 dark:text-slate-300">
-                                Rp {{ number_format((float) $member->simpananWajib, 0, ',', '.') }}
+                                Rp {{ number_format((float) app(\App\Services\ShuCalculationService::class)->getMemberSavingsAtCutoff($member, 'WAJIB', $joinDateCutoff), 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-center">
                                 <input type="checkbox" 
