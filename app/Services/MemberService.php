@@ -168,7 +168,7 @@ class MemberService
             $balanceAfter = $member->{$field};
 
             // Create transaction record
-            $transaction = SimpananTransaction::create([
+            $transactionData = [
                 'memberId' => $memberId,
                 'type' => $type,
                 'transactionType' => 'SETOR',
@@ -178,7 +178,13 @@ class MemberService
                 'buktiPath' => $buktiPath,
                 'processedBy' => $processedBy ?? auth()->id(),
                 'status' => 'APPROVED',
-            ]);
+            ];
+
+            if ($type === 'POKOK' && $member->joinDate && $member->joinDate->isPast()) {
+                $transactionData['created_at'] = $member->joinDate;
+            }
+
+            $transaction = SimpananTransaction::create($transactionData);
 
             return $transaction;
         });
