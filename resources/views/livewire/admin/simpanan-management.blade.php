@@ -525,11 +525,8 @@
                         <span wire:loading.remove wire:target="submitPokok">Simpan</span>
                         <span wire:loading wire:target="submitPokok">Menyimpan...</span>
                     </button>
-                </div>
-            </div>
         </div>
     @endif
-    </div>
 
     <!-- Modal: Wajib -->
     @if($showWajibModal)
