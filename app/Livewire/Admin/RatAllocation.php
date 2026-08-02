@@ -26,6 +26,19 @@ class RatAllocation extends Component
     {
         $ratSession = RatSession::findOrFail($session);
         $this->sessionId = $ratSession->id;
+
+        // Auto-run calculation if distributions exist without snapshot columns or if empty
+        $needsCalculation = MemberShuDistribution::where('rat_session_id', $ratSession->id)
+            ->where(function ($q) {
+                $q->where('simpanan_pokok_snapshot', 0)
+                  ->where('simpanan_wajib_snapshot', 0);
+            })->exists();
+
+        if ($needsCalculation || MemberShuDistribution::where('rat_session_id', $ratSession->id)->count() === 0) {
+            if (!$ratSession->isFinalized()) {
+                $this->shuService->calculateAndSaveDistributions($ratSession);
+            }
+        }
     }
 
     public function updatingSearchMember()

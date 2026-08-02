@@ -166,10 +166,10 @@
                                 <div class="text-[9px] text-slate-400">{{ $member?->unitKerja ?? '' }}</div>
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-400">
-                                Rp {{ number_format((float) $dist->simpanan_pokok_snapshot, 0, ',', '.') }}
+                                Rp {{ number_format((float) ($dist->simpanan_pokok_snapshot > 0 ? $dist->simpanan_pokok_snapshot : ($member?->simpananPokok ?? 0)), 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-400">
-                                Rp {{ number_format((float) $dist->simpanan_wajib_snapshot, 0, ',', '.') }}
+                                Rp {{ number_format((float) ($dist->simpanan_wajib_snapshot > 0 ? $dist->simpanan_wajib_snapshot : ($dist->total_simpanan_amount ?? $member?->simpananWajib ?? 0)), 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-400">
                                 Rp {{ number_format((float) $dist->total_transaksi_amount, 0, ',', '.') }}
