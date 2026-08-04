@@ -20,9 +20,14 @@ class LoanDetail extends Component
             abort(403);
         }
 
-        $member = Member::where('userId', $user->id)->first();
-        if (!$member || $loan->member_id !== $member->id) {
-            abort(403, 'Anda tidak memiliki akses ke data pembiayaan ini.');
+        // Allow Admins, SuperAdmins, and Developers to inspect any member loan
+        $isAdminOrDev = $user->isAdmin() || $user->isSuperAdmin() || $user->isDeveloper();
+
+        if (!$isAdminOrDev) {
+            $member = Member::where('userId', $user->id)->first();
+            if (!$member || (int) $loan->member_id !== (int) $member->id) {
+                abort(403, 'Anda tidak memiliki akses ke data pembiayaan ini.');
+            }
         }
 
         $this->loan = $loan->load(['payments' => function ($query) {
