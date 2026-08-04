@@ -1,8 +1,8 @@
-<div class="relative w-full">
+<div class="relative w-full {{ (!empty($results) || strlen($query) >= 2) ? 'z-50' : 'z-10' }}">
     @if($selectedName)
         <div class="flex items-center justify-between p-2 bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-800 rounded-lg">
             <span class="text-xs font-bold text-indigo-700 dark:text-indigo-400 truncate">{{ $selectedName }}</span>
-            <button wire:click="$set('selectedName', '')" class="text-indigo-400 hover:text-indigo-600">
+            <button type="button" wire:click="$set('selectedName', '')" class="text-indigo-400 hover:text-indigo-600">
                 <i class='bx bx-x'></i>
             </button>
         </div>
@@ -18,19 +18,19 @@
 
         @if(!empty($results))
             <div
-                class="absolute z-50 w-full mt-1 bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-lg shadow-xl max-h-48 overflow-y-auto">
+                class="absolute z-[99] w-full mt-1 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl max-h-56 overflow-y-auto left-0">
                 @foreach($results as $result)
-                    <button wire:click="selectResult({{ $result->id }}, '{{ addslashes($result->name) }}')"
-                        class="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors border-b border-slate-50 dark:border-slate-800 last:border-none group">
+                    <button type="button" wire:click="selectResult({{ $result->id }}, '{{ addslashes($result->name) }}')"
+                        class="w-full text-left px-3 py-2.5 hover:bg-slate-50 dark:hover:bg-slate-700/80 transition-colors border-b border-slate-100 dark:border-slate-700/50 last:border-none group">
                         <p class="text-xs font-bold text-slate-700 dark:text-slate-200 group-hover:text-primary">{{ $result->name }}</p>
-                        <p class="text-[10px] text-slate-400">
+                        <p class="text-[10px] text-slate-400 mt-0.5">
                             SKU: {{ $result->sku ?? '-' }} | Supplier: {{ $result->supplier?->businessName ?? 'Toko' }}
                         </p>
                     </button>
                 @endforeach
             </div>
         @elseif(strlen($query) >= 2)
-            <div class="absolute z-50 w-full mt-1 bg-white dark:bg-darkCard p-3 text-center text-xs text-slate-400 border dark:border-slate-700 rounded-lg shadow-sm">
+            <div class="absolute z-[99] w-full mt-1 bg-white dark:bg-darkCard p-3 text-center text-xs text-slate-400 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl">
                 Tidak ditemukan.
             </div>
         @endif

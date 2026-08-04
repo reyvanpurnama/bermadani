@@ -30,7 +30,7 @@
     </div>
 
     {{-- Main Content Card --}}
-    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         {{-- Tabs --}}
         <div class="flex border-b border-slate-100 dark:border-slate-700">
             <button wire:click="$set('activeTab', 'upload')"
@@ -42,7 +42,7 @@
                 2. Pemetaan Produk ({{ $unmappedCount }} Unmapped)
             </button>
             <button wire:click="$set('activeTab', 'preview')"
-                class="px-6 py-4 text-sm font-bold border-b-2 transition-colors {{ $activeTab === 'preview' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700' }}">
+                class="px-6 py-4 text-sm font-bold border-b-2 transition-colors {{ $activeTab === 'preview' ? 'border-transparent text-slate-500 hover:text-slate-700' : 'border-transparent text-slate-500 hover:text-slate-700' }} {{ $activeTab === 'preview' ? '!border-primary !text-primary' : '' }}">
                 3. Preview Clearing Laporan
             </button>
         </div>
@@ -154,19 +154,19 @@
                     </div>
 
                     @if(count($mappingList) > 0)
-                        <div class="overflow-hidden border border-slate-100 dark:border-slate-700 rounded-2xl">
+                        <div class="border border-slate-100 dark:border-slate-700 rounded-2xl min-h-[350px] pb-12">
                             <table class="w-full text-left text-sm">
-                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
+                                <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 uppercase text-[10px] font-bold tracking-wider rounded-t-2xl">
                                     <tr>
-                                        <th class="px-6 py-4">Nama Barang di CSV (Raw)</th>
+                                        <th class="px-6 py-4 rounded-tl-2xl">Nama Barang di CSV (Raw)</th>
                                         <th class="px-6 py-4">Produk Database (Real)</th>
                                         <th class="px-6 py-4">Supplier & SKU</th>
-                                        <th class="px-6 py-4 text-center w-36">Aksi</th>
+                                        <th class="px-6 py-4 text-center w-36 rounded-tr-2xl">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700 bg-white dark:bg-darkCard">
                                     @foreach($mappingList as $item)
-                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors focus-within:relative focus-within:z-30">
                                             <td class="px-6 py-4">
                                                 <span class="font-mono font-bold text-slate-700 dark:text-slate-200 block">{{ $item['raw_name'] }}</span>
                                                  <div class="mt-1.5 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-450 font-medium">
@@ -182,7 +182,7 @@
                                                      @endif
                                                  </div>
                                             </td>
-                                            <td class="px-6 py-4 min-w-[250px]">
+                                            <td class="px-6 py-4 min-w-[280px] relative focus-within:z-40">
                                                 @if($item['mapping'] && $item['mapping']->product)
                                                     <div class="flex items-center gap-2">
                                                         <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
