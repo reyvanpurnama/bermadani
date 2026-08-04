@@ -2,9 +2,9 @@
     <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-6 shadow-sm space-y-5">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Pinjaman Anggota</h1>
+                <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Pembiayaan Syariah Anggota</h1>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Monitoring pinjaman aktif, sisa hutang, dan progres angsuran anggota.
+                    Monitoring pembiayaan aktif, sisa kewajiban (outstanding), dan progres angsuran anggota.
                 </p>
             </div>
 
@@ -12,27 +12,27 @@
                 <a href="{{ route('admin.loans.import') }}"
                     class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors w-full">
                     <i class='bx bx-import text-base'></i>
-                    Import
+                    Import Angsuran
                 </a>
                 <a href="{{ route('admin.loans.create') }}"
                     class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-sm font-bold shadow-sm shadow-primary/20 transition-colors w-full">
                     <i class='bx bx-plus text-base'></i>
-                    Tambah Pinjaman
+                    Tambah Pembiayaan
                 </a>
             </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
             <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 p-4">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pinjaman Berjalan</p>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pembiayaan Berjalan</p>
                 <p class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{{ number_format($stats['activeLoans']) }}</p>
                 <p class="text-xs text-slate-500 mt-1">Status ACTIVE + OVERDUE</p>
             </div>
 
             <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 p-4">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Outstanding</p>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Outstanding</p>
                 <p class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">Rp {{ number_format($stats['outstandingTotal'], 0, ',', '.') }}</p>
-                <p class="text-xs text-slate-500 mt-1">Total sisa hutang berjalan</p>
+                <p class="text-xs text-slate-500 mt-1">Total sisa kewajiban berjalan</p>
             </div>
 
             <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 p-4">
@@ -42,9 +42,9 @@
             </div>
 
             <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/60 p-4">
-                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Debitur Aktif</p>
+                <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Anggota Pembiayaan</p>
                 <p class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-1">{{ number_format($stats['activeDebtors']) }}</p>
-                <p class="text-xs text-slate-500 mt-1">Anggota dengan pinjaman berjalan</p>
+                <p class="text-xs text-slate-500 mt-1">Anggota dengan pembiayaan berjalan</p>
             </div>
         </div>
     </div>
@@ -98,9 +98,9 @@
                     <option value="end_date">Tanggal Akhir</option>
                     <option value="member_name">Nama Anggota</option>
                     <option value="member_number">Nomor Anggota</option>
-                    <option value="amount">Pokok Pinjaman</option>
+                    <option value="amount">Plafond Pembiayaan</option>
                     <option value="monthly_payment">Angsuran per Bulan</option>
-                    <option value="remaining_amount">Sisa Hutang</option>
+                    <option value="remaining_amount">Sisa Kewajiban</option>
                     <option value="tenor">Tenor</option>
                     <option value="progress">Progress Cicilan</option>
                     <option value="status">Status</option>
@@ -150,7 +150,7 @@
 
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
-                        <p class="text-slate-500">Pokok</p>
+                        <p class="text-slate-500">Plafond</p>
                         <p class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" title="Rp {{ number_format($loan->amount, 0, ',', '.') }}">{{ $this->formatCompactCurrency($loan->amount) }}</p>
                     </div>
                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
@@ -158,7 +158,7 @@
                         <p class="font-bold text-primary dark:text-indigo-400 mt-0.5" title="Rp {{ number_format($loan->monthlyPayment, 0, ',', '.') }}">{{ $this->formatCompactCurrency($loan->monthlyPayment) }}</p>
                     </div>
                     <div class="col-span-2 rounded-lg bg-slate-50 dark:bg-slate-800/80 p-2.5">
-                        <p class="text-slate-500">Sisa Hutang</p>
+                        <p class="text-slate-500">Sisa Kewajiban</p>
                         <p class="font-bold mt-0.5 {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }}"
                             title="Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}">
                             {{ $this->formatCompactCurrency($loan->remainingAmount) }}
@@ -190,7 +190,7 @@
                     @if($loan->member)
                         <a href="{{ route('admin.loans.show', $loan->id) }}"
                             class="inline-flex items-center justify-center gap-1 w-full text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                            Detail Pinjaman
+                            Detail Pembiayaan
                             <i class='bx bx-chevron-right'></i>
                         </a>
                     @else
@@ -204,7 +204,7 @@
                     <div class="w-14 h-14 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                         <i class='bx bx-search-alt text-2xl opacity-60'></i>
                     </div>
-                    <p class="font-semibold text-slate-600 dark:text-slate-300">Tidak ada data pinjaman ditemukan</p>
+                    <p class="font-semibold text-slate-600 dark:text-slate-300">Tidak ada data pembiayaan ditemukan</p>
                     <p class="text-xs mt-1">Coba ubah filter atau kata kunci pencarian.</p>
                 </div>
             </div>
@@ -217,9 +217,9 @@
                 <thead class="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700">
                     <tr>
                         <th class="px-4 py-2.5 uppercase font-bold tracking-wider text-slate-400">Anggota</th>
-                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Pokok</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Plafond</th>
                         <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Angsuran/Bln</th>
-                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Sisa</th>
+                        <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400 text-right">Sisa Kewajiban</th>
                         <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Progress</th>
                         <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Status</th>
                         <th class="px-3 py-2.5 uppercase font-bold tracking-wider text-slate-400">Periode</th>
@@ -288,7 +288,7 @@
                                 @if($loan->member)
                                     <a href="{{ route('admin.loans.show', $loan->id) }}"
                                         class="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-300 dark:hover:text-white px-2.5 py-1 rounded-lg border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 transition-colors">
-                                        Detail Pinjaman
+                                        Detail Pembiayaan
                                         <i class='bx bx-chevron-right'></i>
                                     </a>
                                 @else
@@ -303,7 +303,7 @@
                                     <div class="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mb-3">
                                         <i class='bx bx-search-alt text-3xl opacity-60'></i>
                                     </div>
-                                    <p class="font-semibold text-slate-600 dark:text-slate-300">Tidak ada data pinjaman ditemukan</p>
+                                    <p class="font-semibold text-slate-600 dark:text-slate-300">Tidak ada data pembiayaan ditemukan</p>
                                     <p class="text-xs mt-1">Coba ubah filter atau kata kunci pencarian.</p>
                                 </div>
                             </td>

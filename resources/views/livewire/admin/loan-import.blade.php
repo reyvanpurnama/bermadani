@@ -5,7 +5,7 @@
                 <a href="{{ route('admin.loans') }}"
                     class="inline-flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 mb-2 transition-colors font-medium">
                     <i class='bx bx-arrow-back text-lg'></i>
-                    Kembali ke Pinjaman
+                    Kembali ke Pembiayaan
                 </a>
                 <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Import Data Angsuran</h1>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Import data tagihan dan angsuran dari BMT Itqan (CSV).</p>

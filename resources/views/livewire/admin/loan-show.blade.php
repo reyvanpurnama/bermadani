@@ -3,10 +3,10 @@
         <a href="{{ route('admin.loans') }}"
             class="inline-flex items-center gap-2 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors w-fit">
             <i class='bx bx-arrow-back text-base'></i>
-            Kembali ke Daftar Pinjaman
+            Kembali ke Daftar Pembiayaan
         </a>
         <div class="text-xs text-slate-400 dark:text-slate-500">
-            Admin / Pinjaman / #{{ $loan->id }}
+            Admin / Pembiayaan / #{{ $loan->id }}
         </div>
     </div>
 
@@ -14,7 +14,7 @@
         <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
             <div class="space-y-2">
                 <div class="flex items-center gap-2 flex-wrap">
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Detail Pinjaman #{{ $loan->id }}</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Detail Pembiayaan #{{ $loan->id }}</h1>
                     <span class="inline-flex px-2.5 py-1 text-[10px] font-bold rounded-full border {{ $this->sourceBadgeClass($loan->loanSource) }}">
                         {{ $this->formatLoanSource($loan->loanSource) }}
                     </span>
@@ -26,13 +26,13 @@
                 @if($isOverdueWarning)
                     <p class="inline-flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-400">
                         <i class='bx bx-error-circle'></i>
-                        Pinjaman melewati tanggal akhir.
+                        Pembiayaan melewati tanggal akhir.
                     </p>
                 @endif
             </div>
 
             <div class="text-left lg:text-right">
-                <p class="text-[11px] uppercase tracking-wider font-bold text-slate-400">Sisa Hutang</p>
+                <p class="text-[11px] uppercase tracking-wider font-bold text-slate-400">Sisa Kewajiban (Outstanding)</p>
                 <p class="text-2xl font-black {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }}">
                     {{ $this->formatCurrency($loan->remainingAmount) }}
                 </p>
@@ -43,7 +43,7 @@
 
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
         <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-darkCard p-4">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pokok</p>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Plafond Pembiayaan</p>
             <p class="text-lg font-bold text-slate-900 dark:text-white mt-1">{{ $this->formatCurrency($loan->amount) }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-darkCard p-4">
@@ -51,7 +51,7 @@
             <p class="text-lg font-bold text-primary dark:text-indigo-400 mt-1">{{ $this->formatCurrency($loan->monthlyPayment) }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-darkCard p-4">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sisa Hutang</p>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Sisa Kewajiban</p>
             <p class="text-lg font-bold {{ $loan->remainingAmount > 0 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-600 dark:text-emerald-400' }} mt-1">{{ $this->formatCurrency($loan->remainingAmount) }}</p>
         </div>
         <div class="rounded-xl border border-slate-100 dark:border-slate-700 bg-white dark:bg-darkCard p-4">
@@ -66,7 +66,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
         <div class="xl:col-span-8 space-y-6">
             <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-5">
-                <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-4">Profil Pinjaman</h2>
+                <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-4">Profil Pembiayaan</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                     <div>
                         <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Tanggal Mulai</p>
@@ -85,7 +85,7 @@
                         <p class="mt-1 text-slate-700 dark:text-slate-200">{{ $loan->paid_installments ?? 0 }} kali</p>
                     </div>
                     <div>
-                        <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Margin</p>
+                        <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Margin / Ujrah</p>
                         <p class="mt-1 text-slate-700 dark:text-slate-200">{{ number_format((float) $loan->interestRate, 1, ',', '.') }}%</p>
                     </div>
                     <div>
@@ -94,12 +94,12 @@
                     </div>
                     @if($loan->loanSource === 'BMT_ITQAN')
                         <div>
-                            <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Simwa/Bulan</p>
+                            <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Simwa Pembiayaan/Bulan</p>
                             <p class="mt-1 text-slate-700 dark:text-slate-200">{{ $this->formatCurrency($loan->simwa_amount) }}</p>
                         </div>
                     @endif
                     <div class="sm:col-span-2">
-                        <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Tujuan Pinjaman</p>
+                        <p class="text-[11px] uppercase font-bold tracking-wider text-slate-400">Tujuan Pembiayaan</p>
                         <p class="mt-1 text-slate-700 dark:text-slate-200">{{ $loan->purpose ?: '-' }}</p>
                     </div>
                     <div class="sm:col-span-2">
@@ -111,7 +111,7 @@
 
             <div class="bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700 rounded-2xl p-4 sm:p-5">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-sm font-bold text-slate-900 dark:text-white">Riwayat Pembayaran Pinjaman</h2>
+                    <h2 class="text-sm font-bold text-slate-900 dark:text-white">Riwayat Pembayaran Angsuran</h2>
                     <span class="text-xs text-slate-500 dark:text-slate-400">Total tercatat: {{ $this->formatCurrency($totalRecordedPayments) }}</span>
                 </div>
 
@@ -138,7 +138,7 @@
                     </div>
                 @else
                     <div class="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-6 text-center text-slate-400 dark:text-slate-500 text-sm">
-                        Belum ada riwayat pembayaran pinjaman.
+                        Belum ada riwayat pembayaran angsuran.
                     </div>
                 @endif
             </div>
@@ -162,7 +162,7 @@
                         </a>
                         <a href="{{ route('admin.members.edit', $loan->member->id) }}"
                             class="w-full inline-flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">
-                            Edit Data Anggota/Pinjaman
+                            Edit Data Anggota/Pembiayaan
                             <i class='bx bx-chevron-right text-base'></i>
                         </a>
                         @if($loan->loanSource === 'BMT_ITQAN')
@@ -175,7 +175,7 @@
                     </div>
                 @else
                     <div class="rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-5 text-sm text-slate-400 dark:text-slate-500 text-center">
-                        Data anggota tidak tersedia untuk pinjaman ini.
+                        Data anggota tidak tersedia untuk pembiayaan ini.
                     </div>
                 @endif
             </div>
