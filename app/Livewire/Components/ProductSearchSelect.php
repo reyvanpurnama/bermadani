@@ -14,15 +14,18 @@ class ProductSearchSelect extends Component
 
     public function updatedQuery()
     {
-        if (strlen($this->query) < 2) {
+        $q = trim($this->query);
+        if (strlen($q) < 2) {
             $this->results = [];
             return;
         }
 
         $this->results = Product::query()
             ->with('supplier')
-            ->where('name', 'like', '%' . $this->query . '%')
-            ->orWhere('sku', 'like', '%' . $this->query . '%')
+            ->where(function($query) use ($q) {
+                $query->where('name', 'like', '%' . $q . '%')
+                      ->orWhere('sku', 'like', '%' . $q . '%');
+            })
             ->limit(10)
             ->get();
     }
