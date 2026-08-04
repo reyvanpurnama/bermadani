@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Supplier;
 use App\Http\Controllers\Controller;
 use App\Models\ConsignmentBatch;
 use App\Models\Product;
-use App\Models\TransactionItem;
+use App\Services\SupplierSalesService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class SupplierDashboardController extends Controller
 {
@@ -16,37 +15,35 @@ class SupplierDashboardController extends Controller
         /** @var \App\Models\Supplier $supplier */
         $supplier = Auth::guard('supplier')->user();
 
-        // Get supplier's product IDs
-        $productIds = Product::where('supplierId', $supplier->id)->pluck('id');
+        $allSales = SupplierSalesService::getSalesForSupplier($supplier->id);
 
-        // Total Pendapatan Supplier (quantity × buyPrice) bulan ini
-        $totalPendapatan = TransactionItem::whereIn('productId', $productIds)
-            ->whereHas('transaction', function ($query) {
-                $query->whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->where('status', 'COMPLETED');
-            })
-            ->join('products', 'transaction_items.productId', '=', 'products.id')
-            ->sum(DB::raw('transaction_items.quantity * products.buyPrice'));
+        $nowMonth = now()->month;
+        $nowYear = now()->year;
+        $subMonth = now()->subMonth()->month;
+        $subYear = now()->subMonth()->year;
 
-        // Unit terjual bulan ini
-        $unitTerjual = TransactionItem::whereIn('productId', $productIds)
-            ->whereHas('transaction', function ($query) {
-                $query->whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year)
-                    ->where('status', 'COMPLETED');
-            })
-            ->sum('quantity');
+        $thisMonthSales = $allSales->filter(function($item) use ($nowMonth, $nowYear) {
+            return $item->created_at->month == $nowMonth && $item->created_at->year == $nowYear;
+        });
+
+        $lastMonthSales = $allSales->filter(function($item) use ($subMonth, $subYear) {
+            return $item->created_at->month == $subMonth && $item->created_at->year == $subYear;
+        });
+
+        // Total Pendapatan Supplier (bulan ini or total all time fallback)
+        $totalPendapatan = $thisMonthSales->sum('supplier_revenue');
+        if ($totalPendapatan == 0 && $allSales->isNotEmpty()) {
+            $totalPendapatan = $allSales->sum('supplier_revenue');
+        }
+
+        // Unit terjual (bulan ini or total all time fallback)
+        $unitTerjual = $thisMonthSales->sum('quantity');
+        if ($unitTerjual == 0 && $allSales->isNotEmpty()) {
+            $unitTerjual = $allSales->sum('quantity');
+        }
 
         // Pendapatan bulan lalu untuk hitung growth
-        $pendapatanBulanLalu = TransactionItem::whereIn('productId', $productIds)
-            ->whereHas('transaction', function ($query) {
-                $query->whereMonth('created_at', now()->subMonth()->month)
-                    ->whereYear('created_at', now()->subMonth()->year)
-                    ->where('status', 'COMPLETED');
-            })
-            ->join('products', 'transaction_items.productId', '=', 'products.id')
-            ->sum(DB::raw('transaction_items.quantity * products.buyPrice'));
+        $pendapatanBulanLalu = $lastMonthSales->sum('supplier_revenue');
 
         // Hitung pertumbuhan pendapatan
         $pendapatanGrowth = $pendapatanBulanLalu > 0

@@ -11,7 +11,7 @@
                 Kembali ke Dashboard
             </a>
             <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Penjualan</h1>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Daftar transaksi produk konsinyasi Anda.</p>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Daftar transaksi produk konsinyasi Anda (POS Kasir & Audit Retail CSV).</p>
         </div>
         <div class="flex gap-2">
             <button
@@ -45,16 +45,17 @@
                                 <div class="min-w-0">
                                     <h6 class="font-semibold text-slate-900 dark:text-white truncate">{{ $sale->product->name }}
                                     </h6>
-                                    <p class="text-[10px] text-slate-500">{{ $sale->product->sku }}</p>
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">
+                                        {{ $sale->source ?? 'POS Kasir' }}
+                                    </span>
                                 </div>
                                 <span class="font-bold text-emerald-600 dark:text-emerald-400 text-[13px] flex-shrink-0">
-                                    +Rp {{ number_format($sale->quantity * $sale->product->buyPrice, 0, ',', '.') }}
+                                    +Rp {{ number_format($sale->supplier_revenue ?? ($sale->quantity * ($sale->product->buyPrice ?? 0)), 0, ',', '.') }}
                                 </span>
                             </div>
                             <div class="flex items-center justify-between mt-1.5 text-[10px] text-slate-500">
-                                <span>{{ $sale->created_at->format('d M Y, H:i') }}</span>
-                                <span>{{ $sale->quantity }} × Rp
-                                    {{ number_format($sale->product->buyPrice, 0, ',', '.') }}</span>
+                                <span>{{ $sale->created_at ? $sale->created_at->format('d M Y') : '-' }}</span>
+                                <span>{{ $sale->quantity }} × Rp {{ number_format($sale->buy_price ?? $sale->product->buyPrice ?? 0, 0, ',', '.') }}</span>
                             </div>
                         </div>
                     </div>
@@ -72,27 +73,27 @@
             <table class="w-full text-left border-collapse">
                 <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
                     <tr>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Tanggal & Sumber</th>
                         <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Jumlah
-                        </th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Harga per
-                            Unit</th>
-                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
-                            Pendapatan</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Jumlah</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Harga per Unit</th>
+                        <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Pendapatan Supplier</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @forelse($sales as $sale)
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                             <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
-                                {{ $sale->created_at->format('d M Y H:i') }}
+                                {{ $sale->created_at ? $sale->created_at->format('d M Y') : '-' }}
+                                <span class="block text-[10px] font-semibold text-indigo-600 dark:text-indigo-400 mt-0.5">
+                                    {{ $sale->source ?? 'POS Kasir' }}
+                                </span>
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     <div>
                                         <h6 class="font-medium text-slate-900 dark:text-white">{{ $sale->product->name }}</h6>
-                                        <p class="text-xs text-slate-500">{{ $sale->product->sku }}</p>
+                                        <p class="text-xs text-slate-500">{{ $sale->product->sku ?? '-' }}</p>
                                     </div>
                                 </div>
                             </td>
@@ -100,10 +101,10 @@
                                 {{ $sale->quantity }}
                             </td>
                             <td class="px-6 py-4 text-right text-sm text-slate-600 dark:text-slate-400">
-                                Rp {{ number_format($sale->product->buyPrice, 0, ',', '.') }}
+                                Rp {{ number_format($sale->buy_price ?? $sale->product->buyPrice ?? 0, 0, ',', '.') }}
                             </td>
                             <td class="px-6 py-4 text-right text-sm font-bold text-emerald-600 dark:text-emerald-400">
-                                Rp {{ number_format($sale->quantity * $sale->product->buyPrice, 0, ',', '.') }}
+                                Rp {{ number_format($sale->supplier_revenue ?? ($sale->quantity * ($sale->product->buyPrice ?? 0)), 0, ',', '.') }}
                             </td>
                         </tr>
                     @empty

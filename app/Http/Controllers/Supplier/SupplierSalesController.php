@@ -3,40 +3,39 @@
 namespace App\Http\Controllers\Supplier;
 
 use App\Http\Controllers\Controller;
-use App\Models\TransactionItem;
+use App\Services\SupplierSalesService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class SupplierSalesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        /** @var \App\Models\Supplier $supplier */
         $supplier = Auth::guard('supplier')->user();
         
-        $sales = TransactionItem::whereHas('product', function($q) use ($supplier) {
-                $q->where('supplierId', $supplier->id);
-            })
-            ->with(['product', 'transaction'])
-            ->latest()
-            ->paginate(15);
-            
-        // Calculate stats
-        $totalOmzet = TransactionItem::whereHas('product', function($q) use ($supplier) {
-                $q->where('supplierId', $supplier->id);
-            })->sum('totalPrice');
-            
-        $totalItemsSold = TransactionItem::whereHas('product', function($q) use ($supplier) {
-                $q->where('supplierId', $supplier->id);
-            })->sum('quantity');
-        
-        // Calculate supplier revenue (quantity × buyPrice/supplierPrice)
-        $supplierRevenue = TransactionItem::whereHas('product', function($q) use ($supplier) {
-                $q->where('supplierId', $supplier->id);
-            })
-            ->join('products', 'transaction_items.productId', '=', 'products.id')
-            ->selectRaw('SUM(transaction_items.quantity * products.buyPrice) as total')
-            ->value('total') ?? 0;
+        $allSales = SupplierSalesService::getSalesForSupplier($supplier->id);
 
-        return view('supplier.sales', compact('sales', 'totalOmzet', 'totalItemsSold', 'supplierRevenue'));
+        $totalOmzet = $allSales->sum('total_price');
+        $totalItemsSold = $allSales->sum('quantity');
+        $supplierRevenue = $allSales->sum('supplier_revenue');
+
+        $perPage = 15;
+        $page = (int) $request->get('page', 1);
+        $paginatedSales = new LengthAwarePaginator(
+            $allSales->forPage($page, $perPage)->values(),
+            $allSales->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        return view('supplier.sales', compact('sales', 'totalOmzet', 'totalItemsSold', 'supplierRevenue'), [
+            'sales' => $paginatedSales,
+            'totalOmzet' => $totalOmzet,
+            'totalItemsSold' => $totalItemsSold,
+            'supplierRevenue' => $supplierRevenue,
+        ]);
     }
 }
