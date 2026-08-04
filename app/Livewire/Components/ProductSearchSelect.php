@@ -24,7 +24,12 @@ class ProductSearchSelect extends Component
             ->with('supplier')
             ->where(function($query) use ($q) {
                 $query->where('name', 'like', '%' . $q . '%')
-                      ->orWhere('sku', 'like', '%' . $q . '%');
+                      ->orWhere('sku', 'like', '%' . $q . '%')
+                      ->orWhereHas('supplier', function($sq) use ($q) {
+                          $sq->where('businessName', 'like', '%' . $q . '%')
+                             ->orWhere('ownerName', 'like', '%' . $q . '%')
+                             ->orWhere('code', 'like', '%' . $q . '%');
+                      });
             })
             ->limit(10)
             ->get();
