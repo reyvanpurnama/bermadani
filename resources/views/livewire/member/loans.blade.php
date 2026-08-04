@@ -116,9 +116,6 @@
                             <h4 class="text-sm font-bold text-slate-700 dark:text-slate-200">
                                 {{ $loan->purpose ? $loan->purpose : ($isBMT ? 'Pembiayaan Syariah BMT' : 'Pembiayaan Koperasi') }}
                             </h4>
-                            <p class="text-[10px] text-slate-400 font-mono">
-                                Kontrak / Rekening: {{ $loan->account_number ?? ('PB-' . str_pad($loan->id, 5, '0', STR_PAD_LEFT)) }}
-                            </p>
                         </div>
                     </div>
 
