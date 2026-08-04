@@ -3,6 +3,7 @@
 namespace Tests\Feature\Livewire;
 
 use App\Livewire\Member\Loans;
+use App\Livewire\Member\LoanDetail;
 use App\Models\Loan;
 use App\Models\Member;
 use App\Models\User;
@@ -56,11 +57,12 @@ class MemberLoansTest extends TestCase
             ->assertSet('totalMonthlyPayment', 500000.0)
             ->assertSee('Pembiayaan Syariah Saya')
             ->assertSee('7.500.000')
+            ->assertSee('Pembiayaan Renovasi');
+
+        Livewire::test(LoanDetail::class, ['loan' => $loan])
+            ->assertSee('Detail')
+            ->assertSee('Riwayat Angsuran')
             ->assertSee('Pembiayaan Renovasi')
-            ->call('openHistory', $loan->id)
-            ->assertSet('showHistoryModal', true)
-            ->assertSee('Riwayat Pembayaran Angsuran')
-            ->call('closeHistoryModal')
-            ->assertSet('showHistoryModal', false);
+            ->assertSee('7.500.000');
     }
 }

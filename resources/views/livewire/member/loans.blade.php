@@ -185,12 +185,12 @@
                     </div>
                 </div>
 
-                {{-- Action Button --}}
+                {{-- Action Link --}}
                 <div class="flex justify-end relative z-10">
-                    <button wire:click="openHistory({{ $loan->id }})"
+                    <a href="{{ route('member.loans.detail', $loan->id) }}"
                         class="bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2">
                         <i class='bx bx-history text-base text-emerald-400'></i> Lihat Riwayat Angsuran
-                    </button>
+                    </a>
                 </div>
             </div>
         @empty
@@ -233,137 +233,13 @@
                             <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400">
                                 LUNAS
                             </span>
-                            <button wire:click="openHistory({{ $loan->id }})"
+                            <a href="{{ route('member.loans.detail', $loan->id) }}"
                                 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1">
                                 <i class='bx bx-history'></i> Detail
-                            </button>
+                            </a>
                         </div>
                     </div>
                 @endforeach
-            </div>
-        </div>
-    @endif
-
-    {{-- Repayment History Modal / Drawer --}}
-    @if($showHistoryModal && $selectedLoan)
-        <div class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div class="bg-white dark:bg-darkCard w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden transform transition-all">
-                {{-- Modal Header --}}
-                <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-lg">
-                                <i class='bx bx-history'></i>
-                            </span>
-                            <h3 class="text-base font-bold text-slate-800 dark:text-white">
-                                Riwayat Pembayaran Angsuran
-                            </h3>
-                        </div>
-                        <p class="text-[11px] text-slate-400 font-mono mt-0.5">
-                            Kontrak: {{ $selectedLoan->account_number ?? ('PB-' . str_pad($selectedLoan->id, 5, '0', STR_PAD_LEFT)) }} • Sumber: {{ $selectedLoan->loanSource === 'BMT_ITQAN' ? 'BMT ITQAN' : 'KOPERASI BERMADANI' }}
-                        </p>
-                    </div>
-                    <button wire:click="closeHistoryModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg">
-                        <i class='bx bx-x text-2xl'></i>
-                    </button>
-                </div>
-
-                {{-- Modal Summary Bar --}}
-                <div class="grid grid-cols-3 gap-2 p-4 bg-emerald-50/50 dark:bg-emerald-950/20 border-b border-emerald-100 dark:border-emerald-900/30 text-xs">
-                    <div>
-                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Plafond Pembiayaan</span>
-                        <span class="font-bold text-slate-800 dark:text-white font-mono">Rp {{ number_format($selectedLoan->amount, 0, ',', '.') }}</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Sisa Kewajiban</span>
-                        <span class="font-bold text-emerald-600 dark:text-emerald-400 font-mono">Rp {{ number_format($selectedLoan->remainingAmount, 0, ',', '.') }}</span>
-                    </div>
-                    <div>
-                        <span class="text-[10px] text-slate-400 block uppercase font-bold">Progress Angsuran</span>
-                        <span class="font-bold text-slate-800 dark:text-white font-mono">{{ $selectedLoan->paid_installments }} / {{ $selectedLoan->tenor }} Bulan</span>
-                    </div>
-                </div>
-
-                {{-- Modal Payment List Table --}}
-                <div class="p-5 max-h-[60vh] overflow-y-auto">
-                    @if(count($selectedLoanPayments) > 0)
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs">
-                                <thead>
-                                    <tr class="bg-slate-50 dark:bg-slate-800 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-slate-700">
-                                        <th class="py-2.5 px-3">No</th>
-                                        <th class="py-2.5 px-3">Tanggal Bayar</th>
-                                        <th class="py-2.5 px-3 text-right">Jumlah Bayar</th>
-                                        <th class="py-2.5 px-3">Keterangan</th>
-                                        <th class="py-2.5 px-3 text-center">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
-                                    @foreach($selectedLoanPayments as $index => $payment)
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30">
-                                            <td class="py-2.5 px-3 font-mono text-slate-400">{{ $index + 1 }}</td>
-                                            <td class="py-2.5 px-3 font-mono text-slate-700 dark:text-slate-300">
-                                                {{ $payment->paymentDate ? $payment->paymentDate->format('d/m/Y') : '-' }}
-                                            </td>
-                                            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                                                Rp {{ number_format((float) $payment->amount, 0, ',', '.') }}
-                                            </td>
-                                            <td class="py-2.5 px-3 text-slate-500">
-                                                {{ $payment->description ?? 'Angsuran Pembiayaan Bulanan' }}
-                                            </td>
-                                            <td class="py-2.5 px-3 text-center">
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase">
-                                                    DIBAYAR
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        {{-- Fallback: Timeline view if individual payment records are stored via installment counters --}}
-                        <div class="space-y-2">
-                            <p class="text-xs text-slate-400 italic mb-3">
-                                Rincian angsuran yang telah terbayar (Berdasarkan Mutasi Potongan Gaji / Pembiayaan):
-                            </p>
-                            @for($i = 1; $i <= $selectedLoan->tenor; $i++)
-                                @php $isPaid = $i <= $selectedLoan->paid_installments; @endphp
-                                <div class="flex items-center justify-between p-3 rounded-xl border {{ $isPaid ? 'bg-emerald-50/30 border-emerald-200/60 dark:bg-emerald-950/10 dark:border-emerald-900/40' : 'bg-slate-50/30 border-slate-100 dark:bg-slate-800/10 dark:border-slate-700/40 opacity-60' }}">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold {{ $isPaid ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400' }}">
-                                            {{ $i }}
-                                        </div>
-                                        <div>
-                                            <h5 class="text-xs font-bold {{ $isPaid ? 'text-slate-800 dark:text-white' : 'text-slate-400' }}">
-                                                Angsuran Ke-{{ $i }}
-                                            </h5>
-                                            <p class="text-[10px] text-slate-400">
-                                                {{ $isPaid ? 'Telah dipotong / disetor' : 'Belum jatuh tempo' }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-xs font-mono font-bold {{ $isPaid ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-400' }}">
-                                            Rp {{ number_format($selectedLoan->monthlyPayment, 0, ',', '.') }}
-                                        </span>
-                                        <span class="block text-[9px] font-bold uppercase tracking-wider {{ $isPaid ? 'text-emerald-500' : 'text-slate-400' }}">
-                                            {{ $isPaid ? 'TERBAYAR' : 'PENDING' }}
-                                        </span>
-                                    </div>
-                                </div>
-                            @endfor
-                        </div>
-                    @endif
-                </div>
-
-                {{-- Modal Footer --}}
-                <div class="p-4 border-t border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 flex justify-end">
-                    <button wire:click="closeHistoryModal"
-                        class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2 rounded-xl transition-all">
-                        Tutup
-                    </button>
-                </div>
             </div>
         </div>
     @endif

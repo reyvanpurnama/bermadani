@@ -417,6 +417,7 @@ Route::middleware(['auth', 'member.type'])->prefix('member')->name('member.')->g
     Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
     Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
     Route::get('/loans', \App\Livewire\Member\Loans::class)->name('loans');
+    Route::get('/loans/{loan}', \App\Livewire\Member\LoanDetail::class)->name('loans.detail');
     Route::get('/transfer', \App\Livewire\Member\Transfer::class)->name('transfer');
     Route::get('/transfer/history', \App\Livewire\Member\TransferHistory::class)->name('transfer.history');
 });
