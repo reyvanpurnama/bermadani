@@ -14,7 +14,7 @@ class RatDisbursement extends Component
 
     public $sessionId;
     public $searchMember = '';
-    public $disbursementFilter = 'ALL'; // ALL, PENDING, DISBURSED
+    public $filterDisbursed = 'ALL'; // ALL, PENDING, DISBURSED
 
     protected ShuCalculationService $shuService;
 
@@ -43,7 +43,29 @@ class RatDisbursement extends Component
         if (!$dist || $dist->is_disbursed) return;
 
         $dist->markAsDisbursed();
-        session()->flash('success', "SHU untuk {$dist->member?->name} berhasil dicairkan.");
+        session()->flash('success', "SHU untuk {$dist->member?->name} berhasil dicairkan (Tunai/Transfer).");
+    }
+
+    public function disburseToSukarela($distributionId)
+    {
+        $dist = MemberShuDistribution::where('rat_session_id', $this->sessionId)
+            ->where('id', $distributionId)
+            ->first();
+
+        if (!$dist || $dist->is_disbursed) return;
+
+        $shuAmount = (float) $dist->shu_amount;
+        if ($shuAmount > 0 && $dist->member) {
+            // Add to Simpanan Sukarela balance
+            $dist->member->addSimpanan(
+                'SUKARELA',
+                $shuAmount,
+                "Pencairan SHU RAT {$dist->ratSession?->year} ke Simpanan Sukarela"
+            );
+        }
+
+        $dist->markAsDisbursed();
+        session()->flash('success', "SHU Rp " . number_format($shuAmount, 0, ',', '.') . " untuk {$dist->member?->name} berhasil dimasukkan ke Simpanan Sukarela!");
     }
 
     public function toggleDisbursed($distributionId)
@@ -63,7 +85,7 @@ class RatDisbursement extends Component
         }
     }
 
-    public function disburseAll()
+    public function batchDisburse()
     {
         $distributions = MemberShuDistribution::where('rat_session_id', $this->sessionId)
             ->where('is_disbursed', false)
@@ -76,6 +98,23 @@ class RatDisbursement extends Component
         }
 
         session()->flash('success', "Berhasil mencairkan SHU untuk {$count} anggota.");
+    }
+
+    public function disburseAll()
+    {
+        $this->batchDisburse();
+    }
+
+    public function completeSession()
+    {
+        $session = $this->session;
+        if (!$session) return;
+
+        if ($session->transitionTo(RatSession::STATUS_COMPLETED)) {
+            session()->flash('success', 'Seluruh pencairan SHU telah diselesaikan dan sesi RAT resmi ditutup!');
+        } else {
+            session()->flash('error', 'Gagal merubah status ke Selesai.');
+        }
     }
 
     public function goBack()

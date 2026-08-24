@@ -189,10 +189,25 @@
                                 @endif
                             </td>
                             <td class="py-2.5 px-3 text-center no-print">
-                                <button wire:click="toggleDisbursed({{ $dist->id }})"
-                                    class="px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all {{ $dist->is_disbursed ? 'bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30' : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm' }}">
-                                    {{ $dist->is_disbursed ? 'Batalkan' : 'Cairkan' }}
-                                </button>
+                                @if($dist->is_disbursed)
+                                    <button wire:click="toggleDisbursed({{ $dist->id }})"
+                                        class="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 transition-all">
+                                        Batalkan
+                                    </button>
+                                @else
+                                    <div class="flex items-center justify-center gap-1">
+                                        <button wire:click="disburseSingle({{ $dist->id }})"
+                                            title="Cairkan Tunai / Transfer Bank (Catat Pengeluaran)"
+                                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center gap-1">
+                                            <i class='bx bx-check'></i> Tunai/Transfer
+                                        </button>
+                                        <button wire:click="disburseToSukarela({{ $dist->id }})"
+                                            title="Masukan Nominal SHU ke Dompet Simpanan Sukarela Anggota"
+                                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-1">
+                                            <i class='bx bx-wallet'></i> Ke Sukarela
+                                        </button>
+                                    </div>
+                                @endif
                             </td>
                             <td class="py-2.5 px-3 text-center only-print hidden border-b">
                                 _______________________
