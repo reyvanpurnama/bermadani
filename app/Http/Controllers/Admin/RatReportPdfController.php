@@ -45,4 +45,33 @@ class RatReportPdfController extends Controller
 
         return $pdf->download($filename);
     }
+
+    public function downloadBeritaAcaraPdf(Request $request, RatSession $session)
+    {
+        $totalAnggota = \App\Models\Member::where('status', 'ACTIVE')->count();
+
+        $pdf = Pdf::loadView('pdf.berita-acara-rat', [
+            'session' => $session,
+            'nomorSurat' => $request->input('nomor_surat'),
+            'hariTanggal' => $request->input('hari_tanggal'),
+            'jam' => $request->input('jam'),
+            'tempat' => $request->input('tempat'),
+            'totalAnggota' => $request->input('total_anggota', $totalAnggota),
+            'anggotaHadir' => $request->input('anggota_hadir', $totalAnggota),
+            'pengurusHadir' => $request->input('pengurus_hadir', 3),
+            'pengawasHadir' => $request->input('pengawas_hadir', 1),
+            'tamuHadir' => $request->input('tamu_hadir', 0),
+            'ketuaSidang' => $request->input('ketua_sidang'),
+            'sekretarisSidang' => $request->input('sekretaris_sidang'),
+            'ketuaKoperasi' => $request->input('ketua_koperasi'),
+            'sekretarisKoperasi' => $request->input('sekretaris_koperasi'),
+            'bendaharaKoperasi' => $request->input('bendahara_koperasi'),
+            'ketuaPengawas' => $request->input('ketua_pengawas'),
+            'generatedAt' => now()->translatedFormat('d F Y H:i'),
+        ])->setPaper('a4', 'portrait');
+
+        $filename = "Berita_Acara_RAT_{$session->year}_Koperasi_Bermadani.pdf";
+
+        return $pdf->download($filename);
+    }
 }

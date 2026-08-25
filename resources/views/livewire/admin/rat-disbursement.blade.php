@@ -1,4 +1,4 @@
-<div class="space-y-6">
+<div class="space-y-6" x-data="{ showBeritaAcaraModal: false }">
     {{-- Print Style --}}
     <style>
         @media print {
@@ -27,11 +27,15 @@
                 Step 4: Catat pencairan SHU ke masing-masing anggota dan cetak tanda terima.
             </p>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
             @if($ratSession)
+                <button @click="showBeritaAcaraModal = true"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2">
+                    <i class='bx bxs-file-doc text-lg'></i> Cetak Berita Acara RAT
+                </button>
                 <a href="{{ route('admin.rat.pdf-report', $ratSession->id) }}" target="_blank"
                     class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center gap-2">
-                    <i class='bx bxs-file-pdf text-lg'></i> Download PDF Laporan Lengkap
+                    <i class='bx bxs-file-pdf text-lg'></i> Download PDF Laporan SHU
                 </a>
             @endif
             <button onclick="window.print()"
@@ -246,4 +250,138 @@
             @endif
         </div>
     </div>
+
+    {{-- Modal Form Berita Acara RAT --}}
+    @if($ratSession)
+        <div x-show="showBeritaAcaraModal" x-cloak
+            class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0">
+
+            <div class="bg-white dark:bg-darkCard w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden"
+                @click.away="showBeritaAcaraModal = false">
+                <div class="px-6 py-4 bg-indigo-600 text-white flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class='bx bxs-file-doc text-xl'></i>
+                        <h3 class="font-bold text-sm">Cetak Berita Acara RAT {{ $ratSession->year }}</h3>
+                    </div>
+                    <button @click="showBeritaAcaraModal = false" class="text-white/80 hover:text-white">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+
+                <form action="{{ route('admin.rat.pdf-berita-acara', $ratSession->id) }}" method="POST" target="_blank" class="p-6 space-y-4">
+                    @csrf
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nomor Berita Acara</label>
+                            <input type="text" name="nomor_surat" value="001/BA-RAT/BERMADANI/{{ $ratSession->year }}" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hari & Tanggal Pelaksanaan</label>
+                            <input type="text" name="hari_tanggal" value="{{ $ratSession->event_date ? $ratSession->event_date->translatedFormat('l, d F Y') : date('d F Y') }}" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Waktu Pelaksanaan</label>
+                            <input type="text" name="jam" value="09:00 - 12:00 WIB" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Tempat Pelaksanaan</label>
+                            <input type="text" name="tempat" value="Ruang Rapat Utama Koperasi Bermadani UMB" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100 dark:border-slate-700">
+
+                    <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                        <i class='bx bx-group text-indigo-500'></i> Rekapitulasi Kehadiran (Kuorum)
+                    </h4>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Total Anggota</label>
+                            <input type="number" name="total_anggota" value="{{ $stats['total'] }}" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Anggota Hadir</label>
+                            <input type="number" name="anggota_hadir" value="{{ $stats['total'] }}" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengurus Hadir</label>
+                            <input type="number" name="pengurus_hadir" value="3" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengawas Hadir</label>
+                            <input type="number" name="pengawas_hadir" value="1" required
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-100 dark:border-slate-700">
+
+                    <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                        <i class='bx bx-pen text-indigo-500'></i> Pimpinan Sidang & Pengurus (Tanda Tangan)
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Sidang RAT</label>
+                            <input type="text" name="ketua_sidang" placeholder="Nama Ketua Sidang..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Sidang RAT</label>
+                            <input type="text" name="sekretaris_sidang" placeholder="Nama Sekretaris Sidang..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Koperasi</label>
+                            <input type="text" name="ketua_koperasi" placeholder="Nama Ketua Koperasi..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Koperasi</label>
+                            <input type="text" name="sekretaris_koperasi" placeholder="Nama Sekretaris..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Bendahara Koperasi</label>
+                            <input type="text" name="bendahara_koperasi" placeholder="Nama Bendahara..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Pengawas Koperasi</label>
+                            <input type="text" name="ketua_pengawas" placeholder="Nama Ketua Pengawas..."
+                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
+                        <button type="button" @click="showBeritaAcaraModal = false"
+                            class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
+                            Batal
+                        </button>
+                        <button type="submit" @click="showBeritaAcaraModal = false"
+                            class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-600/20 flex items-center gap-1.5">
+                            <i class='bx bxs-file-pdf text-base'></i> Download PDF Berita Acara
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
 </div>
