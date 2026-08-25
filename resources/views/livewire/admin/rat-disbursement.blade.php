@@ -1,4 +1,4 @@
-<div class="space-y-6" x-data="{ showBeritaAcaraModal: false }">
+<div class="space-y-6" x-data="{ showBeritaAcaraModal: false, activeTab: 'acara' }">
     {{-- Print Style --}}
     <style>
         @media print {
@@ -30,7 +30,7 @@
         <div class="flex flex-wrap items-center gap-2">
             @if($ratSession)
                 <button @click="showBeritaAcaraModal = true"
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center gap-2">
+                    class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
                     <i class='bx bxs-file-doc text-lg'></i> Cetak Berita Acara RAT
                 </button>
                 <a href="{{ route('admin.rat.pdf-report', $ratSession->id) }}" target="_blank"
@@ -251,134 +251,251 @@
         </div>
     </div>
 
-    {{-- Modal Form Berita Acara RAT --}}
+    {{-- Modal Form Berita Acara RAT (Interactive & Tabbed) --}}
     @if($ratSession)
         <div x-show="showBeritaAcaraModal" x-cloak
-            class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 no-print"
+            class="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 no-print"
             x-transition:enter="transition ease-out duration-200"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
             x-transition:leave="transition ease-in duration-150"
-            x-transition:leave-start="opacity-100"
-            x-transition:leave-end="opacity-0">
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95">
 
-            <div class="bg-white dark:bg-darkCard w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden"
+            <div class="bg-white dark:bg-darkCard w-full max-w-3xl rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]"
                 @click.away="showBeritaAcaraModal = false">
-                <div class="px-6 py-4 bg-indigo-600 text-white flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i class='bx bxs-file-doc text-xl'></i>
-                        <h3 class="font-bold text-sm">Cetak Berita Acara RAT {{ $ratSession->year }}</h3>
+                
+                {{-- Modal Header --}}
+                <div class="px-6 py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white flex items-center justify-between shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur flex items-center justify-center text-white">
+                            <i class='bx bxs-file-doc text-xl'></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm">Cetak Berita Acara RAT {{ $ratSession->year }}</h3>
+                            <p class="text-[11px] text-indigo-200">Format Resmi Koperasi Konsumen Syariah Bermadani UMB</p>
+                        </div>
                     </div>
-                    <button @click="showBeritaAcaraModal = false" class="text-white/80 hover:text-white">
+                    <button @click="showBeritaAcaraModal = false" class="text-white/80 hover:text-white transition-all">
                         <i class='bx bx-x text-2xl'></i>
                     </button>
                 </div>
 
-                <form action="{{ route('admin.rat.pdf-berita-acara', $ratSession->id) }}" method="POST" target="_blank" class="p-6 space-y-4">
+                {{-- Tab Navigation --}}
+                <div class="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 px-6 pt-3 gap-2">
+                    <button @click="activeTab = 'acara'"
+                        :class="activeTab === 'acara' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
+                        <i class='bx bx-calendar-event text-sm'></i> 1. Acara & Kuorum
+                    </button>
+                    <button @click="activeTab = 'pengurus'"
+                        :class="activeTab === 'pengurus' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
+                        <i class='bx bx-pen text-sm'></i> 2. Pimpinan & Pengurus
+                    </button>
+                    <button @click="activeTab = 'summary'"
+                        :class="activeTab === 'summary' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
+                        <i class='bx bx-pie-chart-alt-2 text-sm'></i> 3. Preview Ringkasan SHU
+                    </button>
+                </div>
+
+                {{-- Form Body --}}
+                <form action="{{ route('admin.rat.pdf-berita-acara', $ratSession->id) }}" method="POST" target="_blank" class="flex-1 overflow-y-auto p-6 space-y-4">
                     @csrf
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Nomor Berita Acara</label>
-                            <input type="text" name="nomor_surat" value="001/BA-RAT/BERMADANI/{{ $ratSession->year }}" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+
+                    {{-- TAB 1: Acara & Kuorum --}}
+                    <div x-show="activeTab === 'acara'" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <i class='bx bx-hash text-indigo-500'></i> Nomor Berita Acara
+                                </label>
+                                <input type="text" name="nomor_surat" value="001/BA-RAT/BERMADANI/{{ $ratSession->year }}" required
+                                    class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <i class='bx bx-calendar text-indigo-500'></i> Hari & Tanggal Pelaksanaan
+                                </label>
+                                <input type="text" name="hari_tanggal" value="{{ $ratSession->event_date ? $ratSession->event_date->translatedFormat('l, d F Y') : date('d F Y') }}" required
+                                    class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <i class='bx bx-time text-indigo-500'></i> Waktu Pelaksanaan
+                                </label>
+                                <input type="text" name="jam" value="09:00 - 12:00 WIB" required
+                                    class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <i class='bx bx-map-pin text-indigo-500'></i> Tempat Pelaksanaan
+                                </label>
+                                <input type="text" name="tempat" value="Ruang Rapat Utama Koperasi Bermadani UMB" required
+                                    class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
+                            </div>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Hari & Tanggal Pelaksanaan</label>
-                            <input type="text" name="hari_tanggal" value="{{ $ratSession->event_date ? $ratSession->event_date->translatedFormat('l, d F Y') : date('d F Y') }}" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Waktu Pelaksanaan</label>
-                            <input type="text" name="jam" value="09:00 - 12:00 WIB" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Tempat Pelaksanaan</label>
-                            <input type="text" name="tempat" value="Ruang Rapat Utama Koperasi Bermadani UMB" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1 mb-2">
+                                <i class='bx bx-group text-indigo-500'></i> Data Kehadiran / Kuorum Acara
+                            </h4>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 dark:bg-slate-800/40 p-4 rounded-xl border border-slate-100 dark:border-slate-700/60">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Total Anggota</label>
+                                    <input type="number" name="total_anggota" value="{{ $stats['total'] }}" required
+                                        class="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-slate-800 dark:text-white font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Anggota Hadir</label>
+                                    <input type="number" name="anggota_hadir" value="{{ $stats['total'] }}" required
+                                        class="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-slate-800 dark:text-white font-bold text-emerald-600">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengurus Hadir</label>
+                                    <input type="number" name="pengurus_hadir" value="3" required
+                                        class="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-slate-800 dark:text-white font-bold">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengawas Hadir</label>
+                                    <input type="number" name="pengawas_hadir" value="1" required
+                                        class="w-full text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-slate-800 dark:text-white font-bold">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <hr class="border-slate-100 dark:border-slate-700">
+                    {{-- TAB 2: Pimpinan & Pengurus --}}
+                    <div x-show="activeTab === 'pengurus'" class="space-y-4">
+                        <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/40 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/40">
+                            <span class="text-xs text-indigo-700 dark:text-indigo-300 font-medium flex items-center gap-1">
+                                <i class='bx bx-info-circle text-base'></i> Nama-nama ini akan tercetak di lembar tanda tangan pengesahan PDF.
+                            </span>
+                        </div>
 
-                    <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
-                        <i class='bx bx-group text-indigo-500'></i> Rekapitulasi Kehadiran (Kuorum)
-                    </h4>
+                        <div class="space-y-3">
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                                <i class='bx bx-user-voice text-indigo-500'></i> Pimpinan Sidang RAT
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Sidang RAT</label>
+                                    <input type="text" name="ketua_sidang" placeholder="Contoh: Dr. H. Ahmad Fathoni, M.Ag"
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Sidang RAT</label>
+                                    <input type="text" name="sekretaris_sidang" placeholder="Contoh: Siti Rahmawati, S.E"
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                            </div>
+                        </div>
 
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Total Anggota</label>
-                            <input type="number" name="total_anggota" value="{{ $stats['total'] }}" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Anggota Hadir</label>
-                            <input type="number" name="anggota_hadir" value="{{ $stats['total'] }}" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengurus Hadir</label>
-                            <input type="number" name="pengurus_hadir" value="3" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Pengawas Hadir</label>
-                            <input type="number" name="pengawas_hadir" value="1" required
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                        <div class="space-y-3 pt-2">
+                            <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                                <i class='bx bx-award text-indigo-500'></i> Pengurus & Pengawas Koperasi
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Koperasi</label>
+                                    <input type="text" name="ketua_koperasi" placeholder="Nama Ketua Koperasi..."
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Koperasi</label>
+                                    <input type="text" name="sekretaris_koperasi" placeholder="Nama Sekretaris..."
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Bendahara Koperasi</label>
+                                    <input type="text" name="bendahara_koperasi" placeholder="Nama Bendahara..."
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Pengawas Koperasi</label>
+                                    <input type="text" name="ketua_pengawas" placeholder="Nama Ketua Pengawas..."
+                                        class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <hr class="border-slate-100 dark:border-slate-700">
+                    {{-- TAB 3: Summary Financial --}}
+                    <div x-show="activeTab === 'summary'" class="space-y-4">
+                        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-5 rounded-2xl text-white shadow-lg space-y-4">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                                <div>
+                                    <p class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">Ringkasan Data Keuangan RAT</p>
+                                    <h4 class="text-sm font-bold text-white">{{ $ratSession->title }}</h4>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    {{ $ratSession->status }}
+                                </span>
+                            </div>
 
-                    <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
-                        <i class='bx bx-pen text-indigo-500'></i> Pimpinan Sidang & Pengurus (Tanda Tangan)
-                    </h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 font-medium">Total Laba Bersih (Net Profit)</p>
+                                    <h3 class="text-base font-extrabold text-white">Rp {{ number_format((float)$ratSession->total_net_profit, 0, ',', '.') }}</h3>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-emerald-400 font-medium">Total SHU Dibagikan</p>
+                                    <h3 class="text-base font-extrabold text-emerald-400">Rp {{ number_format((float)$ratSession->total_member_shu, 0, ',', '.') }}</h3>
+                                </div>
+                            </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Sidang RAT</label>
-                            <input type="text" name="ketua_sidang" placeholder="Nama Ketua Sidang..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Sidang RAT</label>
-                            <input type="text" name="sekretaris_sidang" placeholder="Nama Sekretaris Sidang..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Koperasi</label>
-                            <input type="text" name="ketua_koperasi" placeholder="Nama Ketua Koperasi..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Sekretaris Koperasi</label>
-                            <input type="text" name="sekretaris_koperasi" placeholder="Nama Sekretaris..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Bendahara Koperasi</label>
-                            <input type="text" name="bendahara_koperasi" placeholder="Nama Bendahara..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Ketua Pengawas Koperasi</label>
-                            <input type="text" name="ketua_pengawas" placeholder="Nama Ketua Pengawas..."
-                                class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white">
+                            <div class="border-t border-white/10 pt-3">
+                                <p class="text-[10px] text-slate-400 font-medium mb-2">Rincian Pembagian 5 Pos SHU:</p>
+                                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                                    <div class="bg-white/5 p-2 rounded-lg">
+                                        <span class="text-[9px] text-slate-400 block">Cadangan ({{ $ratSession->cadangan_percentage ?? 25 }}%)</span>
+                                        <span class="font-bold text-white">Rp {{ number_format((float)$ratSession->total_member_shu * (($ratSession->cadangan_percentage ?? 25)/100), 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="bg-white/5 p-2 rounded-lg">
+                                        <span class="text-[9px] text-slate-400 block">Jasa Simpanan ({{ $ratSession->jasa_simpanan_percentage ?? 30 }}%)</span>
+                                        <span class="font-bold text-white">Rp {{ number_format((float)$ratSession->total_member_shu * (($ratSession->jasa_simpanan_percentage ?? 30)/100), 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="bg-white/5 p-2 rounded-lg">
+                                        <span class="text-[9px] text-slate-400 block">Jasa Usaha ({{ $ratSession->jasa_usaha_percentage ?? 25 }}%)</span>
+                                        <span class="font-bold text-white">Rp {{ number_format((float)$ratSession->total_member_shu * (($ratSession->jasa_usaha_percentage ?? 25)/100), 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="bg-white/5 p-2 rounded-lg">
+                                        <span class="text-[9px] text-slate-400 block">Pengurus ({{ $ratSession->pengurus_percentage ?? 10 }}%)</span>
+                                        <span class="font-bold text-white">Rp {{ number_format((float)$ratSession->total_member_shu * (($ratSession->pengurus_percentage ?? 10)/100), 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="bg-white/5 p-2 rounded-lg">
+                                        <span class="text-[9px] text-slate-400 block">Dana Sosial ({{ $ratSession->dana_sosial_percentage ?? 10 }}%)</span>
+                                        <span class="font-bold text-white">Rp {{ number_format((float)$ratSession->total_member_shu * (($ratSession->dana_sosial_percentage ?? 10)/100), 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="pt-4 flex items-center justify-end gap-2 border-t border-slate-100 dark:border-slate-700">
-                        <button type="button" @click="showBeritaAcaraModal = false"
-                            class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300">
-                            Batal
-                        </button>
-                        <button type="submit" @click="showBeritaAcaraModal = false"
-                            class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-600/20 flex items-center gap-1.5">
-                            <i class='bx bxs-file-pdf text-base'></i> Download PDF Berita Acara
-                        </button>
+                    {{-- Footer Action Buttons --}}
+                    <div class="pt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-700">
+                        <div class="flex items-center gap-1">
+                            <button type="button" @click="activeTab = 'acara'" :class="activeTab === 'acara' ? 'text-indigo-600 font-bold' : 'text-slate-400'" class="text-xs">1</button>
+                            <span class="text-slate-300">•</span>
+                            <button type="button" @click="activeTab = 'pengurus'" :class="activeTab === 'pengurus' ? 'text-indigo-600 font-bold' : 'text-slate-400'" class="text-xs">2</button>
+                            <span class="text-slate-300">•</span>
+                            <button type="button" @click="activeTab = 'summary'" :class="activeTab === 'summary' ? 'text-indigo-600 font-bold' : 'text-slate-400'" class="text-xs">3</button>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="showBeritaAcaraModal = false"
+                                class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 transition-all">
+                                Batal
+                            </button>
+                            <button type="submit" @click="showBeritaAcaraModal = false"
+                                class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white shadow-lg shadow-indigo-600/25 flex items-center gap-2 transition-all">
+                                <i class='bx bxs-file-pdf text-base'></i> Download PDF Berita Acara
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
