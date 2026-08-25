@@ -15,6 +15,7 @@ class RatDisbursement extends Component
     public $sessionId;
     public $searchMember = '';
     public $filterDisbursed = 'ALL'; // ALL, PENDING, DISBURSED
+    public $disbursementFilter = 'ALL'; // Alias for backward compatibility
 
     protected ShuCalculationService $shuService;
 
@@ -166,9 +167,11 @@ class RatDisbursement extends Component
             $query = MemberShuDistribution::with('member')
                 ->where('rat_session_id', $session->id);
 
-            if ($this->disbursementFilter === 'PENDING') {
+            $filter = $this->filterDisbursed ?: $this->disbursementFilter;
+
+            if ($filter === 'PENDING') {
                 $query->where('is_disbursed', false);
-            } elseif ($this->disbursementFilter === 'DISBURSED') {
+            } elseif ($filter === 'DISBURSED') {
                 $query->where('is_disbursed', true);
             }
 
