@@ -2,24 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class FinancialReportSnapshot extends Model
-{
-    protected $fillable = [
-        'month',
-        'year',
-        'data',
-        'status',
-        'executed_by',
-    ];
-
-    protected $casts = [
-        'data' => 'array',
-    ];
-
-    public function executedBy()
-    {
-        return $this->belongsTo(User::class, 'executed_by');
-    }
-}
+/**
+ * Backward-compatible alias.
+ * Real class: App\Domains\Accounting\Models\FinancialReportSnapshot
+ */
+class FinancialReportSnapshot extends \App\Domains\Accounting\Models\FinancialReportSnapshot {}

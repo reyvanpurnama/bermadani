@@ -230,21 +230,6 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
     // RAT Wizard (4-step flow)
     Route::get('/rat/setup', \App\Livewire\Admin\RatSetup::class)->name('admin.rat.setup');
-    
-    // Convenience redirects if accessed without {session} ID parameter
-    Route::get('/rat/eligibility', function () {
-        $latest = \App\Models\RatSession::orderByDesc('id')->first();
-        return $latest ? redirect()->route('admin.rat.eligibility', $latest->id) : redirect()->route('admin.rat.setup');
-    });
-    Route::get('/rat/allocation', function () {
-        $latest = \App\Models\RatSession::orderByDesc('id')->first();
-        return $latest ? redirect()->route('admin.rat.allocation', $latest->id) : redirect()->route('admin.rat.setup');
-    });
-    Route::get('/rat/disbursement', function () {
-        $latest = \App\Models\RatSession::orderByDesc('id')->first();
-        return $latest ? redirect()->route('admin.rat.disbursement', $latest->id) : redirect()->route('admin.rat.setup');
-    });
-
     Route::get('/rat/eligibility/{session}', \App\Livewire\Admin\RatEligibility::class)->name('admin.rat.eligibility');
     Route::get('/rat/allocation/{session}', \App\Livewire\Admin\RatAllocation::class)->name('admin.rat.allocation');
     Route::get('/rat/disbursement/{session}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.disbursement');

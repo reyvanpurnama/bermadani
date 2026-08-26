@@ -2,35 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Category extends Model
-{
-    protected $fillable = [
-        'name',
-        'description',
-        'icon',
-        'order',
-        'isActive',
-    ];
-
-    protected $casts = [
-        'isActive' => 'boolean',
-        'order' => 'integer',
-    ];
-
-    public function products()
-    {
-        return $this->hasMany(Product::class, 'categoryId');
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('isActive', true);
-    }
-
-    public function scopeOrdered($query)
-    {
-        return $query->orderBy('order');
-    }
-}
+/**
+ * Backward-compatible alias.
+ * Real class: App\Domains\Minimarket\Models\Category
+ */
+class Category extends \App\Domains\Minimarket\Models\Category {}
