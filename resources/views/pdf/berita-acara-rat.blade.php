@@ -15,6 +15,24 @@
         }
 
         /* Kop Surat */
+        .kop-container {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .kop-image {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .kop-divider {
+            border-bottom: 2px solid #000000;
+            margin-top: 6px;
+            margin-bottom: 18px;
+        }
+
         .kop-table {
             width: 100%;
             border-bottom: 3px double #000000;
@@ -143,16 +161,26 @@
 </head>
 <body>
 
-    <!-- Kop Surat -->
-    <table class="kop-table">
-        <tr>
-            <td>
-                <div class="kop-title">KOPERASI KONSUMEN SYARIAH BERMADANI</div>
-                <div class="kop-subtitle">UNIVERSITAS MUHAMMADIYAH BANDUNG</div>
-                <div class="kop-address">Jl. Soekarno-Hatta No.752, Cipadung Kidul, Panyileukan, Kota Bandung, Jawa Barat 40614</div>
-            </td>
-        </tr>
-    </table>
+    <!-- Kop Surat Gambar Resmi -->
+    <div class="kop-container">
+        @if(!empty($kopBase64))
+            <img src="{{ $kopBase64 }}" class="kop-image" alt="Kop Surat Koperasi Bermadani">
+            <div class="kop-divider"></div>
+        @elseif(file_exists(public_path('images/Kop.png')))
+            <img src="{{ public_path('images/Kop.png') }}" class="kop-image" alt="Kop Surat Koperasi Bermadani">
+            <div class="kop-divider"></div>
+        @else
+            <table class="kop-table">
+                <tr>
+                    <td>
+                        <div class="kop-title">KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</div>
+                        <div class="kop-subtitle">UNIVERSITAS MUHAMMADIYAH BANDUNG</div>
+                        <div class="kop-address">Jl. Soekarno-Hatta No.752, Cipadung Kidul, Kec. Panyileukan, Kota Bandung, Jawa Barat 40614</div>
+                    </td>
+                </tr>
+            </table>
+        @endif
+    </div>
 
     <!-- Judul Berita Acara -->
     <div class="doc-header">

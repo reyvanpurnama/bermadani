@@ -50,8 +50,20 @@ class RatReportPdfController extends Controller
     {
         $totalAnggota = \App\Models\Member::where('status', 'ACTIVE')->count();
 
+        // Load Kop.png logo image as base64 for DomPDF compatibility
+        $kopPath = public_path('images/Kop.png');
+        if (!file_exists($kopPath) && file_exists('/home/tanesheva/Documents/Bermadani/logo/Kop.png')) {
+            $kopPath = '/home/tanesheva/Documents/Bermadani/logo/Kop.png';
+        }
+
+        $kopBase64 = null;
+        if (file_exists($kopPath)) {
+            $kopBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($kopPath));
+        }
+
         $pdf = Pdf::loadView('pdf.berita-acara-rat', [
             'session' => $session,
+            'kopBase64' => $kopBase64,
             'nomorSurat' => $request->input('nomor_surat'),
             'hariTanggal' => $request->input('hari_tanggal'),
             'jam' => $request->input('jam'),
