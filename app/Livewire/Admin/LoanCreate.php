@@ -20,6 +20,7 @@ class LoanCreate extends Component
     public $monthlyPayment;
     public $interestRate = 0;
     public $simwa_amount = 0;
+    public $admin_fee = 25000;
     
     public $startDate;
     public $purpose;
@@ -60,7 +61,7 @@ class LoanCreate extends Component
             $monthly = $totalAmount / $this->tenor;
 
             // Add BMT ITQAN simwa if applicable
-            $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 0) : 0;
+            $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 30000) : 0;
             $calculatedMonthlyPayment = round($monthly + $simwa);
 
             if (!$this->monthlyPaymentOverridden || $forceAuto) {
@@ -81,8 +82,12 @@ class LoanCreate extends Component
     public function updatedSimwaAmount() { $this->calculateMonthly(); }
     public function updatedLoanSource()
     {
-        if ($this->loanSource !== 'BMT_ITQAN') {
+        if ($this->loanSource === 'BMT_ITQAN') {
+            $this->simwa_amount = 30000;
+            $this->admin_fee = 0;
+        } else {
             $this->simwa_amount = 0;
+            $this->admin_fee = 25000;
         }
 
         $this->calculateMonthly();
@@ -127,6 +132,7 @@ class LoanCreate extends Component
             $cleanAmount = $this->parseNumber($this->amount);
             $cleanMonthly = $this->parseNumber($this->monthlyPayment);
             $cleanSimwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 0) : 0;
+            $cleanAdminFee = $this->loanSource === 'BMT_ITQAN' ? 0 : $this->parseNumber($this->admin_fee ?? 0);
             $cleanInterest = floatval($this->interestRate ?? 0);
 
             // Total hutang yg hrs dibayar (pokok + bunga)
@@ -139,9 +145,9 @@ class LoanCreate extends Component
                 'tenor' => (int) $this->tenor,
                 'monthlyPayment' => $cleanMonthly,
                 'simwa_amount' => $cleanSimwa,
-                'admin_fee' => 25000,
-                'is_admin_fee_paid' => true, // Menandakan dipotong di awal
-                'remainingAmount' => $totalDebt, // Sisa hutang dicatat termasuk margin admin
+                'admin_fee' => $cleanAdminFee,
+                'is_admin_fee_paid' => $cleanAdminFee > 0,
+                'remainingAmount' => $totalDebt,
                 'status' => 'ACTIVE',
                 'loanSource' => $this->loanSource,
                 'purpose' => $this->purpose,

@@ -147,16 +147,25 @@
 
                         @if($loanSource === 'BMT_ITQAN')
                             <div>
-                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Titipan Simwa (Rp)</label>
+                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Titipan Simwa BMT (Rp)</label>
                                 <input type="number" step="1000" min="0" wire:model.live.debounce.400ms="simwa_amount"
                                     class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
-                                    placeholder="15000">
+                                    placeholder="30000">
+                                <p class="text-[11px] text-slate-400 mt-1">Default Rp 30.000 untuk BMT ITQAN.</p>
+                            </div>
+                        @else
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5">Biaya Admin Pencairan (Rp)</label>
+                                <input type="number" step="1000" min="0" wire:model="admin_fee"
+                                    class="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm text-slate-800 dark:text-white focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none"
+                                    placeholder="25000">
+                                <p class="text-[11px] text-slate-400 mt-1">Dipotong 1x di awal saat uang dicairkan.</p>
                             </div>
                         @endif
 
                         <div>
                             <div class="flex items-center justify-between mb-1.5 gap-2">
-                                <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Angsuran per Bulan (Rp)</label>
+                                <label class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Total Potongan Payroll Per Bulan (Rp)</label>
                                 @if($monthlyPaymentOverridden)
                                     <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">Manual</span>
                                 @else
@@ -166,15 +175,34 @@
                             <input type="number" min="1" wire:model.live.debounce.400ms="monthlyPayment"
                                 class="w-full px-3 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg text-sm font-bold text-indigo-700 dark:text-indigo-300 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
                                 placeholder="0">
-                            <div class="mt-1.5 flex items-center justify-between gap-2">
-                                <p class="text-[11px] text-slate-400">Dihitung otomatis, dapat disesuaikan manual.</p>
-                                @if($monthlyPaymentOverridden)
-                                    <button type="button" wire:click="resetMonthlyToAuto"
-                                        class="text-[11px] font-semibold text-primary hover:underline whitespace-nowrap">
-                                        Gunakan hitung otomatis
-                                    </button>
-                                @endif
-                            </div>
+                            
+                            @if($loanSource === 'BMT_ITQAN' && $monthlyPayment > 0)
+                                <div class="mt-2 p-2.5 rounded-lg bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/40 text-[11px] space-y-1">
+                                    <div class="flex justify-between text-slate-600 dark:text-slate-300">
+                                        <span>• Pure Angsuran BMT:</span>
+                                        <span class="font-bold text-indigo-600 dark:text-indigo-300">Rp {{ number_format(max(0, (float)$monthlyPayment - (float)$simwa_amount), 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-slate-600 dark:text-slate-300">
+                                        <span>• Titipan Simwa BMT:</span>
+                                        <span class="font-bold text-amber-600 dark:text-amber-300">Rp {{ number_format((float)$simwa_amount, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between font-bold text-indigo-700 dark:text-indigo-200 pt-1 border-t border-indigo-200/50">
+                                        <span>Total Potongan Gaji:</span>
+                                        <span>Rp {{ number_format((float)$monthlyPayment, 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="mt-1.5 flex items-center justify-between gap-2">
+                                    <p class="text-[11px] text-slate-400">Dihitung otomatis, dapat disesuaikan manual.</p>
+                                    @if($monthlyPaymentOverridden)
+                                        <button type="button" wire:click="resetMonthlyToAuto"
+                                            class="text-[11px] font-semibold text-primary hover:underline whitespace-nowrap">
+                                            Gunakan hitung otomatis
+                                        </button>
+                                    @endif
+                                </div>
+                            @endif
+
                             @error('monthlyPayment')
                                 <p class="text-xs text-rose-500 mt-1.5">{{ $message }}</p>
                             @enderror
