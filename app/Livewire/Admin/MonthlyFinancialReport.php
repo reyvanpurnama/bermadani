@@ -66,6 +66,20 @@ class MonthlyFinancialReport extends Component
         $this->showPreview = true;
     }
 
+    public function refreshLiveData()
+    {
+        FinancialReportSnapshot::where('month', (int) $this->selectedMonth)
+            ->where('year', (int) $this->selectedYear)
+            ->delete();
+
+        $this->reportData = $this->collectReportData();
+        $this->isSnapshot = false;
+        $this->checkIfExecuted();
+        $this->showPreview = true;
+
+        session()->flash('success', 'Data laporan berhasil diperbarui secara live dari database.');
+    }
+
 
 
     private function checkIfExecuted()
