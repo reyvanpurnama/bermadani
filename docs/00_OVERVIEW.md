@@ -49,6 +49,10 @@ app/
   - [[mod_minimarket_pos|POS Kasir, Inventory, & Shift]]
   - [[mod_supplier|Supplier, Konsinyasi, & Payout]]
   - [[mod_akuntansi_audit|Jurnal Keuangan & Reconcile Bank]]
+- **White-Label**:
+  - [[wl_roadmap|Roadmap & Gap Analysis]]
+  - [[wl_hardcoded_audit|Audit Hardcoded Values]]
+  - [[wl_config_architecture|Config Architecture]]
 - **Refactoring**: [[Refactoring_Log|Domain Refactoring Changelog]]
 
 ---
