@@ -20,7 +20,7 @@ class LoanCreate extends Component
     public $monthlyPayment;
     public $interestRate = 0;
     public $simwa_amount = 0;
-    public $admin_fee = 25000;
+    public $admin_fee;
     
     public $startDate;
     public $purpose;
@@ -33,6 +33,7 @@ class LoanCreate extends Component
     {
         // Default start date is next month's 1st day (typical payroll cut off)
         $this->startDate = now()->addMonth()->startOfMonth()->format('Y-m-d');
+        $this->admin_fee = config('cooperative.finance.loan_admin_fee');
     }
 
     private function parseNumber($value): float
@@ -61,7 +62,7 @@ class LoanCreate extends Component
             $monthly = $totalAmount / $this->tenor;
 
             // Add BMT ITQAN simwa if applicable
-            $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? 30000) : 0;
+            $simwa = $this->loanSource === 'BMT_ITQAN' ? $this->parseNumber($this->simwa_amount ?? config('cooperative.finance.bmt_simwa_deduction')) : 0;
             $calculatedMonthlyPayment = round($monthly + $simwa);
 
             if (!$this->monthlyPaymentOverridden || $forceAuto) {
@@ -83,11 +84,11 @@ class LoanCreate extends Component
     public function updatedLoanSource()
     {
         if ($this->loanSource === 'BMT_ITQAN') {
-            $this->simwa_amount = 30000;
+            $this->simwa_amount = config('cooperative.finance.bmt_simwa_deduction');
             $this->admin_fee = 0;
         } else {
             $this->simwa_amount = 0;
-            $this->admin_fee = 25000;
+            $this->admin_fee = config('cooperative.finance.loan_admin_fee');
         }
 
         $this->calculateMonthly();

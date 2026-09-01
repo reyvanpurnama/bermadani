@@ -24,14 +24,14 @@
         .header {
             text-align: center;
             padding: 14px 0 12px;
-            border-bottom: 3px solid #0F52BA;
+            border-bottom: 3px solid {{ config('cooperative.theme.primary') }};
             margin-bottom: 14px;
         }
 
         .header .org {
             font-size: 13px;
             font-weight: bold;
-            color: #0F52BA;
+            color: {{ config('cooperative.theme.primary') }};
             letter-spacing: 0.3px;
             margin-bottom: 2px;
         }
@@ -62,7 +62,7 @@
             padding: 10px 14px;
             border-radius: 6px;
             margin-bottom: 14px;
-            border-left: 4px solid #0F52BA;
+            border-left: 4px solid {{ config('cooperative.theme.primary') }};
         }
 
         .info-box table {
@@ -91,7 +91,7 @@
         }
 
         table.report-table thead tr {
-            background: #0F52BA;
+            background: {{ config('cooperative.theme.primary') }};
             color: white;
         }
 
@@ -230,10 +230,10 @@
 
     {{-- HEADER --}}
     <div class="header">
-        <div class="org">KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</div>
-        <div class="sub-org">Universitas Muhammadiyah Bandung</div>
+        <div class="org">{{ strtoupper(config('cooperative.legal_name')) }}</div>
+        <div class="sub-org">{{ config('cooperative.parent_org') }}</div>
         <div class="doc-title">DAFTAR AKUN PORTAL ANGGOTA KOPERASI</div>
-        <div class="doc-subtitle">Dokumen Sosialisasi Akses Portal Sistem Bermadani &mdash; Rahasia &amp; Terbatas</div>
+        <div class="doc-subtitle">Dokumen Sosialisasi Akses Portal Sistem {{ config('cooperative.short_name') }} &mdash; Rahasia &amp; Terbatas</div>
     </div>
 
     {{-- INFO BOX --}}
@@ -298,7 +298,7 @@
             @foreach($members as $index => $member)
                 @php
                     $username = $member->nomorAnggota ?? explode('@', $member->email ?? '')[0];
-                    $passwordAwal = 'password';
+                    $passwordAwal = config('cooperative.default_password', 'password');
                 @endphp
                 <tr>
                     <td class="center">{{ $index + 1 }}</td>
@@ -316,17 +316,17 @@
     <div class="sig-section">
         <div class="sig-box">&nbsp;</div>
         <div class="sig-box">
-            <div class="sig-city-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
+            <div class="sig-city-date">{{ config('cooperative.city') }}, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
             <div class="sig-role">Ketua Koperasi</div>
             <div style="margin-top: 55px;">
-                <div class="sig-name">(Ridlo Abdillah)</div>
+                <div class="sig-name">({{ coop_setting('ketua_name') }})</div>
             </div>
         </div>
     </div>
 
     {{-- FOOTER --}}
     <div class="footer">
-        <p>Dokumen ini digenerate otomatis oleh Sistem Bermadani UMBandung &bull; Dicetak: {{ $generatedAt }}</p>
+        <p>Dokumen ini digenerate otomatis oleh Sistem {{ config('cooperative.short_name') }} &bull; Dicetak: {{ $generatedAt }}</p>
         <p>RAHASIA &mdash; Hanya untuk keperluan sosialisasi internal anggota koperasi</p>
     </div>
 

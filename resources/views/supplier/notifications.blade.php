@@ -6,7 +6,7 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
             <h1 class="text-xl font-bold text-slate-900 dark:text-white">Notifikasi</h1>
-            <p class="text-[11px] text-slate-500 mt-0.5">Pemberitahuan dari Koperasi UMB</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">Pemberitahuan dari {{ config('cooperative.name') }}</p>
         </div>
         @if($notifications->where('isRead', false)->count() > 0)
         <form method="POST" action="{{ route('supplier.notifications.mark-all-read') }}">

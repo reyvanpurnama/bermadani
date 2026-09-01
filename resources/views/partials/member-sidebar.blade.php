@@ -12,7 +12,7 @@
                 <i class='bx bxs-cube-alt text-xl'></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold text-slate-900 dark:text-white leading-none">Bermadani</h1>
+                <h1 class="text-lg font-bold text-slate-900 dark:text-white leading-none">{{ config('cooperative.short_name') }}</h1>
                 <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-0.5">Member Area</p>
             </div>
         </div>

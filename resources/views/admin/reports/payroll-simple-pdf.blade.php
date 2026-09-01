@@ -23,14 +23,14 @@
         .header {
             text-align: center;
             padding: 20px 0;
-            border-bottom: 3px solid #0F52BA;
+            border-bottom: 3px solid {{ config('cooperative.theme.primary') }};
             margin-bottom: 20px;
         }
 
         .header h1 {
             font-size: 18px;
             font-weight: bold;
-            color: #0F52BA;
+            color: {{ config('cooperative.theme.primary') }};
             margin-bottom: 5px;
         }
 
@@ -56,7 +56,7 @@
         }
 
         table.report-table thead {
-            background: #0F52BA;
+            background: {{ config('cooperative.theme.primary') }};
             color: white;
         }
 
@@ -155,7 +155,7 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 40px;
-            border-left: 5px solid #0F52BA;
+            border-left: 5px solid {{ config('cooperative.theme.primary') }};
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
@@ -173,8 +173,8 @@
 
 <body>
     <div class="header">
-        <h1>KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</h1>
-        <h1>UNIVERSITAS MUHAMMADIYAH BANDUNG</h1>
+        <h1>{{ strtoupper(config('cooperative.legal_name')) }}</h1>
+        <h1>{{ strtoupper(config('cooperative.parent_org')) }}</h1>
         <div class="period">
             DAFTAR POTONGAN GAJI ANGGOTA KOPERASI<br>
             Periode: {{ $monthName }} {{ $year }}
@@ -193,7 +193,7 @@
             </tr>
             <tr>
                 <td>Unit Tujuan</td>
-                <td>: Unit Keuangan UMBandung</td>
+                <td>: Unit Keuangan {{ config('cooperative.parent_org') }}</td>
             </tr>
         </table>
     </div>
@@ -253,9 +253,9 @@
     <div class="note">
         <strong>INFORMASI TRANSFER PENTING:</strong><br><br>
         Mohon melakukan transfer total potongan gaji (Grand Total) ke rekening operasional koperasi berikut:<br>
-        <strong>Bank KB Bukopin Syariah</strong><br>
-        <strong>No. Rek: 7704020507</strong><br>
-        <strong>a.n. Koperasi Konsumen Syariah Berkah Solusi Madani</strong><br><br>
+        <strong>Bank {{ coop_setting('bank_primary_name') }}</strong><br>
+        <strong>No. Rek: {{ coop_setting('bank_primary_number') }}</strong><br>
+        <strong>a.n. {{ coop_setting('bank_primary_holder') }}</strong><br><br>
         <em>*Dokumen ini adalah dasar pemotongan gaji yang sah sesuai persetujuan anggota.</em>
     </div>
 
@@ -265,13 +265,13 @@
             &nbsp;
         </div>
         <div class="signature-box">
-            <div class="location-date">Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
-            <div class="name" style="margin-top: 80px;">(Muhammad Alwi Almaliki)</div>
+            <div class="location-date">{{ config('cooperative.city') }}, {{ now()->locale('id')->translatedFormat('d F Y') }}</div>
+            <div class="name" style="margin-top: 80px;">({{ coop_setting('bendahara_name') }})</div>
         </div>
     </div>
 
     <div class="footer" style="text-align: center; font-size: 9px; color: #94a3b8; margin-top: 30px;">
-        <p>Dokumen ini digenerate otomatis oleh Sistem Bermadani UMBandung</p>
+        <p>Dokumen ini digenerate otomatis oleh Sistem {{ config('cooperative.short_name') }}</p>
         <p>Dicetak pada: {{ $generatedAt }}</p>
     </div>
 </body>

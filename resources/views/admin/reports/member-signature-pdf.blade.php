@@ -22,14 +22,14 @@
         .header {
             text-align: center;
             margin-bottom: 14px;
-            border-bottom: 2px solid #0f52ba;
+            border-bottom: 2px solid {{ config('cooperative.theme.primary') }};
             padding-bottom: 10px;
         }
 
         .header h1 {
             font-size: 16px;
             margin-bottom: 4px;
-            color: #0f52ba;
+            color: {{ config('cooperative.theme.primary') }};
         }
 
         .header h2 {
@@ -57,7 +57,7 @@
         }
 
         thead th {
-            background: #0f52ba;
+            background: {{ config('cooperative.theme.primary') }};
             color: #ffffff;
             font-size: 10px;
             text-transform: uppercase;
@@ -102,7 +102,7 @@
 <body>
     <div class="header">
         <h1>DAFTAR TANDA TANGAN PENERIMA PAKET LEBARAN</h1>
-        <h2>Koperasi Konsumen Syariah Berkah Solusi Madani</h2>
+        <h2>{{ config('cooperative.legal_name') }}</h2>
     </div>
 
     <div class="meta">

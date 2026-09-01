@@ -299,7 +299,7 @@
                         <h4 class="font-bold text-blue-800 dark:text-blue-300 text-[14px]">Ada {{ $requestedCount }} permintaan
                             stok menunggu!</h4>
                         <p class="text-[12px] text-blue-700 dark:text-blue-400 mt-1">
-                            Silakan kirim barang ke Koperasi UMB sesuai jumlah yang diminta. Setelah barang diterima, status
+                            Silakan kirim barang ke {{ config('cooperative.name') }} sesuai jumlah yang diminta. Setelah barang diterima, status
                             akan berubah menjadi "Aktif".
                         </p>
                     </div>

@@ -103,7 +103,7 @@ class PosCustom extends Component
             }
 
             // 1. Create User Account
-            $dummyEmail = $phone.'@bermadani.id';
+            $dummyEmail = $phone.'@' . config('cooperative.email_domain');
 
             // Check if user exists (by email/phone logic - simplified)
             if (\App\Models\User::where('email', $dummyEmail)->exists()) {

@@ -39,7 +39,7 @@
             <div class="relative z-10 flex justify-between items-start">
                 <div>
                     <h5 class="text-xs font-bold opacity-60 tracking-widest uppercase">Member Card</h5>
-                    <h3 class="text-lg font-bold mt-1 tracking-wider">KOPERASI UMB</h3>
+                    <h3 class="text-lg font-bold mt-1 tracking-wider">{{ strtoupper(config('cooperative.name')) }}</h3>
                 </div>
                 <div
                     class="px-2 py-1 rounded bg-white/10 border border-white/10 backdrop-blur-md text-[10px] font-bold uppercase tracking-wider">
@@ -90,7 +90,7 @@
                             <div>
                                 <span
                                     class="text-[10px] font-bold uppercase tracking-wider {{ $isBMT ? 'text-emerald-500' : 'text-blue-500' }} mb-1 block">
-                                    {{ $loan->loanSource === 'BMT_ITQAN' ? 'BMT ITQAN' : 'KOP. BERMADANI' }}
+                                    {{ $loan->loanSource === 'BMT_ITQAN' ? 'BMT ITQAN' : strtoupper(config('cooperative.short_name')) }}
                                 </span>
                                 <h4 class="text-lg font-black text-slate-800 dark:text-white">
                                     Rp {{ number_format($loan->remainingAmount, 0, ',', '.') }}

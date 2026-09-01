@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Member Area') - Bermadani</title>
+    <title>@yield('title', 'Member Area') - {{ config('cooperative.short_name') }}</title>
 
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
-                        primary: '#6366f1', // Indigo
+                        primary: '{{ config('cooperative.theme.membership') }}', // Indigo
                         darkBg: '#0f172a',  // Slate 900
                         darkCard: '#1e293b', // Slate 800
                     }
@@ -67,7 +67,7 @@
             <div
                 class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-purple-500 flex items-center justify-center text-white font-bold">
                 B</div>
-            <span class="font-bold text-lg tracking-tight">Bermadani</span>
+            <span class="font-bold text-lg tracking-tight">{{ config('cooperative.short_name') }}</span>
         </div>
         <div class="flex gap-3">
             <button @click="toggleTheme()"

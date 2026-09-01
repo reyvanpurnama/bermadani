@@ -24,14 +24,14 @@
         .header {
             text-align: center;
             padding-bottom: 10px;
-            border-bottom: 2px solid #0F52BA;
+            border-bottom: 2px solid {{ config('cooperative.theme.primary') }};
             margin-bottom: 15px;
         }
 
         .header h1 {
             font-size: 16px;
             font-weight: bold;
-            color: #0F52BA;
+            color: {{ config('cooperative.theme.primary') }};
             margin-bottom: 3px;
         }
 
@@ -53,7 +53,7 @@
             padding: 8px;
             border-radius: 4px;
             margin-bottom: 15px;
-            border-left: 3px solid #0F52BA;
+            border-left: 3px solid {{ config('cooperative.theme.primary') }};
             font-size: 9px;
         }
 
@@ -68,7 +68,7 @@
         }
 
         table.report-table thead th {
-            background: #0F52BA;
+            background: {{ config('cooperative.theme.primary') }};
             color: white;
             padding: 6px 4px;
             text-align: center;
@@ -162,8 +162,8 @@
 
 <body>
     <div class="header">
-        <h1>KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</h1>
-        <h1>UNIVERSITAS MUHAMMADIYAH BANDUNG</h1>
+        <h1>{{ strtoupper(config('cooperative.legal_name')) }}</h1>
+        <h1>{{ strtoupper(config('cooperative.parent_org')) }}</h1>
         <div class="period">LAPORAN POTONGAN GAJI & SIMPANAN WAJIB - PERIODE: {{ strtoupper($monthName) }} {{ $year }}
         </div>
     </div>
@@ -319,15 +319,15 @@
     <div class="note">
         <strong>CATATAN PENTING:</strong><br>
         1. Laporan ini digenerate dalam format LANDSCAPE untuk menampilkan detail potongan secara lengkap.<br>
-        2. Simwa BMT adalah Simpanan Wajib BMT Itqan (biasanya Rp 30.000) yang terpisah dari angsuran pokok.<br>
+        2. Simwa BMT adalah Simpanan Wajib BMT Itqan (biasanya Rp {{ number_format(coop_setting('bmt_simwa_amount', 30000), 0, ',', '.') }}) yang terpisah dari angsuran pokok.<br>
         3. Pastikan total transfer ke BMT Itqan = Total Angs. BMT 1 + Total Angs. BMT 2 + Total Simwa BMT.<br>
     </div>
 
     <div style="margin-top: 20px; text-align: right; font-size: 10px;">
-        <p>Bandung, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
+        <p>{{ config('cooperative.city') }}, {{ now()->locale('id')->translatedFormat('d F Y') }}</p>
         <br><br><br>
-        <p style="font-weight: bold; text-decoration: underline;">(Muhammad Alwi Almaliki)</p>
-        <p>Manager Operasional</p>
+        <p style="font-weight: bold; text-decoration: underline;">({{ coop_setting('bendahara_name') }})</p>
+        <p>{{ coop_setting('bendahara_title') }}</p>
     </div>
 </body>
 

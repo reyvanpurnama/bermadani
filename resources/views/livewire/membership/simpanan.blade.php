@@ -438,12 +438,12 @@
                              <p class="text-xs text-slate-500 mb-1 uppercase tracking-wider font-bold">Transfer Manual</p>
                              <div class="space-y-2">
                                 <div class="flex justify-between">
-                                    <span class="text-sm text-slate-600 dark:text-slate-300">Bank Mandiri</span>
-                                    <span class="text-sm font-bold text-slate-800 dark:text-white">123-00-9876543-2</span>
+                                    <span class="text-sm text-slate-600 dark:text-slate-300">{{ coop_setting('bank_transfer_name') }}</span>
+                                    <span class="text-sm font-bold text-slate-800 dark:text-white">{{ coop_setting('bank_transfer_number') }}</span>
                                 </div>
                                  <div class="flex justify-between">
                                     <span class="text-sm text-slate-600 dark:text-slate-300">Atas Nama</span>
-                                    <span class="text-sm font-bold text-slate-800 dark:text-white">Koperasi UMB</span>
+                                    <span class="text-sm font-bold text-slate-800 dark:text-white">{{ coop_setting('bank_transfer_holder') }}</span>
                                 </div>
                             </div>
                          </div>

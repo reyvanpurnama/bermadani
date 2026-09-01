@@ -55,7 +55,7 @@ class RegenerateMemberNumbers extends Command
                 // Update member
                 $member->update([
                     'nomorAnggota' => $newNumber,
-                    'email' => $newNumber . '@bermadani.id',
+                    'email' => $newNumber . '@' . config('cooperative.email_domain'),
                 ]);
                 
                 $updated++;

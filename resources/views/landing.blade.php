@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bermadani - Portal Koperasi & Retail</title>
+    <title>{{ config('cooperative.short_name') }} - Portal Koperasi & Retail</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -16,7 +16,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA',
+                        primary: '{{ config('cooperative.theme.primary') }}',
                         secondary: '#F8FAFC', 
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'
@@ -40,7 +40,7 @@
                         <i class='bx bxs-cube-alt text-2xl'></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-none">Bermadani</h1>
+                        <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-none">{{ config('cooperative.short_name') }}</h1>
                         <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-0.5">Commerce System</p>
                     </div>
                 </div>
@@ -81,8 +81,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 grid lg:grid-cols-2 gap-12 items-center">
             <div class="py-10 lg:py-0 text-center lg:text-left">
                 <h1 class="text-4xl lg:text-6xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight">
-                    Satu Akses Untuk <br>
-                    <span class="text-primary">Semua Anggota</span>
+                    {{ config('cooperative.landing_tagline') }}
                 </h1>
                 <p class="text-lg text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
                     Nikmati kemudahan berbelanja di minimarket dan layanan simpan pinjam koperasi dalam satu ekosistem digital yang terintegrasi.
@@ -122,7 +121,7 @@
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>
-                                <span class="font-bold italic text-sm">BERMADANI</span>
+                                <span class="font-bold italic text-sm">{{ strtoupper(config('cooperative.short_name')) }}</span>
                             </div>
                         </div>
                     </div>
@@ -219,7 +218,7 @@
                 <div class="w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center text-slate-500 dark:text-slate-300">
                     <i class='bx bxs-cube-alt text-xs'></i>
                 </div>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Bermadani</span>
+                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ config('cooperative.short_name') }}</span>
             </div>
             <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Koperasi & Retail Management System.</p>
         </div>

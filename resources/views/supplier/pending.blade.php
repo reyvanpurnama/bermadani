@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menunggu Persetujuan - Bermadani</title>
+    <title>Menunggu Persetujuan - {{ config('cooperative.short_name') }}</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -16,7 +16,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA',
+                        primary: '{{ config('cooperative.theme.primary') }}',
                         secondary: '#F8FAFC', 
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'

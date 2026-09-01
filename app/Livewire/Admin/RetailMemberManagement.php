@@ -61,7 +61,7 @@ class RetailMemberManagement extends Component
         try {
             // 1. Create User (Dummy Email from Phone)
             // Format email: [Phone]@bermadani.id
-            $email = $this->newPhone . '@bermadani.id';
+            $email = $this->newPhone . '@' . config('cooperative.email_domain');
 
             $user = \App\Models\User::create([
                 'name' => $this->newName,

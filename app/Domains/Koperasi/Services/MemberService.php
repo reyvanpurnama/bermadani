@@ -26,7 +26,7 @@ class MemberService
             $nomorAnggota = Member::generateNomorAnggota();
             
             // Auto-generate email from member number
-            $memberEmail = $nomorAnggota . '@bermadani.id';
+            $memberEmail = $nomorAnggota . '@' . config('cooperative.email_domain');
 
             // Create or link to user account
             if (isset($data['createNewUser']) && $data['createNewUser']) {

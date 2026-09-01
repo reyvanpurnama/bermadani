@@ -102,7 +102,7 @@
                                 <label class="cursor-pointer">
                                     <input type="radio" wire:model.live="loanSource" value="BERMADANI" class="peer sr-only">
                                     <div class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors peer-checked:border-primary peer-checked:bg-indigo-50 dark:peer-checked:bg-indigo-900/20 peer-checked:text-primary dark:peer-checked:text-indigo-300">
-                                        <i class='bx bx-building-house mr-1'></i> Koperasi Bermadani
+                                        <i class='bx bx-building-house mr-1'></i> {{ config('cooperative.name') }}
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">

@@ -218,7 +218,7 @@
                             </div>
                             <div>
                                 <h4 class="text-xs font-bold text-slate-800 dark:text-white">
-                                    {{ $loan->purpose ? $loan->purpose : ($loan->loanSource === 'BMT_ITQAN' ? 'Pembiayaan BMT Itqan' : 'Pembiayaan Kop. Bermadani') }}
+                                    {{ $loan->purpose ? $loan->purpose : ($loan->loanSource === 'BMT_ITQAN' ? 'Pembiayaan BMT Itqan' : 'Pembiayaan ' . config('cooperative.short_name')) }}
                                 </h4>
                                 <p class="text-[10px] text-slate-400 font-mono">
                                     Plafond Awal: Rp {{ number_format($loan->amount, 0, ',', '.') }} • Tenor: {{ $loan->tenor }} Bulan

@@ -51,7 +51,7 @@
             <div>
                 <h1 class="text-xl font-bold text-slate-800 dark:text-white">Dashboard Keuangan RAT {{ $dashboard['year'] }}</h1>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Koperasi Konsumen Syariah Berkah Solusi Madani Universitas Muhammadiyah Bandung — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
+                    {{ config('cooperative.legal_name') }} {{ config('cooperative.parent_org') }} — Ringkasan Kinerja & Infografis Rapat Anggota Tahunan
                 </p>
             </div>
         </div>
@@ -492,7 +492,7 @@
                     <i class='bx bx-list-check text-emerald-600 text-xl'></i> Matriks Rincian & Sumber Alokasi Keuangan RAT
                 </h3>
                 <p class="text-xs text-slate-500 dark:text-slate-400">
-                    Transparansi rincian alokasi dana internal Koperasi Konsumen Syariah Berkah Solusi Madani (Tahun Buku {{ $dashboard['year'] }})
+                    Transparansi rincian alokasi dana internal {{ config('cooperative.legal_name') }} (Tahun Buku {{ $dashboard['year'] }})
                 </p>
             </div>
             

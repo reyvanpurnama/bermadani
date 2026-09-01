@@ -183,7 +183,7 @@
             <textarea readonly rows="12" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded p-3 font-mono text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
 LAPORAN EVALUASI SIMPANAN & PINJAMAN
 Rapat Anggota Tahunan (RAT) Tahun {{ $currentYear }}
-Koperasi Karyawan UMB Bermadani
+{{ config('cooperative.name') }}
 
 --- DATA SIMPANAN ---
 Total Pendanaan bersumber dari modal simpanan tercatat sebesar Rp {{ number_format($simpanan['total'], 0, ',', '.') }}, dengan rincian:

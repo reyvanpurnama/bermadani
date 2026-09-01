@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Masuk Portal - Bermadani</title>
+    <title>Masuk Portal - {{ config('cooperative.short_name') }}</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -19,7 +19,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA',
+                        primary: '{{ config('cooperative.theme.primary') }}',
                         secondary: '#F8FAFC',
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'
@@ -66,7 +66,7 @@
                         <i class='bx bxs-cube-alt text-xl lg:text-2xl'></i>
                     </div>
                     <div>
-                        <h1 class="text-lg lg:text-2xl font-bold tracking-tight leading-none">BERMADANI</h1>
+                        <h1 class="text-lg lg:text-2xl font-bold tracking-tight leading-none">{{ strtoupper(config('cooperative.short_name')) }}</h1>
                         <p class="text-[8px] lg:text-[10px] uppercase tracking-widest font-semibold opacity-80">Commerce
                             System</p>
                     </div>
@@ -75,7 +75,7 @@
                 {{-- Desktop Only Content --}}
                 <div class="hidden lg:block animate-fade-up">
                     <h2 class="text-4xl font-bold mb-6 leading-tight">
-                        "Satu Kartu, <br> <span class="text-yellow-400">Ribuan Kemudahan.</span>"
+                        "{{ config('cooperative.tagline') }}"
                     </h2>
                     <p class="text-blue-100 text-lg leading-relaxed mb-8">
                         Nikmati kemudahan transaksi di minimarket kampus dan akses layanan simpan pinjam koperasi dalam
@@ -97,7 +97,7 @@
             </div>
 
             <div class="absolute bottom-8 left-16 text-xs text-white/40 hidden lg:block">
-                &copy; 2025 Digital Campus Initiative
+                &copy; 2025 {{ config('cooperative.parent_org') }}
             </div>
         </div>
 

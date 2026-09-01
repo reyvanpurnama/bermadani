@@ -335,7 +335,7 @@
                                 <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
                                     <i class='bx bx-map-pin text-indigo-500'></i> Tempat Pelaksanaan
                                 </label>
-                                <input type="text" name="tempat" value="Ruang Rapat Utama Koperasi Bermadani UMB" required
+                                <input type="text" name="tempat" value="{{ coop_setting('rat_default_venue') }}" required
                                     class="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none focus:border-indigo-500">
                             </div>
                         </div>

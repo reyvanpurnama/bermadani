@@ -149,7 +149,7 @@
             </form>
 
             <div class="text-center py-6">
-                <p class="text-[10px] text-slate-400">BERMADANI v1.0.0 • Koperasi UMB</p>
+                <p class="text-[10px] text-slate-400">{{ strtoupper(config('cooperative.short_name')) }} {{ config('cooperative.version') }} • {{ config('cooperative.name') }}</p>
             </div>
         </div>
     </div>

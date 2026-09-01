@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan SHU RAT {{ $session->year }} - Koperasi Bermadani UMB</title>
+    <title>Laporan SHU RAT {{ $session->year }} - {{ config('cooperative.name') }}</title>
     <style>
         @page {
             margin: 1.2cm 1.5cm 1.5cm 1.5cm;
@@ -205,7 +205,7 @@
     <table class="header-table">
         <tr>
             <td>
-                <div class="org-title">KOPERASI KONSUMEN SYARIAH BERMADANI UNIVERSITAS MUHAMMADIYAH BANDUNG</div>
+                <div class="org-title">{{ strtoupper(config('cooperative.legal_name')) }} {{ strtoupper(config('cooperative.parent_org')) }}</div>
                 <div class="org-subtitle">Laporan Eksekutif Perhitungan dan Alokasi SHU Anggota</div>
             </td>
             <td style="text-align: right;">
@@ -339,7 +339,7 @@
     </table>
 
     <div class="footer">
-        Dicetak otomatis oleh Sistem Informasi Koperasi Konsumen Syariah Bermadani Universitas Muhammadiyah Bandung pada {{ $generatedAt }} WIB
+        Dicetak otomatis oleh Sistem Informasi {{ config('cooperative.legal_name') }} {{ config('cooperative.parent_org') }} pada {{ $generatedAt }} WIB
     </div>
 
 </body>

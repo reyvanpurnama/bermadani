@@ -10,7 +10,7 @@
                 </div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Audit Keuangan & Aliran Kas Bulanan</h1>
                 <p class="mt-1 text-sm text-indigo-200 max-w-2xl">
-                    Analisis real-time data pinjaman, angsuran terbayar, mutasi simpanan, serta visualisasi tren aliran kas bulanan Koperasi UMB.
+                    Analisis real-time data pinjaman, angsuran terbayar, mutasi simpanan, serta visualisasi tren aliran kas bulanan {{ config('cooperative.name') }}.
                 </p>
             </div>
             <div class="flex items-center gap-3">

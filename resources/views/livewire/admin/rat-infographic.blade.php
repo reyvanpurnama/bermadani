@@ -95,14 +95,14 @@
                         <i class='bx bxs-institution'></i>
                     </div>
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-800 dark:text-white uppercase tracking-tight">KOPERASI BERMADANI</h2>
+                        <h2 class="text-lg font-extrabold text-slate-800 dark:text-white uppercase tracking-tight">{{ strtoupper(config('cooperative.name')) }}</h2>
                         <p class="text-xs font-bold text-emerald-600 dark:text-emerald-400">DASHBOARD KINERJA KEUANGAN TAHUN 2025</p>
-                        <p class="text-[10px] text-slate-500">Laporan Internal Bermadani • 31 Juli 2026</p>
+                        <p class="text-[10px] text-slate-500">Laporan Internal {{ config('cooperative.short_name') }} • 31 Juli 2026</p>
                     </div>
                 </div>
                 <div class="text-left md:text-right bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-xl border border-emerald-200 dark:border-emerald-800">
                     <p class="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-widest">Slogan RAT 2025</p>
-                    <p class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">"Bersama Anggota, Koperasi Kuat, Manfaat Nyata"</p>
+                    <p class="text-xs font-semibold text-emerald-800 dark:text-emerald-300">"{{ coop_setting('rat_slogan') }}"</p>
                 </div>
             </div>
 
@@ -499,8 +499,8 @@
                 </div>
                 <div class="text-right">
                     <p class="font-bold text-slate-800 dark:text-white">Disusun Oleh Pengurus Koperasi</p>
-                    <p class="text-slate-800 dark:text-white font-bold mt-8">Ridlo Abdillah</p>
-                    <p class="text-[10px] text-slate-500">Ketua Koperasi Bermadani</p>
+                    <p class="text-slate-800 dark:text-white font-bold mt-8">{{ coop_setting('ketua_name') }}</p>
+                    <p class="text-[10px] text-slate-500">{{ coop_setting('ketua_title') }} {{ config('cooperative.short_name') }}</p>
                 </div>
             </div>
         @endif

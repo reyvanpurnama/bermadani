@@ -120,10 +120,10 @@
     <div class="receipt">
         {{-- Header --}}
         <div class="header">
-            <div class="store-name">KOPERASI UMB</div>
-            <div class="store-info">Universitas Muhammadiyah Bengkulu</div>
-            <div class="store-info">Jl. Bali, Bengkulu</div>
-            <div class="store-info">Telp: (0736) 22765</div>
+            <div class="store-name">{{ strtoupper(config('cooperative.name')) }}</div>
+            <div class="store-info">{{ config('cooperative.parent_org') }}</div>
+            <div class="store-info">{{ config('cooperative.address') }}</div>
+            <div class="store-info">Telp: {{ config('cooperative.phone') }}</div>
         </div>
 
         {{-- Transaction Info --}}
@@ -197,9 +197,9 @@
 
         {{-- Footer --}}
         <div class="footer">
-            <p>Terima kasih atas kunjungan Anda!</p>
-            <p>Barang yang sudah dibeli tidak dapat dikembalikan</p>
-            <p style="margin-top: 10px;">www.koperasiumb.com</p>
+            <p>{{ config('cooperative.receipt.footer_text') }}</p>
+            <p>{{ config('cooperative.receipt.policy_text') }}</p>
+            <p style="margin-top: 10px;">{{ config('cooperative.website') }}</p>
             <p style="margin-top: 10px; font-size: 9px;">Printed: {{ now()->format('d/m/Y H:i:s') }}</p>
         </div>
     </div>

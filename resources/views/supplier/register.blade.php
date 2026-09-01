@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Mitra Supplier - Bermadani</title>
+    <title>Daftar Mitra Supplier - {{ config('cooperative.short_name') }}</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -16,7 +16,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '#0F52BA', 
+                        primary: '{{ config('cooperative.theme.primary') }}', 
                         secondary: '#F8FAFC', 
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'
@@ -55,7 +55,7 @@
                     <a href="{{ route('home') }}" class="w-8 h-8 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center hover:bg-white/30 transition-colors">
                         <i class='bx bxs-cube-alt text-xl'></i>
                     </a>
-                    <span class="text-xl font-bold tracking-tight">Bermadani<span class="font-light">Partner</span></span>
+                    <span class="text-xl font-bold tracking-tight">{{ config('cooperative.short_name') }}<span class="font-light">Partner</span></span>
                 </div>
                 
                 <h1 class="text-3xl lg:text-4xl font-extrabold leading-tight mb-4">
@@ -86,7 +86,7 @@
             </div>
 
             <div class="relative z-10 text-xs text-blue-200 hidden lg:block">
-                © 2025 Bermadani - Koperasi & Retail Management.
+                © 2025 {{ config('cooperative.short_name') }} - Koperasi & Retail Management.
             </div>
         </div>
 

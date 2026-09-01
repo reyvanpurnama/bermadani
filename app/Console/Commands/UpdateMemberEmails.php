@@ -39,7 +39,7 @@ class UpdateMemberEmails extends Command
         DB::beginTransaction();
         try {
             foreach ($members as $member) {
-                $newEmail = strtolower($member->nomorAnggota) . '@bermadani.id';
+                $newEmail = strtolower($member->nomorAnggota) . '@' . config('cooperative.email_domain');
                 
                 // Update member email
                 $member->update(['email' => $newEmail]);

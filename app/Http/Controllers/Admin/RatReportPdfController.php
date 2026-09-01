@@ -41,7 +41,7 @@ class RatReportPdfController extends Controller
             'generatedAt' => now()->translatedFormat('d F Y H:i'),
         ])->setPaper('a4', 'landscape');
 
-        $filename = "Laporan_Lengkap_SHU_RAT_{$session->year}_Koperasi_Bermadani.pdf";
+        $filename = "Laporan_Lengkap_SHU_RAT_{$session->year}_" . config('cooperative.short_name') . ".pdf";
 
         return $pdf->download($filename);
     }
@@ -51,10 +51,7 @@ class RatReportPdfController extends Controller
         $totalAnggota = \App\Models\Member::where('status', 'ACTIVE')->count();
 
         // Load Kop.png logo image as base64 for DomPDF compatibility
-        $kopPath = public_path('images/Kop.png');
-        if (!file_exists($kopPath) && file_exists('/home/tanesheva/Documents/Bermadani/logo/Kop.png')) {
-            $kopPath = '/home/tanesheva/Documents/Bermadani/logo/Kop.png';
-        }
+        $kopPath = public_path(config('cooperative.kop_surat_path'));
 
         $kopBase64 = null;
         if (file_exists($kopPath)) {
@@ -82,7 +79,7 @@ class RatReportPdfController extends Controller
             'generatedAt' => now()->translatedFormat('d F Y H:i'),
         ])->setPaper('a4', 'portrait');
 
-        $filename = "Berita_Acara_RAT_{$session->year}_Koperasi_Bermadani.pdf";
+        $filename = "Berita_Acara_RAT_{$session->year}_" . config('cooperative.short_name') . ".pdf";
 
         return $pdf->download($filename);
     }

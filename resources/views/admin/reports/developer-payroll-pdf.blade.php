@@ -129,7 +129,7 @@
         <div class="{{ !$loop->last ? 'page-break' : '' }}">
             <div class="header">
                 <h1>REKAPITULASI ABSENSI KERJA LEMBUR</h1>
-                <h2>KOPERASI BERMADANI</h2>
+                <h2>{{ strtoupper(config('cooperative.name')) }}</h2>
             </div>
 
             <table class="meta-info">
@@ -194,8 +194,8 @@
                     <div class="name">{{ strtoupper($devName) }}</div>
                 </div>
                 <div class="signature-box">
-                    <div class="title">Mengetahui,<br>Ketua Koperasi Bermadani</div>
-                    <div class="name">RIDLO ABDILLAH, S.Pd., M.Si.</div>
+                    <div class="title">Mengetahui,<br>{{ coop_setting('ketua_title') }} {{ config('cooperative.short_name') }}</div>
+                    <div class="name">{{ coop_setting('ketua_name') }}</div>
                     <div>NIP: ...........................</div>
                 </div>
             </div>

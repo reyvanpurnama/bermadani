@@ -50,8 +50,8 @@
                         <i class='bx bxs-cube-alt text-2xl'></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-slate-900 dark:text-white leading-none">KOPERASI BERMADANI</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Universitas Mercu Buana<br>Telp: (021) 5840-816</p>
+                        <h2 class="text-xl font-bold text-slate-900 dark:text-white leading-none">{{ strtoupper(config('cooperative.name')) }}</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ config('cooperative.parent_org') }}<br>Telp: {{ config('cooperative.phone') }}</p>
                     </div>
                 </div>
                 <div class="text-right">
@@ -147,7 +147,7 @@
 
     {{-- Footer --}}
     <div class="mt-8 text-center text-xs text-slate-400 no-print">
-        &copy; {{ date('Y') }} Koperasi Bermadani. Generated automatically.
+        &copy; {{ date('Y') }} {{ config('cooperative.name') }}. Generated automatically.
     </div>
 
 </div>

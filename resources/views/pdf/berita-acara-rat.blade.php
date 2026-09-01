@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Berita Acara RAT {{ $session->year }} - Koperasi Bermadani</title>
+    <title>Berita Acara RAT {{ $session->year }} - {{ config('cooperative.name') }}</title>
     <style>
         @page {
             margin: 1.5cm 2cm 2cm 2cm;
@@ -164,18 +164,18 @@
     <!-- Kop Surat Gambar Resmi -->
     <div class="kop-container">
         @if(!empty($kopBase64))
-            <img src="{{ $kopBase64 }}" class="kop-image" alt="Kop Surat Koperasi Bermadani">
+            <img src="{{ $kopBase64 }}" class="kop-image" alt="Kop Surat {{ config('cooperative.name') }}">
             <div class="kop-divider"></div>
-        @elseif(file_exists(public_path('images/Kop.png')))
-            <img src="{{ public_path('images/Kop.png') }}" class="kop-image" alt="Kop Surat Koperasi Bermadani">
+        @elseif(file_exists(public_path(config('cooperative.kop_surat_path'))))
+            <img src="{{ public_path(config('cooperative.kop_surat_path')) }}" class="kop-image" alt="Kop Surat {{ config('cooperative.name') }}">
             <div class="kop-divider"></div>
         @else
             <table class="kop-table">
                 <tr>
                     <td>
-                        <div class="kop-title">KOPERASI KONSUMEN SYARIAH BERKAH SOLUSI MADANI</div>
-                        <div class="kop-subtitle">UNIVERSITAS MUHAMMADIYAH BANDUNG</div>
-                        <div class="kop-address">Jl. Soekarno-Hatta No.752, Cipadung Kidul, Kec. Panyileukan, Kota Bandung, Jawa Barat 40614</div>
+                        <div class="kop-title">{{ strtoupper(config('cooperative.legal_name')) }}</div>
+                        <div class="kop-subtitle">{{ strtoupper(config('cooperative.parent_org')) }}</div>
+                        <div class="kop-address">{{ config('cooperative.address') }}</div>
                     </td>
                 </tr>
             </table>
@@ -186,14 +186,14 @@
     <div class="doc-header">
         <h2>BERITA ACARA RAPAT ANGGOTA TAHUNAN (RAT)</h2>
         <p><strong>TAHUN BUKU {{ $session->year }}</strong></p>
-        <p>Nomor: {{ $nomorSurat ?? ('.../BA-RAT/BERMADANI/' . date('Y')) }}</p>
+        <p>Nomor: {{ $nomorSurat ?? ('.../' . coop_setting('rat_letter_prefix') . '/' . date('Y')) }}</p>
     </div>
 
     <!-- Paragraf Pembuka -->
     <p class="paragraph">
         Pada hari ini, <strong>{{ $hariTanggal ?? ($session->event_date ? $session->event_date->translatedFormat('l, d F Y') : date('d F Y')) }}</strong>,
-        bertempat di <strong>{{ $tempat ?? 'Ruang Rapat Utama Koperasi Bermadani UMB' }}</strong>,
-        telah diselenggarakan Rapat Anggota Tahunan (RAT) <strong>{{ $session->title ?? ('Koperasi Bermadani Tahun Buku ' . $session->year) }}</strong>
+        bertempat di <strong>{{ $tempat ?? coop_setting('rat_default_venue') }}</strong>,
+        telah diselenggarakan Rapat Anggota Tahunan (RAT) <strong>{{ $session->title ?? (config('cooperative.name') . ' Tahun Buku ' . $session->year) }}</strong>
         yang dimulai pada pukul <strong>{{ $jam ?? '09:00 WIB' }}</strong>.
     </p>
 
@@ -227,7 +227,7 @@
     </table>
 
     <p class="paragraph">
-        Karena jumlah anggota yang hadir telah memenuhi ketentuan Anggaran Dasar / Anggaran Rumah Tangga (AD/ART) Koperasi Konsumen Syariah Bermadani UMB, maka Rapat Anggota Tahunan ini dinyatakan <strong>SAH</strong> dan berhak mengambil keputusan hukum yang mengikat.
+        Karena jumlah anggota yang hadir telah memenuhi ketentuan Anggaran Dasar / Anggaran Rumah Tangga (AD/ART) {{ config('cooperative.legal_name') }}, maka Rapat Anggota Tahunan ini dinyatakan <strong>SAH</strong> dan berhak mengambil keputusan hukum yang mengikat.
     </p>
 
     <!-- Susunan Acara -->
@@ -235,7 +235,7 @@
     <ol class="numbered-list">
         <li>Pembukaan oleh Pembawa Acara.</li>
         <li>Menyanyikan Lagu Indonesia Raya dan Mars Koperasi / Universitas Muhammadiyah Bandung.</li>
-        <li>Sambutan Ketua Koperasi Bermadani UMB.</li>
+        <li>Sambutan Ketua {{ config('cooperative.name') }}.</li>
         <li>Pemilihan dan Penetapan Pimpinan Sidang RAT.</li>
         <li>Pembacaan dan Pengesahan Peraturan Tata Tertib RAT.</li>
         <li>Penyampaian Laporan Pertanggungjawaban (LPJ) Pengurus Tahun Buku {{ $session->year }}.</li>
@@ -253,7 +253,7 @@
     <p style="margin-bottom: 5px;">Setelah dilakukan pembahasan dan tanggapan oleh seluruh anggota, Rapat Anggota Tahunan menyepakati dan memutuskan:</p>
 
     <ol class="numbered-list">
-        <li>Menerima dan mengesahkan Laporan Pertanggungjawaban (LPJ) Pengurus Koperasi Bermadani Tahun Buku {{ $session->year }}.</li>
+        <li>Menerima dan mengesahkan Laporan Pertanggungjawaban (LPJ) Pengurus {{ config('cooperative.name') }} Tahun Buku {{ $session->year }}.</li>
         <li>Menerima dan mengesahkan Laporan Hasil Pengawasan Pengawas Koperasi Tahun Buku {{ $session->year }}.</li>
         <li>
             Mengesahkan Laporan Keuangan Tahun Buku {{ $session->year }} dengan rincian Perhitungan Hasil Usaha:
@@ -337,7 +337,7 @@
     </p>
 
     <div style="margin-top: 20px; text-align: right;">
-        Bandung, {{ $hariTanggal ?? ($session->event_date ? $session->event_date->translatedFormat('d F Y') : date('d F Y')) }}
+        {{ config('cooperative.city') }}, {{ $hariTanggal ?? ($session->event_date ? $session->event_date->translatedFormat('d F Y') : date('d F Y')) }}
     </div>
 
     <!-- Lembar Tanda Tangan Pimpinan Sidang -->
