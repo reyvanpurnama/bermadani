@@ -128,7 +128,38 @@
                     </div>
                     <h1 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Portal Anggota</h1>
                     <p class="text-slate-500 dark:text-slate-400 text-sm">Masuk untuk mengakses layanan.</p>
-                </div>
+                @auth
+                    <div class="bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 mb-6 text-sm">
+                        <p class="text-indigo-900 dark:text-indigo-200 font-semibold flex items-center gap-2 mb-2">
+                            <i class='bx bx-user-check text-lg text-indigo-600 dark:text-indigo-400'></i>
+                            <span>Sesi Aktif Terdeteksi</span>
+                        </p>
+                        <p class="text-slate-600 dark:text-slate-300 text-xs mb-3">
+                            Kamu sedang login sebagai <strong>{{ auth()->user()->name }}</strong> (Role: <span class="text-indigo-600 dark:text-indigo-400 font-semibold">{{ auth()->user()->role }}</span>).
+                        </p>
+                        <div class="flex items-center gap-2">
+                            @php
+                                $role = auth()->user()->role;
+                                $dashboardUrl = match($role) {
+                                    'SUPER_ADMIN', 'ADMIN', 'DEVELOPER' => route('admin.dashboard'),
+                                    'KASIR' => route('admin.pos'),
+                                    'SUPPLIER' => route('supplier.dashboard'),
+                                    'MEMBER' => route('member.dashboard'),
+                                    default => route('home'),
+                                };
+                            @endphp
+                            <a href="{{ $dashboardUrl }}" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold transition-colors">
+                                Ke Dashboard Saya
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}" class="inline">
+                                @csrf
+                                <button type="submit" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-colors">
+                                    Logout & Ganti Akun
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
 
                 @if ($errors->any())
                     <div

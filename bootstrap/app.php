@@ -11,9 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Redirect authenticated users away from guest routes
+        // Dynamic role-based redirect for authenticated users away from guest routes
         $middleware->redirectGuestsTo('/login');
-        $middleware->redirectUsersTo('/admin');
+        $middleware->redirectUsersTo(function () {
+            $user = auth()->user();
+            if (!$user) return '/login';
+            return match ($user->role) {
+                'SUPER_ADMIN', 'ADMIN', 'DEVELOPER' => '/admin',
+                'KASIR' => '/admin/pos',
+                'SUPPLIER' => '/supplier',
+                'MEMBER' => '/member/dashboard',
+                default => '/login',
+            };
+        });
 
         // Register custom middleware aliases
         $middleware->alias([
