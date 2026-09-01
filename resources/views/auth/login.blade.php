@@ -135,7 +135,7 @@
                             <span>Sesi Aktif Terdeteksi</span>
                         </p>
                         <p class="text-slate-600 dark:text-slate-300 text-xs mb-3">
-                            Kamu sedang login sebagai <strong>{{ auth()->user()->name }}</strong> (Role: <span class="text-indigo-600 dark:text-indigo-400 font-semibold">{{ auth()->user()->role }}</span>).
+                            Role akun terdeteksi saat ini: <span class="text-indigo-600 dark:text-indigo-400 font-bold">{{ auth()->user()->role }}</span>.
                         </p>
                         <div class="flex items-center gap-2">
                             @php

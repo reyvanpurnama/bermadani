@@ -34,15 +34,9 @@
         </p>
 
         @auth
-            <!-- Current Logged in User Card -->
-            <div class="mb-6 p-4 rounded-xl bg-slate-900/80 border border-slate-700 text-left flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-indigo-600 text-white font-bold flex items-center justify-center text-sm shrink-0">
-                    {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
-                </div>
-                <div class="flex-1 overflow-hidden">
-                    <h4 class="text-xs font-bold text-white truncate">{{ auth()->user()->name }}</h4>
-                    <p class="text-[11px] text-slate-400">Role Terdeteksi: <span class="text-indigo-400 font-semibold">{{ auth()->user()->role }}</span></p>
-                </div>
+            <!-- Current Logged in User Role Card -->
+            <div class="mb-6 p-4 rounded-xl bg-slate-900/80 border border-slate-700 text-center">
+                <p class="text-xs text-slate-400">Role Akun Terdeteksi: <span class="text-indigo-400 font-bold text-sm">{{ auth()->user()->role }}</span></p>
             </div>
 
             <!-- Action Buttons -->
