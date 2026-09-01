@@ -328,10 +328,20 @@ class CooperativeSettings extends Component
     public function restoreUploadedBackup(): void
     {
         $this->validate([
-            'upload_sql_file' => 'required|file|max:102400', // max 100MB
+            'upload_sql_file' => 'required|file|max:204800', // max 200MB
+        ], [
+            'upload_sql_file.required' => 'Pilih file .sql terlebih dahulu.',
+            'upload_sql_file.file' => 'File gagal diupload. Pastikan ukuran file tidak melebihi batas upload_max_filesize di php.ini.',
+            'upload_sql_file.max' => 'Ukuran file maksimal adalah 200MB.',
         ]);
 
         try {
+            $ext = strtolower($this->upload_sql_file->getClientOriginalExtension());
+            if (!in_array($ext, ['sql', 'txt'])) {
+                session()->flash('error', 'File harus berformat .sql atau .txt!');
+                return;
+            }
+
             $tempPath = $this->upload_sql_file->getRealPath();
 
             // Save copy to storage/app/backups/

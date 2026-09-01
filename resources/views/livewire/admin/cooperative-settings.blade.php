@@ -27,6 +27,18 @@
         </div>
     @endif
 
+    @if (session()->has('error'))
+        <div class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 flex items-center justify-between shadow-sm animate-fade-in">
+            <div class="flex items-center gap-3">
+                <i class='bx bx-error-circle text-2xl'></i>
+                <span class="font-medium">{{ session('error') }}</span>
+            </div>
+            <button type="button" @click="$el.parentElement.remove()" class="text-rose-500 hover:text-rose-700">
+                <i class='bx bx-x text-xl'></i>
+            </button>
+        </div>
+    @endif
+
     <!-- Main Settings Card with Tabs -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <!-- Navigation Tabs -->
