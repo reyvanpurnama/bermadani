@@ -307,6 +307,49 @@ class CooperativeSettings extends Component
         }
     }
 
+    // === Upload SQL File for Import ===
+    public $upload_sql_file;
+
+    public function restoreBackup(string $filename): void
+    {
+        try {
+            $safeName = basename($filename);
+            $filePath = storage_path("app/backups/{$safeName}");
+
+            $backupService = new \App\Services\DatabaseBackupService();
+            $backupService->importDump($filePath);
+
+            session()->flash('message', "Database berhasil di-restore dari `{$safeName}`!");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal merestore database: ' . $e->getMessage());
+        }
+    }
+
+    public function restoreUploadedBackup(): void
+    {
+        $this->validate([
+            'upload_sql_file' => 'required|file|max:102400', // max 100MB
+        ]);
+
+        try {
+            $tempPath = $this->upload_sql_file->getRealPath();
+
+            // Save copy to storage/app/backups/
+            $originalName = $this->upload_sql_file->getClientOriginalName();
+            $safeName = 'imported_' . date('Y-m-d_H-i-s') . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '', $originalName);
+            $destinationPath = storage_path("app/backups/{$safeName}");
+            copy($tempPath, $destinationPath);
+
+            $backupService = new \App\Services\DatabaseBackupService();
+            $backupService->importDump($destinationPath);
+
+            $this->reset('upload_sql_file');
+            session()->flash('message', "File SQL `{$originalName}` berhasil diupload & di-restore ke Database!");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal merestore file SQL yang diupload: ' . $e->getMessage());
+        }
+    }
+
     public function getBackupListProperty(): array
     {
         $backupService = new \App\Services\DatabaseBackupService();

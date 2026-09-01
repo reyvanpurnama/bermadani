@@ -155,6 +155,34 @@ class DatabaseBackupService
     }
 
     /**
+     * Import / Restore a MySQL SQL Dump file into the database.
+     * Pure PHP implementation using DB::unprepared.
+     */
+    public function importDump(string $filePath): void
+    {
+        if (!file_exists($filePath)) {
+            throw new \Exception("File SQL dump tidak ditemukan di: {$filePath}");
+        }
+
+        // Increase memory & execution time for large imports
+        ini_set('memory_limit', '512M');
+        set_time_limit(300);
+
+        $sqlContent = file_get_contents($filePath);
+
+        // Execute SQL within disabled FK checks block
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        try {
+            DB::unprepared($sqlContent);
+        } finally {
+            DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        }
+
+        // Clear application caches after database restore
+        cache()->flush();
+    }
+
+    /**
      * Format bytes to human readable string (KB, MB).
      */
     private function formatBytes(int $bytes): string

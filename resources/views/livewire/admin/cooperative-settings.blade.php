@@ -486,6 +486,30 @@
                         </button>
                     </div>
 
+                    <!-- Upload & Restore SQL Dump Form -->
+                    <div class="p-5 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 space-y-3">
+                        <h4 class="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class='bx bx-upload text-blue-500 text-lg'></i>
+                            Import & Restore Database (.sql Dump)
+                        </h4>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">
+                            Upload file <code>.sql</code> dari hasil download server Production atau lokal untuk langsung di-restore ke database ini.
+                        </p>
+
+                        <form wire:submit.prevent="restoreUploadedBackup" class="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                            <input type="file" wire:model="upload_sql_file" accept=".sql" required 
+                                   class="w-full sm:flex-1 text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+
+                            <button type="submit" wire:loading.attr="disabled" onclick="return confirm('PERHATIAN! Merestore database akan menimpa seluruh data yang ada saat ini. Lanjutkan?')"
+                                    class="w-full sm:w-auto px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs shadow-sm transition-all flex items-center justify-center gap-2 shrink-0">
+                                <i class='bx bx-import text-base' wire:loading.remove wire:target="restoreUploadedBackup"></i>
+                                <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="restoreUploadedBackup"></i>
+                                <span>Upload & Restore Database</span>
+                            </button>
+                        </form>
+                        @error('upload_sql_file') <span class="text-xs text-rose-500 block mt-1">{{ $message }}</span> @enderror
+                    </div>
+
                     <!-- Backup Files Table -->
                     <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
                         <table class="w-full text-left text-sm">
@@ -510,15 +534,21 @@
                                         <td class="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
                                             {{ $b['created_at'] }}
                                         </td>
-                                        <td class="px-4 py-3 text-right space-x-2">
+                                        <td class="px-4 py-3 text-right space-x-1.5">
+                                            <button wire:click="restoreBackup('{{ $b['filename'] }}')" onclick="confirm('PERHATIAN! Merestore {{ $b['filename'] }} akan menimpa data yang ada saat ini. Lanjutkan?') || event.stopImmediatePropagation()"
+                                                class="px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
+                                                <i class='bx bx-history text-sm'></i>
+                                                <span>Restore</span>
+                                            </button>
+
                                             <button wire:click="downloadBackup('{{ $b['filename'] }}')" 
-                                                class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
+                                                class="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
                                                 <i class='bx bx-download text-sm'></i>
                                                 <span>Download SQL</span>
                                             </button>
 
                                             <button wire:click="deleteBackup('{{ $b['filename'] }}')" onclick="confirm('Hapus file backup ini?') || event.stopImmediatePropagation()"
-                                                class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
+                                                class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
                                                 <i class='bx bx-trash text-sm'></i>
                                                 <span>Hapus</span>
                                             </button>
