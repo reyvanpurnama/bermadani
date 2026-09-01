@@ -112,32 +112,15 @@ class DatabaseBackupService
      */
     public function getBackupList(): array
     {
-        $possibleDirs = [
-            storage_path('app/backups'),
-            storage_path('app/private/backups'),
-            storage_path('app/public/backups'),
-        ];
-
-        // Ensure main backup directory exists
-        $mainDir = storage_path('app/backups');
-        if (!file_exists($mainDir)) {
-            mkdir($mainDir, 0755, true);
+        $backupDir = storage_path('app/backups');
+        if (!file_exists($backupDir)) {
+            return [];
         }
 
-        $files = [];
-        foreach ($possibleDirs as $dir) {
-            if (file_exists($dir)) {
-                $found = glob("{$dir}/*.{sql,SQL,txt,TXT}", GLOB_BRACE) ?: [];
-                $files = array_merge($files, $found);
-            }
-        }
-
-        // Deduplicate files by filename
-        $files = array_unique($files);
+        $files = glob("{$backupDir}/*.sql");
         $backups = [];
 
         foreach ($files as $file) {
-            if (!is_file($file)) continue;
             $size = filesize($file);
             $backups[] = [
                 'filename' => basename($file),

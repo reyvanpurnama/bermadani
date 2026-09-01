@@ -25,3 +25,9 @@ tugas-uas-bermadani.txt
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Database Backups & Dumps (Security)
+*.sql
+*.sql.gz
+/storage/app/backups/*
+!/storage/app/backups/.gitignore
