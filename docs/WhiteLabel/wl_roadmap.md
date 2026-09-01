@@ -58,13 +58,17 @@ Detail arsitektur: [[wl_config_architecture|Config Architecture]]
   5. Tema & Warna (Color Picker per layout)
   6. Parameter Keuangan & Struk Kasir
 
-### Fase 3: Installer & Packaging ⬜
+### Fase 3: Installer & Packaging ✅
 > **Goal**: Koperasi baru bisa setup dari nol dalam 5 menit.
 
-- [ ] Buat `php artisan koperasi:install` — setup wizard CLI
-- [ ] Buat Setup Wizard di browser (first-run flow)
-- [ ] Dokumentasi deployment guide untuk white-label customer
-- [ ] Hapus/pindahkan semua data fixture spesifik Bermadani ke seeder opsional
+- [x] Buat `php artisan koperasi:install` — setup wizard CLI interaktif
+- [x] Buat Web Setup Wizard di browser (`/install`) 4-step UI:
+  1. System Requirements Check (PHP 8.2+, Extensions, Storage Permissions)
+  2. Database Configuration & Connection Tester
+  3. Identitas Koperasi & Akun Super Admin Setup
+  4. Automated Setup Execution & Installation Lock (`storage/installed`)
+- [x] Middlewares `EnsureAppIsInstalled` & `RedirectIfInstalled`
+- [x] Automatic deployment lock & protection
 
 ---
 

@@ -22,7 +22,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'cashier.shift' => \App\Http\Middleware\CheckCashierShift::class,
             'log.activity' => \App\Http\Middleware\LogActivity::class,
             'member.type' => \App\Http\Middleware\CheckMemberType::class,
+            'installed' => \App\Http\Middleware\EnsureAppIsInstalled::class,
+            'uninstalled' => \App\Http\Middleware\RedirectIfInstalled::class,
         ]);
+
+        $middleware->appendToGroup('web', \App\Http\Middleware\EnsureAppIsInstalled::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

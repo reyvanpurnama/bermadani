@@ -1,10 +1,21 @@
 <?php
 
+use App\Http\Controllers\InstallerController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionController;
 use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+// Installer Routes (Only accessible if not yet installed)
+Route::middleware('uninstalled')->prefix('install')->group(function () {
+    Route::get('/', [InstallerController::class, 'step1'])->name('installer.step1');
+    Route::get('/database', [InstallerController::class, 'step2'])->name('installer.step2');
+    Route::post('/test-database', [InstallerController::class, 'testDatabase'])->name('installer.test-db');
+    Route::match(['get', 'post'], '/setup', [InstallerController::class, 'step3'])->name('installer.step3');
+    Route::post('/process', [InstallerController::class, 'processInstall'])->name('installer.process');
+    Route::get('/success', [InstallerController::class, 'success'])->name('installer.success');
+});
 
 // Landing Page
 Route::get('/', function () {
