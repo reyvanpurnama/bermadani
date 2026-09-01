@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Member Area') - {{ config('cooperative.short_name') }}</title>
+    <title>@yield('title', 'Member Area') - {{ coop_config('short_name') }}</title>
 
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -25,7 +25,7 @@
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
-                        primary: '{{ config('cooperative.theme.membership') }}', // Indigo
+                        primary: '{{ coop_config('theme.membership') }}', // Indigo
                         darkBg: '#0f172a',  // Slate 900
                         darkCard: '#1e293b', // Slate 800
                     }

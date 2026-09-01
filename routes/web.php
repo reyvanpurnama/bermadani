@@ -183,6 +183,9 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.pos');
     })->name('admin.pos');
 
+    // Pengaturan Koperasi (White-Label)
+    Route::get('/settings', \App\Livewire\Admin\CooperativeSettings::class)->name('admin.settings');
+
     // Laporan RAT
     Route::get('/rat-dashboard', \App\Livewire\Admin\RatVisualDashboard::class)->name('admin.rat-dashboard');
     Route::get('/laporan-rat', \App\Livewire\Admin\RatReport::class)->name('admin.rat-report');

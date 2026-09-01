@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Masuk Portal - {{ config('cooperative.short_name') }}</title>
+    <title>Masuk Portal - {{ coop_config('short_name') }}</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
@@ -19,7 +19,7 @@
                 extend: {
                     fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
                     colors: {
-                        primary: '{{ config('cooperative.theme.primary') }}',
+                        primary: '{{ coop_config('theme.primary') }}',
                         secondary: '#F8FAFC',
                         darkBg: '#0f172a',
                         darkCard: '#1e293b'

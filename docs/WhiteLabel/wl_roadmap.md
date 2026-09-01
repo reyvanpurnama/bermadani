@@ -32,25 +32,31 @@ Detail lengkap: [[wl_hardcoded_audit|Audit Hardcoded Values]]
 
 ## 🗺️ Roadmap (3 Fase)
 
-### Fase 1: Config-Driven Foundation ⬜
+### Fase 1: Config-Driven Foundation ✅
 > **Goal**: Semua identitas & parameter koperasi bisa diubah tanpa edit source code.
 
-- [ ] Buat `config/cooperative.php` — file konfigurasi utama identitas koperasi
-- [ ] Buat tabel `cooperative_settings` — untuk setting yang bisa diubah lewat Admin panel
-- [ ] Replace semua hardcoded nama/alamat/telepon di 66 Blade views → `{{ config('cooperative.name') }}`
-- [ ] Replace email domain `@bermadani.id` → `config('cooperative.email_domain')`
-- [ ] Replace hardcoded pejabat penandatangan → database `cooperative_settings`
-- [ ] Replace hardcoded fee/rate/persentase → `config('cooperative.finance.*')`
+- [x] Buat `config/cooperative.php` — file konfigurasi utama identitas koperasi
+- [x] Buat tabel `cooperative_settings` — untuk setting yang bisa diubah lewat Admin panel
+- [x] Replace semua hardcoded nama/alamat/telepon di 66 Blade views → `{{ coop_config('name') }}`
+- [x] Replace email domain `@bermadani.id` → `coop_config('email_domain')`
+- [x] Replace hardcoded pejabat penandatangan → database `cooperative_settings`
+- [x] Replace hardcoded fee/rate/persentase → `coop_config('finance.*')`
 
 Detail arsitektur: [[wl_config_architecture|Config Architecture]]
 
-### Fase 2: Dynamic Theming ⬜
-> **Goal**: Warna, logo, dan branding bisa dikustomisasi per instalasi.
+### Fase 2: Dynamic Theming & Admin Settings ✅
+> **Goal**: Warna, logo, dan branding bisa dikustomisasi per instalasi langsung dari Admin Panel.
 
-- [ ] Buat sistem theme config (primary color, accent color, logo URL)
-- [ ] Replace hardcoded hex colors di layout files → CSS variables
-- [ ] Replace hardcoded hex colors di PDF templates → config-driven
-- [ ] Buat halaman "Pengaturan Branding" di Admin panel (upload logo, pilih warna)
+- [x] Buat sistem theme config (primary color, admin, member, supplier colors)
+- [x] Replace hardcoded colors di layout files → `coop_config()`
+- [x] Replace hardcoded colors di PDF templates → config-driven
+- [x] Buat halaman "Pengaturan Koperasi" di Admin panel (`/admin/settings`) dengan 6 tab:
+  1. Identitas & Kontak
+  2. Branding & Logo (Upload logo, kop surat, favicon)
+  3. Pejabat & RAT (Ketua, Bendahara, Pengawas, Slogan RAT)
+  4. Rekening Bank (Bank Utama & Bank Transfer)
+  5. Tema & Warna (Color Picker per layout)
+  6. Parameter Keuangan & Struk Kasir
 
 ### Fase 3: Installer & Packaging ⬜
 > **Goal**: Koperasi baru bisa setup dari nol dalam 5 menit.

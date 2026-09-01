@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Portal Anggota') - {{ config('cooperative.name') }}</title>
+    <title>@yield('title', 'Portal Anggota') - {{ coop_config('name') }}</title>
 
     <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
                 extend: {
                     fontFamily: { sans: ['Outfit', 'sans-serif'] },
                     colors: {
-                        primary: '{{ config('cooperative.theme.member') }}', // Emerald-500 (Koperasi Theme)
+                        primary: '{{ coop_config('theme.member') }}', // Emerald-500 (Koperasi Theme)
                         darkBg: '#0f172a',  // Slate 900
                         darkCard: '#1e293b', // Slate 800
                     }
