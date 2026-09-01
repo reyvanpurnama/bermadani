@@ -66,6 +66,12 @@
                 <i class='bx bx-coin-stack text-lg'></i>
                 <span>Keuangan & Struk</span>
             </button>
+
+            <button wire:click="setTab('backup')" 
+                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'backup' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                <i class='bx bx-data text-lg'></i>
+                <span>Backup Database</span>
+            </button>
         </div>
 
         <!-- Tab Content -->
@@ -457,6 +463,78 @@
                         </button>
                     </div>
                 </form>
+            @endif
+
+            <!-- TAB 7: BACKUP DATABASE -->
+            @if ($activeTab === 'backup')
+                <div class="space-y-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-5 rounded-2xl bg-indigo-50/50 dark:bg-indigo-950/20 border border-indigo-100 dark:border-indigo-900/50">
+                        <div>
+                            <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                                <i class='bx bx-data text-indigo-600 text-xl'></i>
+                                Backup & Export Database MySQL
+                            </h3>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                                Hasilkan file dump SQL murni yang kompatibel penuh dengan phpMyAdmin & MySQL Client.
+                            </p>
+                        </div>
+                        <button wire:click="createBackup" wire:loading.attr="disabled"
+                            class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium text-sm shadow-sm transition-all duration-200 flex items-center gap-2 shrink-0">
+                            <i class='bx bx-plus-circle text-lg' wire:loading.remove wire:target="createBackup"></i>
+                            <i class='bx bx-loader-alt animate-spin text-lg' wire:loading wire:target="createBackup"></i>
+                            <span>Buat Backup SQL Baru</span>
+                        </button>
+                    </div>
+
+                    <!-- Backup Files Table -->
+                    <div class="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold border-b border-slate-200 dark:border-slate-800">
+                                <tr>
+                                    <th class="px-4 py-3">Nama File Backup</th>
+                                    <th class="px-4 py-3">Ukuran File</th>
+                                    <th class="px-4 py-3">Waktu Dibuat</th>
+                                    <th class="px-4 py-3 text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+                                @forelse($backups as $b)
+                                    <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                        <td class="px-4 py-3 font-mono text-xs text-slate-800 dark:text-white font-medium flex items-center gap-2">
+                                            <i class='bx bxs-file-doc text-indigo-500 text-lg'></i>
+                                            <span>{{ $b['filename'] }}</span>
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
+                                            {{ $b['size_formatted'] }}
+                                        </td>
+                                        <td class="px-4 py-3 text-xs text-slate-500 dark:text-slate-400">
+                                            {{ $b['created_at'] }}
+                                        </td>
+                                        <td class="px-4 py-3 text-right space-x-2">
+                                            <button wire:click="downloadBackup('{{ $b['filename'] }}')" 
+                                                class="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
+                                                <i class='bx bx-download text-sm'></i>
+                                                <span>Download SQL</span>
+                                            </button>
+
+                                            <button wire:click="deleteBackup('{{ $b['filename'] }}')" onclick="confirm('Hapus file backup ini?') || event.stopImmediatePropagation()"
+                                                class="px-3 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-900/60 font-medium text-xs transition-colors inline-flex items-center gap-1">
+                                                <i class='bx bx-trash text-sm'></i>
+                                                <span>Hapus</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-xs">
+                                            Belum ada file backup database yang dibuat. Klik tombol di atas untuk membuat backup pertama.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

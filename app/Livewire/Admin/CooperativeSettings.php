@@ -272,9 +272,52 @@ class CooperativeSettings extends Component
         session()->flash('message', 'Parameter Keuangan berhasil diperbarui!');
     }
 
+    public function createBackup(): void
+    {
+        try {
+            $backupService = new \App\Services\DatabaseBackupService();
+            $filePath = $backupService->generateDump();
+            $filename = basename($filePath);
+
+            session()->flash('message', "Backup database `{$filename}` berhasil dibuat!");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal membuat backup database: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadBackup(string $filename)
+    {
+        $safeName = basename($filename);
+        $filePath = storage_path("app/backups/{$safeName}");
+
+        if (file_exists($filePath)) {
+            return response()->download($filePath);
+        }
+
+        session()->flash('error', 'File backup tidak ditemukan!');
+    }
+
+    public function deleteBackup(string $filename): void
+    {
+        $backupService = new \App\Services\DatabaseBackupService();
+        if ($backupService->deleteBackup($filename)) {
+            session()->flash('message', "File backup `{$filename}` berhasil dihapus!");
+        } else {
+            session()->flash('error', 'Gagal menghapus file backup!');
+        }
+    }
+
+    public function getBackupListProperty(): array
+    {
+        $backupService = new \App\Services\DatabaseBackupService();
+        return $backupService->getBackupList();
+    }
+
     public function render()
     {
-        return view('livewire.admin.cooperative-settings')
+        return view('livewire.admin.cooperative-settings', [
+            'backups' => $this->backupList,
+        ])
             ->extends('layouts.admin')
             ->section('content');
     }
