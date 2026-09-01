@@ -356,10 +356,8 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     Route::post('/suppliers/{id}/suspend', [SupplierController::class, 'suspend'])->name('admin.suppliers.suspend');
     Route::post('/suppliers/{id}/activate', [SupplierController::class, 'activate'])->name('admin.suppliers.activate');
 
-    // Settings
-    Route::get('/settings', function () {
-        return view('admin.placeholder', ['title' => 'Pengaturan']);
-    })->name('admin.settings');
+    // Pengaturan Koperasi (White-Label Settings & Backup)
+    Route::get('/settings', \App\Livewire\Admin\CooperativeSettings::class)->name('admin.settings');
 
     // Activity Logs (Admin, Super Admin, Developer)
     Route::middleware(['role:SUPER_ADMIN,DEVELOPER,ADMIN'])->get('/activity-logs', function () {
