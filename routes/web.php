@@ -286,6 +286,7 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
         // Pengembalian Simpanan Anggota Keluar
         Route::get('/settlements', \App\Livewire\Admin\ResignedMemberSettlement::class)->name('settlements');
+        Route::get('/settlements/export-summary-pdf', [\App\Http\Controllers\Admin\MemberSettlementPdfController::class, 'exportSummaryPdf'])->name('settlements-export-pdf');
         Route::get('/settlements/{id}/pdf', [\App\Http\Controllers\Admin\MemberSettlementPdfController::class, 'downloadPdf'])->name('settlement-pdf');
 
         Route::get('/{member}', function ($member) {

@@ -14,6 +14,14 @@
                 Kelola daftar anggota berhenti/keluar, kalkulasi sisa simpanan & potongan pinjaman, serta proses pelunasan.
             </p>
         </div>
+
+        <div class="flex items-center gap-2 shrink-0">
+            <a href="{{ route('admin.members.settlements-export-pdf', ['status' => $statusFilter, 'search' => $search]) }}" target="_blank"
+               class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-sm transition-all flex items-center gap-2">
+                <i class='bx bxs-file-pdf text-lg'></i>
+                <span>Export Rekap PDF</span>
+            </a>
+        </div>
     </div>
 
     <!-- Alert Success Flash -->
