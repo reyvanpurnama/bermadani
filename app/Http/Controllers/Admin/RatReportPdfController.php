@@ -76,6 +76,7 @@ class RatReportPdfController extends Controller
             'sekretarisKoperasi' => $request->input('sekretaris_koperasi'),
             'bendaharaKoperasi' => $request->input('bendahara_koperasi'),
             'ketuaPengawas' => $request->input('ketua_pengawas'),
+            'catatanRekomendasi' => $request->input('catatan_rekomendasi'),
             'generatedAt' => now()->translatedFormat('d F Y H:i'),
         ])->setPaper('a4', 'portrait');
 

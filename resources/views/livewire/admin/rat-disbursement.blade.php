@@ -282,21 +282,26 @@
                 </div>
 
                 {{-- Tab Navigation --}}
-                <div class="flex border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 px-6 pt-3 gap-2">
+                <div class="flex overflow-x-auto no-scrollbar border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 px-6 pt-3 gap-2">
                     <button @click="activeTab = 'acara'"
                         :class="activeTab === 'acara' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
-                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5 shrink-0">
                         <i class='bx bx-calendar-event text-sm'></i> 1. Acara & Kuorum
                     </button>
                     <button @click="activeTab = 'pengurus'"
                         :class="activeTab === 'pengurus' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
-                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5 shrink-0">
                         <i class='bx bx-pen text-sm'></i> 2. Pimpinan & Pengurus
+                    </button>
+                    <button @click="activeTab = 'rekomendasi'"
+                        :class="activeTab === 'rekomendasi' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5 shrink-0">
+                        <i class='bx bx-notepad text-sm'></i> 3. Substansi & Rekomendasi
                     </button>
                     <button @click="activeTab = 'summary'"
                         :class="activeTab === 'summary' ? 'border-indigo-600 text-indigo-600 dark:text-indigo-400 bg-white dark:bg-darkCard' : 'border-transparent text-slate-500 hover:text-slate-700'"
-                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5">
-                        <i class='bx bx-pie-chart-alt-2 text-sm'></i> 3. Preview Ringkasan SHU
+                        class="px-4 py-2 text-xs font-bold border-b-2 rounded-t-xl transition-all flex items-center gap-1.5 shrink-0">
+                        <i class='bx bx-pie-chart-alt-2 text-sm'></i> 4. Preview SHU
                     </button>
                 </div>
 
@@ -424,7 +429,26 @@
                         </div>
                     </div>
 
-                    {{-- TAB 3: Summary Financial --}}
+                    {{-- TAB 3: Substansi & Rekomendasi Hasil RAT --}}
+                    <div x-show="activeTab === 'rekomendasi'" class="space-y-4">
+                        <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-950/40 p-3 rounded-xl border border-indigo-100 dark:border-indigo-900/40">
+                            <span class="text-xs text-indigo-700 dark:text-indigo-300 font-medium flex items-center gap-1">
+                                <i class='bx bx-info-circle text-base'></i> Poin rekomendasi & catatan masukan hasil RAT ini akan otomatis tercetak di Berita Acara PDF.
+                            </span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                <i class='bx bx-edit text-indigo-500'></i> Catatan Substansi & Rekomendasi Anggota (Bisa Diedit):
+                            </label>
+                            <textarea name="catatan_rekomendasi" rows="7" 
+                                class="w-full text-xs font-sans bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-slate-800 dark:text-white outline-none focus:border-indigo-500">1. Persiapan & Sosialisasi Laporan RAT: Rapat Anggota Tahunan Tahun Buku {{ $ratSession->year }} merekomendasikan agar pelaksanaan RAT pada periode selanjutnya dipersiapkan secara lebih matang. Salah satu poin utamanya adalah seluruh data dan dokumen Laporan Pertanggungjawaban (LPJ) RAT disosialisasikan terlebih dahulu kepada anggota sekurang-kurangnya 1 (satu) minggu sebelum pelaksanaan RAT.
+2. Detail & Transparansi Laporan Keuangan: Laporan Keuangan Koperasi disajikan secara lebih rinci, detail, dan transparan, khususnya data mengenai perincian saldo dan mutasi simpanan seluruh anggota.</textarea>
+                            <p class="text-[10px] text-slate-400 mt-1">Kamu bisa menambah, mengedit, atau menghapus catatan poin di atas sebelum mengklik tombol Download PDF.</p>
+                        </div>
+                    </div>
+
+                    {{-- TAB 4: Summary Financial --}}
                     <div x-show="activeTab === 'summary'" class="space-y-4">
                         <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-5 rounded-2xl text-white shadow-lg space-y-4">
                             <div class="flex items-center justify-between border-b border-white/10 pb-3">

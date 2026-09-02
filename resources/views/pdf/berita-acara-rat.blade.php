@@ -328,6 +328,23 @@
             </table>
         </li>
         <li>Menyetujui dan mengesahkan Rencana Kerja (RK) serta Rencana Anggaran Pendapatan dan Belanja (RAPB) Tahun Buku berikutnya.</li>
+        <li>
+            <strong>Catatan Substansi, Saran, Masukan, dan Rekomendasi Anggota:</strong>
+            <div style="margin-top: 5px; margin-bottom: 5px;">
+                @if(!empty($catatanRekomendasi))
+                    {!! nl2br(e($catatanRekomendasi)) !!}
+                @else
+                    <ol type="a" style="margin-top: 4px; padding-left: 20px;">
+                        <li style="margin-bottom: 4px;">
+                            <strong>Persiapan & Sosialisasi Laporan RAT:</strong> Rapat Anggota Tahunan Tahun Buku {{ $session->year }} merekomendasikan agar pelaksanaan RAT di periode selanjutnya dipersiapkan secara lebih matang. Salah satunya, data dan dokumen Laporan Pertanggungjawaban (LPJ) RAT disosialisasikan terlebih dahulu kepada seluruh anggota sekurang-kurangnya <strong>1 (satu) minggu</strong> sebelum hari pelaksanaan RAT.
+                        </li>
+                        <li style="margin-bottom: 4px;">
+                            <strong>Detail & Transparansi Laporan Keuangan:</strong> Laporan Keuangan Koperasi disajikan secara lebih rinci, detail, dan transparan, khususnya data mengenai perincian saldo dan mutasi simpanan anggota.
+                        </li>
+                    </ol>
+                @endif
+            </div>
+        </li>
         <li>Memberikan kuasa dan mandat penuh kepada Pengurus Koperasi untuk melaksanakan seluruh keputusan RAT ini sesuai Anggaran Dasar Koperasi dan peraturan perundang-undangan yang berlaku.</li>
     </ol>
 
