@@ -211,9 +211,15 @@
                 style="display: none;" class="mt-2 space-y-0.5">
 
                 <a href="{{ route('admin.members.index') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members.index', 'admin.members.show', 'admin.members.edit', 'admin.members.create') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Anggota Koperasi</span>
+                </a>
+
+                <a href="{{ route('admin.members.settlements') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members.settlements*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-user-x text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pengembalian Simpanan Keluar</span>
                 </a>
 
                 <a href="{{ route('admin.reports.monthly-financial') }}"

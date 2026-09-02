@@ -284,6 +284,10 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
             return view('admin.members.create');
         })->name('create');
 
+        // Pengembalian Simpanan Anggota Keluar
+        Route::get('/settlements', \App\Livewire\Admin\ResignedMemberSettlement::class)->name('settlements');
+        Route::get('/settlements/{id}/pdf', [\App\Http\Controllers\Admin\MemberSettlementPdfController::class, 'downloadPdf'])->name('settlement-pdf');
+
         Route::get('/{member}', function ($member) {
             $member = \App\Models\Member::findOrFail($member);
 

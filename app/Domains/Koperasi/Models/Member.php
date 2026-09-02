@@ -369,4 +369,14 @@ class Member extends Model
 
         return $this;
     }
+
+    public function settlement()
+    {
+        return $this->hasOne(MemberSettlement::class, 'member_id')->latestOfMany();
+    }
+
+    public function settlements()
+    {
+        return $this->hasMany(MemberSettlement::class, 'member_id');
+    }
 }
