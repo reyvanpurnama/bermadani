@@ -19,8 +19,10 @@
         }
         .kop-image {
             width: 100%;
-            max-height: 110px;
-            object-fit: contain;
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
         .kop-divider {
             border-bottom: 2px solid #0F52BA;
