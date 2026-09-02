@@ -41,46 +41,46 @@
 
     <!-- Main Settings Card with Tabs -->
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <!-- Navigation Tabs -->
-        <div class="flex flex-wrap border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 p-2 gap-1">
+        <!-- Navigation Tabs (Horizontally scrollable on mobile) -->
+        <div class="flex overflow-x-auto no-scrollbar md:flex-wrap border-b border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 p-2 gap-1.5 shrink-0">
             <button wire:click="setTab('general')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'general' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'general' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-building-house text-lg'></i>
                 <span>Identitas & Kontak</span>
             </button>
 
             <button wire:click="setTab('branding')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'branding' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'branding' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-image text-lg'></i>
                 <span>Branding & Logo</span>
             </button>
 
             <button wire:click="setTab('officers')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'officers' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'officers' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-user-voice text-lg'></i>
                 <span>Pejabat & RAT</span>
             </button>
 
             <button wire:click="setTab('bank')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'bank' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'bank' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-credit-card text-lg'></i>
                 <span>Rekening Bank</span>
             </button>
 
             <button wire:click="setTab('theme')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'theme' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'theme' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-palette text-lg'></i>
                 <span>Tema & Warna</span>
             </button>
 
             <button wire:click="setTab('finance')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'finance' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'finance' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-coin-stack text-lg'></i>
                 <span>Keuangan & Struk</span>
             </button>
 
             <button wire:click="setTab('backup')" 
-                class="px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-200 flex items-center gap-2 {{ $activeTab === 'backup' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                class="px-4 py-2.5 rounded-xl font-medium text-xs sm:text-sm transition-all duration-200 flex items-center gap-2 shrink-0 {{ $activeTab === 'backup' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <i class='bx bx-data text-lg'></i>
                 <span>Backup Database</span>
             </button>

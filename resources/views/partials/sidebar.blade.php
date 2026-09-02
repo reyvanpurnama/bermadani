@@ -24,7 +24,7 @@
             <div class="w-6 h-6 bg-primary rounded flex items-center justify-center text-white shrink-0">
                 <i class='bx bxs-cube-alt text-xs'></i>
             </div>
-                class="sidebar-text text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none mt-0.5 transition-opacity duration-300">{{ config('cooperative.short_name') }}</span>
+            <span class="sidebar-text text-base font-bold tracking-tight text-slate-900 dark:text-white leading-none mt-0.5 transition-opacity duration-300">{{ config('cooperative.short_name') }}</span>
         </div>
         <button id="sidebar-close" class="md:hidden ml-auto text-slate-500 hover:text-rose-500 transition-colors">
             <i class='bx bx-x text-2xl'></i>

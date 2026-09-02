@@ -49,6 +49,14 @@
             background: #475569;
         }
 
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         .custom-scroll::-webkit-scrollbar {
             width: 4px;
         }
