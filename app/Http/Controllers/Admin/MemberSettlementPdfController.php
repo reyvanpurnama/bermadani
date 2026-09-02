@@ -66,7 +66,7 @@ class MemberSettlementPdfController extends Controller
             $query->whereHas('settlement', fn($sub) => $sub->where('status', 'SETTLED'));
         }
 
-        $members = $query->orderBy('name', 'asc')->get();
+        $members = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->get();
 
         $kopPath = public_path(coop_config('kop_surat_path'));
         $kopBase64 = '';

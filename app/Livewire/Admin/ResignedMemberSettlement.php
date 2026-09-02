@@ -154,7 +154,7 @@ class ResignedMemberSettlement extends Component
             $query->whereHas('settlement', fn($sub) => $sub->where('status', 'SETTLED'));
         }
 
-        $resignedMembers = $query->paginate(10);
+        $resignedMembers = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(10);
 
         // Overview KPI calculations
         $allResignedQuery = Member::query()->whereIn('status', ['INACTIVE', 'SUSPENDED']);
