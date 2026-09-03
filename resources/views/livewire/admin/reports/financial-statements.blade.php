@@ -34,13 +34,8 @@
         </button>
     </div>
 
-    @if($isLoading)
-        <div class="flex justify-center items-center py-20">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        </div>
-    @else
-        <!-- Content Area -->
-        <div class="bg-white dark:bg-zinc-800 rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-700 overflow-hidden relative">
+    <!-- Content Area -->
+    <div class="bg-white dark:bg-zinc-800 rounded-2xl shadow-sm border border-slate-200 dark:border-zinc-700 overflow-hidden relative">
             
             @php
                 $formatRp = function($val) {
@@ -427,5 +422,4 @@
             @endif
 
         </div>
-    @endif
 </div>

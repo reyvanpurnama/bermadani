@@ -7,28 +7,18 @@ use Livewire\Attributes\Layout;
 use App\Domains\Accounting\Services\FinancialStatementService;
 use App\Models\Member;
 use App\Models\Loan;
-use Illuminate\Support\Facades\DB;
 
 #[Layout('layouts.admin')]
 class ExecutiveDashboard extends Component
 {
-    public $selectedYear;
-    public $kpiData = [];
-    public $healthScorecard = [];
-    public $chartData = [];
+    public int $selectedYear;
 
     public function mount()
     {
         $this->selectedYear = (int) date('Y');
-        $this->loadDashboardData();
     }
 
-    public function updatedSelectedYear()
-    {
-        $this->loadDashboardData();
-    }
-
-    public function loadDashboardData()
+    public function render()
     {
         $service = app(FinancialStatementService::class);
         
@@ -44,19 +34,19 @@ class ExecutiveDashboard extends Component
         $totalMembers = Member::where('status', 'ACTIVE')->count();
         $prevMembers = Member::where('status', 'ACTIVE')->whereYear('created_at', '<', $this->selectedYear)->count();
         
-        $totalLoans = Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('remainingAmount');
-        $prevLoans = $totalLoans * 0.9; // Dummy prev if history not easily available
+        $totalLoans = (float) Loan::whereIn('status', ['ACTIVE', 'OVERDUE'])->sum('remainingAmount');
+        $prevLoans = $totalLoans * 0.9;
 
-        $totalAset = $balanceSheet['total_aset'] ?? 0;
-        $prevAset = $prevBalanceSheet['total_aset'] ?? 0;
+        $totalAset = (float) ($balanceSheet['total_aset'] ?? 0);
+        $prevAset = (float) ($prevBalanceSheet['total_aset'] ?? 0);
         
-        $shu = $incomeStatement['shu_berjalan'] ?? 0;
-        $prevShu = $prevIncomeStatement['shu_berjalan'] ?? 0;
+        $shu = (float) ($incomeStatement['shu_bersih'] ?? 0);
+        $prevShu = (float) ($prevIncomeStatement['shu_bersih'] ?? 0);
 
-        $kas = $balanceSheet['kas_bank'] ?? 0;
-        $prevKas = $prevBalanceSheet['kas_bank'] ?? 0;
+        $kas = (float) ($balanceSheet['kas'] ?? 0);
+        $prevKas = (float) ($prevBalanceSheet['kas'] ?? 0);
 
-        $this->kpiData = [
+        $kpiData = [
             'total_aset' => [
                 'value' => $totalAset,
                 'yoy' => $prevAset > 0 ? (($totalAset - $prevAset) / $prevAset) * 100 : 0
@@ -79,16 +69,14 @@ class ExecutiveDashboard extends Component
             ]
         ];
 
-        $this->healthScorecard = $healthScorecard;
-
         // Collect historical SHU
         $shuHistory = [];
         $years = [];
         for ($i = 4; $i >= 0; $i--) {
             $yr = $this->selectedYear - $i;
             $inc = $service->getIncomeStatement($yr);
-            $shuHistory[] = $inc['shu_berjalan'] ?? 0;
-            $years[] = $yr;
+            $shuHistory[] = (float) ($inc['shu_bersih'] ?? 0);
+            $years[] = (string) $yr;
         }
 
         // NPF
@@ -102,28 +90,28 @@ class ExecutiveDashboard extends Component
         $simpananSukarela = (float) Member::sum('simpananSukarela');
 
         // Asset composition
-        $piutang = $balanceSheet['piutang'] ?? ($totalAset * 0.6);
-        $asetTetap = $balanceSheet['aset_tetap'] ?? ($totalAset * 0.1);
-        $asetLain = $totalAset - $piutang - $kas - $asetTetap;
+        $piutang = (float) ($balanceSheet['piutang_pembiayaan'] ?? 0);
+        $asetTetap = (float) ($balanceSheet['aset_tetap'] ?? 0);
+        $asetLain = max(0, $totalAset - $piutang - $kas - $asetTetap);
 
         // Income composition
-        $margin = $incomeStatement['pendapatan_margin'] ?? ($shu * 1.5);
-        $admin = $incomeStatement['pendapatan_admin'] ?? ($shu * 0.2);
-        $pendapatanLain = $incomeStatement['pendapatan_lain'] ?? ($shu * 0.1);
+        $margin = (float) ($incomeStatement['margin_pembiayaan'] ?? 0);
+        $admin = (float) ($incomeStatement['pendapatan_administrasi'] ?? 0);
+        $pendapatanLain = (float) ($incomeStatement['pendapatan_lain'] ?? 0);
 
         // Expense composition
-        $gaji = $incomeStatement['beban_gaji'] ?? ($shu * 0.4);
-        $atk = $incomeStatement['beban_atk'] ?? ($shu * 0.1);
-        $listrik = $incomeStatement['beban_listrik'] ?? ($shu * 0.05);
-        $penyusutan = $incomeStatement['beban_penyusutan'] ?? ($shu * 0.1);
-        $bebanLain = $incomeStatement['beban_lain'] ?? ($shu * 0.15);
+        $gaji = (float) ($incomeStatement['beban_gaji'] ?? 0);
+        $atk = (float) ($incomeStatement['beban_atk'] ?? 0);
+        $listrik = (float) ($incomeStatement['beban_listrik'] ?? 0);
+        $penyusutan = (float) ($incomeStatement['beban_penyusutan'] ?? 0);
+        $bebanLain = (float) ($incomeStatement['beban_lain'] ?? 0);
 
         // Cash flow
-        $cfOperasi = $cashFlowStatement['arus_kas_operasi'] ?? ($shu * 1.2);
-        $cfInvestasi = $cashFlowStatement['arus_kas_investasi'] ?? ($shu * -0.5);
-        $cfPendanaan = $cashFlowStatement['arus_kas_pendanaan'] ?? ($shu * 0.3);
+        $cfOperasi = (float) ($cashFlowStatement['total_operasi'] ?? 0);
+        $cfInvestasi = (float) ($cashFlowStatement['total_investasi'] ?? 0);
+        $cfPendanaan = (float) ($cashFlowStatement['total_pendanaan'] ?? 0);
 
-        $this->chartData = [
+        $chartData = [
             'komposisi_aset' => [
                 'labels' => ['Piutang', 'Kas & Bank', 'Aset Tetap', 'Lainnya'],
                 'series' => [max(0,$piutang), max(0,$kas), max(0,$asetTetap), max(0,$asetLain)]
@@ -149,15 +137,14 @@ class ExecutiveDashboard extends Component
             ],
             'arus_kas' => [
                 'labels' => ['Operasi', 'Investasi', 'Pendanaan'],
-                'series' => [(float)$cfOperasi, (float)$cfInvestasi, (float)$cfPendanaan]
+                'series' => [$cfOperasi, $cfInvestasi, $cfPendanaan]
             ]
         ];
 
-        $this->dispatch('dashboardDataLoaded', $this->chartData);
-    }
-
-    public function render()
-    {
-        return view('livewire.admin.reports.executive-dashboard');
+        return view('livewire.admin.reports.executive-dashboard', [
+            'kpiData' => $kpiData,
+            'healthScorecard' => $healthScorecard,
+            'chartData' => $chartData,
+        ]);
     }
 }
