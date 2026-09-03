@@ -325,14 +325,24 @@
             charts.arusKas.render();
         }
 
-        // Handle initial load
-        if (@json($chartData)) {
-            initCharts(@json($chartData));
+        let retryCount = 0;
+        function tryInit() {
+            if (typeof ApexCharts !== 'undefined') {
+                initCharts(@json($chartData));
+            } else if (retryCount < 20) {
+                retryCount++;
+                setTimeout(tryInit, 150);
+            }
         }
 
-        // Handle updates
-        Livewire.on('dashboardDataLoaded', (data) => {
-            initCharts(data[0]);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            tryInit();
+        } else {
+            document.addEventListener('DOMContentLoaded', tryInit);
+        }
+
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            setTimeout(tryInit, 100);
         });
     </script>
     @endscript
