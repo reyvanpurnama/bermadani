@@ -94,14 +94,6 @@ Route::middleware('guest')->group(function () {
 
             // Redirect based on role
             if ($user->isMember()) {
-                $member = \App\Models\Member::where('userId', $user->id)->first();
-                if ($member && in_array(strtoupper($member->status ?? ''), ['INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR'])) {
-                    Auth::logout();
-                    return back()->withErrors([
-                        'email' => 'Status keanggotaan Anda telah dinonaktifkan / keluar dari Koperasi. Silakan hubungi Pengurus.',
-                    ])->onlyInput('email');
-                }
-
                 return redirect()->route('member.dashboard');
             }
 
@@ -448,6 +440,7 @@ Route::middleware(['auth', 'member.type'])->prefix('member')->name('member.')->g
     Route::get('/loans/{loan}', \App\Livewire\Member\LoanDetail::class)->name('loans.detail');
     Route::get('/transfer', \App\Livewire\Member\Transfer::class)->name('transfer');
     Route::get('/transfer/history', \App\Livewire\Member\TransferHistory::class)->name('transfer.history');
+    Route::get('/my-settlement-pdf', [\App\Http\Controllers\Admin\MemberSettlementPdfController::class, 'downloadMySettlementPdf'])->name('my-settlement-pdf');
 });
 
 // Retail Membership Portal Routes (Retail Members Only)

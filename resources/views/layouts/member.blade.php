@@ -97,6 +97,28 @@
 
     <!-- Main Content -->
     <div class="pt-20 pb-28 px-4 lg:pt-8 lg:px-8 max-w-md mx-auto lg:max-w-4xl min-h-screen relative">
+        @php
+            $currentMember = auth()->check() ? \App\Models\Member::where('userId', auth()->id())->first() : null;
+            $isInactiveMember = $currentMember && in_array(strtoupper($currentMember->status ?? ''), ['INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR']);
+        @endphp
+
+        @if($isInactiveMember)
+            <div class="mb-5 p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/30 flex items-start gap-3 shadow-sm">
+                <div class="p-2 bg-amber-500 text-white rounded-xl shrink-0 mt-0.5 shadow-md shadow-amber-500/20">
+                    <i class='bx bx-info-circle text-xl'></i>
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center justify-between">
+                        <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">Mode Keanggotaan Non-Aktif / Alumni</h4>
+                        <span class="px-2 py-0.5 rounded text-[9px] font-extrabold bg-amber-200 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">READ-ONLY</span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        Akun Anda dalam status <strong>{{ $currentMember->status }}</strong>. Anda dapat melihat riwayat simpanan, mutasi transaksi terdahulu, dan mengunduh bukti pengembalian simpanan. Pengajuan pinjaman/transfer baru dinonaktifkan.
+                    </p>
+                </div>
+            </div>
+        @endif
+
         @yield('content')
         {{ $slot ?? '' }}
     </div>

@@ -9,6 +9,20 @@
         </button>
     </div>
 
+    {{-- Settlement Receipt PDF Card for Resigned/Settled Member --}}
+    @if(optional($member->settlement)->id)
+        <div class="mb-6 p-5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 uppercase tracking-wider text-emerald-100">Pencairan & Pengembalian Simpanan</span>
+                <h3 class="text-base font-bold mt-1">Berita Acara Pengembalian Simpanan</h3>
+                <p class="text-xs text-emerald-100 mt-0.5">Total Pengembalian Bersih: <strong>Rp {{ number_format($member->settlement->net_refund_amount ?? 0, 0, ',', '.') }}</strong> ({{ optional($member->settlement->settled_at)->format('d M Y') ?? '-' }})</p>
+            </div>
+            <a href="{{ route('member.my-settlement-pdf') }}" target="_blank" class="px-4 py-2.5 bg-white text-emerald-700 hover:bg-emerald-50 rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2 shrink-0">
+                <i class='bx bxs-file-pdf text-lg text-rose-600'></i> Unduh Dokumen PDF
+            </a>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         @if($member->isMemberKoperasi)
         {{-- Simpanan Pokok --}}

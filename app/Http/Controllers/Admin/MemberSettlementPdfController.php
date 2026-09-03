@@ -40,6 +40,17 @@ class MemberSettlementPdfController extends Controller
         return $pdf->stream($filename);
     }
 
+    public function downloadMySettlementPdf()
+    {
+        $user = auth()->user();
+        if (!$user) {
+            abort(401);
+        }
+
+        $member = Member::where('userId', $user->id)->firstOrFail();
+        return $this->downloadPdf($member->id);
+    }
+
     public function exportSummaryPdf(Request $request)
     {
         $statusFilter = $request->query('status', 'ALL');

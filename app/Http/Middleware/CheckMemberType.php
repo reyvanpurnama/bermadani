@@ -30,14 +30,6 @@ class CheckMemberType
             return $next($request);
         }
 
-        // Block inactive/resigned members
-        if (in_array(strtoupper($member->status ?? ''), ['INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR'])) {
-            \Illuminate\Support\Facades\Auth::logout();
-            return redirect()->route('login')->withErrors([
-                'email' => 'Status keanggotaan Anda telah dinonaktifkan / keluar dari Koperasi. Silakan hubungi Pengurus.',
-            ]);
-        }
-
         $currentPath = $request->path();
         $isCoopMember = $member->isMemberKoperasi;
 
