@@ -35,9 +35,9 @@
         </a>
 
         <a href="{{ route('member.simpanan') }}" 
-           class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('member.simpanan') ? 'bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+           class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('member.simpanan*', 'member.transfer*') ? 'bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
             <i class='bx bx-wallet text-lg mr-3'></i> 
-            <span class="text-sm {{ request()->routeIs('member.simpanan') ? 'font-bold' : 'font-medium' }}">Simpanan Saya</span>
+            <span class="text-sm {{ request()->routeIs('member.simpanan*', 'member.transfer*') ? 'font-bold' : 'font-medium' }}">Simpanan Saya</span>
             @php
                 $unreadCount = App\Models\SimpananTransaction::where('memberId', auth()->user()->member?->id)
                     ->where('isRead', false)
@@ -47,19 +47,6 @@
             @if($unreadCount > 0)
                 <span class="ml-auto w-2 h-2 bg-rose-500 rounded-full animate-pulse" title="{{ $unreadCount }} transfer belum dibaca"></span>
             @endif
-        </a>
-
-        <a href="{{ route('member.transfer') }}" 
-           class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('member.transfer') ? 'bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-            <i class='bx bx-transfer text-lg mr-3'></i> 
-            <span class="text-sm {{ request()->routeIs('member.transfer') ? 'font-bold' : 'font-medium' }}">Transfer</span>
-            <span class="ml-auto px-1.5 py-0.5 text-[9px] font-bold bg-emerald-500 text-white rounded-full">NEW</span>
-        </a>
-
-        <a href="{{ route('member.transfer.history') }}" 
-           class="flex items-center px-4 py-3 rounded-xl transition-all group {{ request()->routeIs('member.transfer.history') ? 'bg-blue-50 dark:bg-blue-900/20 text-primary dark:text-blue-300' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-            <i class='bx bx-history text-lg mr-3'></i> 
-            <span class="text-sm {{ request()->routeIs('member.transfer.history') ? 'font-bold' : 'font-medium' }}">Riwayat Transfer</span>
         </a>
 
         <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 mt-6">Akun</p>
