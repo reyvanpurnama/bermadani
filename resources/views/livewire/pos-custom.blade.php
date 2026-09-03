@@ -23,10 +23,20 @@
                 </div>
             </div>
 
-            <button id="theme-toggle"
-                class="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
-                <i id="theme-icon" class='bx bx-moon text-lg'></i>
-            </button>
+            <div class="flex items-center gap-3">
+                <div id="offline-queue-badge" onclick="PosOfflineEngine.syncOfflineQueue()"
+                    class="hidden px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center gap-1.5 cursor-pointer shadow-sm">
+                    0 Transaksi Offline Pending 🔄
+                </div>
+                <div id="pos-connection-status"
+                    class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span> ONLINE 🟢
+                </div>
+                <button id="theme-toggle"
+                    class="w-8 h-8 flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors">
+                    <i id="theme-icon" class='bx bx-moon text-lg'></i>
+                </button>
+            </div>
         </header>
 
         {{-- Category Filter --}}
@@ -464,10 +474,57 @@
         </div>
     </div>
 
-    {{-- Success Toast --}}
+    {{-- Success Checkout Modal & Receipt Print Dialog --}}
     @if($lastInvoice)
-        <div class="fixed top-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-lg z-[70] animate-pulse">
-            ✅ Transaksi Berhasil: {{ $lastInvoice }}
+        <div class="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <div class="bg-white dark:bg-zinc-800 rounded-2xl shadow-xl border border-slate-200 dark:border-zinc-700 max-w-md w-full p-6 text-center">
+                <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class='bx bx-check text-4xl font-bold'></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-1">Transaksi Berhasil!</h3>
+                <p class="text-sm font-mono text-slate-500 dark:text-zinc-400 mb-4">{{ $lastInvoice }}</p>
+
+                @if($lastChange > 0)
+                    <div class="p-3 bg-slate-50 dark:bg-zinc-900 rounded-xl mb-6">
+                        <div class="text-xs text-slate-400">Kembalian:</div>
+                        <div class="text-xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                            Rp {{ number_format($lastChange, 0, ',', '.') }}
+                        </div>
+                    </div>
+                @endif
+
+                <div class="flex flex-col gap-2">
+                    @if($lastTransactionId)
+                        <button onclick="PosOfflineEngine.printReceipt({{ $lastTransactionId }})"
+                            class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
+                            <i class='bx bx-printer text-xl'></i> Cetak Struk Thermal
+                        </button>
+                    @endif
+                    <button wire:click="closeSuccessModal"
+                        class="w-full py-3 bg-slate-100 dark:bg-zinc-700 hover:bg-slate-200 dark:hover:bg-zinc-600 text-slate-700 dark:text-zinc-200 font-semibold rounded-xl transition-all">
+                        ➕ Transaksi Baru
+                    </button>
+                </div>
+            </div>
         </div>
     @endif
+
+    {{-- Offline Engine Scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/dexie@3.2.4/dist/dexie.min.js"></script>
+    <script src="/js/pos-offline-engine.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw-pos.js')
+                .then(reg => console.log('[Service Worker] Registered for POS:', reg.scope))
+                .catch(err => console.warn('[Service Worker] Registration failed:', err));
+        }
+
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('open-receipt', (data) => {
+                if (data && data[0] && data[0].transactionId) {
+                    PosOfflineEngine.printReceipt(data[0].transactionId);
+                }
+            });
+        });
+    </script>
 </div>

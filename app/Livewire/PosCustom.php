@@ -36,6 +36,8 @@ class PosCustom extends Component
     public $checkoutToken = null;
 
     public $lastInvoice = null;
+    public $lastTransactionId = null;
+    public $lastChange = 0;
 
     public $showNewMemberModal = false;
 
@@ -391,6 +393,9 @@ class PosCustom extends Component
             }
 
             $this->lastInvoice = $transaction->invoiceNumber;
+            $this->lastTransactionId = $transaction->id;
+            $this->lastChange = max(0, $this->cashReceived - $transaction->totalAmount);
+
             $this->dispatch('notify', ['type' => 'success', 'message' => 'Transaksi berhasil!']);
 
             $this->clearCart();
@@ -401,6 +406,13 @@ class PosCustom extends Component
         } catch (Throwable $e) {
             $this->dispatch('notify', ['type' => 'error', 'message' => 'Gagal memproses transaksi: '.$e->getMessage()]);
         }
+    }
+
+    public function closeSuccessModal()
+    {
+        $this->lastInvoice = null;
+        $this->lastTransactionId = null;
+        $this->lastChange = 0;
     }
 
     public function getCartTotalProperty()

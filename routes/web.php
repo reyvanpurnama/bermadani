@@ -196,6 +196,10 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
         return view('admin.pos');
     })->name('admin.pos');
 
+    // POS Offline Sync API
+    Route::get('/api/pos/catalog', [\App\Http\Controllers\Api\POSCatalogSyncController::class, 'getCatalog'])->name('api.pos.catalog');
+    Route::post('/api/pos/sync-offline', [\App\Http\Controllers\Api\POSOfflineSyncController::class, 'syncBatch'])->name('api.pos.sync-offline');
+
     // Pengaturan Koperasi (White-Label)
     Route::get('/settings', \App\Livewire\Admin\CooperativeSettings::class)->name('admin.settings');
 
