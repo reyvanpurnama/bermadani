@@ -56,6 +56,10 @@ class SimpananManagement extends Component
     public $editPeriodAmount = 50000;
     public $editPeriodNotes = '';
 
+    // Quick Edit Tanggal Bergabung
+    public $showJoinDateModal = false;
+    public $newJoinDate = '';
+
     protected $queryString = ['activeTab'];
 
     public function mount($id)
@@ -224,6 +228,55 @@ class SimpananManagement extends Component
             return 'member_id';
         }
         return 'memberId';
+    }
+
+    // === Quick Edit Tanggal Bergabung Methods ===
+    public function openJoinDateModal(): void
+    {
+        $this->newJoinDate = $this->member->joinDate
+            ? Carbon::parse($this->member->joinDate)->format('Y-m-d')
+            : date('Y-m-01');
+        $this->showJoinDateModal = true;
+    }
+
+    public function closeJoinDateModal(): void
+    {
+        $this->showJoinDateModal = false;
+    }
+
+    public function saveJoinDate(): void
+    {
+        $this->validate([
+            'newJoinDate' => 'required|date',
+        ]);
+
+        try {
+            DB::table('members')
+                ->where('id', $this->memberId)
+                ->update(['joinDate' => $this->newJoinDate]);
+
+            $this->loadMember();
+            $this->closeJoinDateModal();
+
+            session()->flash('message', 'Tanggal Bergabung Anggota berhasil diubah ke ' . Carbon::parse($this->newJoinDate)->translatedFormat('d F Y') . '.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal merubah tanggal bergabung: ' . $e->getMessage());
+        }
+    }
+
+    public function quickSetJoinMonth(string $periodKey): void
+    {
+        try {
+            $newDate = Carbon::createFromFormat('Y-m', $periodKey)->startOfMonth()->format('Y-m-d');
+            DB::table('members')
+                ->where('id', $this->memberId)
+                ->update(['joinDate' => $newDate]);
+
+            $this->loadMember();
+            session()->flash('message', '⚡ Bulan Bergabung Anggota berhasil diubah ke ' . Carbon::parse($newDate)->translatedFormat('F Y') . '! Kartu simpanan periode ini sekarang aktif.');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal merubah bulan bergabung: ' . $e->getMessage());
+        }
     }
 
     // === Mode Audit Admin Methods ===

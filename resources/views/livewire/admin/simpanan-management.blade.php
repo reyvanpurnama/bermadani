@@ -252,7 +252,13 @@
                                 <i class='bx bx-calendar-check text-blue-600 dark:text-blue-400 text-lg'></i>
                                 Kartu Kontrol Simpanan Wajib
                             </h3>
-                            <p class="text-xs text-slate-500">Monitoring status setoran bulanan anggota per periode tahun</p>
+                            <p class="text-xs text-slate-500">
+                                Status setoran per periode • Tgl Bergabung: 
+                                <strong class="text-slate-800 dark:text-slate-200">{{ $member->joinDate ? \Carbon\Carbon::parse($member->joinDate)->translatedFormat('d M Y') : 'Belum Set' }}</strong>
+                                <button wire:click="openJoinDateModal" class="ml-1 text-[11px] text-indigo-600 hover:underline font-bold">
+                                    <i class='bx bx-edit'></i> Ubah
+                                </button>
+                            </p>
                         </div>
                         
                         <div class="flex flex-wrap items-center gap-2">
@@ -337,6 +343,11 @@
                                     @else
                                         <i class='bx bx-minus-circle text-2xl text-slate-300 dark:text-slate-600 mb-1'></i>
                                         <span class="text-[10px] font-medium block">Belum Anggota</span>
+                                        @if($auditMode)
+                                            <button wire:click="quickSetJoinMonth('{{ $data['periodKey'] }}')" class="mt-1 px-1.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-[9px] font-bold transition-all w-full flex items-center justify-center gap-1 shadow-sm">
+                                                <i class='bx bx-user-plus'></i> Masuk Bulan Ini
+                                            </button>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -748,6 +759,50 @@
                         <i class='bx bx-check-circle text-base' wire:loading.remove wire:target="saveEditPeriod"></i>
                         <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="saveEditPeriod"></i>
                         <span>Simpan Perubahan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Modal Audit: Edit Tanggal Bergabung -->
+    @if($showJoinDateModal)
+        <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div class="bg-white dark:bg-darkCard w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 mb-4">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-calendar-event text-amber-500 text-xl'></i>
+                        Ubah Tanggal Bergabung
+                    </h3>
+                    <button wire:click="closeJoinDateModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                        <i class='bx bx-x text-xl'></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-100 dark:border-amber-800/40">
+                        <div class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Anggota Koperasi</div>
+                        <div class="font-extrabold text-slate-800 dark:text-white text-sm mt-0.5">{{ $member->user->name ?? 'Anggota' }}</div>
+                        <div class="text-xs text-slate-500 mt-0.5">Tgl Bergabung Saat Ini: {{ $member->joinDate ? \Carbon\Carbon::parse($member->joinDate)->translatedFormat('d F Y') : '-' }}</div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Tanggal Bergabung Baru</label>
+                        <input type="date" wire:model="newJoinDate"
+                            class="w-full border rounded-xl p-2.5 text-sm font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none">
+                        <p class="text-[10px] text-slate-400 mt-1">Mengubah tanggal bergabung akan mengaktifkan bulan-bulan sebelumnya pada Kartu Kontrol Simpanan Wajib.</p>
+                        @error('newJoinDate') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <button wire:click="closeJoinDateModal"
+                        class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Batal</button>
+                    <button wire:click="saveJoinDate" wire:loading.attr="disabled"
+                        class="px-5 py-2 text-xs font-bold text-white bg-amber-600 hover:bg-amber-700 rounded-xl shadow-sm flex items-center gap-1.5">
+                        <i class='bx bx-check-circle text-base' wire:loading.remove wire:target="saveJoinDate"></i>
+                        <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="saveJoinDate"></i>
+                        <span>Simpan Tanggal Baru</span>
                     </button>
                 </div>
             </div>
