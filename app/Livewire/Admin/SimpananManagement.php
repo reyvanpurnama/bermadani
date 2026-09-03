@@ -838,10 +838,19 @@ class SimpananManagement extends Component
             $monthName = $monthsName[$i];
 
             $hasTx = $txs->filter(function ($t) use ($selectedYear, $i, $periodKey, $monthName) {
-                if ($t->billingMonth === $periodKey) return true;
+                if (!empty($t->billingMonth) && $t->billingMonth !== '-') {
+                    return $t->billingMonth === $periodKey;
+                }
 
-                $dateMatch = ($t->created_at->format('Y') == $selectedYear && $t->created_at->format('n') == $i);
-                $notesMatch = !empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName)) && (str_contains($t->notes, (string)$selectedYear) || $t->created_at->format('Y') == $selectedYear);
+                $txYear = (int) $t->created_at->format('Y');
+                $txMonth = (int) $t->created_at->format('n');
+
+                if (!empty($t->notes) && preg_match('/20\d{2}/', $t->notes, $matches)) {
+                    $txYear = (int) $matches[0];
+                }
+
+                $dateMatch = ($txYear === $selectedYear && $txMonth === $i);
+                $notesMatch = !empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName)) && str_contains($t->notes, (string) $selectedYear);
 
                 if ($t->type === 'WAJIB') {
                     return $dateMatch || $notesMatch;
