@@ -145,9 +145,11 @@ Route::middleware('guest')->group(function () {
     });
 });
 
-Route::post('/logout', function () {
+Route::match(['get', 'post'], '/logout', function () {
     // Log logout activity before logout
-    ActivityLog::logLogout();
+    if (Auth::check() || Auth::guard('supplier')->check()) {
+        ActivityLog::logLogout();
+    }
 
     // Logout from all guards
     Auth::guard('web')->logout();
@@ -156,7 +158,7 @@ Route::post('/logout', function () {
     request()->session()->invalidate();
     request()->session()->regenerateToken();
 
-    return redirect()->route('home');
+    return redirect()->route('login');
 })->name('logout');
 
 // Supplier Pending Page (ketika supplier belum approve)
