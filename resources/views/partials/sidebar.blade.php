@@ -228,6 +228,40 @@
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Payroll</span>
                 </a>
 
+                {{-- Laporan Keuangan Dropdown --}}
+                <div class="space-y-0.5" x-data="{ laporanOpen: {{ request()->routeIs('admin.reports.financial-statements*', 'admin.reports.calk*', 'admin.reports.executive-dashboard', 'admin.reports.fixed-assets', 'admin.reports.balance-sheet') ? 'true' : 'false' }} }">
+                    <button @click="laporanOpen = !laporanOpen"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.financial-statements*', 'admin.reports.calk*', 'admin.reports.executive-dashboard', 'admin.reports.fixed-assets', 'admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <div class="flex items-center">
+                            <i class='bx bx-bar-chart-alt-2 text-sm mr-2 opacity-70 group-hover:opacity-100 text-teal-500 dark:text-teal-400'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Laporan Keuangan</span>
+                        </div>
+                        <i class='bx sidebar-text text-xs transition-transform duration-200' :class="laporanOpen ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="laporanOpen" x-collapse class="ml-4 space-y-0.5 border-l-2 border-slate-200 dark:border-slate-700 pl-2">
+                        <a href="{{ route('admin.reports.executive-dashboard') }}"
+                            class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.executive-dashboard') ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-tachometer text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-[11px] font-medium">Dashboard Eksekutif</span>
+                        </a>
+                        <a href="{{ route('admin.reports.financial-statements') }}"
+                            class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.financial-statements*') ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-spreadsheet text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-[11px] font-medium">4 Laporan Utama</span>
+                        </a>
+                        <a href="{{ route('admin.reports.calk') }}"
+                            class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.calk*') ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-note text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-[11px] font-medium">CALK</span>
+                        </a>
+                        <a href="{{ route('admin.reports.fixed-assets') }}"
+                            class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.fixed-assets') ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <i class='bx bx-building text-sm mr-2 opacity-70'></i>
+                            <span class="sidebar-text text-[11px] font-medium">Aset Tetap</span>
+                        </a>
+                    </div>
+                </div>
+
                 <a href="{{ route('admin.loans') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-money text-sm mr-2 opacity-70 group-hover:opacity-100'></i>

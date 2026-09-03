@@ -380,6 +380,20 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
     // Balance Sheet (Neraca)
     Route::get('/reports/balance-sheet', \App\Livewire\Admin\Reports\BalanceSheet::class)->name('admin.reports.balance-sheet');
 
+    // Laporan Keuangan Lengkap (Neraca, SHU, Perubahan Ekuitas, Arus Kas)
+    Route::get('/reports/financial-statements', \App\Livewire\Admin\Reports\FinancialStatements::class)->name('admin.reports.financial-statements');
+    Route::get('/reports/financial-statements/pdf', [\App\Http\Controllers\Admin\FinancialStatementPdfController::class, 'download'])->name('admin.reports.financial-statements.pdf');
+
+    // CALK Builder (Catatan Atas Laporan Keuangan)
+    Route::get('/reports/calk', \App\Livewire\Admin\Reports\CalkBuilder::class)->name('admin.reports.calk');
+    Route::get('/reports/calk/pdf', [\App\Http\Controllers\Admin\FinancialStatementPdfController::class, 'downloadCalk'])->name('admin.reports.calk.pdf');
+
+    // Dashboard Eksekutif Keuangan
+    Route::get('/reports/executive-dashboard', \App\Livewire\Admin\Reports\ExecutiveDashboard::class)->name('admin.reports.executive-dashboard');
+
+    // Aset Tetap & Penyusutan
+    Route::get('/reports/fixed-assets', \App\Livewire\Admin\Reports\FixedAssetManager::class)->name('admin.reports.fixed-assets');
+
     // Developer Payroll (Super Admin, Admin, Developer)
     Route::middleware(['role:SUPER_ADMIN,ADMIN,DEVELOPER'])->get('/developer-payroll', \App\Livewire\Admin\DeveloperPayroll::class)->name('admin.developer-payroll');
 
