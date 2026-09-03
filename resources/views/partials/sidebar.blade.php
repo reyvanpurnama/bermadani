@@ -253,9 +253,6 @@
                 </a>
 
                 {{-- RAT Wizard Dropdown --}}
-                @php
-                    $latestRatId = \App\Models\RatSession::orderByDesc('year')->value('id') ?? 1;
-                @endphp
                 <div class="space-y-0.5">
                     <button @click="toggleRatDropdown()"
                         class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
@@ -270,15 +267,15 @@
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.setup') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Konfigurasi</span>
                         </a>
-                        <a href="{{ route('admin.rat.eligibility', ['session' => $latestRatId]) }}"
+                        <a href="{{ route('admin.rat.setup') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.eligibility') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Anggota</span>
                         </a>
-                        <a href="{{ route('admin.rat.allocation', ['session' => $latestRatId]) }}"
+                        <a href="{{ route('admin.rat.setup') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.allocation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. Alokasi SHU</span>
                         </a>
-                        <a href="{{ route('admin.rat.disbursement', ['session' => $latestRatId]) }}"
+                        <a href="{{ route('admin.rat.setup') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.disbursement') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Pencairan</span>
                         </a>
