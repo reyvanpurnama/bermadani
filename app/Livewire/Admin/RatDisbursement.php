@@ -17,6 +17,13 @@ class RatDisbursement extends Component
     public $filterDisbursed = 'ALL'; // ALL, PENDING, DISBURSED
     public $disbursementFilter = 'ALL'; // Alias for backward compatibility
 
+    // Modal Manual Entry / Susulan SHU
+    public $showAddManualModal = false;
+    public $selectedMemberId = '';
+    public $manualJasaSimpanan = 0;
+    public $manualJasaUsaha = 0;
+    public $manualNotes = '';
+
     protected ShuCalculationService $shuService;
 
     public function boot(ShuCalculationService $shuService)
@@ -106,6 +113,79 @@ class RatDisbursement extends Component
         $this->batchDisburse();
     }
 
+    // === Manual Entry / Susulan SHU Methods ===
+    public function openAddManualModal()
+    {
+        $this->reset(['selectedMemberId', 'manualJasaSimpanan', 'manualJasaUsaha', 'manualNotes']);
+        $this->showAddManualModal = true;
+    }
+
+    public function closeAddManualModal()
+    {
+        $this->showAddManualModal = false;
+    }
+
+    public function updatedSelectedMemberId($val)
+    {
+        if (!$val) return;
+        $member = \App\Models\Member::find($val);
+        $session = $this->session;
+        if ($member && $session) {
+            $cutoff = $session->join_date_cutoff?->format('Y-m-d');
+            $simpok = $this->shuService->getMemberSavingsAtCutoff($member, 'POKOK', $cutoff);
+            $simwa = $this->shuService->getMemberSavingsAtCutoff($member, 'WAJIB', $cutoff);
+            $totSimpanan = $simpok + $simwa;
+            $totTx = $this->shuService->getMemberTransactionTotal($member->id, $session->year);
+
+            $summary = $this->shuService->calculateSummary($session);
+            $totAllSimpanan = max(1, $summary['totalSimpanan'] ?? 1);
+            $totAllTx = max(1, $summary['totalTransaksi'] ?? 1);
+
+            $jasaSimpananPool = $summary['jasaSimpananPool'] ?? 0;
+            $jasaUsahaPool = $summary['jasaUsahaPool'] ?? 0;
+
+            $this->manualJasaSimpanan = round(($totSimpanan / $totAllSimpanan) * $jasaSimpananPool, 0);
+            $this->manualJasaUsaha = round(($totTx > 0 ? ($totTx / $totAllTx) : 0) * $jasaUsahaPool, 0);
+        }
+    }
+
+    public function saveManualDistribution()
+    {
+        $this->validate([
+            'selectedMemberId' => 'required|exists:members,id',
+            'manualJasaSimpanan' => 'required|numeric|min:0',
+            'manualJasaUsaha' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $member = \App\Models\Member::findOrFail($this->selectedMemberId);
+            $totalShu = (float) $this->manualJasaSimpanan + (float) $this->manualJasaUsaha;
+
+            MemberShuDistribution::updateOrCreate(
+                [
+                    'rat_session_id' => $this->sessionId,
+                    'member_id' => $member->id,
+                ],
+                [
+                    'total_simpanan_amount' => $member->simpananPokok + $member->simpananWajib,
+                    'simpanan_pokok_snapshot' => $member->simpananPokok,
+                    'simpanan_wajib_snapshot' => $member->simpananWajib,
+                    'portion_percentage' => 0,
+                    'shu_amount' => $totalShu,
+                    'jasa_simpanan_amount' => $this->manualJasaSimpanan,
+                    'jasa_usaha_amount' => $this->manualJasaUsaha,
+                    'total_transaksi_amount' => 0,
+                    'notes' => $this->manualNotes ?: 'Susulan SHU Anggota Non-Aktif / Alumni',
+                ]
+            );
+
+            $this->closeAddManualModal();
+            session()->flash('success', "🎉 Berhasil menambahkan susulan SHU Rp " . number_format($totalShu, 0, ',', '.') . " untuk {$member->user->name} ({$member->nomorAnggota}). Data anggota lain AMAN & tidak berubah!");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal menambahkan susulan SHU: ' . $e->getMessage());
+        }
+    }
+
     public function completeSession()
     {
         $session = $this->session;
@@ -185,10 +265,13 @@ class RatDisbursement extends Component
             $distributions = $query->orderBy('is_disbursed', 'asc')->orderByDesc('shu_amount')->paginate(20);
         }
 
+        $allMembers = \App\Models\Member::with('user')->orderBy('nomorAnggota')->get();
+
         return view('livewire.admin.rat-disbursement', [
             'ratSession' => $session,
             'distributions' => $distributions,
             'stats' => $this->stats,
+            'allMembers' => $allMembers,
         ])->layout('layouts.admin');
     }
 }

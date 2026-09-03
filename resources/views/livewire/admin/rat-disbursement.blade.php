@@ -29,6 +29,10 @@
         </div>
         <div class="flex flex-wrap items-center gap-2">
             @if($ratSession)
+                <button wire:click="openAddManualModal"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2">
+                    <i class='bx bx-user-plus text-lg'></i> + Tambah Susulan SHU (Alumni)
+                </button>
                 <button @click="showBeritaAcaraModal = true"
                     class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
                     <i class='bx bxs-file-doc text-lg'></i> Cetak Berita Acara RAT
@@ -522,6 +526,84 @@
                         </div>
                     </div>
                 </form>
+            </div>
+        </div>
+    @endif
+
+    <!-- Modal Audit: Tambah Susulan SHU (Ex-Anggota / Alumni) -->
+    @if($showAddManualModal)
+        <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in no-print">
+            <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 mb-4">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-user-plus text-emerald-600 text-xl'></i>
+                        Tambah Susulan SHU (Anggota Non-Aktif / Alumni)
+                    </h3>
+                    <button wire:click="closeAddManualModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                        <i class='bx bx-x text-xl'></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-100 dark:border-emerald-800/40 text-xs text-slate-600 dark:text-slate-300">
+                        ℹ️ <strong>Pengaman Data:</strong> Menambahkan susulan SHU ini <strong>TIDAK AKAN merubah atau menghitung ulang nominal SHU anggota lain</strong> yang sudah disahkan.
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Pilih Anggota / Ex-Anggota (Alumni)</label>
+                        <select wire:model.live="selectedMemberId" class="w-full border rounded-xl p-2.5 text-xs font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none">
+                            <option value="">-- Pilih Anggota (Cari NIK / Nama) --</option>
+                            @foreach($allMembers as $m)
+                                <option value="{{ $m->id }}">
+                                    {{ $m->nomorAnggota }} - {{ optional($m->user)->name ?? $m->name }} (Status: {{ $m->status }})
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('selectedMemberId') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Jasa Simpanan (Rp)</label>
+                            <input type="number" wire:model="manualJasaSimpanan" step="100"
+                                class="w-full border rounded-xl p-2.5 text-xs font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none"
+                                placeholder="0">
+                            @error('manualJasaSimpanan') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Jasa Usaha / Transaksi (Rp)</label>
+                            <input type="number" wire:model="manualJasaUsaha" step="100"
+                                class="w-full border rounded-xl p-2.5 text-xs font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none"
+                                placeholder="0">
+                            @error('manualJasaUsaha') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">Total SHU Susulan:</span>
+                        <span class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">
+                            Rp {{ number_format((float)$manualJasaSimpanan + (float)$manualJasaUsaha, 0, ',', '.') }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Keterangan / Catatan Susulan</label>
+                        <input type="text" wire:model="manualNotes"
+                            class="w-full border rounded-xl p-2.5 text-xs dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none"
+                            placeholder="Misal: Susulan SHU 2025 untuk Deden Abdul Wahid (Resigned 2026)">
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <button wire:click="closeAddManualModal"
+                        class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Batal</button>
+                    <button wire:click="saveManualDistribution" wire:loading.attr="disabled"
+                        class="px-5 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm flex items-center gap-1.5">
+                        <i class='bx bx-check-circle text-base' wire:loading.remove wire:target="saveManualDistribution"></i>
+                        <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="saveManualDistribution"></i>
+                        <span>Simpan Susulan SHU</span>
+                    </button>
+                </div>
             </div>
         </div>
     @endif
