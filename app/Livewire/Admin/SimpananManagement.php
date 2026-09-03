@@ -47,6 +47,15 @@ class SimpananManagement extends Component
     public $paymentTotalAmount = 0;
     public $paymentItemsCount = 0;
 
+    // Mode Audit & Quick Edit Admin
+    public $auditMode = false;
+    public $showEditPeriodModal = false;
+    public $editPeriodKey = '';
+    public $editPeriodMonthName = '';
+    public $editPeriodType = 'WAJIB';
+    public $editPeriodAmount = 50000;
+    public $editPeriodNotes = '';
+
     protected $queryString = ['activeTab'];
 
     public function mount($id)
@@ -202,6 +211,252 @@ class SimpananManagement extends Component
             session()->flash('message', 'Setoran Wajib berhasil dicatat.');
         } catch (\Exception $e) {
             session()->flash('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
+
+    // === Mode Audit Admin Methods ===
+    public function toggleAuditMode(): void
+    {
+        $this->auditMode = !$this->auditMode;
+        $statusText = $this->auditMode ? 'AKTIF' : 'NONAKTIF';
+        session()->flash('message', "Mode Edit & Audit Admin sekarang {$statusText}. Klik kartu bulan untuk ubah status/nominal.");
+    }
+
+    public function quickToggleWajibPaid(string $periodKey, string $monthName): void
+    {
+        try {
+            $amount = $this->member->monthly_simpanan_wajib > 0 ? (float)$this->member->monthly_simpanan_wajib : 50000;
+
+            // Add transaction with billingMonth
+            $memberService = app(MemberService::class);
+            $trx = $memberService->addSimpanan(
+                $this->memberId,
+                'WAJIB',
+                $amount,
+                "Koreksi Audit Admin: Setor Wajib - {$monthName}",
+                null,
+                Auth::id()
+            );
+
+            // Update billingMonth on transaction if column exists
+            DB::table('simpanan_transactions')
+                ->where('id', $trx->id)
+                ->update(['billingMonth' => $periodKey]);
+
+            // Update bill status if bill exists
+            DB::table('simpanan_bills')
+                ->where('member_id', $this->memberId)
+                ->where('billingMonth', $periodKey)
+                ->where('type', 'WAJIB')
+                ->update([
+                    'paymentStatus' => 'PAID',
+                    'paidAmount' => $amount,
+                    'remainingAmount' => 0,
+                    'paidAt' => now(),
+                ]);
+
+            $this->recalculateMemberBalances();
+            $this->loadMember();
+            $this->refreshUnpaidBills();
+
+            session()->flash('message', "Bulan {$monthName} berhasil ditandai LUNAS (Rp " . number_format($amount, 0, ',', '.') . ").");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal memproses setoran: ' . $e->getMessage());
+        }
+    }
+
+    public function quickToggleWajibUnpaid(string $periodKey, string $monthName): void
+    {
+        try {
+            // Find transactions for this period
+            $txs = DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where(function ($q) use ($periodKey, $monthName) {
+                    $q->where('billingMonth', $periodKey)
+                      ->orWhere(function ($sub) use ($monthName) {
+                          $sub->where('type', 'WAJIB')
+                              ->where('notes', 'like', "%{$monthName}%");
+                      });
+                })
+                ->get();
+
+            foreach ($txs as $tx) {
+                DB::table('simpanan_transactions')->where('id', $tx->id)->delete();
+            }
+
+            // Reset bill status if bill exists
+            DB::table('simpanan_bills')
+                ->where('member_id', $this->memberId)
+                ->where('billingMonth', $periodKey)
+                ->where('type', 'WAJIB')
+                ->update([
+                    'paymentStatus' => 'UNPAID',
+                    'paidAmount' => 0,
+                    'remainingAmount' => DB::raw('amount'),
+                    'paidAt' => null,
+                ]);
+
+            $this->recalculateMemberBalances();
+            $this->loadMember();
+            $this->refreshUnpaidBills();
+
+            session()->flash('message', "Bulan {$monthName} berhasil ditandai BELUM BAYAR.");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal membatalkan setoran: ' . $e->getMessage());
+        }
+    }
+
+    public function openEditPeriodModal(string $periodKey, string $monthName, string $type = 'WAJIB'): void
+    {
+        $this->editPeriodKey = $periodKey;
+        $this->editPeriodMonthName = $monthName;
+        $this->editPeriodType = $type;
+
+        // Fetch current paid amount if exists
+        $tx = DB::table('simpanan_transactions')
+            ->where('member_id', $this->memberId)
+            ->where(function ($q) use ($periodKey, $monthName, $type) {
+                $q->where('billingMonth', $periodKey)
+                  ->orWhere(function ($sub) use ($monthName, $type) {
+                      $sub->where('type', $type)
+                          ->where('notes', 'like', "%{$monthName}%");
+                  });
+            })
+            ->first();
+
+        $this->editPeriodAmount = $tx ? (float)$tx->amount : ($type === 'WAJIB' ? 50000 : 100000);
+        $this->editPeriodNotes = $tx ? ($tx->notes ?? '') : "Koreksi Audit Admin: Setor {$type} - {$monthName}";
+        $this->showEditPeriodModal = true;
+    }
+
+    public function closeEditPeriodModal(): void
+    {
+        $this->showEditPeriodModal = false;
+        $this->reset(['editPeriodKey', 'editPeriodMonthName', 'editPeriodAmount', 'editPeriodNotes']);
+    }
+
+    public function saveEditPeriod(): void
+    {
+        $this->validate([
+            'editPeriodAmount' => 'required|numeric|min:0',
+        ]);
+
+        try {
+            $periodKey = $this->editPeriodKey;
+            $monthName = $this->editPeriodMonthName;
+            $type = $this->editPeriodType;
+            $newAmount = (float) $this->editPeriodAmount;
+
+            // Delete previous transactions for this period
+            DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where(function ($q) use ($periodKey, $monthName, $type) {
+                    $q->where('billingMonth', $periodKey)
+                      ->orWhere(function ($sub) use ($monthName, $type) {
+                          $sub->where('type', $type)
+                              ->where('notes', 'like', "%{$monthName}%");
+                      });
+                })
+                ->delete();
+
+            if ($newAmount > 0) {
+                $memberService = app(MemberService::class);
+                $trx = $memberService->addSimpanan(
+                    $this->memberId,
+                    $type,
+                    $newAmount,
+                    $this->editPeriodNotes ?: "Koreksi Audit Admin: Setor {$type} - {$monthName}",
+                    null,
+                    Auth::id()
+                );
+
+                DB::table('simpanan_transactions')
+                    ->where('id', $trx->id)
+                    ->update(['billingMonth' => $periodKey]);
+
+                // Update bill if exists
+                DB::table('simpanan_bills')
+                    ->where('member_id', $this->memberId)
+                    ->where('billingMonth', $periodKey)
+                    ->where('type', $type)
+                    ->update([
+                        'paymentStatus' => 'PAID',
+                        'paidAmount' => $newAmount,
+                        'remainingAmount' => 0,
+                        'paidAt' => now(),
+                    ]);
+            } else {
+                // Set bill to unpaid if 0
+                DB::table('simpanan_bills')
+                    ->where('member_id', $this->memberId)
+                    ->where('billingMonth', $periodKey)
+                    ->where('type', $type)
+                    ->update([
+                        'paymentStatus' => 'UNPAID',
+                        'paidAmount' => 0,
+                        'remainingAmount' => DB::raw('amount'),
+                        'paidAt' => null,
+                    ]);
+            }
+
+            $this->recalculateMemberBalances();
+            $this->loadMember();
+            $this->refreshUnpaidBills();
+            $this->closeEditPeriodModal();
+
+            session()->flash('message', "Nominal setoran {$type} bulan {$monthName} berhasil diperbarui menjadi Rp " . number_format($newAmount, 0, ',', '.') . ".");
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal memperbarui nominal setoran: ' . $e->getMessage());
+        }
+    }
+
+    public function recalculateMemberBalances(): void
+    {
+        try {
+            $sumPokok = (float) DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where('type', 'POKOK')
+                ->sum('amount');
+
+            $sumWajib = (float) DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where('type', 'WAJIB')
+                ->sum('amount');
+
+            $sumSukarelaMasuk = (float) DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where('type', 'SUKARELA')
+                ->sum('amount');
+
+            $sumSukarelaKeluar = (float) DB::table('simpanan_transactions')
+                ->where('member_id', $this->memberId)
+                ->where('type', 'TARIK_SUKARELA')
+                ->sum('amount');
+
+            $sumSukarela = max(0, $sumSukarelaMasuk - $sumSukarelaKeluar);
+
+            // Also check payroll imports if any
+            $importWajib = (float) DB::table('payroll_audit_loan_imports')
+                ->where('member_id', $this->memberId)
+                ->where('raw_uraian', 'like', '%WAJIB%')
+                ->sum('amount');
+
+            if ($importWajib > 0 && $sumWajib == 0) {
+                $sumWajib += $importWajib;
+            }
+
+            DB::table('members')
+                ->where('id', $this->memberId)
+                ->update([
+                    'simpananPokok' => $sumPokok,
+                    'simpananWajib' => $sumWajib,
+                    'simpananSukarela' => $sumSukarela,
+                ]);
+
+            $this->loadMember();
+            session()->flash('message', '🎉 Total Saldo DB Anggota berhasil disinkronkan & dihitung ulang!');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Gagal menghitung ulang saldo: ' . $e->getMessage());
         }
     }
 

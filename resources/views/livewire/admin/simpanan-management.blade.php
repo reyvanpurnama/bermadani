@@ -13,7 +13,7 @@
     @endif
 
     <!-- Member Summary -->
-    <div class="flex justify-between items-center bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm mb-6">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white dark:bg-darkCard p-4 rounded-xl border border-slate-100 dark:border-slate-700 shadow-sm mb-6 gap-3">
         <div class="flex items-center gap-3">
             <img src="https://ui-avatars.com/api/?name={{ urlencode($member->user->name) }}&background=0F52BA&color=fff"
                 class="w-10 h-10 rounded-full" alt="{{ $member->user->name }}">
@@ -22,9 +22,16 @@
                 <p class="text-[11px] text-slate-500">{{ $member->nomorAnggota }} • {{ $member->unitKerja === 'unknown' ? 'Belum Diisi' : ($member->unitKerja ?? '-') }}</p>
             </div>
         </div>
-        <div class="text-right">
-            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Total Aset (Grand Total)</p>
-            <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($member->totalSimpanan, 0, ',', '.') }}</h3>
+        <div class="flex items-center gap-3 text-right">
+            <button wire:click="recalculateMemberBalances" wire:loading.attr="disabled" class="px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 text-xs font-bold transition-all flex items-center gap-1.5 shrink-0" title="Sinkronkan total saldo dari database">
+                <i class='bx bx-refresh text-base' wire:loading.remove wire:target="recalculateMemberBalances"></i>
+                <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="recalculateMemberBalances"></i>
+                <span>Sync Saldo DB</span>
+            </button>
+            <div>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Total Aset (Grand Total)</p>
+                <h3 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($member->totalSimpanan, 0, ',', '.') }}</h3>
+            </div>
         </div>
     </div>
 
@@ -238,13 +245,21 @@
                             <p class="text-xs text-slate-500">Monitoring status setoran bulanan anggota per periode tahun</p>
                         </div>
                         
-                        <div class="flex items-center gap-2">
-                            <label class="text-xs font-bold text-slate-500">Tahun:</label>
-                            <select wire:change="changeYear($event.target.value)" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
-                                @foreach($availableYears as $year)
-                                    <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
-                                @endforeach
-                            </select>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <!-- Toggle Sakelar Mode Audit Admin -->
+                            <button wire:click="toggleAuditMode" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 border shadow-sm {{ $auditMode ? 'bg-amber-500 text-white border-amber-600 shadow-amber-500/20' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:bg-slate-100' }}">
+                                <i class='bx {{ $auditMode ? 'bx-toggle-right text-lg text-white' : 'bx-toggle-left text-lg text-slate-400' }}'></i>
+                                <span>{{ $auditMode ? 'Mode Audit: AKTIF' : 'Mode Audit Admin' }}</span>
+                            </button>
+
+                            <div class="flex items-center gap-1.5">
+                                <label class="text-xs font-bold text-slate-500">Tahun:</label>
+                                <select wire:change="changeYear($event.target.value)" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-white rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-primary/20 outline-none cursor-pointer">
+                                    @foreach($availableYears as $year)
+                                        <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -258,22 +273,57 @@
                                     'NOT_MEMBER' => 'bg-slate-100/60 border-slate-200 text-slate-400 dark:bg-slate-800/30 dark:border-slate-800 dark:text-slate-600',
                                 };
                             @endphp
-                            <div class="relative border rounded-xl p-3 flex flex-col items-center justify-between text-center min-h-[110px] {{ $colorClass }}">
+                            <div class="relative border rounded-xl p-3 flex flex-col items-center justify-between text-center min-h-[125px] {{ $colorClass }} transition-all">
                                 <div class="w-full text-center">
                                     <span class="text-[10px] font-bold uppercase tracking-wider block mb-1">{{ $data['fullName'] }}</span>
+                                    
                                     @if($data['status'] === 'PAID')
                                         <i class='bx bx-check-circle text-2xl text-emerald-600 dark:text-emerald-400 mb-1'></i>
                                         <span class="text-[11px] font-bold block">LUNAS</span>
-                                        <span class="text-[9px] text-emerald-600/80 dark:text-emerald-400/80 block">{{ $data['paidDate'] }}</span>
+                                        <span class="text-[9px] text-emerald-600/80 dark:text-emerald-400/80 block mb-1">
+                                            {{ $data['paidAmount'] > 0 ? 'Rp '.number_format($data['paidAmount'], 0, ',', '.') : $data['paidDate'] }}
+                                        </span>
+
+                                        @if($auditMode)
+                                            <!-- Audit Action Controls for PAID Month -->
+                                            <div class="mt-2 pt-1 border-t border-emerald-200 dark:border-emerald-800/60 flex flex-col gap-1">
+                                                <button wire:click="openEditPeriodModal('{{ $data['periodKey'] }}', '{{ $data['fullName'] }} {{ $selectedYear }}', 'WAJIB')" class="px-1.5 py-0.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[9px] font-bold transition-all w-full flex items-center justify-center gap-1">
+                                                    <i class='bx bx-edit'></i> Edit Rp
+                                                </button>
+                                                <button wire:click="quickToggleWajibUnpaid('{{ $data['periodKey'] }}', '{{ $data['fullName'] }} {{ $selectedYear }}')" onclick="confirm('Tandai bulan {{ $data['fullName'] }} {{ $selectedYear }} sebagai BELUM BAYAR?') || event.stopImmediatePropagation()" class="px-1.5 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[9px] font-bold transition-all w-full flex items-center justify-center gap-1">
+                                                    <i class='bx bx-x'></i> Batal Lunas
+                                                </button>
+                                            </div>
+                                        @endif
+
                                     @elseif($data['status'] === 'UNPAID')
                                         <i class='bx bx-x-circle text-2xl text-rose-500 mb-1'></i>
                                         <span class="text-[11px] font-bold block mb-1">BELUM BAYAR</span>
-                                        <button wire:click="openWajibModal('{{ $data['fullName'] }} {{ $selectedYear }}', '{{ $data['periodKey'] }}')" class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold shadow-sm transition-colors w-full">
-                                            + Setor
-                                        </button>
+
+                                        @if($auditMode)
+                                            <!-- Audit Action Controls for UNPAID Month -->
+                                            <div class="mt-1 flex flex-col gap-1 w-full">
+                                                <button wire:click="quickToggleWajibPaid('{{ $data['periodKey'] }}', '{{ $data['fullName'] }} {{ $selectedYear }}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold shadow-sm transition-all w-full flex items-center justify-center gap-1">
+                                                    <i class='bx bx-check'></i> 1-Klik Setor
+                                                </button>
+                                                <button wire:click="openEditPeriodModal('{{ $data['periodKey'] }}', '{{ $data['fullName'] }} {{ $selectedYear }}', 'WAJIB')" class="px-1.5 py-0.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded text-[9px] font-bold transition-all w-full">
+                                                    Atur Nominal
+                                                </button>
+                                            </div>
+                                        @else
+                                            <button wire:click="openWajibModal('{{ $data['fullName'] }} {{ $selectedYear }}', '{{ $data['periodKey'] }}')" class="px-2 py-0.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold shadow-sm transition-colors w-full">
+                                                + Setor
+                                            </button>
+                                        @endif
+
                                     @elseif($data['status'] === 'FUTURE')
                                         <i class='bx bx-time text-2xl text-slate-400 mb-1'></i>
                                         <span class="text-[10px] font-medium block">Belum Waktunya</span>
+                                        @if($auditMode)
+                                            <button wire:click="quickToggleWajibPaid('{{ $data['periodKey'] }}', '{{ $data['fullName'] }} {{ $selectedYear }}')" class="mt-1 px-1.5 py-0.5 bg-indigo-600 text-white rounded text-[9px] font-bold w-full">
+                                                + Bayar Awal
+                                            </button>
+                                        @endif
                                     @else
                                         <i class='bx bx-minus-circle text-2xl text-slate-300 dark:text-slate-600 mb-1'></i>
                                         <span class="text-[10px] font-medium block">Belum Anggota</span>
@@ -637,6 +687,57 @@
                         class="px-4 py-2 text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-lg disabled:opacity-50">
                         <span wire:loading.remove wire:target="submitTarik">Proses Penarikan</span>
                         <span wire:loading wire:target="submitTarik">Memproses...</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Modal Audit: Edit Nominal Periode -->
+    @if($showEditPeriodModal)
+        <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+            <div class="bg-white dark:bg-darkCard w-full max-w-sm rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 mb-4">
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-edit text-indigo-600 text-xl'></i>
+                        Edit Setoran Periode
+                    </h3>
+                    <button wire:click="closeEditPeriodModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                        <i class='bx bx-x text-xl'></i>
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl border border-indigo-100 dark:border-indigo-800/40">
+                        <div class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Periode Tambungan</div>
+                        <div class="font-extrabold text-slate-800 dark:text-white text-sm mt-0.5">{{ $editPeriodMonthName }}</div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Nominal Setoran (Rp)</label>
+                        <input type="number" wire:model="editPeriodAmount" step="1000"
+                            class="w-full border rounded-xl p-2.5 text-sm font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none"
+                            placeholder="0">
+                        <p class="text-[10px] text-slate-400 mt-1">Masukkan 0 untuk mengosongkan / membatalkan setoran bulan ini.</p>
+                        @error('editPeriodAmount') <span class="text-xs text-rose-500 mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Catatan Audit Admin</label>
+                        <textarea wire:model="editPeriodNotes" rows="2"
+                            class="w-full border rounded-xl p-2 text-xs dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none"
+                            placeholder="Catatan penyesuaian audit..."></textarea>
+                    </div>
+                </div>
+
+                <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <button wire:click="closeEditPeriodModal"
+                        class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Batal</button>
+                    <button wire:click="saveEditPeriod" wire:loading.attr="disabled"
+                        class="px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm flex items-center gap-1.5">
+                        <i class='bx bx-check-circle text-base' wire:loading.remove wire:target="saveEditPeriod"></i>
+                        <i class='bx bx-loader-alt animate-spin text-base' wire:loading wire:target="saveEditPeriod"></i>
+                        <span>Simpan Perubahan</span>
                     </button>
                 </div>
             </div>
