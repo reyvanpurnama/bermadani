@@ -79,6 +79,11 @@ class Dashboard extends Component
                 ->first();
 
             if ($dist) {
+                $portion = (float) $dist->portion_percentage;
+                if ($portion <= 0 && $dist->shu_amount > 0 && ($latestSession->total_member_shu ?? 0) > 0) {
+                    $portion = ($dist->shu_amount / $latestSession->total_member_shu) * 100;
+                }
+
                 return [
                     'year' => $latestSession->year,
                     'title' => $latestSession->title,
@@ -86,7 +91,7 @@ class Dashboard extends Component
                     'shuAmount' => (float) $dist->shu_amount,
                     'jasaSimpanan' => (float) $dist->jasa_simpanan_amount,
                     'jasaUsaha' => (float) $dist->jasa_usaha_amount,
-                    'portionPercentage' => (float) $dist->portion_percentage,
+                    'portionPercentage' => round($portion, 4),
                     'totalSimpanan' => (float) ($dist->total_simpanan_amount > 0 ? $dist->total_simpanan_amount : ((float)$dist->simpanan_pokok_snapshot + (float)$dist->simpanan_wajib_snapshot)),
                     'totalTransaksi' => (float) $dist->total_transaksi_amount,
                     'isDisbursed' => (bool) $dist->is_disbursed,
@@ -103,6 +108,11 @@ class Dashboard extends Component
                 ->first();
 
             if ($dist) {
+                $portion = (float) $dist->portion_percentage;
+                if ($portion <= 0 && $dist->shu_amount > 0 && ($latestDraft->total_member_shu ?? 0) > 0) {
+                    $portion = ($dist->shu_amount / $latestDraft->total_member_shu) * 100;
+                }
+
                 return [
                     'year' => $latestDraft->year,
                     'title' => $latestDraft->title,
@@ -110,7 +120,7 @@ class Dashboard extends Component
                     'shuAmount' => (float) $dist->shu_amount,
                     'jasaSimpanan' => (float) $dist->jasa_simpanan_amount,
                     'jasaUsaha' => (float) $dist->jasa_usaha_amount,
-                    'portionPercentage' => (float) $dist->portion_percentage,
+                    'portionPercentage' => round($portion, 4),
                     'totalSimpanan' => (float) ($dist->total_simpanan_amount > 0 ? $dist->total_simpanan_amount : ((float)$dist->simpanan_pokok_snapshot + (float)$dist->simpanan_wajib_snapshot)),
                     'totalTransaksi' => (float) $dist->total_transaksi_amount,
                     'isDisbursed' => (bool) $dist->is_disbursed,
@@ -120,8 +130,8 @@ class Dashboard extends Component
 
         // 3. Fallback estimate if no session distribution exists
         $currentYear = (int) date('Y');
-        $totalSimwa = (float) Member::where('status', 'ACTIVE')->sum('simpananWajib');
-        $totalSimpok = (float) Member::where('status', 'ACTIVE')->sum('simpananPokok');
+        $totalSimwa = (float) Member::sum('simpananWajib');
+        $totalSimpok = (float) Member::sum('simpananPokok');
         $totalSimpanan = max(1, $totalSimwa + $totalSimpok);
         $memberSimpanan = (float) ($this->member->simpananWajib ?? 0) + (float) ($this->member->simpananPokok ?? 0);
         $portion = ($memberSimpanan / $totalSimpanan);

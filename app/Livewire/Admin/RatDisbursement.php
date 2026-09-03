@@ -160,6 +160,11 @@ class RatDisbursement extends Component
         try {
             $member = \App\Models\Member::findOrFail($this->selectedMemberId);
             $totalShu = (float) $this->manualJasaSimpanan + (float) $this->manualJasaUsaha;
+            $session = $this->session;
+
+            $overallPortion = ($session && (float) $session->total_member_shu > 0)
+                ? (($totalShu / (float) $session->total_member_shu) * 100)
+                : 0;
 
             MemberShuDistribution::updateOrCreate(
                 [
@@ -170,12 +175,12 @@ class RatDisbursement extends Component
                     'total_simpanan_amount' => $member->simpananPokok + $member->simpananWajib,
                     'simpanan_pokok_snapshot' => $member->simpananPokok,
                     'simpanan_wajib_snapshot' => $member->simpananWajib,
-                    'portion_percentage' => 0,
+                    'portion_percentage' => round($overallPortion, 4),
                     'shu_amount' => $totalShu,
                     'jasa_simpanan_amount' => $this->manualJasaSimpanan,
                     'jasa_usaha_amount' => $this->manualJasaUsaha,
                     'total_transaksi_amount' => 0,
-                    'notes' => $this->manualNotes ?: 'Susulan SHU Anggota Non-Aktif / Alumni',
+                    'notes' => $this->manualNotes ?: 'Susulan SHU Anggota Non-Aktif / Ex-Anggota',
                 ]
             );
 
