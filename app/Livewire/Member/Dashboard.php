@@ -46,15 +46,17 @@ class Dashboard extends Component
                 ->get();
 
             // Check unread transfers (today only)
-            $this->unreadTransfers = SimpananTransaction::where('memberId', $this->member->id)
-                ->where('transactionType', 'TRANSFER_IN')
-                ->where('isRead', false)
-                ->whereDate('created_at', today())
-                ->with('relatedMember')
-                ->latest()
-                ->get();
+            if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'isRead')) {
+                $this->unreadTransfers = SimpananTransaction::where('memberId', $this->member->id)
+                    ->where('transactionType', 'TRANSFER_IN')
+                    ->where('isRead', false)
+                    ->whereDate('created_at', today())
+                    ->with('relatedMember')
+                    ->latest()
+                    ->get();
 
-            $this->unreadCount = $this->unreadTransfers->count();
+                $this->unreadCount = $this->unreadTransfers->count();
+            }
         }
     }
 

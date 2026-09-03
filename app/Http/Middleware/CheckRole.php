@@ -27,10 +27,10 @@ class CheckRole
         }
         
         // Check if user is active
-        if (method_exists($user, 'isActive') && !$user->isActive) {
+        if (isset($user->isActive) && !$user->isActive) {
             Auth::logout();
             return redirect()->route('login')->withErrors([
-                'email' => 'Your account has been deactivated. Please contact administrator.'
+                'email' => 'Akun Anda telah dinonaktifkan. Silakan hubungi administrator.'
             ]);
         }
         

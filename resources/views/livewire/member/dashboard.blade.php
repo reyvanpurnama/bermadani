@@ -92,7 +92,7 @@
                     <div class="flex justify-between items-end mt-4">
                         <div>
                             <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Nama Anggota</p>
-                            <p class="font-bold uppercase tracking-wide text-sm sm:text-base">{{ $member->name ?? 'Member' }}</p>
+                            <p class="font-bold uppercase tracking-wide text-sm sm:text-base">{{ optional($member->user)->name ?? $member->name ?? 'Anggota' }}</p>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>

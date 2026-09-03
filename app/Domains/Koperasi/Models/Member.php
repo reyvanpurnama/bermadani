@@ -98,6 +98,11 @@ class Member extends Model
         return $this->simpananPokok + $this->simpananWajib + $this->simpananSukarela;
     }
 
+    public function getNameAttribute()
+    {
+        return $this->user->name ?? $this->attributes['name'] ?? 'Anggota';
+    }
+
     public function getStatusBadgeAttribute()
     {
         return match ($this->status) {
