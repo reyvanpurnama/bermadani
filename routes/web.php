@@ -433,6 +433,7 @@ Route::middleware(['auth'])->get('/pos', function () {
 // Member Portal Routes (Cooperative Members Only)
 Route::middleware(['auth', 'member.type'])->prefix('member')->name('member.')->group(function () {
     Route::get('/', \App\Livewire\Member\Dashboard::class)->name('dashboard');
+    Route::get('/dashboard', \App\Livewire\Member\Dashboard::class);
     Route::get('/profile', \App\Livewire\Member\Profile::class)->name('profile');
     Route::get('/simpanan', \App\Livewire\Member\Simpanan::class)->name('simpanan');
     Route::get('/transactions', \App\Livewire\Member\Transactions::class)->name('transactions');
