@@ -265,7 +265,12 @@ class RatDisbursement extends Component
             $distributions = $query->orderBy('is_disbursed', 'asc')->orderByDesc('shu_amount')->paginate(20);
         }
 
-        $allMembers = \App\Models\Member::with('user')->orderBy('nomorAnggota')->get();
+        $allMembers = \App\Models\Member::with('user')
+            ->get()
+            ->sortBy(function ($m) {
+                return strtolower($m->user->name ?? $m->name ?? '');
+            })
+            ->values();
 
         return view('livewire.admin.rat-disbursement', [
             'ratSession' => $session,

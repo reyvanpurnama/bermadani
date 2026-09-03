@@ -555,7 +555,7 @@
                             <option value="">-- Pilih Anggota (Cari NIK / Nama) --</option>
                             @foreach($allMembers as $m)
                                 <option value="{{ $m->id }}">
-                                    {{ $m->nomorAnggota }} - {{ optional($m->user)->name ?? $m->name }} (Status: {{ $m->status }})
+                                    {{ optional($m->user)->name ?? $m->name }} (NIK: {{ $m->nomorAnggota }} • Status: {{ $m->status }})
                                 </option>
                             @endforeach
                         </select>
