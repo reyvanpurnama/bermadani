@@ -31,7 +31,7 @@
             @if($ratSession)
                 <button wire:click="openAddManualModal"
                     class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2">
-                    <i class='bx bx-user-plus text-lg'></i> + Tambah Susulan SHU (Alumni)
+                    <i class='bx bx-user-plus text-lg'></i> + Tambah Susulan SHU (Anggota Keluar)
                 </button>
                 <button @click="showBeritaAcaraModal = true"
                     class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
@@ -530,14 +530,14 @@
         </div>
     @endif
 
-    <!-- Modal Audit: Tambah Susulan SHU (Ex-Anggota / Alumni) -->
+    <!-- Modal Audit: Tambah Susulan SHU (Ex-Anggota / Anggota Keluar) -->
     @if($showAddManualModal)
         <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in no-print">
             <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 mb-4">
                     <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
                         <i class='bx bx-user-plus text-emerald-600 text-xl'></i>
-                        Tambah Susulan SHU (Anggota Non-Aktif / Alumni)
+                        Tambah Susulan SHU (Anggota Non-Aktif / Ex-Anggota)
                     </h3>
                     <button wire:click="closeAddManualModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                         <i class='bx bx-x text-xl'></i>
@@ -550,7 +550,7 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Pilih Anggota / Ex-Anggota (Alumni)</label>
+                        <label class="text-xs font-bold text-slate-700 dark:text-slate-300 block mb-1">Pilih Anggota / Ex-Anggota (Anggota Keluar)</label>
                         <select wire:model.live="selectedMemberId" class="w-full border rounded-xl p-2.5 text-xs font-bold dark:bg-slate-800 dark:border-slate-600 dark:text-white focus:ring-2 focus:ring-primary/20 outline-none">
                             <option value="">-- Pilih Anggota (Cari NIK / Nama) --</option>
                             @foreach($allMembers as $m)

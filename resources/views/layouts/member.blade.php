@@ -109,7 +109,7 @@
                 </div>
                 <div class="flex-1">
                     <div class="flex items-center justify-between">
-                        <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">Mode Keanggotaan Non-Aktif / Alumni</h4>
+                        <h4 class="text-xs font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wider">Mode Keanggotaan Non-Aktif / Anggota Keluar</h4>
                         <span class="px-2 py-0.5 rounded text-[9px] font-extrabold bg-amber-200 dark:bg-amber-900/60 text-amber-800 dark:text-amber-200">READ-ONLY</span>
                     </div>
                     <p class="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
