@@ -1,14 +1,24 @@
 <div>
-    <!-- Flash Messages -->
+    <!-- Floating Toast Notifications -->
     @if (session()->has('message'))
-        <div class="mb-6 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
-            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-medium">{{ session('message') }}</p>
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+            class="fixed top-5 right-5 z-50 flex items-center gap-3 bg-emerald-600 text-white px-4 py-3 rounded-2xl shadow-2xl border border-emerald-500 transition-all animate-bounce-short">
+            <i class='bx bx-check-circle text-2xl'></i>
+            <span class="text-xs font-bold">{{ session('message') }}</span>
+            <button @click="show = false" class="text-white/80 hover:text-white ml-2">
+                <i class='bx bx-x text-lg'></i>
+            </button>
         </div>
     @endif
 
     @if (session()->has('error'))
-        <div class="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-lg">
-            <p class="text-sm text-rose-600 dark:text-rose-400 font-medium">{{ session('error') }}</p>
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+            class="fixed top-5 right-5 z-50 flex items-center gap-3 bg-rose-600 text-white px-4 py-3 rounded-2xl shadow-2xl border border-rose-500 transition-all animate-bounce-short">
+            <i class='bx bx-error-circle text-2xl'></i>
+            <span class="text-xs font-bold">{{ session('error') }}</span>
+            <button @click="show = false" class="text-white/80 hover:text-white ml-2">
+                <i class='bx bx-x text-lg'></i>
+            </button>
         </div>
     @endif
 

@@ -238,14 +238,16 @@ class SimpananManagement extends Component
                 Auth::id()
             );
 
-            // Update billingMonth on transaction if column exists
+            // Update billingMonth on transaction
             DB::table('simpanan_transactions')
                 ->where('id', $trx->id)
                 ->update(['billingMonth' => $periodKey]);
 
             // Update bill status if bill exists
             DB::table('simpanan_bills')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('billingMonth', $periodKey)
                 ->where('type', 'WAJIB')
                 ->update([
@@ -268,25 +270,40 @@ class SimpananManagement extends Component
     public function quickToggleWajibUnpaid(string $periodKey, string $monthName): void
     {
         try {
-            // Find transactions for this period
-            $txs = DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
-                ->where(function ($q) use ($periodKey, $monthName) {
+            $parts = explode('-', $periodKey);
+            $year = (int) ($parts[0] ?? date('Y'));
+            $monthNum = (int) ($parts[1] ?? 1);
+
+            // Delete ALL transactions for this period/month
+            DB::table('simpanan_transactions')
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
+                ->where(function ($q) use ($periodKey, $monthName, $year, $monthNum) {
                     $q->where('billingMonth', $periodKey)
+                      ->orWhere(function ($sub) use ($year, $monthNum) {
+                          $sub->where('type', 'WAJIB')
+                              ->whereYear('created_at', $year)
+                              ->whereMonth('created_at', $monthNum);
+                      })
                       ->orWhere(function ($sub) use ($monthName) {
                           $sub->where('type', 'WAJIB')
                               ->where('notes', 'like', "%{$monthName}%");
                       });
                 })
-                ->get();
+                ->delete();
 
-            foreach ($txs as $tx) {
-                DB::table('simpanan_transactions')->where('id', $tx->id)->delete();
-            }
+            // Clear any matched import audit entry for this period
+            DB::table('audit_simwa_imports')
+                ->where('matched_member_id', $this->memberId)
+                ->where('period', $periodKey)
+                ->delete();
 
             // Reset bill status if bill exists
             DB::table('simpanan_bills')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('billingMonth', $periodKey)
                 ->where('type', 'WAJIB')
                 ->update([
@@ -312,11 +329,22 @@ class SimpananManagement extends Component
         $this->editPeriodMonthName = $monthName;
         $this->editPeriodType = $type;
 
+        $parts = explode('-', $periodKey);
+        $year = (int) ($parts[0] ?? date('Y'));
+        $monthNum = (int) ($parts[1] ?? 1);
+
         // Fetch current paid amount if exists
         $tx = DB::table('simpanan_transactions')
-            ->where('member_id', $this->memberId)
-            ->where(function ($q) use ($periodKey, $monthName, $type) {
+            ->where(function ($q) {
+                $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+            })
+            ->where(function ($q) use ($periodKey, $monthName, $type, $year, $monthNum) {
                 $q->where('billingMonth', $periodKey)
+                  ->orWhere(function ($sub) use ($type, $year, $monthNum) {
+                      $sub->where('type', $type)
+                          ->whereYear('created_at', $year)
+                          ->whereMonth('created_at', $monthNum);
+                  })
                   ->orWhere(function ($sub) use ($monthName, $type) {
                       $sub->where('type', $type)
                           ->where('notes', 'like', "%{$monthName}%");
@@ -347,17 +375,36 @@ class SimpananManagement extends Component
             $type = $this->editPeriodType;
             $newAmount = (float) $this->editPeriodAmount;
 
+            $parts = explode('-', $periodKey);
+            $year = (int) ($parts[0] ?? date('Y'));
+            $monthNum = (int) ($parts[1] ?? 1);
+
             // Delete previous transactions for this period
             DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
-                ->where(function ($q) use ($periodKey, $monthName, $type) {
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
+                ->where(function ($q) use ($periodKey, $monthName, $type, $year, $monthNum) {
                     $q->where('billingMonth', $periodKey)
+                      ->orWhere(function ($sub) use ($type, $year, $monthNum) {
+                          $sub->where('type', $type)
+                              ->whereYear('created_at', $year)
+                              ->whereMonth('created_at', $monthNum);
+                      })
                       ->orWhere(function ($sub) use ($monthName, $type) {
                           $sub->where('type', $type)
                               ->where('notes', 'like', "%{$monthName}%");
                       });
                 })
                 ->delete();
+
+            // Clear import if 0
+            if ($newAmount == 0) {
+                DB::table('audit_simwa_imports')
+                    ->where('matched_member_id', $this->memberId)
+                    ->where('period', $periodKey)
+                    ->delete();
+            }
 
             if ($newAmount > 0) {
                 $memberService = app(MemberService::class);
@@ -376,7 +423,9 @@ class SimpananManagement extends Component
 
                 // Update bill if exists
                 DB::table('simpanan_bills')
-                    ->where('member_id', $this->memberId)
+                    ->where(function ($q) {
+                        $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                    })
                     ->where('billingMonth', $periodKey)
                     ->where('type', $type)
                     ->update([
@@ -388,7 +437,9 @@ class SimpananManagement extends Component
             } else {
                 // Set bill to unpaid if 0
                 DB::table('simpanan_bills')
-                    ->where('member_id', $this->memberId)
+                    ->where(function ($q) {
+                        $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                    })
                     ->where('billingMonth', $periodKey)
                     ->where('type', $type)
                     ->update([
@@ -414,36 +465,34 @@ class SimpananManagement extends Component
     {
         try {
             $sumPokok = (float) DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('type', 'POKOK')
                 ->sum('amount');
 
             $sumWajib = (float) DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('type', 'WAJIB')
                 ->sum('amount');
 
             $sumSukarelaMasuk = (float) DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('type', 'SUKARELA')
                 ->sum('amount');
 
             $sumSukarelaKeluar = (float) DB::table('simpanan_transactions')
-                ->where('member_id', $this->memberId)
+                ->where(function ($q) {
+                    $q->where('memberId', $this->memberId)->orWhere('member_id', $this->memberId);
+                })
                 ->where('type', 'TARIK_SUKARELA')
                 ->sum('amount');
 
             $sumSukarela = max(0, $sumSukarelaMasuk - $sumSukarelaKeluar);
-
-            // Also check payroll imports if any
-            $importWajib = (float) DB::table('payroll_audit_loan_imports')
-                ->where('member_id', $this->memberId)
-                ->where('raw_uraian', 'like', '%WAJIB%')
-                ->sum('amount');
-
-            if ($importWajib > 0 && $sumWajib == 0) {
-                $sumWajib += $importWajib;
-            }
 
             DB::table('members')
                 ->where('id', $this->memberId)
