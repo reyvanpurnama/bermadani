@@ -133,7 +133,7 @@
                 class="mt-2 space-y-0.5">
 
                 <a href="{{ route('admin.pos') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.pos') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-desktop text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">POS System</span>
                 </a>
@@ -144,10 +144,10 @@
                 @endphp
 
                 <a href="{{ route('admin.products') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*', 'admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.products*', 'admin.product-review') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <div class="flex items-center">
                         <i class='bx bx-package text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Katalog Produk</span>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Produk</span>
                     </div>
                     @if($pendingProductsCount > 0)
                         <span
@@ -156,16 +156,16 @@
                 </a>
 
                 <a href="{{ route('admin.stock-mutation') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation', 'admin.stock-adjustment') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.stock-mutation', 'admin.stock-adjustment') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-transfer-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Mutasi Inventori</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Inventori</span>
                 </a>
 
                 <a href="{{ route('admin.suppliers') }}"
-                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*', 'admin.consignment-batches', 'admin.consignment-report', 'admin.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.suppliers*', 'admin.consignment-batches', 'admin.consignment-report', 'admin.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <div class="flex items-center">
                         <i class='bx bx-store-alt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Suplai & Konsinyasi</span>
+                        <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Suplai</span>
                     </div>
                     @if($actionableConsignmentBatches > 0)
                         <span
@@ -173,20 +173,32 @@
                     @endif
                 </a>
 
+                <a href="{{ route('admin.supplier-daily-ops') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.supplier-daily-ops') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-notepad text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Operasional Supplier</span>
+                </a>
+
                 <a href="{{ route('admin.transactions') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*', 'admin.manual-transaction', 'admin.kasir-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.transactions*', 'admin.manual-transaction', 'admin.reports.balance-sheet') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-receipt text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Penjualan & Kasir</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Keuangan</span>
                 </a>
 
                 <a href="{{ route('admin.audit.retail-product') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.audit.retail-product') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.audit.retail-product') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-check-shield text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Clearing Retail</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Clearing & Matching</span>
+                </a>
+
+                <a href="{{ route('admin.kasir-history') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.kasir-history') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-user-check text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Monitoring Kasir</span>
                 </a>
 
                 <a href="{{ route('admin.retail-members.index') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.retail-members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.retail-members*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-user-pin text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Member Retail</span>
                 </a>
@@ -199,7 +211,7 @@
                 style="display: none;" class="mt-2 space-y-0.5">
 
                 <a href="{{ route('admin.members.index') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members.index', 'admin.members.show', 'admin.members.edit', 'admin.members.create') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members.index', 'admin.members.show', 'admin.members.edit', 'admin.members.create') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-group text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Anggota Koperasi</span>
                 </a>
@@ -207,32 +219,102 @@
                 <a href="{{ route('admin.members.settlements') }}"
                     class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.members.settlements*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-user-x text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Simpanan Keluar</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pengembalian Simpanan Keluar</span>
                 </a>
 
-                <a href="{{ route('admin.audit.simwa') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.audit.simwa', 'admin.reports.monthly-financial') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-check-double text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Simpanan & Payroll</span>
+                <a href="{{ route('admin.reports.monthly-financial') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.reports.monthly-financial', 'admin.manual-transaction') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-file text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Payroll</span>
                 </a>
 
                 <a href="{{ route('admin.loans') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*', 'admin.audit.loan') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.loans*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-money text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
                     <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pinjaman Anggota</span>
                 </a>
 
-                <a href="{{ route('admin.rat.setup') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
-                    <i class='bx bx-gift text-sm mr-2 opacity-70 group-hover:opacity-100 text-emerald-500 dark:text-emerald-400'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pelaksanaan RAT</span>
+                <a href="{{ route('admin.audit.simwa') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.audit.simwa') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-check-double text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Audit Simpanan</span>
+                </a>
+
+                <a href="{{ route('admin.audit.loan') }}"
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.audit.loan') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    <i class='bx bx-calculator text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Audit Pinjaman</span>
                 </a>
 
                 <a href="{{ route('admin.rat-dashboard') }}"
-                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-dashboard', 'admin.rat-infographic') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                    class="nav-item flex items-center px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-dashboard') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                     <i class='bx bx-line-chart-down text-sm mr-2 opacity-70 group-hover:opacity-100'></i>
-                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Infografis & Laporan RAT</span>
+                    <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Dashboard Visual RAT</span>
                 </a>
+
+                {{-- RAT Wizard Dropdown --}}
+                @php
+                    $latestRatId = \App\Models\RatSession::orderByDesc('year')->value('id') ?? 1;
+                @endphp
+                <div class="space-y-0.5">
+                    <button @click="toggleRatDropdown()"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.*') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <div class="flex items-center">
+                            <i class='bx bx-gift text-sm mr-2 opacity-70 group-hover:opacity-100 text-emerald-500 dark:text-emerald-400'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Pelaksanaan RAT</span>
+                        </div>
+                        <i class='bx text-xs transition-transform duration-200 mr-1 opacity-70 group-hover:opacity-100' :class="ratDropdown ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="ratDropdown" x-transition class="pl-4 space-y-0.5">
+                        <a href="{{ route('admin.rat.setup') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.setup') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Konfigurasi</span>
+                        </a>
+                        <a href="{{ route('admin.rat.eligibility', ['session' => $latestRatId]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.eligibility') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Anggota</span>
+                        </a>
+                        <a href="{{ route('admin.rat.allocation', ['session' => $latestRatId]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.allocation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. Alokasi SHU</span>
+                        </a>
+                        <a href="{{ route('admin.rat.disbursement', ['session' => $latestRatId]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.disbursement') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Pencairan</span>
+                        </a>
+                    </div>
+                </div>
+
+                {{-- HIDDEN: Laporan RAT & RAT Akuntansi (Dalam Pembaruan / Pengembangan) --}}
+                {{-- Dropdown Infografis RAT (4 Lembar) --}}
+                <div class="space-y-0.5 mt-1">
+                    <button @click="toggleInfografisDropdown()"
+                        class="w-full nav-item flex items-center justify-between px-2 py-1.5 rounded-md transition-all group whitespace-nowrap text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white">
+                        <div class="flex items-center">
+                            <i class='bx bx-slideshow text-sm mr-2 opacity-70 group-hover:opacity-100 text-indigo-500 dark:text-indigo-400'></i>
+                            <span class="sidebar-text text-xs font-medium transition-opacity duration-300">Infografis RAT (4 Page)</span>
+                        </div>
+                        <i class='bx text-xs transition-transform duration-200 mr-1 opacity-70 group-hover:opacity-100' :class="infografisDropdown ? 'bx-chevron-up' : 'bx-chevron-down'"></i>
+                    </button>
+                    <div x-show="infografisDropdown" x-transition class="pl-4 space-y-0.5">
+                        <a href="{{ route('admin.rat-infographic', ['page' => 1]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page', 1) == 1 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Dashboard Kinerja</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 2]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 2 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Posisi Keuangan</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 3]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 3 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. SHU & Bagi Hasil</span>
+                        </a>
+                        <a href="{{ route('admin.rat-infographic', ['page' => 4]) }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat-infographic') && request()->query('page') == 4 ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                            <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Siklus & CALK</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             {{-- SYSTEM (ADMIN ONLY) --}}
