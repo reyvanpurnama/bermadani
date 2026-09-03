@@ -251,9 +251,8 @@ class SimpananManagement extends Component
         ]);
 
         try {
-            DB::table('members')
-                ->where('id', $this->memberId)
-                ->update(['joinDate' => $this->newJoinDate]);
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $service->updateJoinDate($this->memberId, $this->newJoinDate);
 
             $this->loadMember();
             $this->closeJoinDateModal();
@@ -267,10 +266,8 @@ class SimpananManagement extends Component
     public function quickSetJoinMonth(string $periodKey): void
     {
         try {
-            $newDate = Carbon::createFromFormat('Y-m', $periodKey)->startOfMonth()->format('Y-m-d');
-            DB::table('members')
-                ->where('id', $this->memberId)
-                ->update(['joinDate' => $newDate]);
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $newDate = $service->quickSetJoinMonth($this->memberId, $periodKey);
 
             $this->loadMember();
             session()->flash('message', '⚡ Bulan Bergabung Anggota berhasil diubah ke ' . Carbon::parse($newDate)->translatedFormat('F Y') . '! Kartu simpanan periode ini sekarang aktif.');
@@ -290,45 +287,13 @@ class SimpananManagement extends Component
     public function quickToggleWajibPaid(string $periodKey, string $monthName): void
     {
         try {
-            $amount = $this->member->monthly_simpanan_wajib > 0 ? (float)$this->member->monthly_simpanan_wajib : 50000;
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $service->quickSetPaidPeriod($this->memberId, $periodKey, $monthName, null, Auth::id());
 
-            // Add transaction with billingMonth
-            $memberService = app(MemberService::class);
-            $trx = $memberService->addSimpanan(
-                $this->memberId,
-                'WAJIB',
-                $amount,
-                "Koreksi Audit Admin: Setor Wajib - {$monthName}",
-                null,
-                Auth::id()
-            );
-
-            // Update billingMonth on transaction
-            if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
-                DB::table('simpanan_transactions')
-                    ->where('id', $trx->id)
-                    ->update(['billingMonth' => $periodKey]);
-            }
-
-            // Update bill status if bill table exists
-            if (\Illuminate\Support\Facades\Schema::hasTable('simpanan_bills')) {
-                $billCol = $this->getMemberCol('simpanan_bills');
-                DB::table('simpanan_bills')
-                    ->where($billCol, $this->memberId)
-                    ->where('billingMonth', $periodKey)
-                    ->where('type', 'WAJIB')
-                    ->update([
-                        'paymentStatus' => 'PAID',
-                        'paidAmount' => $amount,
-                        'remainingAmount' => 0,
-                        'paidAt' => now(),
-                    ]);
-            }
-
-            $this->recalculateMemberBalances();
             $this->loadMember();
             $this->refreshUnpaidBills();
 
+            $amount = $this->member->monthly_simpanan_wajib > 0 ? (float)$this->member->monthly_simpanan_wajib : 50000;
             session()->flash('message', "Bulan {$monthName} berhasil ditandai LUNAS (Rp " . number_format($amount, 0, ',', '.') . ").");
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal memproses setoran: ' . $e->getMessage());
@@ -338,57 +303,9 @@ class SimpananManagement extends Component
     public function quickToggleWajibUnpaid(string $periodKey, string $monthName): void
     {
         try {
-            $parts = explode('-', $periodKey);
-            $year = (int) ($parts[0] ?? date('Y'));
-            $monthNum = (int) ($parts[1] ?? 1);
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $service->quickSetUnpaidPeriod($this->memberId, $periodKey, $monthName);
 
-            $trxCol = $this->getMemberCol('simpanan_transactions');
-
-            // Delete ALL transactions for this period/month
-            DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where(function ($q) use ($periodKey, $monthName, $year, $monthNum) {
-                    $q->where(function ($sub) use ($periodKey) {
-                          if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
-                              $sub->where('billingMonth', $periodKey);
-                          }
-                      })
-                      ->orWhere(function ($sub) use ($year, $monthNum) {
-                          $sub->where('type', 'WAJIB')
-                              ->whereYear('created_at', $year)
-                              ->whereMonth('created_at', $monthNum);
-                      })
-                      ->orWhere(function ($sub) use ($monthName) {
-                          $sub->where('type', 'WAJIB')
-                              ->where('notes', 'like', "%{$monthName}%");
-                      });
-                })
-                ->delete();
-
-            // Clear any matched import audit entry for this period
-            if (\Illuminate\Support\Facades\Schema::hasTable('audit_simwa_imports')) {
-                DB::table('audit_simwa_imports')
-                    ->where('matched_member_id', $this->memberId)
-                    ->where('period', $periodKey)
-                    ->delete();
-            }
-
-            // Reset bill status if bill exists
-            if (\Illuminate\Support\Facades\Schema::hasTable('simpanan_bills')) {
-                $billCol = $this->getMemberCol('simpanan_bills');
-                DB::table('simpanan_bills')
-                    ->where($billCol, $this->memberId)
-                    ->where('billingMonth', $periodKey)
-                    ->where('type', 'WAJIB')
-                    ->update([
-                        'paymentStatus' => 'UNPAID',
-                        'paidAmount' => 0,
-                        'remainingAmount' => DB::raw('amount'),
-                        'paidAt' => null,
-                    ]);
-            }
-
-            $this->recalculateMemberBalances();
             $this->loadMember();
             $this->refreshUnpaidBills();
 
@@ -404,18 +321,18 @@ class SimpananManagement extends Component
         $this->editPeriodMonthName = $monthName;
         $this->editPeriodType = $type;
 
+        $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+        $trxCol = $service->getMemberCol('simpanan_transactions');
+
         $parts = explode('-', $periodKey);
         $year = (int) ($parts[0] ?? date('Y'));
         $monthNum = (int) ($parts[1] ?? 1);
 
-        $trxCol = $this->getMemberCol('simpanan_transactions');
-
-        // Fetch current paid amount if exists
         $tx = DB::table('simpanan_transactions')
             ->where($trxCol, $this->memberId)
             ->where(function ($q) use ($periodKey, $monthName, $type, $year, $monthNum) {
                 $q->where(function ($sub) use ($periodKey) {
-                      if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
+                      if (Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
                           $sub->where('billingMonth', $periodKey);
                       }
                   })
@@ -424,14 +341,15 @@ class SimpananManagement extends Component
                           ->whereYear('created_at', $year)
                           ->whereMonth('created_at', $monthNum);
                   })
-                  ->orWhere(function ($sub) use ($monthName, $type) {
+                  ->orWhere(function ($sub) use ($monthName, $type, $year) {
                       $sub->where('type', $type)
-                          ->where('notes', 'like', "%{$monthName}%");
+                          ->where('notes', 'like', "%{$monthName}%")
+                          ->where('notes', 'like', "%{$year}%");
                   });
             })
             ->first();
 
-        $this->editPeriodAmount = $tx ? (float)$tx->amount : ($type === 'WAJIB' ? 50000 : 100000);
+        $this->editPeriodAmount = $tx ? (float) $tx->amount : ($type === 'WAJIB' ? 50000 : 100000);
         $this->editPeriodNotes = $tx ? ($tx->notes ?? '') : "Koreksi Audit Admin: Setor {$type} - {$monthName}";
         $this->showEditPeriodModal = true;
     }
@@ -449,100 +367,22 @@ class SimpananManagement extends Component
         ]);
 
         try {
-            $periodKey = $this->editPeriodKey;
-            $monthName = $this->editPeriodMonthName;
-            $type = $this->editPeriodType;
-            $newAmount = (float) $this->editPeriodAmount;
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $service->saveEditPeriodAmount(
+                $this->memberId,
+                $this->editPeriodKey,
+                $this->editPeriodMonthName,
+                $this->editPeriodType,
+                (float) $this->editPeriodAmount,
+                $this->editPeriodNotes,
+                Auth::id()
+            );
 
-            $parts = explode('-', $periodKey);
-            $year = (int) ($parts[0] ?? date('Y'));
-            $monthNum = (int) ($parts[1] ?? 1);
-
-            $trxCol = $this->getMemberCol('simpanan_transactions');
-
-            // Delete previous transactions for this period
-            DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where(function ($q) use ($periodKey, $monthName, $type, $year, $monthNum) {
-                    $q->where(function ($sub) use ($periodKey) {
-                          if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
-                              $sub->where('billingMonth', $periodKey);
-                          }
-                      })
-                      ->orWhere(function ($sub) use ($type, $year, $monthNum) {
-                          $sub->where('type', $type)
-                              ->whereYear('created_at', $year)
-                              ->whereMonth('created_at', $monthNum);
-                      })
-                      ->orWhere(function ($sub) use ($monthName, $type) {
-                          $sub->where('type', $type)
-                              ->where('notes', 'like', "%{$monthName}%");
-                      });
-                })
-                ->delete();
-
-            // Clear import if 0
-            if ($newAmount == 0 && \Illuminate\Support\Facades\Schema::hasTable('audit_simwa_imports')) {
-                DB::table('audit_simwa_imports')
-                    ->where('matched_member_id', $this->memberId)
-                    ->where('period', $periodKey)
-                    ->delete();
-            }
-
-            if ($newAmount > 0) {
-                $memberService = app(MemberService::class);
-                $trx = $memberService->addSimpanan(
-                    $this->memberId,
-                    $type,
-                    $newAmount,
-                    $this->editPeriodNotes ?: "Koreksi Audit Admin: Setor {$type} - {$monthName}",
-                    null,
-                    Auth::id()
-                );
-
-                if (\Illuminate\Support\Facades\Schema::hasColumn('simpanan_transactions', 'billingMonth')) {
-                    DB::table('simpanan_transactions')
-                        ->where('id', $trx->id)
-                        ->update(['billingMonth' => $periodKey]);
-                }
-
-                // Update bill if exists
-                if (\Illuminate\Support\Facades\Schema::hasTable('simpanan_bills')) {
-                    $billCol = $this->getMemberCol('simpanan_bills');
-                    DB::table('simpanan_bills')
-                        ->where($billCol, $this->memberId)
-                        ->where('billingMonth', $periodKey)
-                        ->where('type', $type)
-                        ->update([
-                            'paymentStatus' => 'PAID',
-                            'paidAmount' => $newAmount,
-                            'remainingAmount' => 0,
-                            'paidAt' => now(),
-                        ]);
-                }
-            } else {
-                // Set bill to unpaid if 0
-                if (\Illuminate\Support\Facades\Schema::hasTable('simpanan_bills')) {
-                    $billCol = $this->getMemberCol('simpanan_bills');
-                    DB::table('simpanan_bills')
-                        ->where($billCol, $this->memberId)
-                        ->where('billingMonth', $periodKey)
-                        ->where('type', $type)
-                        ->update([
-                            'paymentStatus' => 'UNPAID',
-                            'paidAmount' => 0,
-                            'remainingAmount' => DB::raw('amount'),
-                            'paidAt' => null,
-                        ]);
-                }
-            }
-
-            $this->recalculateMemberBalances();
             $this->loadMember();
             $this->refreshUnpaidBills();
             $this->closeEditPeriodModal();
 
-            session()->flash('message', "Nominal setoran {$type} bulan {$monthName} berhasil diperbarui menjadi Rp " . number_format($newAmount, 0, ',', '.') . ".");
+            session()->flash('message', "Nominal setoran {$this->editPeriodType} bulan {$this->editPeriodMonthName} berhasil diperbarui menjadi Rp " . number_format($this->editPeriodAmount, 0, ',', '.') . ".");
         } catch (\Exception $e) {
             session()->flash('error', 'Gagal memperbarui nominal setoran: ' . $e->getMessage());
         }
@@ -551,37 +391,8 @@ class SimpananManagement extends Component
     public function recalculateMemberBalances(): void
     {
         try {
-            $trxCol = $this->getMemberCol('simpanan_transactions');
-
-            $sumPokok = (float) DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where('type', 'POKOK')
-                ->sum('amount');
-
-            $sumWajib = (float) DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where('type', 'WAJIB')
-                ->sum('amount');
-
-            $sumSukarelaMasuk = (float) DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where('type', 'SUKARELA')
-                ->sum('amount');
-
-            $sumSukarelaKeluar = (float) DB::table('simpanan_transactions')
-                ->where($trxCol, $this->memberId)
-                ->where('type', 'TARIK_SUKARELA')
-                ->sum('amount');
-
-            $sumSukarela = max(0, $sumSukarelaMasuk - $sumSukarelaKeluar);
-
-            DB::table('members')
-                ->where('id', $this->memberId)
-                ->update([
-                    'simpananPokok' => $sumPokok,
-                    'simpananWajib' => $sumWajib,
-                    'simpananSukarela' => $sumSukarela,
-                ]);
+            $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+            $service->recalculateMemberBalances($this->memberId);
 
             $this->loadMember();
             session()->flash('message', '🎉 Total Saldo DB Anggota berhasil disinkronkan & dihitung ulang!');
@@ -813,94 +624,8 @@ class SimpananManagement extends Component
     {
         if (!$this->member) return [];
 
-        $grid = [];
-        $today = Carbon::now();
-        $joinDate = $this->member->joinDate ? Carbon::parse($this->member->joinDate)->startOfMonth() : $today->startOfMonth();
-        $selectedYear = (int) ($this->selectedYear ?? date('Y'));
-
-        $txs = SimpananTransaction::where('memberId', $this->memberId)
-            ->where('status', 'APPROVED')
-            ->get();
-
-        $imports = DB::table('audit_simwa_imports')
-            ->where('matched_member_id', $this->memberId)
-            ->get();
-
-        $monthsName = [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
-        ];
-
-        for ($i = 1; $i <= 12; $i++) {
-            $currentMonthDate = Carbon::createFromDate($selectedYear, $i, 1)->endOfMonth();
-            $periodKey = sprintf('%s-%02d', $selectedYear, $i);
-            $monthName = $monthsName[$i];
-
-            $hasTx = $txs->filter(function ($t) use ($selectedYear, $i, $periodKey, $monthName) {
-                if (!empty($t->billingMonth) && $t->billingMonth !== '-') {
-                    return $t->billingMonth === $periodKey;
-                }
-
-                $txYear = (int) $t->created_at->format('Y');
-                $txMonth = (int) $t->created_at->format('n');
-
-                if (!empty($t->notes) && preg_match('/20\d{2}/', $t->notes, $matches)) {
-                    $txYear = (int) $matches[0];
-                }
-
-                $dateMatch = ($txYear === $selectedYear && $txMonth === $i);
-                $notesMatch = !empty($t->notes) && str_contains(strtolower($t->notes), strtolower($monthName)) && str_contains($t->notes, (string) $selectedYear);
-
-                if ($t->type === 'WAJIB') {
-                    return $dateMatch || $notesMatch;
-                }
-
-                if ($t->type === 'SUKARELA' && (!empty($t->notes) && (str_contains(strtolower($t->notes), 'payroll') || str_contains(strtolower($t->notes), 'tabungan')))) {
-                    return $dateMatch || $notesMatch;
-                }
-
-                return false;
-            })->first();
-
-            $hasImport = $imports->filter(function ($imp) use ($periodKey) {
-                return $imp->period === $periodKey && (
-                    str_contains(strtoupper($imp->raw_uraian), 'SIMWA') || 
-                    str_contains(strtoupper($imp->raw_uraian), 'TABUNGAN') || 
-                    str_contains(strtoupper($imp->raw_uraian), 'SUKARELA')
-                );
-            })->first();
-
-            $status = 'UNPAID';
-            $paidDate = null;
-            $paidAmount = 0;
-
-            if ($hasTx) {
-                $status = 'PAID';
-                $paidDate = $hasTx->created_at->format('d M Y');
-                $paidAmount = (float) $hasTx->amount;
-            } elseif ($hasImport) {
-                $status = 'PAID';
-                $paidDate = 'Payroll / Import';
-                $paidAmount = (float) $hasImport->amount;
-            } elseif ($currentMonthDate->isFuture() && $currentMonthDate->format('Y-m') > $today->format('Y-m')) {
-                $status = 'FUTURE';
-            } elseif ($currentMonthDate->lt($joinDate)) {
-                $status = 'NOT_MEMBER';
-            }
-
-            $grid[$i] = [
-                'monthNum' => $i,
-                'monthName' => Carbon::create()->month($i)->translatedFormat('M'),
-                'fullName' => $monthName,
-                'periodKey' => $periodKey,
-                'status' => $status,
-                'paidDate' => $paidDate,
-                'paidAmount' => $paidAmount,
-            ];
-        }
-
-        return $grid;
+        $service = app(\App\Domains\Koperasi\Services\SimpananService::class);
+        return $service->buildSimwaGrid($this->member, (int) ($this->selectedYear ?? date('Y')));
     }
 
     public function getAvailableYearsProperty()
