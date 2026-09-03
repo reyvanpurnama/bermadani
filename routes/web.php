@@ -94,6 +94,14 @@ Route::middleware('guest')->group(function () {
 
             // Redirect based on role
             if ($user->isMember()) {
+                $member = \App\Models\Member::where('userId', $user->id)->first();
+                if ($member && in_array(strtoupper($member->status ?? ''), ['INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR'])) {
+                    Auth::logout();
+                    return back()->withErrors([
+                        'email' => 'Status keanggotaan Anda telah dinonaktifkan / keluar dari Koperasi. Silakan hubungi Pengurus.',
+                    ])->onlyInput('email');
+                }
+
                 return redirect()->route('member.dashboard');
             }
 
