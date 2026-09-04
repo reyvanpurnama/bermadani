@@ -8,10 +8,47 @@
         ['num' => 3, 'label' => 'Alokasi SHU', 'icon' => 'bx-pie-chart-alt-2', 'route' => 'admin.rat.allocation', 'params' => ['session' => $sessionId]],
         ['num' => 4, 'label' => 'Pencairan', 'icon' => 'bx-wallet', 'route' => 'admin.rat.disbursement', 'params' => ['session' => $sessionId]],
     ];
+    $activeStepItem = $steps[$currentStep - 1] ?? $steps[0];
 @endphp
 
-<div class="bg-white dark:bg-darkCard p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
-    <div class="flex items-center justify-between gap-2">
+<div class="bg-white dark:bg-darkCard p-3.5 sm:p-4 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+    {{-- Mobile Compact Step View (< sm) --}}
+    <div class="block sm:hidden space-y-2">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                    {{ $currentStep }}
+                </span>
+                <div>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Langkah {{ $currentStep }} dari 4</span>
+                    <h4 class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                        <i class='bx {{ $activeStepItem["icon"] }} text-indigo-500'></i>
+                        {{ $activeStepItem['label'] }}
+                    </h4>
+                </div>
+            </div>
+            
+            {{-- Quick Nav Pills for Completed Steps --}}
+            <div class="flex items-center gap-1">
+                @foreach($steps as $s)
+                    @if($sessionId && $s['num'] <= $currentStep && $s['num'] !== $currentStep)
+                        <a href="{{ route($s['route'], $s['params']) }}"
+                           class="w-6 h-6 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-[10px] font-bold">
+                            {{ $s['num'] }}
+                        </a>
+                    @endif
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Progress Bar Mobile --}}
+        <div class="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-indigo-600 h-full transition-all duration-300" style="width: {{ ($currentStep / 4) * 100 }}%"></div>
+        </div>
+    </div>
+
+    {{-- Desktop Step Indicator (≥ sm) --}}
+    <div class="hidden sm:flex items-center justify-between gap-2">
         @foreach($steps as $index => $step)
             @php
                 $isActive = $step['num'] === $currentStep;
@@ -38,7 +75,7 @@
                             <i class='bx {{ $step["icon"] }} text-base'></i>
                         @endif
                     </div>
-                    <div class="{{ $isActive ? '' : 'hidden sm:block' }}">
+                    <div>
                         <p class="text-[9px] font-bold uppercase tracking-wider {{ $isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400' }}">
                             Step {{ $step['num'] }}
                         </p>

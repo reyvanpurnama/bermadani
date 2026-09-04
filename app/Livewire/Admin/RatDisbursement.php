@@ -454,6 +454,10 @@ class RatDisbursement extends Component
             'allMembers' => $allMembers,
             'selectedDistribution' => $this->selectedDistribution,
             'selectedReceipt' => $this->selectedReceipt,
+            'viewMode' => $this->viewMode,
+            'showDetailModal' => $this->showDetailModal,
+            'showReceiptModal' => $this->showReceiptModal,
+            'showAddManualModal' => $this->showAddManualModal,
         ])->layout('layouts.admin');
     }
 }
