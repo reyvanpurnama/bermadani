@@ -7,6 +7,7 @@ use App\Models\RatSession;
 use App\Services\ShuCalculationService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RatAllocation extends Component
 {
@@ -14,6 +15,8 @@ class RatAllocation extends Component
 
     public $sessionId;
     public $searchMember = '';
+    public $showDetailModal = false;
+    public $selectedDistributionId = null;
 
     protected ShuCalculationService $shuService;
 
@@ -59,11 +62,49 @@ class RatAllocation extends Component
         return RatSession::find($this->sessionId);
     }
 
+    public function getAllSessionsProperty()
+    {
+        return RatSession::orderByDesc('year')->get();
+    }
+
+    public function selectSession($id)
+    {
+        $session = RatSession::find($id);
+        if ($session) {
+            $this->sessionId = $session->id;
+            $this->resetPage();
+        }
+    }
+
+    public function updatedSessionId($id)
+    {
+        $this->selectSession($id);
+    }
+
     public function getSummaryProperty()
     {
         $session = $this->session;
         if (!$session) return [];
         return $this->shuService->calculateSummary($session);
+    }
+
+    // === Detail Modal Methods ===
+    public function openDetailModal($distributionId)
+    {
+        $this->selectedDistributionId = $distributionId;
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->selectedDistributionId = null;
+    }
+
+    public function getSelectedDistributionProperty()
+    {
+        if (!$this->selectedDistributionId) return null;
+        return MemberShuDistribution::with(['member', 'ratSession'])->find($this->selectedDistributionId);
     }
 
     /**
@@ -115,6 +156,75 @@ class RatAllocation extends Component
         }
     }
 
+    /**
+     * Export allocation table to CSV/Excel.
+     */
+    public function exportCsv(): StreamedResponse
+    {
+        $session = $this->session;
+        $year = $session ? $session->year : date('Y');
+        $fileName = "Kalkulasi_Alokasi_SHU_RAT_{$year}_" . date('Ymd_His') . ".csv";
+
+        $headers = [
+            "Content-type" => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($session) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF"); // UTF-8 BOM
+
+            fputcsv($file, [
+                'No',
+                'No. Anggota',
+                'Nama Anggota',
+                'Unit Kerja / Institusi',
+                'Simpanan Pokok Snapshot (Rp)',
+                'Simpanan Wajib Snapshot (Rp)',
+                'Total Simpanan Snapshot (Rp)',
+                'Total Transaksi Snapshot (Rp)',
+                'Jasa Simpanan (Rp)',
+                'Jasa Usaha (Rp)',
+                'Porsi (%)',
+                'Total SHU (Rp)',
+                'Status Sesi'
+            ]);
+
+            if ($session) {
+                $query = MemberShuDistribution::with('member')
+                    ->where('rat_session_id', $session->id)
+                    ->orderBy('id', 'asc');
+
+                $no = 1;
+                foreach ($query->cursor() as $dist) {
+                    $m = $dist->member;
+                    fputcsv($file, [
+                        $no++,
+                        $m?->nomorAnggota ?? '-',
+                        $m?->name ?? '-',
+                        $m?->unitKerja ?? '-',
+                        round((float) $dist->simpanan_pokok_snapshot, 0),
+                        round((float) $dist->simpanan_wajib_snapshot, 0),
+                        round((float) $dist->total_simpanan_amount, 0),
+                        round((float) $dist->total_transaksi_amount, 0),
+                        round((float) $dist->jasa_simpanan_amount, 0),
+                        round((float) $dist->jasa_usaha_amount, 0),
+                        number_format((float) $dist->portion_percentage, 4, ',', ''),
+                        round((float) $dist->shu_amount, 0),
+                        $session->status_label
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function advanceToDisbursement()
     {
         $session = $this->session;
@@ -150,13 +260,16 @@ class RatAllocation extends Component
                 });
             }
 
-            $distributions = $query->orderByDesc('shu_amount')->paginate(20);
+            $distributions = $query->orderByDesc('shu_amount')->paginate(25);
         }
 
         return view('livewire.admin.rat-allocation', [
             'ratSession' => $session,
+            'allSessions' => $this->allSessions,
             'distributions' => $distributions,
             'summary' => $this->summary,
+            'selectedDistribution' => $this->selectedDistribution,
+            'showDetailModal' => $this->showDetailModal,
         ])->layout('layouts.admin');
     }
 }
