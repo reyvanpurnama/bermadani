@@ -250,9 +250,10 @@ Route::middleware(['auth', 'role:SUPER_ADMIN,ADMIN,DEVELOPER', 'log.activity'])-
 
     // RAT Wizard (4-step flow)
     Route::get('/rat/setup', \App\Livewire\Admin\RatSetup::class)->name('admin.rat.setup');
-    Route::get('/rat/eligibility/{session}', \App\Livewire\Admin\RatEligibility::class)->name('admin.rat.eligibility');
-    Route::get('/rat/allocation/{session}', \App\Livewire\Admin\RatAllocation::class)->name('admin.rat.allocation');
-    Route::get('/rat/disbursement/{session}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.disbursement');
+    Route::get('/rat/eligibility/{session?}', \App\Livewire\Admin\RatEligibility::class)->name('admin.rat.eligibility');
+    Route::get('/rat/allocation/{session?}', \App\Livewire\Admin\RatAllocation::class)->name('admin.rat.allocation');
+    Route::get('/rat/disbursement/{session?}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.disbursement');
+    Route::get('/rat/pencairan/{session?}', \App\Livewire\Admin\RatDisbursement::class)->name('admin.rat.pencairan');
     Route::get('/rat/pdf-report/{session}', [\App\Http\Controllers\Admin\RatReportPdfController::class, 'downloadPdf'])->name('admin.rat.pdf-report');
     Route::match(['get', 'post'], '/rat/pdf-berita-acara/{session}', [\App\Http\Controllers\Admin\RatReportPdfController::class, 'downloadBeritaAcaraPdf'])->name('admin.rat.pdf-berita-acara');
 

@@ -7,6 +7,7 @@ use App\Models\RatSession;
 use App\Services\ShuCalculationService;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RatDisbursement extends Component
 {
@@ -16,6 +17,15 @@ class RatDisbursement extends Component
     public $searchMember = '';
     public $filterDisbursed = 'ALL'; // ALL, PENDING, DISBURSED
     public $disbursementFilter = 'ALL'; // Alias for backward compatibility
+    public $viewMode = 'SUMMARY'; // SUMMARY, DETAILED
+
+    // Modal Detail Member SHU
+    public $showDetailModal = false;
+    public $selectedDistributionId = null;
+
+    // Modal Slip Kwitansi SHU
+    public $showReceiptModal = false;
+    public $selectedReceiptId = null;
 
     // Modal Manual Entry / Susulan SHU
     public $showAddManualModal = false;
@@ -31,10 +41,27 @@ class RatDisbursement extends Component
         $this->shuService = $shuService;
     }
 
-    public function mount($session)
+    public function mount($session = null)
     {
-        $ratSession = RatSession::findOrFail($session);
-        $this->sessionId = $ratSession->id;
+        $ratSession = null;
+        if ($session) {
+            $ratSession = RatSession::find($session);
+        }
+
+        if (!$ratSession) {
+            $ratSession = RatSession::whereIn('status', [
+                RatSession::STATUS_DISBURSING,
+                RatSession::STATUS_FINALIZED,
+                RatSession::STATUS_MEMBERS_LOCKED,
+                RatSession::STATUS_COMPLETED,
+            ])
+            ->latest('year')
+            ->first() ?? RatSession::latest('id')->first();
+        }
+
+        if ($ratSession) {
+            $this->sessionId = $ratSession->id;
+        }
     }
 
     public function getSessionProperty()
@@ -42,6 +69,74 @@ class RatDisbursement extends Component
         return RatSession::find($this->sessionId);
     }
 
+    public function getAllSessionsProperty()
+    {
+        return RatSession::orderByDesc('year')->get();
+    }
+
+    public function selectSession($id)
+    {
+        $session = RatSession::find($id);
+        if ($session) {
+            $this->sessionId = $session->id;
+            $this->resetPage();
+        }
+    }
+
+    public function updatedSessionId($id)
+    {
+        $this->selectSession($id);
+    }
+
+    public function updatingSearchMember()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingFilterDisbursed()
+    {
+        $this->resetPage();
+    }
+
+    // === Detail Modal Methods ===
+    public function openDetailModal($distributionId)
+    {
+        $this->selectedDistributionId = $distributionId;
+        $this->showDetailModal = true;
+    }
+
+    public function closeDetailModal()
+    {
+        $this->showDetailModal = false;
+        $this->selectedDistributionId = null;
+    }
+
+    public function getSelectedDistributionProperty()
+    {
+        if (!$this->selectedDistributionId) return null;
+        return MemberShuDistribution::with(['member', 'ratSession'])->find($this->selectedDistributionId);
+    }
+
+    // === Receipt Modal Methods ===
+    public function openReceiptModal($distributionId)
+    {
+        $this->selectedReceiptId = $distributionId;
+        $this->showReceiptModal = true;
+    }
+
+    public function closeReceiptModal()
+    {
+        $this->showReceiptModal = false;
+        $this->selectedReceiptId = null;
+    }
+
+    public function getSelectedReceiptProperty()
+    {
+        if (!$this->selectedReceiptId) return null;
+        return MemberShuDistribution::with(['member', 'ratSession'])->find($this->selectedReceiptId);
+    }
+
+    // === Disbursement Actions ===
     public function disburseSingle($distributionId)
     {
         $dist = MemberShuDistribution::where('rat_session_id', $this->sessionId)
@@ -111,6 +206,79 @@ class RatDisbursement extends Component
     public function disburseAll()
     {
         $this->batchDisburse();
+    }
+
+    // === CSV / Excel Export ===
+    public function exportCsv(): StreamedResponse
+    {
+        $session = $this->session;
+        $year = $session ? $session->year : date('Y');
+        $fileName = "SHU_Anggota_RAT_{$year}_" . date('Ymd_His') . ".csv";
+
+        $headers = [
+            "Content-type" => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function () use ($session) {
+            $file = fopen('php://output', 'w');
+            // Add UTF-8 BOM for Excel compatibility
+            fputs($file, "\xEF\xBB\xBF");
+
+            // CSV Column Headers
+            fputcsv($file, [
+                'No',
+                'No. Anggota',
+                'Nama Anggota',
+                'Unit Kerja / Institusi',
+                'Simpanan Pokok Snapshot (Rp)',
+                'Simpanan Wajib Snapshot (Rp)',
+                'Total Simpanan Snapshot (Rp)',
+                'Total Transaksi Snapshot (Rp)',
+                'Jasa Simpanan (Rp)',
+                'Jasa Usaha (Rp)',
+                'Porsi (%)',
+                'Total SHU (Rp)',
+                'Status Pencairan',
+                'Waktu Pencairan',
+                'Catatan'
+            ]);
+
+            if ($session) {
+                $query = MemberShuDistribution::with('member')
+                    ->where('rat_session_id', $session->id)
+                    ->orderBy('id', 'asc');
+
+                $no = 1;
+                foreach ($query->cursor() as $dist) {
+                    $m = $dist->member;
+                    fputcsv($file, [
+                        $no++,
+                        $m?->nomorAnggota ?? '-',
+                        $m?->name ?? '-',
+                        $m?->unitKerja ?? '-',
+                        round((float) $dist->simpanan_pokok_snapshot, 0),
+                        round((float) $dist->simpanan_wajib_snapshot, 0),
+                        round((float) $dist->total_simpanan_amount, 0),
+                        round((float) $dist->total_transaksi_amount, 0),
+                        round((float) $dist->jasa_simpanan_amount, 0),
+                        round((float) $dist->jasa_usaha_amount, 0),
+                        number_format((float) $dist->portion_percentage, 4, ',', ''),
+                        round((float) $dist->shu_amount, 0),
+                        $dist->is_disbursed ? 'Sudah Dicairkan' : 'Belum Dicairkan',
+                        $dist->disbursed_at ? $dist->disbursed_at->format('Y-m-d H:i:s') : '-',
+                        $dist->notes ?? ''
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     // === Manual Entry / Susulan SHU Methods ===
@@ -263,11 +431,12 @@ class RatDisbursement extends Component
             if ($this->searchMember) {
                 $query->whereHas('member', function ($q) {
                     $q->where('name', 'like', '%' . $this->searchMember . '%')
-                      ->orWhere('nomorAnggota', 'like', '%' . $this->searchMember . '%');
+                      ->orWhere('nomorAnggota', 'like', '%' . $this->searchMember . '%')
+                      ->orWhere('unitKerja', 'like', '%' . $this->searchMember . '%');
                 });
             }
 
-            $distributions = $query->orderBy('is_disbursed', 'asc')->orderByDesc('shu_amount')->paginate(20);
+            $distributions = $query->orderBy('is_disbursed', 'asc')->orderByDesc('shu_amount')->paginate(25);
         }
 
         $allMembers = \App\Models\Member::with('user')
@@ -279,9 +448,12 @@ class RatDisbursement extends Component
 
         return view('livewire.admin.rat-disbursement', [
             'ratSession' => $session,
+            'allSessions' => $this->allSessions,
             'distributions' => $distributions,
             'stats' => $this->stats,
             'allMembers' => $allMembers,
+            'selectedDistribution' => $this->selectedDistribution,
+            'selectedReceipt' => $this->selectedReceipt,
         ])->layout('layouts.admin');
     }
 }

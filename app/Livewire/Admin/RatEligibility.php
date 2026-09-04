@@ -26,9 +26,17 @@ class RatEligibility extends Component
         $this->shuService = $shuService;
     }
 
-    public function mount($session)
+    public function mount($session = null)
     {
-        $ratSession = RatSession::findOrFail($session);
+        $ratSession = $session ? RatSession::find($session) : null;
+        if (!$ratSession) {
+            $ratSession = RatSession::latest('year')->first() ?? RatSession::latest('id')->first();
+        }
+
+        if (!$ratSession) {
+            return redirect()->route('admin.rat.setup');
+        }
+
         $this->sessionId = $ratSession->id;
         $this->joinDateCutoff = $ratSession->join_date_cutoff?->format('Y-m-d');
         $this->excludedMemberIds = $ratSession->excluded_member_ids ?? [];

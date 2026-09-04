@@ -3,8 +3,8 @@
     <style>
         @media print {
             body * { visibility: hidden; }
-            #printableSection, #printableSection * { visibility: visible; }
-            #printableSection { position: absolute; left: 0; top: 0; width: 100%; }
+            #printableSection, #printableSection *, #receiptPrintableSection, #receiptPrintableSection * { visibility: visible; }
+            #printableSection, #receiptPrintableSection { position: absolute; left: 0; top: 0; width: 100%; }
             .no-print { display: none !important; }
         }
     </style>
@@ -14,36 +14,52 @@
         <x-rat-wizard-steps :currentStep="4" :sessionId="$ratSession?->id" :sessionStatus="$ratSession?->status ?? 'DRAFT'" />
     </div>
 
-    {{-- Header --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 no-print">
-        <div>
-            <div class="flex items-center gap-2 mb-1">
-                <span class="p-2 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+    {{-- Header & Session Switcher --}}
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 no-print">
+        <div class="space-y-1">
+            <div class="flex items-center gap-2">
+                <span class="p-2 rounded-xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
                     <i class='bx bx-wallet text-2xl'></i>
                 </span>
-                <h1 class="text-xl font-bold text-slate-800 dark:text-white">Pencairan SHU</h1>
+                <div>
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-xl font-bold text-slate-800 dark:text-white">Pencairan & Data SHU Anggota</h1>
+                        @if($allSessions->count() > 0)
+                            <select wire:model.live="sessionId" class="bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs font-bold rounded-xl px-3 py-1.5 outline-none cursor-pointer">
+                                @foreach($allSessions as $s)
+                                    <option value="{{ $s->id }}">Tahun Buku {{ $s->year }} (Status: {{ $s->status }})</option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                        Step 4: Pantau data nominal SHU masing-masing anggota, catat pencairan, dan cetak slip kwitansi / berita acara.
+                    </p>
+                </div>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-                Step 4: Catat pencairan SHU ke masing-masing anggota dan cetak tanda terima.
-            </p>
         </div>
-        <div class="flex flex-wrap items-center gap-2">
+
+        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
             @if($ratSession)
+                <button wire:click="exportCsv"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5">
+                    <i class='bx bx-download text-base'></i> Export CSV / Excel
+                </button>
                 <button wire:click="openAddManualModal"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2">
-                    <i class='bx bx-user-plus text-lg'></i> + Tambah Susulan SHU (Anggota Keluar)
+                    class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-amber-600/20 transition-all flex items-center gap-1.5">
+                    <i class='bx bx-user-plus text-base'></i> + Susulan SHU
                 </button>
                 <button @click="showBeritaAcaraModal = true"
-                    class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center gap-2">
-                    <i class='bx bxs-file-doc text-lg'></i> Cetak Berita Acara RAT
+                    class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-indigo-600/20 transition-all flex items-center gap-1.5">
+                    <i class='bx bxs-file-doc text-base'></i> Berita Acara
                 </button>
                 <a href="{{ route('admin.rat.pdf-report', $ratSession->id) }}" target="_blank"
-                    class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center gap-2">
-                    <i class='bx bxs-file-pdf text-lg'></i> Download PDF Laporan SHU
+                    class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shadow-md shadow-rose-600/20 transition-all flex items-center gap-1.5">
+                    <i class='bx bxs-file-pdf text-base'></i> PDF Laporan SHU
                 </a>
             @endif
             <button onclick="window.print()"
-                class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2">
+                class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5">
                 <i class='bx bx-printer text-base'></i> Cetak Rekap
             </button>
         </div>
@@ -76,12 +92,12 @@
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
             <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <i class='bx bx-trending-up text-base text-emerald-500'></i>
-                Progress Pencairan
+                Progress Pencairan SHU RAT {{ $ratSession?->year }}
             </h3>
             @if($stats['pending'] > 0)
                 <button wire:click="batchDisburse"
                     onclick="return confirm('Cairkan SHU untuk {{ $stats['pending'] }} anggota sekaligus?')"
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2">
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-1.5">
                     <i class='bx bx-check-double text-base'></i> Cairkan Semua ({{ $stats['pending'] }} anggota)
                 </button>
             @endif
@@ -90,9 +106,9 @@
         {{-- Progress Bar --}}
         <div class="mb-4">
             <div class="flex items-center justify-between text-xs font-bold mb-2">
-                <span class="text-emerald-600">{{ $stats['disbursed'] }} dicairkan</span>
-                <span class="text-slate-400">{{ $stats['pending'] }} belum</span>
-                <span class="text-slate-700 dark:text-white">{{ $stats['total'] }} total</span>
+                <span class="text-emerald-600">{{ $stats['disbursed'] }} dicairkan ({{ $stats['percentage'] }}%)</span>
+                <span class="text-amber-500">{{ $stats['pending'] }} belum dicairkan</span>
+                <span class="text-slate-700 dark:text-white">{{ $stats['total'] }} total anggota</span>
             </div>
             <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3 overflow-hidden">
                 <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-full rounded-full transition-all duration-500"
@@ -103,30 +119,30 @@
         {{-- Stats Cards --}}
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                    <i class='bx bx-money text-lg'></i>
+                <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                    <i class='bx bx-money text-xl'></i>
                 </div>
                 <div>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Total SHU</p>
-                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Rp {{ number_format($stats['totalAmount'], 0, ',', '.') }}</h4>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total SHU Anggota</p>
+                    <h4 class="text-base font-extrabold text-slate-800 dark:text-white">Rp {{ number_format($stats['totalAmount'], 0, ',', '.') }}</h4>
                 </div>
             </div>
             <div class="bg-emerald-50/50 dark:bg-emerald-950/20 p-4 rounded-xl flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                    <i class='bx bx-check-circle text-lg'></i>
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                    <i class='bx bx-check-circle text-xl'></i>
                 </div>
                 <div>
-                    <p class="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Sudah Dicairkan</p>
-                    <h4 class="text-sm font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($stats['disbursedAmount'], 0, ',', '.') }}</h4>
+                    <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Sudah Dicairkan</p>
+                    <h4 class="text-base font-extrabold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($stats['disbursedAmount'], 0, ',', '.') }}</h4>
                 </div>
             </div>
             <div class="bg-amber-50/50 dark:bg-amber-950/20 p-4 rounded-xl flex items-center gap-3">
-                <div class="w-9 h-9 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500 dark:text-amber-400">
-                    <i class='bx bx-time-five text-lg'></i>
+                <div class="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-amber-500 dark:text-amber-400">
+                    <i class='bx bx-time-five text-xl'></i>
                 </div>
                 <div>
-                    <p class="text-[9px] font-bold text-amber-500 uppercase tracking-widest">Belum Dicairkan</p>
-                    <h4 class="text-sm font-bold text-amber-600 dark:text-amber-400">Rp {{ number_format($stats['pendingAmount'], 0, ',', '.') }}</h4>
+                    <p class="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Belum Dicairkan</p>
+                    <h4 class="text-base font-extrabold text-amber-600 dark:text-amber-400">Rp {{ number_format($stats['pendingAmount'], 0, ',', '.') }}</h4>
                 </div>
             </div>
         </div>
@@ -136,21 +152,34 @@
     <div id="printableSection" class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
         {{-- Print Header --}}
         <div class="mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
-            <h2 class="text-base font-bold text-slate-800 dark:text-white">DAFTAR PENCAIRAN SHU ANGGOTA</h2>
-            <p class="text-[10px] text-slate-500">{{ $ratSession?->title }} • {{ $ratSession?->event_date?->format('d F Y') }}</p>
+            <h2 class="text-base font-bold text-slate-800 dark:text-white">DAFTAR HAK SHU & PENCAIRAN ANGGOTA</h2>
+            <p class="text-[10px] text-slate-500">{{ $ratSession?->title }} • Tanggal Pelaksanaan: {{ $ratSession?->event_date?->format('d F Y') }}</p>
         </div>
 
-        {{-- Search & Filter --}}
-        <div class="flex items-center gap-3 mb-4 no-print">
-            <input type="text" wire:model.live.debounce.300ms="searchMember"
-                placeholder="Cari Anggota..."
-                class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-4 py-2 text-slate-800 dark:text-white outline-none w-52">
-            <select wire:model.live="filterDisbursed"
-                class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none">
-                <option value="ALL">Semua</option>
-                <option value="PENDING">Belum Dicairkan</option>
-                <option value="DISBURSED">Sudah Dicairkan</option>
-            </select>
+        {{-- Search, Filter & View Toggle --}}
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4 no-print">
+            <div class="flex flex-wrap items-center gap-2">
+                <input type="text" wire:model.live.debounce.300ms="searchMember"
+                    placeholder="Cari Nama, No. Anggota, Unit Kerja..."
+                    class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-4 py-2 text-slate-800 dark:text-white outline-none w-full sm:w-64 focus:ring-2 focus:ring-primary/20">
+                <select wire:model.live="filterDisbursed"
+                    class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-3 py-2 text-slate-800 dark:text-white outline-none cursor-pointer">
+                    <option value="ALL">Status: Semua Anggota</option>
+                    <option value="PENDING">Status: Belum Dicairkan</option>
+                    <option value="DISBURSED">Status: Sudah Dicairkan</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl shrink-0">
+                <button wire:click="$set('viewMode', 'SUMMARY')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $viewMode === 'SUMMARY' ? 'bg-white dark:bg-darkCard text-primary dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}">
+                    <i class='bx bx-list-ul mr-1'></i> Ringkas
+                </button>
+                <button wire:click="$set('viewMode', 'DETAILED')"
+                    class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {{ $viewMode === 'DETAILED' ? 'bg-white dark:bg-darkCard text-primary dark:text-indigo-400 shadow-sm' : 'text-slate-500 hover:text-slate-700' }}">
+                    <i class='bx bx-table mr-1'></i> Rincian SHU
+                </button>
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -161,25 +190,55 @@
                         <th class="py-3 px-3">No. Anggota</th>
                         <th class="py-3 px-3">Nama Anggota</th>
                         <th class="py-3 px-3">Unit Kerja</th>
+                        @if($viewMode === 'DETAILED')
+                            <th class="py-3 px-3 text-right">Simpanan Snapshot</th>
+                            <th class="py-3 px-3 text-right">Jasa Simpanan</th>
+                            <th class="py-3 px-3 text-right">Jasa Usaha</th>
+                            <th class="py-3 px-3 text-center">Porsi</th>
+                        @endif
                         <th class="py-3 px-3 text-right">Nominal SHU (Rp)</th>
                         <th class="py-3 px-3 text-center no-print">Status</th>
-                        <th class="py-3 px-3 text-center no-print">Aksi</th>
-                        <th class="py-3 px-3 text-center only-print hidden">Tanda Terima</th>
+                        <th class="py-3 px-3 text-center no-print">Aksi & Kwitansi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
                     @forelse($distributions as $index => $dist)
                         @php $member = $dist->member; @endphp
                         <tr wire:key="disb-{{ $dist->id }}" class="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all">
-                            <td class="py-2.5 px-3 font-mono text-slate-400">{{ $distributions->firstItem() + $index }}</td>
+                            <td class="py-2.5 px-3 font-mono text-slate-400">
+                                {{ method_exists($distributions, 'firstItem') ? $distributions->firstItem() + $index : $index + 1 }}
+                            </td>
                             <td class="py-2.5 px-3 font-mono font-bold text-slate-700 dark:text-slate-300">
                                 {{ $member?->nomorAnggota ?? '-' }}
                             </td>
                             <td class="py-2.5 px-3 font-bold text-slate-800 dark:text-white">
-                                {{ $member?->name ?? '-' }}
+                                <div class="flex items-center gap-2">
+                                    <span>{{ $member?->name ?? '-' }}</span>
+                                    @if($dist->notes)
+                                        <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" title="{{ $dist->notes }}">
+                                            Susulan
+                                        </span>
+                                    @endif
+                                </div>
                             </td>
                             <td class="py-2.5 px-3 text-slate-500">{{ $member?->unitKerja ?? '-' }}</td>
-                            <td class="py-2.5 px-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">
+
+                            @if($viewMode === 'DETAILED')
+                                <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-300">
+                                    Rp {{ number_format((float) $dist->total_simpanan_amount, 0, ',', '.') }}
+                                </td>
+                                <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-300">
+                                    Rp {{ number_format((float) $dist->jasa_simpanan_amount, 0, ',', '.') }}
+                                </td>
+                                <td class="py-2.5 px-3 text-right font-mono text-slate-600 dark:text-slate-300">
+                                    Rp {{ number_format((float) $dist->jasa_usaha_amount, 0, ',', '.') }}
+                                </td>
+                                <td class="py-2.5 px-3 text-center font-mono text-indigo-600 dark:text-indigo-400 font-semibold">
+                                    {{ number_format((float) $dist->portion_percentage, 2, ',', '.') }}%
+                                </td>
+                            @endif
+
+                            <td class="py-2.5 px-3 text-right font-mono font-extrabold text-emerald-600 dark:text-emerald-400 text-sm">
                                 Rp {{ number_format((float) $dist->shu_amount, 0, ',', '.') }}
                             </td>
                             <td class="py-2.5 px-3 text-center no-print">
@@ -197,33 +256,45 @@
                                 @endif
                             </td>
                             <td class="py-2.5 px-3 text-center no-print">
-                                @if($dist->is_disbursed)
-                                    <button wire:click="toggleDisbursed({{ $dist->id }})"
-                                        class="px-3 py-1.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 transition-all">
-                                        Batalkan
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button wire:click="openDetailModal({{ $dist->id }})"
+                                        title="Lihat Rincian Perhitungan SHU Anggota"
+                                        class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-300 transition-all flex items-center gap-1">
+                                        <i class='bx bx-search text-xs'></i> Detail
                                     </button>
-                                @else
-                                    <div class="flex items-center justify-center gap-1">
+
+                                    <button wire:click="openReceiptModal({{ $dist->id }})"
+                                        title="Cetak Kwitansi / Slip Tanda Terima SHU"
+                                        class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:text-indigo-400 transition-all flex items-center gap-1">
+                                        <i class='bx bx-receipt text-xs'></i> Slip SHU
+                                    </button>
+
+                                    @if($dist->is_disbursed)
+                                        <button wire:click="toggleDisbursed({{ $dist->id }})"
+                                            class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 transition-all">
+                                            Batalkan
+                                        </button>
+                                    @else
                                         <button wire:click="disburseSingle({{ $dist->id }})"
                                             title="Cairkan Tunai / Transfer Bank (Catat Pengeluaran)"
-                                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center gap-1">
-                                            <i class='bx bx-check'></i> Tunai/Transfer
+                                            class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center gap-1">
+                                            <i class='bx bx-check'></i> Tunai
                                         </button>
                                         <button wire:click="disburseToSukarela({{ $dist->id }})"
                                             title="Masukan Nominal SHU ke Dompet Simpanan Sukarela Anggota"
-                                            class="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-1">
+                                            class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-1">
                                             <i class='bx bx-wallet'></i> Ke Sukarela
                                         </button>
-                                    </div>
-                                @endif
-                            </td>
-                            <td class="py-2.5 px-3 text-center only-print hidden border-b">
-                                _______________________
+                                    @endif
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400">Tidak ada data distribusi.</td>
+                            <td colspan="{{ $viewMode === 'DETAILED' ? 11 : 7 }}" class="py-12 text-center text-slate-400">
+                                <i class='bx bx-folder-open text-4xl mb-2 block'></i>
+                                Tidak ada data alokasi SHU ditemukan.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -237,12 +308,206 @@
         @endif
     </div>
 
-    {{-- Actions --}}
+    {{-- Modal Detail Breakdown SHU Anggota --}}
+    @if($showDetailModal && $selectedDistribution)
+        <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in no-print"
+            wire:keydown.escape="closeDetailModal">
+            <div class="bg-white dark:bg-darkCard w-full max-w-xl rounded-2xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-5">
+                {{-- Header --}}
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
+                            <i class='bx bx-user-check text-xl'></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-base text-slate-800 dark:text-white">Detail Hak SHU Anggota</h3>
+                            <p class="text-xs text-slate-400">RAT Tahun Buku {{ $selectedDistribution->ratSession?->year }}</p>
+                        </div>
+                    </div>
+                    <button wire:click="closeDetailModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+
+                {{-- Member Meta Info --}}
+                <div class="bg-slate-50 dark:bg-slate-800/60 p-4 rounded-xl space-y-2">
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-medium">Nama Anggota:</span>
+                        <span class="font-bold text-slate-800 dark:text-white text-sm">{{ $selectedDistribution->member?->name }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-medium">Nomor Anggota (NIK):</span>
+                        <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400">{{ $selectedDistribution->member?->nomorAnggota }}</span>
+                    </div>
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-slate-400 font-medium">Unit Kerja / Institusi:</span>
+                        <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $selectedDistribution->member?->unitKerja ?? '-' }}</span>
+                    </div>
+                </div>
+
+                {{-- Calculation Breakdown Cards --}}
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/30">
+                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider block">Snapshot Simpanan</span>
+                        <h4 class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 font-mono mt-1">
+                            Rp {{ number_format((float)$selectedDistribution->total_simpanan_amount, 0, ',', '.') }}
+                        </h4>
+                        <div class="text-[9px] text-indigo-400 mt-1">
+                            Pokok: Rp {{ number_format((float)$selectedDistribution->simpanan_pokok_snapshot, 0, ',', '.') }} | 
+                            Wajib: Rp {{ number_format((float)$selectedDistribution->simpanan_wajib_snapshot, 0, ',', '.') }}
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
+                        <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider block">Porsi & Jasa Simpanan</span>
+                        <h4 class="text-sm font-extrabold text-emerald-700 dark:text-emerald-300 font-mono mt-1">
+                            Rp {{ number_format((float)$selectedDistribution->jasa_simpanan_amount, 0, ',', '.') }}
+                        </h4>
+                        <div class="text-[9px] text-emerald-500 mt-1">
+                            Persentase Porsi: {{ number_format((float)$selectedDistribution->portion_percentage, 4, ',', '.') }}%
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-amber-50/50 dark:bg-amber-950/30 rounded-xl border border-amber-100 dark:border-amber-900/30">
+                        <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">Jasa Usaha / Transaksi</span>
+                        <h4 class="text-sm font-extrabold text-amber-700 dark:text-amber-300 font-mono mt-1">
+                            Rp {{ number_format((float)$selectedDistribution->jasa_usaha_amount, 0, ',', '.') }}
+                        </h4>
+                        <div class="text-[9px] text-amber-500 mt-1">
+                            Tx Snapshot: Rp {{ number_format((float)$selectedDistribution->total_transaksi_amount, 0, ',', '.') }}
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-emerald-600 text-white rounded-xl shadow-md">
+                        <span class="text-[10px] font-bold text-emerald-200 uppercase tracking-wider block">Total SHU Diterima</span>
+                        <h4 class="text-base font-extrabold font-mono mt-1">
+                            Rp {{ number_format((float)$selectedDistribution->shu_amount, 0, ',', '.') }}
+                        </h4>
+                        <div class="text-[9px] text-emerald-100 mt-1">
+                            Status: {{ $selectedDistribution->is_disbursed ? 'Sudah Dicairkan' : 'Belum Dicairkan' }}
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Action Footer --}}
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+                    <button wire:click="openReceiptModal({{ $selectedDistribution->id }})"
+                        class="px-4 py-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl hover:bg-indigo-100 transition-all flex items-center gap-1.5">
+                        <i class='bx bx-receipt text-base'></i> Cetak Slip SHU
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button wire:click="closeDetailModal" class="px-4 py-2 text-xs font-bold text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl">Tutup</button>
+                        @if(!$selectedDistribution->is_disbursed)
+                            <button wire:click="disburseSingle({{ $selectedDistribution->id }}); closeDetailModal();"
+                                class="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl shadow-sm">
+                                Cairkan Sekarang
+                            </button>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Modal Slip Kwitansi SHU Printable --}}
+    @if($showReceiptModal && $selectedReceipt)
+        <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in no-print"
+            wire:keydown.escape="closeReceiptModal">
+            <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-4">
+                {{-- Header --}}
+                <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 no-print">
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-receipt text-indigo-600 text-lg'></i> Preview Slip Kwitansi SHU
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1">
+                            <i class='bx bx-printer text-base'></i> Cetak Slip
+                        </button>
+                        <button wire:click="closeReceiptModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                            <i class='bx bx-x text-2xl'></i>
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Printable Receipt Content --}}
+                <div id="receiptPrintableSection" class="bg-white text-slate-900 p-6 rounded-xl border border-slate-200 font-sans space-y-4 text-xs">
+                    {{-- Kop --}}
+                    <div class="text-center border-b pb-3 border-slate-300">
+                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">{{ config('cooperative.legal_name') }}</h2>
+                        <p class="text-[10px] text-slate-600">{{ config('cooperative.parent_org') }}</p>
+                        <p class="text-[9px] text-slate-500 font-mono mt-0.5">SLIP PEMBERITAHUAN & KWITANSI PENCAIRAN SHU RAT {{ $selectedReceipt->ratSession?->year }}</p>
+                    </div>
+
+                    {{-- Member Metadata --}}
+                    <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <div>
+                            <span class="text-slate-500 block text-[9px]">Nomor Anggota</span>
+                            <span class="font-mono font-bold text-slate-900">{{ $selectedReceipt->member?->nomorAnggota }}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-500 block text-[9px]">Nama Anggota</span>
+                            <span class="font-bold text-slate-900">{{ $selectedReceipt->member?->name }}</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-slate-500 block text-[9px]">Unit Kerja / Institusi</span>
+                            <span class="font-medium text-slate-800">{{ $selectedReceipt->member?->unitKerja ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Breakdown Table --}}
+                    <table class="w-full border-collapse border border-slate-300 text-[10px]">
+                        <thead>
+                            <tr class="bg-slate-100 font-bold uppercase text-slate-700">
+                                <th class="border border-slate-300 p-2 text-left">Rincian SHU</th>
+                                <th class="border border-slate-300 p-2 text-right">Jumlah (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-300 p-2">Jasa Simpanan (Alokasi Modal)</td>
+                                <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                    Rp {{ number_format((float)$selectedReceipt->jasa_simpanan_amount, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="border border-slate-300 p-2">Jasa Usaha / Transaksi (Alokasi Partisipasi)</td>
+                                <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                    Rp {{ number_format((float)$selectedReceipt->jasa_usaha_amount, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                            <tr class="bg-slate-50 font-bold">
+                                <td class="border border-slate-300 p-2 uppercase">TOTAL HAK SHU DITERIMA</td>
+                                <td class="border border-slate-300 p-2 text-right font-mono text-sm text-emerald-700">
+                                    Rp {{ number_format((float)$selectedReceipt->shu_amount, 0, ',', '.') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    {{-- Signatures --}}
+                    <div class="grid grid-cols-2 gap-4 pt-4 text-[10px] text-center">
+                        <div>
+                            <p class="text-slate-500">Penerima (Anggota),</p>
+                            <div class="h-12"></div>
+                            <p class="font-bold border-t border-slate-300 pt-1 text-slate-800">({{ $selectedReceipt->member?->name }})</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-500">Kasir / Bendahara Koperasi,</p>
+                            <div class="h-12"></div>
+                            <p class="font-bold border-t border-slate-300 pt-1 text-slate-800">({{ coop_setting('bendahara_name') }})</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    {{-- Actions Footer --}}
     <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 no-print">
         <div class="flex flex-wrap items-center justify-between gap-3">
             <button wire:click="goBack"
                 class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-2">
-                <i class='bx bx-left-arrow-alt text-base'></i> Kembali ke Alokasi
+                <i class='bx bx-left-arrow-alt text-base'></i> Kembali ke Alokasi SHU
             </button>
 
             @if($stats['pending'] === 0 && $stats['total'] > 0)
@@ -536,7 +801,7 @@
             <div class="bg-white dark:bg-darkCard w-full max-w-lg rounded-2xl p-6 shadow-2xl border border-slate-200 dark:border-slate-700">
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 mb-4">
                     <h3 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
-                        <i class='bx bx-user-plus text-emerald-600 text-xl'></i>
+                        <i class='bx bx-user-plus text-amber-600 text-xl'></i>
                         Tambah Susulan SHU (Anggota Non-Aktif / Ex-Anggota)
                     </h3>
                     <button wire:click="closeAddManualModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
@@ -545,7 +810,7 @@
                 </div>
 
                 <div class="space-y-4">
-                    <div class="p-3 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl border border-emerald-100 dark:border-emerald-800/40 text-xs text-slate-600 dark:text-slate-300">
+                    <div class="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl border border-amber-100 dark:border-amber-800/40 text-xs text-slate-600 dark:text-slate-300">
                         ℹ️ <strong>Pengaman Data:</strong> Menambahkan susulan SHU ini <strong>TIDAK AKAN merubah atau menghitung ulang nominal SHU anggota lain</strong> yang sudah disahkan.
                     </div>
 

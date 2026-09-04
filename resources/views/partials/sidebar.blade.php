@@ -301,16 +301,16 @@
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.setup') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">1. Konfigurasi</span>
                         </a>
-                        <a href="{{ route('admin.rat.setup') }}"
+                        <a href="{{ route('admin.rat.eligibility') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.eligibility') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">2. Anggota</span>
                         </a>
-                        <a href="{{ route('admin.rat.setup') }}"
+                        <a href="{{ route('admin.rat.allocation') }}"
                             class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.allocation') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">3. Alokasi SHU</span>
                         </a>
-                        <a href="{{ route('admin.rat.setup') }}"
-                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.disbursement') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
+                        <a href="{{ route('admin.rat.disbursement') }}"
+                            class="nav-item flex items-center px-2 py-1 rounded-md transition-all group whitespace-nowrap {{ request()->routeIs('admin.rat.disbursement') || request()->routeIs('admin.rat.pencairan') ? 'bg-indigo-50 dark:bg-indigo-500/10 text-primary dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white' }}">
                             <span class="sidebar-text text-[11px] font-medium transition-opacity duration-300">4. Pencairan</span>
                         </a>
                     </div>

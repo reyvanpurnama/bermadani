@@ -22,9 +22,17 @@ class RatAllocation extends Component
         $this->shuService = $shuService;
     }
 
-    public function mount($session)
+    public function mount($session = null)
     {
-        $ratSession = RatSession::findOrFail($session);
+        $ratSession = $session ? RatSession::find($session) : null;
+        if (!$ratSession) {
+            $ratSession = RatSession::latest('year')->first() ?? RatSession::latest('id')->first();
+        }
+
+        if (!$ratSession) {
+            return redirect()->route('admin.rat.setup');
+        }
+
         $this->sessionId = $ratSession->id;
 
         // Auto-run calculation if distributions exist without snapshot columns or if empty
