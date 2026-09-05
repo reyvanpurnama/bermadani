@@ -272,6 +272,25 @@
                         </div>
                     </div>
 
+                    {{-- Total Pencairan (Simpanan + SHU) --}}
+                    @if($member)
+                        @php $mobTotalSimpanan = (float)$member->simpananPokok + (float)$member->simpananWajib; $mobTotalPencairan = $mobTotalSimpanan + (float)$dist->shu_amount; @endphp
+                        <div class="bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20 p-3 rounded-xl border border-amber-200 dark:border-amber-800/50">
+                            <div class="flex items-center gap-1.5 mb-1.5">
+                                <i class='bx bx-calculator text-amber-600 dark:text-amber-400 text-sm'></i>
+                                <span class="text-[9px] font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Total Pencairan (Jika Keluar)</span>
+                            </div>
+                            <div class="flex items-baseline justify-between">
+                                <span class="text-lg font-extrabold text-amber-700 dark:text-amber-300 font-mono">
+                                    Rp {{ number_format($mobTotalPencairan, 0, ',', '.') }}
+                                </span>
+                                <span class="text-[9px] text-amber-500 dark:text-amber-400">
+                                    Simpanan Rp {{ number_format($mobTotalSimpanan, 0, ',', '.') }} + SHU Rp {{ number_format((float) $dist->shu_amount, 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </div>
+                    @endif
+
                     {{-- Mobile Action Buttons Grid --}}
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <button wire:click="openDetailModal({{ $dist->id }})"
@@ -530,6 +549,66 @@
                     </div>
                 </div>
 
+                {{-- TOTAL PENCAIRAN (Simpanan Terkini + SHU) --}}
+                @if($selectedDistribution->member)
+                    @php
+                        $detailMember = $selectedDistribution->member;
+                        $detailSimpananPokok = (float) $detailMember->simpananPokok;
+                        $detailSimpananWajib = (float) $detailMember->simpananWajib;
+                        $detailSimpananSukarela = (float) $detailMember->simpananSukarela;
+                        $detailTotalSimpanan = $detailSimpananPokok + $detailSimpananWajib;
+                        $detailShuAmount = (float) $selectedDistribution->shu_amount;
+                        $detailTotalPencairan = $detailTotalSimpanan + $detailShuAmount;
+                    @endphp
+                    <div class="bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-950/40 dark:via-yellow-950/30 dark:to-orange-950/20 p-4 rounded-xl border-2 border-amber-300 dark:border-amber-700 shadow-sm space-y-3">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-amber-200 dark:bg-amber-800/60 flex items-center justify-center">
+                                <i class='bx bx-calculator text-amber-700 dark:text-amber-300 text-lg'></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-extrabold text-amber-800 dark:text-amber-200 uppercase tracking-wider">Total Pencairan Anggota Keluar</h4>
+                                <p class="text-[9px] text-amber-500 dark:text-amber-400">Simpanan Pokok + Wajib + SHU yang harus dibayarkan</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/70 dark:bg-slate-800/60 rounded-lg p-3 space-y-1.5 text-xs">
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Simpanan Pokok</span>
+                                <span class="font-mono font-bold text-slate-700 dark:text-slate-300">Rp {{ number_format($detailSimpananPokok, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-slate-500">Simpanan Wajib</span>
+                                <span class="font-mono font-bold text-slate-700 dark:text-slate-300">Rp {{ number_format($detailSimpananWajib, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-slate-200 dark:border-slate-700 pt-1.5">
+                                <span class="text-slate-500">Subtotal Simpanan</span>
+                                <span class="font-mono font-bold text-slate-800 dark:text-white">Rp {{ number_format($detailTotalSimpanan, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-emerald-600 dark:text-emerald-400 font-medium">+ SHU RAT {{ $selectedDistribution->ratSession?->year }}</span>
+                                <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400">Rp {{ number_format($detailShuAmount, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-600 dark:bg-amber-700 text-white rounded-lg p-3 flex items-center justify-between">
+                            <div>
+                                <span class="text-[9px] font-bold text-amber-200 uppercase tracking-wider block">TOTAL HARUS DIBAYAR</span>
+                                <span class="text-[9px] text-amber-200">Simpanan + SHU</span>
+                            </div>
+                            <h3 class="text-xl font-extrabold font-mono">
+                                Rp {{ number_format($detailTotalPencairan, 0, ',', '.') }}
+                            </h3>
+                        </div>
+
+                        @if($detailSimpananSukarela > 0)
+                            <div class="text-[10px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                                <i class='bx bx-info-circle'></i>
+                                <span>Catatan: Anggota juga memiliki Simpanan Sukarela sebesar <strong>Rp {{ number_format($detailSimpananSukarela, 0, ',', '.') }}</strong> yang juga harus dikembalikan.</span>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
                 {{-- Action Footer --}}
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-3 border-t border-slate-100 dark:border-slate-700">
                     <button wire:click="openReceiptModal({{ $selectedDistribution->id }})"
@@ -599,29 +678,80 @@
                     <table class="w-full border-collapse border border-slate-300 text-[10px]">
                         <thead>
                             <tr class="bg-slate-100 font-bold uppercase text-slate-700">
-                                <th class="border border-slate-300 p-2 text-left">Rincian SHU</th>
+                                <th class="border border-slate-300 p-2 text-left">Rincian</th>
                                 <th class="border border-slate-300 p-2 text-right">Jumlah (Rp)</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {{-- SHU Section --}}
+                            <tr class="bg-slate-50">
+                                <td class="border border-slate-300 p-2 font-bold text-slate-700" colspan="2">A. RINCIAN SHU</td>
+                            </tr>
                             <tr>
-                                <td class="border border-slate-300 p-2">Jasa Simpanan (Alokasi Modal)</td>
+                                <td class="border border-slate-300 p-2 pl-4">Jasa Simpanan (Alokasi Modal)</td>
                                 <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
                                     Rp {{ number_format((float)$selectedReceipt->jasa_simpanan_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-300 p-2">Jasa Usaha / Transaksi (Alokasi Partisipasi)</td>
+                                <td class="border border-slate-300 p-2 pl-4">Jasa Usaha / Transaksi (Alokasi Partisipasi)</td>
                                 <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
                                     Rp {{ number_format((float)$selectedReceipt->jasa_usaha_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
-                            <tr class="bg-slate-50 font-bold">
-                                <td class="border border-slate-300 p-2 uppercase">TOTAL HAK SHU DITERIMA</td>
+                            <tr class="bg-emerald-50 font-bold">
+                                <td class="border border-slate-300 p-2 pl-4 uppercase text-emerald-800">Total Hak SHU</td>
                                 <td class="border border-slate-300 p-2 text-right font-mono text-sm text-emerald-700">
                                     Rp {{ number_format((float)$selectedReceipt->shu_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
+
+                            {{-- Simpanan Section --}}
+                            @if($selectedReceipt->member)
+                                @php
+                                    $rcptPokok = (float) $selectedReceipt->member->simpananPokok;
+                                    $rcptWajib = (float) $selectedReceipt->member->simpananWajib;
+                                    $rcptSukarela = (float) $selectedReceipt->member->simpananSukarela;
+                                    $rcptTotalSimpanan = $rcptPokok + $rcptWajib;
+                                    $rcptTotalPencairan = $rcptTotalSimpanan + (float)$selectedReceipt->shu_amount;
+                                @endphp
+                                <tr class="bg-slate-50">
+                                    <td class="border border-slate-300 p-2 font-bold text-slate-700" colspan="2">B. SIMPANAN ANGGOTA (Saldo Terkini)</td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-slate-300 p-2 pl-4">Simpanan Pokok</td>
+                                    <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                        Rp {{ number_format($rcptPokok, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="border border-slate-300 p-2 pl-4">Simpanan Wajib</td>
+                                    <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                        Rp {{ number_format($rcptWajib, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                <tr class="bg-indigo-50 font-bold">
+                                    <td class="border border-slate-300 p-2 pl-4 uppercase text-indigo-800">Total Simpanan (Pokok + Wajib)</td>
+                                    <td class="border border-slate-300 p-2 text-right font-mono text-sm text-indigo-700">
+                                        Rp {{ number_format($rcptTotalSimpanan, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+
+                                {{-- Grand Total --}}
+                                <tr class="bg-amber-100 font-bold border-t-2 border-amber-400">
+                                    <td class="border border-amber-300 p-2.5 uppercase text-amber-900 text-[11px]">TOTAL PENCAIRAN (SHU + SIMPANAN)</td>
+                                    <td class="border border-amber-300 p-2.5 text-right font-mono text-base text-amber-900">
+                                        Rp {{ number_format($rcptTotalPencairan, 0, ',', '.') }}
+                                    </td>
+                                </tr>
+                                @if($rcptSukarela > 0)
+                                    <tr class="bg-blue-50">
+                                        <td class="border border-slate-300 p-2 pl-4 text-blue-700 italic" colspan="2">
+                                            * Simpanan Sukarela: Rp {{ number_format($rcptSukarela, 0, ',', '.') }} (dikembalikan terpisah)
+                                        </td>
+                                    </tr>
+                                @endif
+                            @endif
                         </tbody>
                     </table>
 
