@@ -334,15 +334,20 @@ class RatDisbursement extends Component
                 ? (($totalShu / (float) $session->total_member_shu) * 100)
                 : 0;
 
+            $cutoff = $session?->join_date_cutoff?->format('Y-m-d');
+            $simpok = $this->shuService->getMemberSavingsAtCutoff($member, 'POKOK', $cutoff);
+            $simwa = $this->shuService->getMemberSavingsAtCutoff($member, 'WAJIB', $cutoff);
+            $totSimpanan = $simpok + $simwa;
+
             MemberShuDistribution::updateOrCreate(
                 [
                     'rat_session_id' => $this->sessionId,
                     'member_id' => $member->id,
                 ],
                 [
-                    'total_simpanan_amount' => $member->simpananPokok + $member->simpananWajib,
-                    'simpanan_pokok_snapshot' => $member->simpananPokok,
-                    'simpanan_wajib_snapshot' => $member->simpananWajib,
+                    'total_simpanan_amount' => $totSimpanan,
+                    'simpanan_pokok_snapshot' => $simpok,
+                    'simpanan_wajib_snapshot' => $simwa,
                     'portion_percentage' => round($overallPortion, 4),
                     'shu_amount' => $totalShu,
                     'jasa_simpanan_amount' => $this->manualJasaSimpanan,
