@@ -26,28 +26,35 @@
             line-height: 1.05;
         }
 
-        /* Glassmorphism Card Overlay */
+        /* Glassmorphism Card Overlay (0% Opacity) */
         .glass-card-login {
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0);
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
             box-shadow: 
-                inset 0 1.5px 2px 0 rgba(255, 255, 255, 1),
+                inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.8),
                 0 20px 40px -15px rgba(0, 0, 0, 0.12);
             border-radius: 32px;
+            transition: all 0.4s ease;
+        }
+
+        .glass-card-login:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* Glass Input Fields */
         .glass-input {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(212, 212, 216, 0.8);
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             border-radius: 16px;
             transition: all 0.25s ease;
         }
 
         .glass-input:focus-within {
-            background: #ffffff;
+            background: rgba(255, 255, 255, 0.85);
             border-color: #155A6B;
             box-shadow: 0 0 0 4px rgba(21, 90, 107, 0.15);
         }
