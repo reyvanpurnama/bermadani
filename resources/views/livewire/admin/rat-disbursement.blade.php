@@ -181,6 +181,14 @@
             <p class="text-[10px] text-slate-500">{{ $ratSession?->title }} • Tanggal Pelaksanaan: {{ $ratSession?->event_date?->format('d F Y') }}</p>
         </div>
 
+        {{-- Info Cutoff Notice --}}
+        <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-950/40 rounded-xl border border-blue-100 dark:border-blue-800/40 text-xs text-blue-700 dark:text-blue-300 flex items-center gap-2.5 no-print">
+            <i class='bx bx-info-circle text-lg shrink-0 text-blue-600 dark:text-blue-400'></i>
+            <span>
+                <strong>Catatan Saldo Simpanan RAT {{ $ratSession?->year }}:</strong> Nominal simpanan yang dijadikan dasar pembagian SHU adalah <strong>Snapshot Per Cutoff 31 Desember {{ $ratSession?->year }}</strong>. Setoran simpanan anggota di tahun berikutnya (misal tahun 2026) tercatat aman di menu Anggota, dan akan dihitung pada pembagian RAT periode berikutnya.
+            </span>
+        </div>
+
         {{-- Search & Filter Bar --}}
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 mb-4 no-print">
             <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
@@ -469,7 +477,10 @@
                 {{-- Calculation Breakdown Cards --}}
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="p-3 bg-indigo-50/50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/30">
-                        <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider block">Snapshot Simpanan</span>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider block">Simpanan Cutoff RAT {{ $selectedDistribution->ratSession?->year }}</span>
+                            <span class="text-[9px] px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 font-bold">Per 31 Des {{ $selectedDistribution->ratSession?->year }}</span>
+                        </div>
                         <h4 class="text-sm font-extrabold text-indigo-700 dark:text-indigo-300 font-mono mt-1">
                             Rp {{ number_format((float)$selectedDistribution->total_simpanan_amount, 0, ',', '.') }}
                         </h4>
@@ -477,6 +488,15 @@
                             Pokok: Rp {{ number_format((float)$selectedDistribution->simpanan_pokok_snapshot, 0, ',', '.') }} | 
                             Wajib: Rp {{ number_format((float)$selectedDistribution->simpanan_wajib_snapshot, 0, ',', '.') }}
                         </div>
+                        @if($selectedDistribution->member)
+                            @php $currentTotal = $selectedDistribution->member->simpananPokok + $selectedDistribution->member->simpananWajib; @endphp
+                            @if(abs($currentTotal - $selectedDistribution->total_simpanan_amount) > 1)
+                                <div class="mt-2 pt-2 border-t border-indigo-100 dark:border-indigo-900/40 text-[10px] text-slate-600 dark:text-slate-300">
+                                    ℹ️ <strong>Saldo Terkini di Menu Member:</strong> Rp {{ number_format($currentTotal, 0, ',', '.') }}
+                                    <br/><span class="text-[9px] text-slate-400">(Selisih Rp {{ number_format($currentTotal - $selectedDistribution->total_simpanan_amount, 0, ',', '.') }} dari setoran simpanan wajib tahun berjalan yang akan dihitung pada RAT berikutnya).</span>
+                                </div>
+                            @endif
+                        @endif
                     </div>
 
                     <div class="p-3 bg-emerald-50/50 dark:bg-emerald-950/30 rounded-xl border border-emerald-100 dark:border-emerald-900/30">
