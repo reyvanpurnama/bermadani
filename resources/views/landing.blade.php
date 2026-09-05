@@ -3,283 +3,395 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ coop_config('short_name') }} - Portal Koperasi & Retail</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>{{ coop_config('legal_name', 'Koperasi Konsumen Syariah Berkah Solusi Madani') }} — UMBandung</title>
 
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-                    colors: {
-                        primary: '{{ coop_config('theme.primary') }}',
-                        secondary: '#F8FAFC', 
-                        darkBg: '#0f172a',
-                        darkCard: '#1e293b'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=SF+Pro+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Vite Assets -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        .clip-path-slant { clip-path: polygon(20% 0%, 100% 0, 100% 100%, 0% 100%); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .text-apple-headline {
+            letter-spacing: -0.035em;
+            line-height: 1.04;
+        }
+
+        .apple-btn-blue {
+            background-color: #155A6B;
+            color: #ffffff;
+            border-radius: 980px;
+            box-shadow: 0 4px 14px 0 rgba(21, 90, 107, 0.3);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .apple-btn-blue:hover {
+            background-color: #1a6b80;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 18px 0 rgba(21, 90, 107, 0.4);
+            color: #ffffff;
+        }
+
+        /* Glassmorphism CTA Primary (Hero Button - 0% Opacity) */
+        .glass-cta-primary {
+            background: rgba(255, 255, 255, 0) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+            border-radius: 980px !important;
+            box-shadow: 
+                inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.8),
+                0 10px 30px -4px rgba(0, 0, 0, 0.12) !important;
+            color: #0f172a !important;
+            font-weight: 700 !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .glass-cta-primary:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: #ffffff !important;
+            transform: translateY(-2px) scale(1.03) !important;
+            box-shadow: 
+                inset 0 2px 4px 0 rgba(255, 255, 255, 1),
+                0 16px 36px -4px rgba(0, 0, 0, 0.18) !important;
+            color: #155A6B !important;
+        }
+
+        /* Glassmorphism CTA Secondary (0% Opacity) */
+        .glass-cta-secondary {
+            background: rgba(255, 255, 255, 0) !important;
+            backdrop-filter: blur(24px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+            border: 1.5px solid rgba(255, 255, 255, 0.7) !important;
+            border-radius: 980px !important;
+            box-shadow: 
+                inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.6),
+                0 8px 24px -4px rgba(0, 0, 0, 0.08) !important;
+            color: #1e293b !important;
+            font-weight: 700 !important;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .glass-cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            border-color: rgba(255, 255, 255, 0.95) !important;
+            transform: translateY(-2px) scale(1.03) !important;
+            box-shadow: 
+                inset 0 2px 3px 0 rgba(255, 255, 255, 0.9),
+                0 12px 30px -4px rgba(0, 0, 0, 0.14) !important;
+            color: #0f172a !important;
+        }
+
+        .apple-tile {
+            border-radius: 28px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .apple-tile:hover {
+            transform: scale(1.015);
+        }
     </style>
 </head>
-<body class="bg-secondary text-slate-800 antialiased dark:bg-darkBg dark:text-slate-200 font-sans">
+<body class="bg-[#f5f5f7] text-zinc-900 selection:bg-[#155A6B] selection:text-white transition-colors duration-300">
 
-    <nav class="fixed w-full z-50 top-0 start-0 bg-white/90 dark:bg-darkBg/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30">
-                        <i class='bx bxs-cube-alt text-2xl'></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-slate-900 dark:text-white leading-none">{{ config('cooperative.short_name') }}</h1>
-                        <p class="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-0.5">Commerce System</p>
-                    </div>
-                </div>
+    <!-- Apple Frosted Navigation Bar -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-zinc-200/80 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-6 h-12 flex items-center justify-between text-xs">
+            
+            <!-- Official Brand Logo -->
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 font-semibold tracking-tight text-zinc-900 hover:opacity-80 transition-opacity">
+                <img src="{{ asset('images/logo-koperasi.png') }}" alt="Logo Koperasi Bermadani" class="w-6 h-6 object-contain">
+                <span>{{ coop_config('short_name', 'Bermadani') }} — UMBandung</span>
+            </a>
 
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#layanan" class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 transition-colors">Layanan</a>
-                    <a href="webcom.html" class="text-sm font-medium text-slate-600 hover:text-primary dark:text-slate-300 transition-colors">Tentang Kami</a>
-                    
-                    <button id="theme-toggle" class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
-                        <i id="theme-icon" class='bx bx-moon text-xl'></i>
-                    </button>
-                </div>
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-zinc-500 font-medium">
+                <a href="#overview" class="hover:text-zinc-900 transition-colors">Ikhtisar</a>
+                <a href="#features" class="hover:text-zinc-900 transition-colors">Layanan Syariah</a>
+                <a href="#supplier" class="hover:text-zinc-900 transition-colors">Mitra Supplier</a>
+                <a href="#faq" class="hover:text-zinc-900 transition-colors">FAQ</a>
+            </nav>
 
-                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
-                    <i class='bx bx-menu text-2xl'></i>
-                </button>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-darkBg border-t border-slate-200 dark:border-slate-800 shadow-xl absolute w-full left-0 top-20">
-            <div class="flex flex-col p-4 space-y-2">
-                <a href="#layanan" class="block px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors">
-                    Layanan
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <!-- Portal CTA Button -->
+                <a href="{{ route('login') }}" class="apple-btn-blue px-3.5 py-1.5 font-medium text-xs shadow-sm">
+                    Portal Anggota
                 </a>
-                <a href="webcom.html" class="block px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors">
-                    Tentang Kami
-                </a>
-                <button id="theme-toggle-mobile" class="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-primary transition-colors flex items-center gap-2">
-                    <i class='bx bx-moon text-lg'></i> Ganti Tema
-                </button>
             </div>
+
         </div>
-    </nav>
+    </header>
 
-    <section class="relative pt-28 lg:pt-0 min-h-screen flex items-center bg-white dark:bg-darkBg overflow-hidden">
-        <div class="absolute right-0 top-0 w-1/2 h-full bg-slate-50 dark:bg-slate-800/50 clip-path-slant hidden lg:block"></div>
+    <!-- STEVE JOBS STYLE HERO SECTION (Problem-Solving & Human Values) -->
+    <section id="overview" class="min-h-[85dvh] pt-24 pb-16 sm:pt-32 sm:pb-24 md:pt-40 md:pb-28 text-center bg-[#f5f5f7] overflow-hidden relative border-b border-zinc-200 flex items-center justify-center">
+        <!-- 3D Hero Background Graphic (Pure Image - No Overlay) -->
+        <div class="absolute inset-0 bg-[url('/images/hero-bg.jpg')] bg-cover bg-center opacity-100 pointer-events-none transition-transform duration-1000"></div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 grid lg:grid-cols-2 gap-12 items-center">
-            <div class="py-10 lg:py-0 text-center lg:text-left">
-                <h1 class="text-4xl lg:text-6xl font-extrabold text-slate-900 dark:text-white mb-6 leading-tight">
-                    {{ config('cooperative.landing_tagline') }}
-                </h1>
-                <p class="text-lg text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
-                    Nikmati kemudahan berbelanja di minimarket dan layanan simpan pinjam koperasi dalam satu ekosistem digital yang terintegrasi.
-                </p>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 space-y-4 sm:space-y-6 relative z-10 w-full">
+            
+            <!-- Headline -->
+            <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-zinc-900 text-apple-headline tracking-tight max-w-4xl mx-auto break-words leading-[1.1] sm:leading-[1.04]">
+                {{ coop_config('name', 'Koperasi Bermadani') }}
+            </h1>
 
-                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mt-8">
-                    <a href="{{ route('login') }}" class="inline-flex justify-center items-center py-4 px-8 text-base font-bold text-center text-white rounded-full bg-primary hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 shadow-xl shadow-blue-500/30 transition-transform hover:-translate-y-1">
-                        <i class='bx bxs-log-in-circle text-2xl mr-3'></i> Masuk Sistem
-                    </a>
+            <!-- Value Proposition Sub-Headline (Clean Solid Color) -->
+            <p class="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-bold text-[#155A6B] leading-snug max-w-3xl mx-auto">
+                Didesain untuk Ekonomi Kampus UMBandung.
+            </p>
 
-                    <a href="#layanan" class="inline-flex justify-center items-center py-4 px-8 text-base font-bold text-center text-slate-700 bg-white border border-slate-200 rounded-full hover:bg-slate-50 focus:ring-4 focus:ring-slate-100 dark:bg-slate-800 dark:text-white dark:border-slate-700 dark:hover:bg-slate-700 transition-colors">
-                        <i class='bx bx-info-circle text-2xl mr-3'></i> Pelajari Dulu
-                    </a>
-                </div>
+            <!-- Human Benefit Subtext -->
+            <p class="text-xs sm:text-base md:text-lg text-zinc-600 max-w-2xl mx-auto font-normal leading-relaxed px-2 sm:px-0">
+                Wadah resmi civitas akademika UMBandung. Belanja harian di Bermadani Mart, simpanan syariah amanah, dan bagi hasil SHU yang kembali ke kantong kamu.
+            </p>
+
+            <!-- Action Button (Responsive Glassmorphism CTA) -->
+            <div class="pt-4 sm:pt-6 flex justify-center px-4 sm:px-0">
+                <a href="{{ route('login') }}" class="w-full sm:w-auto max-w-xs sm:max-w-none glass-cta-primary px-7 py-3.5 sm:px-9 sm:py-4 text-sm sm:text-base font-bold text-center gap-2">
+                    <span>Masuk Portal</span>
+                    <i class='bx bx-right-arrow-alt text-lg sm:text-xl'></i>
+                </a>
             </div>
 
-            <div class="relative block w-full h-[450px] lg:h-full lg:min-h-[500px] mt-12 lg:mt-0">
-                <div class="absolute top-10 right-10 w-64 h-64 bg-primary/20 rounded-full blur-3xl"></div>
-                <div class="absolute bottom-10 left-10 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl"></div>
-                
-                <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-md px-4">
-                    <div class="bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-6 shadow-2xl text-white mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-500 border border-slate-700/50 relative overflow-hidden group">
-                        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine"></div>
-                        
-                        <div class="flex justify-between items-start mb-8">
-                            <i class='bx bxs-chip text-4xl opacity-80'></i>
-                            <div class="flex items-center gap-2 opacity-80">
-                                <i class='bx bxs-contactless text-2xl'></i>
-                                <span class="text-xs font-mono">NFC</span>
-                            </div>
-                        </div>
-                        <p class="font-mono text-base sm:text-lg tracking-widest mb-1">8800 2024 9988 1234</p>
-                        <div class="flex justify-between items-end mt-4">
-                            <div>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-widest mb-0.5">Pemegang Kartu</p>
-                                <p class="font-bold uppercase tracking-wide text-sm sm:text-base">Aditya Pratama</p>
-                            </div>
-                            <div class="flex items-center gap-1.5">
-                                <div class="w-6 h-6 bg-white/20 rounded flex items-center justify-center"><i class='bx bxs-cube-alt'></i></div>
-                                <span class="font-bold italic text-sm">{{ strtoupper(config('cooperative.short_name')) }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-darkCard rounded-2xl p-5 shadow-xl border border-slate-100 dark:border-slate-700 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-10 h-10 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
-                                <i class='bx bxs-wallet'></i>
-                            </div>
-                            <div>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wide font-semibold">Total Simpanan</p>
-                                <h4 class="font-bold text-lg text-slate-900 dark:text-white">Rp 1.250.000</h4>
-                            </div>
-                        </div>
-                        <div class="flex justify-between text-[10px] text-slate-400 mb-1">
-                            <span>Sisa Plafon Belanja</span>
-                            <span>75%</span>
-                        </div>
-                        <div class="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5">
-                            <div class="bg-emerald-500 h-1.5 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
-        <section class="py-16 bg-gradient-to-r from-indigo-600 to-primary relative overflow-hidden">
+
+    <!-- STEVE JOBS BENTO GRID TILES (Full Dual Light Aesthetics) -->
+    <section id="features" class="py-16 sm:py-24 bg-white text-zinc-900 border-t border-zinc-200 relative overflow-hidden">
         
-        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 24px 24px;"></div>
-        <div class="absolute -right-20 -top-20 w-96 h-96 bg-white opacity-5 rounded-full blur-3xl"></div>
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+            
+            <div class="mb-10 sm:mb-14 text-center md:text-left">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-apple-headline text-zinc-900">
+                    Fasilitas Anggota Bermadani.
+                </h2>
+                <p class="text-xs sm:text-sm text-zinc-600 mt-2 max-w-xl">
+                    Semua layanan dirancang transparan, adil, dan berbasis syariah untuk mendukung keberdayaan ekonomi civitas akademika UMBandung.
+                </p>
+            </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-8">
+            <!-- Bento Grid 6 Columns Layout (Floating Text over 3D Images - No Dark Overlays) -->
+            <div class="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-6">
                 
-                <div class="md:w-2/3">
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-800/50 border border-blue-400/30 text-blue-100 text-[11px] font-bold uppercase tracking-widest mb-4 backdrop-blur-md">
-        <i class='bx bxs-store-alt'></i> Terbuka Untuk Umum
-    </div>
-    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">
-        Punya Produk Sendiri? <br>
-        <span class="text-blue-200">Titip Jual di Sini Aja!</span>
-    </h2>
-    <p class="text-blue-100 text-base md:text-lg max-w-xl leading-relaxed">
-        Kami menerima supplier dari Mahasiswa, UMKM, maupun Umum. Pantau omzet lewat aplikasi, dan cairkan dana penjualan kapan saja.
-    </p>
-</div>
+                <!-- Card 1: Bermadani Mart (3 Cols) -->
+                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl max-lg:rounded-t-3xl lg:rounded-tl-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[22rem] sm:min-h-[26rem] p-6 sm:p-8 lg:col-span-3">
+                    <!-- 3D Illustration Background -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-mart-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
+                    
+                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
 
-                <div class="md:w-1/3 flex justify-center md:justify-end">
-                    <a href="{{ route('supplier.register') }}" class="group inline-flex justify-center items-center py-4 px-8 text-base font-bold text-primary bg-white rounded-full shadow-xl hover:bg-slate-50 transition-all hover:scale-105">
-                        Daftar Jadi Mitra <i class='bx bx-right-arrow-alt text-2xl ml-2 group-hover:translate-x-1 transition-transform'></i>
-                    </a>
+                    <!-- Text Floating Content -->
+                    <div class="relative z-10">
+                        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
+                            Belanja Harian, Untungnya Balik ke Kamu.
+                        </h3>
+                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed max-w-xl">
+                            Belanja kebutuhan harian di minimarket UMBandung. Dapatkan harga khusus anggota & setiap rupiah transaksi diakumulasikan jadi dividen kamu.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Simpanan Syariah (3 Cols) -->
+                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl lg:rounded-tr-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[22rem] sm:min-h-[26rem] p-6 sm:p-8 lg:col-span-3">
+                    <!-- 3D Illustration Background -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-savings-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
+                    
+                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+
+                    <!-- Text Floating Content -->
+                    <div class="relative z-10">
+                        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
+                            Nabung Amanah Tanpa Biaya Admin Siluman.
+                        </h3>
+                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed max-w-xl">
+                            Simpanan Pokok & Wajib berbasis akad Syariah. Bebas potongan bulanan misterius, tercatat transparan, & dipantau langsung dari portal.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 3: Bagi Hasil SHU (2 Cols) -->
+                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl lg:rounded-bl-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
+                    <!-- 3D Illustration Background -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-shu-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
+                    
+                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+
+                    <!-- Text Floating Content -->
+                    <div class="relative z-10">
+                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                            Keuntungan Toko Dibagi ke Anggota.
+                        </h3>
+                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                            Keuntungan usaha minimarket dikembalikan secara adil & proporsional ke seluruh anggota aktif.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 4: Titip Jual Supplier (2 Cols) -->
+                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
+                    <!-- 3D Illustration Background -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-supplier-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
+                    
+                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+
+                    <!-- Text Floating Content -->
+                    <div class="relative z-10">
+                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                            Pajang Produk di Gerai Kampus.
+                        </h3>
+                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                            Wadah wirausaha mahasiswa & UMKM. Titip barang dan pantau omzet penjualan harian secara digital.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 5: Portal Keanggotaan (2 Cols) -->
+                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl max-lg:rounded-b-3xl lg:rounded-br-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
+                    <!-- 3D Illustration Background -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-portal-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
+                    
+                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+
+                    <!-- Text Floating Content -->
+                    <div class="relative z-10">
+                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                            Satu Akun Akses Serba Bisa.
+                        </h3>
+                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                            Pantau simpanan, poin belanja, hingga pencairan SHU dalam satu platform portal anggota yang cepat.
+                        </p>
+                    </div>
                 </div>
 
             </div>
+
         </div>
     </section>
-    <section id="layanan" class="py-20 bg-slate-50 dark:bg-slate-900/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="text-primary font-bold text-sm uppercase tracking-widest">Fasilitas</span>
-                <h2 class="text-3xl font-bold text-slate-900 dark:text-white mt-2">Layanan Terintegrasi</h2>
-                <p class="text-slate-500 mt-2 max-w-2xl mx-auto">Satu kartu keanggotaan untuk akses berbagai fasilitas di lingkungan komunitas.</p>
+
+    <!-- Supplier Banner Section (Full 2400x1792 Uncropped Image + Floating Glassmorphism Overlay) -->
+    <section id="supplier" class="py-16 sm:py-24 bg-[#f5f5f7] relative overflow-hidden border-t border-zinc-200">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            
+            <!-- 3D Storefront Image Container (Strict 2400x1792 / 4:3 Uncropped Aspect Ratio) -->
+            <div class="relative overflow-hidden rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/80 shadow-2xl bg-white aspect-[2400/1792] w-full flex items-center justify-center p-4 sm:p-8 md:p-12">
+                
+                <!-- Full 2400x1792 Uncropped Image Background -->
+                <img src="{{ asset('images/bento/bento-supplier.jpeg') }}" alt="Mitra Supplier UMBandung" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
+
+                <!-- Ambient Subtle Overlay for Depth -->
+                <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
+
+                <!-- Glassmorphism Card Overlay (Pure 0% Opacity Frosted Glass) -->
+                <div class="relative z-10 w-full p-6 sm:p-10 md:p-14 rounded-2xl sm:rounded-3xl bg-white/0 backdrop-blur-2xl border border-white/80 shadow-2xl shadow-black/10 transition-all duration-500 hover:bg-white/10">
+                    
+                    <!-- Content Layout -->
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-10 text-center md:text-left">
+                        
+                        <div class="space-y-3.5 max-w-2xl">
+                            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-900 text-apple-headline tracking-tight leading-tight">
+                                Dapatkan Ribuan Pembeli di Kampus UMBandung.
+                            </h2>
+                            <p class="text-sm sm:text-base md:text-lg text-zinc-800 leading-relaxed font-semibold max-w-xl">
+                                Jangkau mahasiswa, dosen, dan staf UMBandung setiap hari. Pantau stok barang laku dan omzet harian secara transparan dari Dashboard Supplier.
+                            </p>
+                        </div>
+
+                        <!-- Supplier CTA Button -->
+                        <div class="w-full md:w-auto flex-shrink-0">
+                            <a href="{{ route('supplier.register') }}" class="w-full md:w-auto glass-cta-primary px-8 sm:px-10 py-4 sm:py-5 font-bold text-sm sm:text-base shadow-xl flex items-center justify-center gap-3 group/btn">
+                                <span>Daftar Supplier UMKM</span>
+                                <i class='bx bx-right-arrow-alt text-xl sm:text-2xl group-hover/btn:translate-x-1.5 transition-transform duration-300'></i>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all border border-slate-100 dark:border-slate-700 group">
-                    <div class="w-12 h-12 bg-blue-50 dark:bg-blue-900/20 text-primary rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class='bx bx-shopping-bag'></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Minimarket</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Belanja kebutuhan harian dengan harga anggota. Bayar pakai saldo simpanan atau QRIS.</p>
-                </div>
-                <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all border border-slate-100 dark:border-slate-700 group">
-                    <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class='bx bx-money'></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Simpan Pinjam</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Kelola simpanan wajib/sukarela dan ajukan pembiayaan dengan proses yang transparan.</p>
-                </div>
-                <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all border border-slate-100 dark:border-slate-700 group">
-                    <div class="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
-                        <i class='bx bx-store'></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Titip Jual (Supplier)</h3>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">Program wirausaha untuk anggota dan non anggota. Titip produk Anda di minimarket dan pantau penjualannya.</p>
-                </div>
-            </div>
         </div>
     </section>
 
-    <footer class="bg-white dark:bg-darkCard border-t border-slate-200 dark:border-slate-800 py-8">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-2">
-                <div class="w-6 h-6 bg-slate-200 dark:bg-slate-700 rounded flex items-center justify-center text-slate-500 dark:text-slate-300">
-                    <i class='bx bxs-cube-alt text-xs'></i>
-                </div>
-                <span class="text-sm font-bold text-slate-700 dark:text-slate-200">{{ config('cooperative.short_name') }}</span>
+    <!-- FAQ Accordion (Apple Minimalist Style) -->
+    <section id="faq" class="py-16 sm:py-24 bg-white border-t border-zinc-200">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6">
+            
+            <div class="mb-8 sm:mb-12 text-center md:text-left">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-zinc-900 tracking-tight">Frequently Asked Questions</h2>
             </div>
-            <p class="text-xs text-slate-500 dark:text-slate-400">© 2025 Koperasi & Retail Management System.</p>
+
+            <div class="divide-y divide-zinc-200 border-t border-b border-zinc-200">
+                
+                <details class="group py-4 sm:py-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-sm sm:text-base text-zinc-900 list-none gap-4">
+                        <span>Siapa saja yang bisa mendaftar menjadi anggota Koperasi Bermadani?</span>
+                        <i class='bx bx-plus text-lg sm:text-xl text-zinc-500 group-open:rotate-45 transition-transform flex-shrink-0'></i>
+                    </summary>
+                    <p class="mt-3 sm:mt-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                        Seluruh Civitas Academica Universitas Muhammadiyah Bandung (UMBandung) meliputi mahasiswa terdaftar, dosen, serta staf/karyawan kampus.
+                    </p>
+                </details>
+
+                <details class="group py-4 sm:py-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-sm sm:text-base text-zinc-900 list-none gap-4">
+                        <span>Apakah non-anggota bisa berbelanja di Bermadani Mart?</span>
+                        <i class='bx bx-plus text-lg sm:text-xl text-zinc-500 group-open:rotate-45 transition-transform flex-shrink-0'></i>
+                    </summary>
+                    <p class="mt-3 sm:mt-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                        Bisa. Bermadani Mart terbuka untuk umum. Namun, Anggota terdaftar akan memperoleh harga promo khusus anggota dan akumulasi poin dividen SHU.
+                    </p>
+                </details>
+
+                <details class="group py-4 sm:py-6 cursor-pointer">
+                    <summary class="flex justify-between items-center font-bold text-sm sm:text-base text-zinc-900 list-none gap-4">
+                        <span>Bagaimana mekanisme titip jual barang untuk Supplier UMKM?</span>
+                        <i class='bx bx-plus text-lg sm:text-xl text-zinc-500 group-open:rotate-45 transition-transform flex-shrink-0'></i>
+                    </summary>
+                    <p class="mt-3 sm:mt-4 text-xs sm:text-sm text-zinc-600 leading-relaxed">
+                        Calon supplier dapat mengisi formulir pendaftaran supplier, melakukan verifikasi produk dengan pengurus, dan memantau laporan barang laku serta pencairan dana secara transparan melalui Dashboard Supplier.
+                    </p>
+                </details>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Apple Minimalist Footer -->
+    <footer class="bg-[#f5f5f7] text-zinc-500 py-8 sm:py-12 border-t border-zinc-200 text-xs">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div>
+                <p class="font-semibold text-zinc-700 mb-0.5">{{ coop_config('legal_name', 'Koperasi Konsumen Syariah Berkah Solusi Madani') }}</p>
+                <p class="text-[11px] sm:text-xs">Universitas Muhammadiyah Bandung (UMBandung) — Jl. Soekarno-Hatta No.752, Bandung</p>
+            </div>
+            <div class="flex items-center gap-6">
+                <a href="{{ route('login') }}" class="hover:text-zinc-900 transition-colors">Portal Anggota</a>
+                <a href="{{ route('supplier.register') }}" class="hover:text-zinc-900 transition-colors">Supplier</a>
+            </div>
         </div>
     </footer>
-
-    <script>
-    // --- VARIABLE SELECTION ---
-    const html = document.documentElement;
-    const themeIcon = document.getElementById('theme-icon');
-    const themeBtnDesktop = document.getElementById('theme-toggle');
-    const themeBtnMobile = document.getElementById('theme-toggle-mobile');
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    // --- 1. INITIAL CHECK (Saat website dimuat) ---
-    // Cek apakah user pernah pilih dark mode atau settingan laptopnya dark
-    if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        html.classList.add('dark'); 
-        if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
-    } else {
-        html.classList.remove('dark');
-        if(themeIcon) themeIcon.classList.replace('bx-sun', 'bx-moon');
-    }
-
-    // --- 2. FUNGSI GANTI TEMA (Dipakai tombol desktop & mobile) ---
-    function toggleTheme() {
-        html.classList.toggle('dark');
-        if(html.classList.contains('dark')) {
-            if(themeIcon) themeIcon.classList.replace('bx-moon', 'bx-sun');
-            localStorage.setItem('color-theme', 'dark');
-        } else {
-            if(themeIcon) themeIcon.classList.replace('bx-sun', 'bx-moon');
-            localStorage.setItem('color-theme', 'light');
-        }
-    }
-
-    // Pasang Event Listener ke Tombol Desktop
-    if(themeBtnDesktop) {
-        themeBtnDesktop.addEventListener('click', toggleTheme);
-    }
-
-    // Pasang Event Listener ke Tombol Mobile (Kalau ada)
-    if(themeBtnMobile) {
-        themeBtnMobile.addEventListener('click', toggleTheme);
-    }
-
-    // --- 3. LOGIC MOBILE MENU (Hamburger) ---
-    if(mobileBtn && mobileMenu) {
-        mobileBtn.addEventListener('click', () => {
-            // Buka/Tutup Menu
-            mobileMenu.classList.toggle('hidden');
-            
-            // Ganti Icon Hamburger jadi X (Silang) biar keren
-            const icon = mobileBtn.querySelector('i');
-            if (mobileMenu.classList.contains('hidden')) {
-                icon.classList.replace('bx-x', 'bx-menu');
-            } else {
-                icon.classList.replace('bx-menu', 'bx-x');
-            }
-        });
-    }
-</script>
 </body>
 </html>
