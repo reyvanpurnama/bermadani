@@ -89,7 +89,7 @@
             <span class="font-bold tracking-tight text-[11px] sm:text-xs truncate max-w-[170px] sm:max-w-none">{{ coop_config('short_name', 'Bermadani') }} — UMBandung</span>
         </a>
 
-        <a href="{{ route('home') }}" class="inline-flex items-center gap-1 sm:gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs font-semibold bg-white/70 backdrop-blur-md border border-white/90 text-zinc-700 hover:text-zinc-900 hover:bg-white shadow-sm transition-all">
+        <a href="{{ route('home') }}" class="glass-cta-primary px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold gap-1 sm:gap-1.5">
             <i class='bx bx-left-arrow-alt text-base'></i>
             <span><span class="hidden sm:inline">Kembali ke </span>Beranda</span>
         </a>
