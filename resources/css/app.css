@@ -115,3 +115,8 @@ html {
     color: #0f172a !important;
 }
 
+/* Responsive SVG Inverted Cutout Window */
+.hero-cutout-window {
+    clip-path: url(#hero-cutout-shape);
+    -webkit-clip-path: url(#hero-cutout-shape);
+}
