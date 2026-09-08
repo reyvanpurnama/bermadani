@@ -136,13 +136,29 @@ class ShuCalculationService
      */
     public function calculateSummary(RatSession $session): array
     {
-        $members = $this->getEligibleMembers($session);
-        $eligible = $members->where('is_eligible', true);
+        $hasDistributions = MemberShuDistribution::where('rat_session_id', $session->id)->exists();
 
-        $totalSimpok = $eligible->sum('simpanan_pokok');
-        $totalSimwa = $eligible->sum('simpanan_wajib');
-        $totalSimpanan = $eligible->sum('total_simpanan');
-        $totalTransaksi = $eligible->sum('total_transaksi');
+        if ($session->isFinalized() || $hasDistributions) {
+            $distQuery = MemberShuDistribution::where('rat_session_id', $session->id);
+            $eligibleQuery = (clone $distQuery)->where('shu_amount', '>', 0);
+
+            $eligibleCount = $eligibleQuery->count();
+            $totalMembers = $distQuery->count();
+            $totalSimpok = (float) $eligibleQuery->sum('simpanan_pokok_snapshot');
+            $totalSimwa = (float) $eligibleQuery->sum('simpanan_wajib_snapshot');
+            $totalSimpanan = (float) $eligibleQuery->sum('total_simpanan_amount');
+            $totalTransaksi = (float) $eligibleQuery->sum('total_transaksi_amount');
+        } else {
+            $members = $this->getEligibleMembers($session);
+            $eligible = $members->where('is_eligible', true);
+
+            $eligibleCount = $eligible->count();
+            $totalMembers = $members->count();
+            $totalSimpok = $eligible->sum('simpanan_pokok');
+            $totalSimwa = $eligible->sum('simpanan_wajib');
+            $totalSimpanan = $eligible->sum('total_simpanan');
+            $totalTransaksi = $eligible->sum('total_transaksi');
+        }
 
         $totalNetProfit = (float) $session->total_net_profit;
         $totalMemberShu = (float) $session->total_member_shu;
@@ -162,8 +178,8 @@ class ShuCalculationService
         $danaSosialPool = round($totalMemberShu * ($sosPct / 100), 2);
 
         return [
-            'eligibleCount' => $eligible->count(),
-            'totalMembers' => $members->count(),
+            'eligibleCount' => $eligibleCount,
+            'totalMembers' => $totalMembers,
             'totalSimpok' => $totalSimpok,
             'totalSimwa' => $totalSimwa,
             'totalSimpanan' => max(1, $totalSimpanan), // avoid div by 0
