@@ -3,44 +3,61 @@
 @section('title', 'Batch Konsinyasi')
 
 @section('content')
-    <div class="space-y-6">
-        {{-- Header with Back Button --}}
+    <div class="max-w-6xl mx-auto space-y-6">
+
+        {{-- Top Navigation Header --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
                 <a href="{{ route('supplier.dashboard') }}" 
-                    class="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-emerald-600 dark:text-slate-400 dark:hover:text-emerald-400 mb-2 transition-colors group">
+                    class="inline-flex items-center gap-1.5 text-xs font-bold text-zinc-500 hover:text-[#155A6B] dark:text-zinc-400 dark:hover:text-teal-400 mb-1.5 transition-colors group">
                     <i class='bx bx-arrow-back text-base group-hover:-translate-x-1 transition-transform'></i>
-                    Kembali ke Dashboard
+                    Kembali ke Dasbor
                 </a>
-                <h1 class="text-xl font-bold text-slate-900 dark:text-white">Riwayat Stok & Pengiriman</h1>
-                <p class="text-[11px] text-slate-500 mt-0.5">Daftar batch konsinyasi dan histori pengiriman barang Anda</p>
+                <h1 class="text-2xl font-black text-zinc-900 dark:text-white tracking-tight">Riwayat Stok & Batch Pengiriman</h1>
+                <p class="text-xs text-zinc-500 dark:text-zinc-400 font-medium mt-0.5">Daftar batch konsinyasi dan histori pengiriman barang Anda ke minimarket</p>
             </div>
             <a href="{{ route('supplier.restock.create') }}"
-                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl text-sm transition-colors shadow-sm shadow-emerald-500/20">
+                class="inline-flex items-center gap-2 bg-[#155A6B] hover:bg-[#166072] text-white font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-md shadow-[#155A6B]/20">
                 <i class='bx bx-package text-lg'></i> Buat Request Pengiriman
             </a>
         </div>
 
         @if(session('success'))
-        <div class="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-3">
-            <i class='bx bx-check-circle text-xl'></i>
-            <span class="text-sm font-medium">{{ session('success') }}</span>
+        <div class="bg-teal-50 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 text-teal-800 dark:text-teal-300 px-4 py-3 rounded-2xl flex items-center gap-3">
+            <i class='bx bx-check-circle text-xl text-[#155A6B] dark:text-teal-400'></i>
+            <span class="text-xs font-semibold">{{ session('success') }}</span>
         </div>
         @endif
 
         @if(session('error'))
-        <div class="bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-400 px-4 py-3 rounded-xl flex items-center gap-3">
-            <i class='bx bx-error-circle text-xl'></i>
-            <span class="text-sm font-medium">{{ session('error') }}</span>
+        <div class="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300 px-4 py-3 rounded-2xl flex items-center gap-3">
+            <i class='bx bx-error-circle text-xl text-rose-600 dark:text-rose-400'></i>
+            <span class="text-xs font-semibold">{{ session('error') }}</span>
         </div>
         @endif
 
-        {{-- Batch List --}}
-        <div
-            class="bg-white dark:bg-darkCard rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+        {{-- Info Box for REQUESTED batches --}}
+        @if(isset($requestedCount) && $requestedCount > 0)
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border border-blue-200/80 dark:border-blue-800/50 rounded-2xl p-4 sm:p-5 shadow-sm">
+                <div class="flex gap-3.5 items-start">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                        <i class='bx bx-truck text-2xl'></i>
+                    </div>
+                    <div>
+                        <h4 class="font-extrabold text-blue-900 dark:text-blue-200 text-sm">Ada {{ $requestedCount }} permintaan stok menunggu pengiriman!</h4>
+                        <p class="text-xs text-blue-700 dark:text-blue-300 mt-1 font-medium leading-relaxed">
+                            Silakan kirim barang ke minimarket {{ config('cooperative.name') }} sesuai jumlah yang diminta. Setelah tim minimarket mengkonfirmasi penerimaan, status batch akan otomatis berubah menjadi "Aktif".
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        {{-- Batch List Main Container --}}
+        <div class="rounded-3xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl border border-zinc-200/80 dark:border-zinc-800/80 shadow-xl overflow-hidden">
 
             {{-- Mobile Card View --}}
-            <div class="sm:hidden divide-y divide-slate-100 dark:divide-slate-700">
+            <div class="sm:hidden divide-y divide-zinc-200/60 dark:divide-zinc-800/60">
                 @forelse($batches as $batch)
                     @php
                         $totalRequested = $batch->items->sum('initialQty');
@@ -52,227 +69,183 @@
                         <div class="flex items-start justify-between gap-3 mb-2">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h6 class="font-bold text-slate-900 dark:text-white text-[13px]">#{{ $batch->batchCode }}
-                                    </h6>
+                                    <h6 class="font-bold text-zinc-900 dark:text-white text-sm">#{{ $batch->batchCode }}</h6>
                                     @if($batch->status === 'REQUESTED')
-                                        <span
-                                            class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse">
-                                            Perlu Dikirim
+                                        <span class="bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase animate-pulse">
+                                            Perlu Kirim
                                         </span>
                                     @elseif($batch->status === 'ACTIVE')
-                                        <span
-                                            class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
+                                        <span class="bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase">
                                             Aktif
                                         </span>
                                     @elseif($batch->status === 'PENDING_SETTLEMENT')
-                                        <span
-                                            class="bg-amber-50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase">
-                                            Siap Bayar
+                                        <span class="bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase">
+                                            Siap Cair
                                         </span>
                                     @elseif($batch->status === 'SETTLED')
-                                        <span
-                                            class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2 py-0.5 rounded text-[9px] font-bold uppercase"
-                                            title="Dibayar {{ $batch->settledAt ? $batch->settledAt->format('d M Y H:i') : '-' }}">
+                                        <span class="bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300 border border-teal-200 dark:border-teal-800/50 px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase">
                                             ✓ Lunas
                                         </span>
                                     @endif
                                 </div>
-                                <p class="text-[10px] text-slate-500 mt-0.5">{{ $batch->created_at->format('d M Y H:i') }}</p>
+                                <p class="text-[10px] font-semibold text-zinc-400 mt-0.5">{{ $batch->created_at->format('d M Y H:i') }}</p>
                             </div>
-                            <span class="font-bold text-emerald-600 dark:text-emerald-400 text-[13px]">
+                            <span class="font-black text-[#155A6B] dark:text-teal-400 text-sm">
                                 Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
                             </span>
                         </div>
-                        {{-- Product list with images --}}
-                        <div class="flex flex-wrap gap-2 mb-2">
+
+                        {{-- Product List Snippet --}}
+                        <div class="flex flex-wrap gap-2 my-2.5">
                             @foreach($batch->items->take(3) as $item)
-                                <div class="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg px-2 py-1">
-                                    @if($item->product->image)
+                                <div class="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/60 rounded-xl px-2.5 py-1 border border-zinc-200/50 dark:border-zinc-700/50">
+                                    @if(!empty($item->product->image))
                                         <img src="{{ asset('storage/' . $item->product->image) }}" alt="{{ $item->product->name }}"
-                                            class="w-8 h-8 rounded object-cover">
+                                            class="w-7 h-7 rounded-lg object-cover">
                                     @else
-                                        <div
-                                            class="w-8 h-8 rounded bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400">
-                                            <i class='bx bx-image text-sm'></i>
+                                        <div class="w-7 h-7 rounded-lg bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center text-zinc-400">
+                                            <i class='bx bx-image text-xs'></i>
                                         </div>
                                     @endif
-                                    <span
-                                        class="text-[11px] text-slate-700 dark:text-slate-300 max-w-[100px] truncate">{{ $item->product->name ?? '-' }}</span>
+                                    <span class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300 max-w-[110px] truncate">{{ $item->product->name ?? '-' }}</span>
                                 </div>
                             @endforeach
                             @if($batch->items->count() > 3)
-                                <span class="text-[10px] text-slate-400 self-center">+{{ $batch->items->count() - 3 }}
-                                    lainnya</span>
+                                <span class="text-[10px] text-zinc-400 font-bold self-center">+{{ $batch->items->count() - 3 }} lainnya</span>
                             @endif
                         </div>
-                        <div class="flex items-center gap-4 text-[11px]">
-                            <span class="text-slate-500">Diminta: <strong
-                                    class="text-slate-900 dark:text-white">{{ $totalRequested }}</strong></span>
+
+                        <div class="flex items-center gap-3 text-[11px] pt-1">
+                            <span class="text-zinc-500 font-medium">Diminta: <strong class="text-zinc-900 dark:text-white font-extrabold">{{ $totalRequested }}</strong></span>
                             @if($batch->status !== 'REQUESTED')
                                 @php
                                     $totalSold = $batch->items->sum('soldQty');
                                     $totalReturned = $batch->items->sum('returnedQty');
                                     $totalRemaining = $batch->items->sum('remainingQty');
                                 @endphp
-                                <span class="text-slate-500">Terjual:
-                                    <strong class="text-emerald-600">{{ $totalSold }}</strong>
-                                </span>
+                                <span class="text-zinc-500 font-medium">Terjual: <strong class="text-teal-600 font-extrabold">{{ $totalSold }}</strong></span>
                                 @if($totalReturned > 0)
-                                    <span class="text-slate-500">Retur:
-                                        <strong class="text-rose-600">{{ $totalReturned }}</strong>
-                                    </span>
+                                    <span class="text-zinc-500 font-medium">Retur: <strong class="text-rose-600 font-extrabold">{{ $totalReturned }}</strong></span>
                                 @endif
-                                <span class="text-slate-500">Sisa:
-                                    <strong class="text-blue-600">{{ $totalRemaining }}</strong>
-                                </span>
-                                @if($hasDiscrepancy)
-                                    <span class="text-red-600 font-bold">(-{{ $totalDamaged }} selisih)</span>
-                                @endif
+                                <span class="text-zinc-500 font-medium">Sisa: <strong class="text-blue-600 font-extrabold">{{ $totalRemaining }}</strong></span>
                             @endif
                         </div>
                     </div>
                 @empty
-                    <div class="p-8 text-center text-slate-500 dark:text-slate-400">
-                        <div
-                            class="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-2xl text-slate-300 dark:text-slate-600 mb-3 mx-auto">
-                            <i class='bx bx-archive-in'></i>
-                        </div>
-                        <p class="font-medium">Belum ada batch konsinyasi</p>
-                        <p class="text-[11px] mt-1">Batch akan muncul ketika koperasi meminta stok produk Anda</p>
+                    <div class="p-10 text-center text-zinc-400">
+                        <i class='bx bx-archive-in text-5xl mb-2 text-zinc-300 dark:text-zinc-700'></i>
+                        <p class="text-xs font-semibold">Belum ada riwayat batch pengiriman.</p>
                     </div>
                 @endforelse
             </div>
 
+            {{-- Desktop Table View --}}
             <div class="hidden sm:block overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
+                    <thead class="bg-zinc-50/80 dark:bg-zinc-800/40 border-b border-zinc-200/80 dark:border-zinc-800/80">
                         <tr>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Batch</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider">Produk</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Diminta</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Terjual</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Retur</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Sisa</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
-                                Status</th>
-                            <th class="px-6 py-3 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">
-                                Pendapatan</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Kode Batch</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Produk</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Diminta</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Terjual</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Retur</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Sisa</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Status</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-right">Pendapatan Anda</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tbody class="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-xs">
                         @forelse($batches as $batch)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                            <tr class="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition-colors">
                                 <td class="px-6 py-4">
                                     <div>
-                                        <h6 class="font-bold text-slate-900 dark:text-white text-[13px]">
-                                            #{{ $batch->batchCode }}</h6>
-                                        <p class="text-[10px] text-slate-500">{{ $batch->created_at->format('d M Y H:i') }}</p>
+                                        <h6 class="font-bold text-zinc-900 dark:text-white text-xs">#{{ $batch->batchCode }}</h6>
+                                        <p class="text-[10px] font-semibold text-zinc-400 mt-0.5">{{ $batch->created_at->format('d M Y H:i') }}</p>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">
                                     @foreach($batch->items->take(2) as $item)
-                                        <div class="text-[12px] text-slate-700 dark:text-slate-300">
+                                        <div class="font-semibold text-zinc-800 dark:text-zinc-200">
                                             {{ $item->product->name ?? '-' }}
                                         </div>
                                     @endforeach
                                     @if($batch->items->count() > 2)
-                                        <span class="text-[10px] text-slate-400">+{{ $batch->items->count() - 2 }} lainnya</span>
+                                        <span class="text-[10px] font-bold text-zinc-400">+{{ $batch->items->count() - 2 }} lainnya</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-4 text-center font-extrabold text-zinc-900 dark:text-white">
                                     @php
                                         $totalRequested = $batch->items->sum('initialQty');
                                         $totalDamaged = $batch->items->sum('damagedQty');
                                         $hasDiscrepancy = $totalDamaged > 0;
                                     @endphp
-                                    <span class="font-bold text-slate-900 dark:text-white">{{ $totalRequested }}</span>
+                                    {{ $totalRequested }}
                                     @if($hasDiscrepancy)
-                                        <div class="text-[9px] text-red-600 dark:text-red-400 mt-0.5" title="Rusak/hilang/tidak layak jual">
+                                        <div class="text-[9px] font-extrabold text-rose-600 dark:text-rose-400 mt-0.5" title="Rusak/hilang">
                                             -{{ $totalDamaged }} selisih
                                         </div>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @php
-                                        $totalSold = $batch->items->sum('soldQty');
-                                    @endphp
+                                    @php $totalSold = $batch->items->sum('soldQty'); @endphp
                                     @if($batch->status === 'REQUESTED')
-                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                        <span class="text-zinc-400 font-medium text-xs">-</span>
                                     @else
-                                        <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ $totalSold }}</span>
+                                        <span class="font-extrabold text-teal-600 dark:text-teal-400">{{ $totalSold }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @php
-                                        $totalReturned = $batch->items->sum('returnedQty');
-                                    @endphp
+                                    @php $totalReturned = $batch->items->sum('returnedQty'); @endphp
                                     @if($batch->status === 'REQUESTED')
-                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                        <span class="text-zinc-400 font-medium text-xs">-</span>
                                     @elseif($totalReturned > 0)
-                                        <span class="font-bold text-rose-600 dark:text-rose-400">{{ $totalReturned }}</span>
+                                        <span class="font-extrabold text-rose-600 dark:text-rose-400">{{ $totalReturned }}</span>
                                     @else
-                                        <span class="text-slate-400">0</span>
+                                        <span class="text-zinc-400 font-semibold">0</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    @php
-                                        $totalRemaining = $batch->items->sum('remainingQty');
-                                    @endphp
+                                    @php $totalRemaining = $batch->items->sum('remainingQty'); @endphp
                                     @if($batch->status === 'REQUESTED')
-                                        <span class="text-[11px] text-slate-400 italic">-</span>
+                                        <span class="text-zinc-400 font-medium text-xs">-</span>
                                     @else
-                                        <span class="font-bold text-blue-600 dark:text-blue-400">{{ $totalRemaining }}</span>
+                                        <span class="font-extrabold text-blue-600 dark:text-blue-400">{{ $totalRemaining }}</span>
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     @if($batch->status === 'REQUESTED')
-                                        <span
-                                            class="bg-blue-50 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1 animate-pulse">
-                                            <i class='bx bx-time-five'></i> Perlu Dikirim
+                                        <span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase animate-pulse">
+                                            <i class='bx bx-time-five'></i> Perlu Kirim
                                         </span>
                                     @elseif($batch->status === 'ACTIVE')
-                                        <span
-                                            class="bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
+                                        <span class="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 dark:bg-indigo-950/50 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/50 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase">
                                             <i class='bx bx-store'></i> Aktif
                                         </span>
                                     @elseif($batch->status === 'PENDING_SETTLEMENT')
-                                        <span
-                                            class="bg-amber-50 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
-                                            <i class='bx bx-wallet'></i> Siap Bayar
+                                        <span class="inline-flex items-center gap-1 bg-amber-50 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase">
+                                            <i class='bx bx-wallet'></i> Siap Cair
                                         </span>
                                     @elseif($batch->status === 'SETTLED')
                                         <div class="flex flex-col items-center gap-0.5">
-                                            <span
-                                                class="bg-emerald-50 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wide inline-flex items-center gap-1">
+                                            <span class="inline-flex items-center gap-1 bg-teal-50 text-teal-700 dark:bg-teal-950/50 dark:text-teal-300 border border-teal-200 dark:border-teal-800/50 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase">
                                                 <i class='bx bx-check-circle'></i> Lunas
                                             </span>
                                             @if($batch->settledAt)
-                                                <span class="text-[9px] text-slate-400 italic">{{ $batch->settledAt->format('d M Y H:i') }}</span>
+                                                <span class="text-[9px] text-zinc-400 font-semibold">{{ $batch->settledAt->format('d M Y H:i') }}</span>
                                             @endif
                                         </div>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <span class="font-bold text-emerald-600 dark:text-emerald-400 text-[13px]">
-                                        Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
-                                    </span>
+                                <td class="px-6 py-4 text-right font-extrabold text-[#155A6B] dark:text-teal-400">
+                                    Rp {{ number_format($batch->payableAmount ?? 0, 0, ',', '.') }}
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                                <td colspan="8" class="px-6 py-12 text-center text-zinc-400">
                                     <div class="flex flex-col items-center justify-center">
-                                        <div
-                                            class="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-3xl text-slate-300 dark:text-slate-600 mb-4">
-                                            <i class='bx bx-archive-in'></i>
-                                        </div>
-                                        <p class="font-medium">Belum ada batch konsinyasi</p>
-                                        <p class="text-[12px] mt-1">Batch akan muncul ketika koperasi meminta stok produk Anda
-                                        </p>
+                                        <i class='bx bx-archive-in text-5xl mb-2 text-zinc-300 dark:text-zinc-700'></i>
+                                        <p class="text-xs font-semibold">Belum ada batch konsinyasi.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -282,29 +255,10 @@
             </div>
 
             @if($batches->hasPages())
-                <div class="px-6 py-4 border-t border-slate-100 dark:border-slate-700">
+                <div class="px-6 py-4 border-t border-zinc-200/60 dark:border-zinc-800/60">
                     {{ $batches->links() }}
                 </div>
             @endif
         </div>
-
-        {{-- Info Box for REQUESTED batches --}}
-        @if($requestedCount > 0)
-            <div class="bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 rounded-xl p-4">
-                <div class="flex gap-3">
-                    <div class="flex-shrink-0">
-                        <i class='bx bx-info-circle text-2xl text-blue-600 dark:text-blue-400'></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-blue-800 dark:text-blue-300 text-[14px]">Ada {{ $requestedCount }} permintaan
-                            stok menunggu!</h4>
-                        <p class="text-[12px] text-blue-700 dark:text-blue-400 mt-1">
-                            Silakan kirim barang ke {{ config('cooperative.name') }} sesuai jumlah yang diminta. Setelah barang diterima, status
-                            akan berubah menjadi "Aktif".
-                        </p>
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
 @endsection
