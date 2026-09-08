@@ -43,9 +43,13 @@
                     </div>
                 </div>
 
-                <!-- Crisp Bottom 3D Frame (Unobscured 100% full visual) -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
-                    <img src="{{ asset('images/bento/bento-supplier-43.jpeg') }}" alt="Pendaftaran SKU Supplier" class="w-full h-full object-cover">
+                <!-- Clean Frame Shell Placeholder -->
+                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-amber-50/50 via-zinc-50 to-orange-50/30 border border-amber-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-amber-600 text-xl mb-2">
+                        <i class='bx bx-id-card'></i>
+                    </div>
+                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame SKU Digital</span>
+                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Formulir & Katalog Supplier</span>
                 </div>
             </div>
 
@@ -67,9 +71,13 @@
                     </div>
                 </div>
 
-                <!-- Crisp Bottom 3D Frame -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
-                    <img src="{{ asset('images/bento/bento-mart-43.jpeg') }}" alt="Penjualan POS Kampus" class="w-full h-full object-cover">
+                <!-- Clean Frame Shell Placeholder -->
+                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-teal-50/50 via-zinc-50 to-emerald-50/30 border border-teal-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#155A6B] text-xl mb-2">
+                        <i class='bx bx-store-alt'></i>
+                    </div>
+                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame Display POS Toko</span>
+                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Kasir & Barcode Scanner Kampus</span>
                 </div>
             </div>
 
@@ -91,9 +99,13 @@
                     </div>
                 </div>
 
-                <!-- Crisp Bottom 3D Frame -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
-                    <img src="{{ asset('images/bento/bento-portal-43.jpeg') }}" alt="Dashboard Sales Supplier" class="w-full h-full object-cover">
+                <!-- Clean Frame Shell Placeholder -->
+                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-purple-50/50 via-zinc-50 to-indigo-50/30 border border-purple-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-purple-600 text-xl mb-2">
+                        <i class='bx bx-line-chart'></i>
+                    </div>
+                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame Dashboard Sales</span>
+                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Monitoring Mutasi & Omzet 24/7</span>
                 </div>
             </div>
 

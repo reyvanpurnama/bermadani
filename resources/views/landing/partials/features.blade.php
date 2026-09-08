@@ -98,9 +98,13 @@
                             </p>
                         </div>
                         
-                        <!-- Unobscured Crisp 3D Image Container -->
-                        <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
-                            <img src="{{ asset('images/bento/bento-mart-43.jpeg') }}" alt="Bermadani Mart" class="w-full h-full object-cover">
+                        <!-- Empty Visual Frame Placeholder -->
+                        <div class="w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-teal-50/50 via-zinc-50 to-emerald-50/30 border border-teal-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group">
+                            <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#155A6B] text-2xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                                <i class='bx bx-shopping-bag'></i>
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 tracking-tight">Visual Display Bermadani Mart</span>
+                            <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Frame Pratinjau POS & Retail Kampus</span>
                         </div>
 
                         <!-- Key Metric Pills -->
@@ -130,9 +134,13 @@
                             </p>
                         </div>
 
-                        <!-- Unobscured Crisp 3D Image Container -->
-                        <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
-                            <img src="{{ asset('images/bento/bento-savings-43.jpeg') }}" alt="Simpanan Syariah" class="w-full h-full object-cover">
+                        <!-- Empty Visual Frame Placeholder -->
+                        <div class="w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-blue-50/50 via-zinc-50 to-teal-50/30 border border-blue-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group">
+                            <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-600 text-2xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                                <i class='bx bx-vault'></i>
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 tracking-tight">Visual Display Simpanan Syariah</span>
+                            <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Frame Pratinjau Portal Simpanan & Ledger</span>
                         </div>
 
                         <!-- Key Metric Pills -->
@@ -162,9 +170,13 @@
                             </p>
                         </div>
 
-                        <!-- Unobscured Crisp 3D Image Container -->
-                        <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
-                            <img src="{{ asset('images/bento/bento-shu-43.jpeg') }}" alt="Bagi Hasil SHU" class="w-full h-full object-cover">
+                        <!-- Empty Visual Frame Placeholder -->
+                        <div class="w-full aspect-[16/9] rounded-2xl bg-gradient-to-br from-purple-50/50 via-zinc-50 to-indigo-50/30 border border-purple-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group">
+                            <div class="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-purple-600 text-2xl mb-2 group-hover:scale-110 transition-transform duration-300">
+                                <i class='bx bx-pie-chart-alt-2'></i>
+                            </div>
+                            <span class="text-xs font-bold text-zinc-700 tracking-tight">Visual Display Dividen SHU</span>
+                            <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Frame Pratinjau Kalkulasi Bagi Hasil SHU</span>
                         </div>
 
                         <!-- Key Metric Pills -->
