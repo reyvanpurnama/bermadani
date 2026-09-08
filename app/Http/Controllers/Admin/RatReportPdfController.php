@@ -16,11 +16,8 @@ class RatReportPdfController extends Controller
             ->where('rat_session_id', $session->id)
             ->where('shu_amount', '>', 0)
             ->get()
-            ->filter(function ($dist) {
-                return $dist->member && $dist->member->status === 'ACTIVE' && $dist->member->isMemberKoperasi;
-            })
             ->sortBy(function ($dist) {
-                return $dist->member?->name ?? 'ZZZ';
+                return strtolower($dist->member?->name ?? 'zzz');
             })
             ->values();
 
