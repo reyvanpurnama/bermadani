@@ -22,26 +22,26 @@
             <!-- Background Image Graphic -->
             <img src="{{ asset('images/hero-landscape.jpeg') }}" alt="Strategic Advantages" class="absolute inset-0 w-full h-full object-cover opacity-35 filter saturate-150">
             
-            <!-- Ambient Dark Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-zinc-950/30"></div>
+            <!-- Ambient Dark Overlay (Darker for maximum text contrast) -->
+            <div class="absolute inset-0 bg-gradient-to-b from-zinc-950/85 via-zinc-950/70 to-zinc-950/90 pointer-events-none"></div>
 
-            <!-- Top Metric Stats Bar -->
-            <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 pb-8 border-b border-white/10">
-                <div class="space-y-0.5">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">1,200+</p>
-                    <p class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">Civitas Akademika</p>
+            <!-- Top Metric Stats Bar (High-Contrast Frosted Glass Cards) -->
+            <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pb-8 border-b border-white/15">
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/80 backdrop-blur-md border border-white/10 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                    <p class="text-2xl sm:text-3xl font-black text-white tracking-tight">1,200+</p>
+                    <span class="text-[11px] text-teal-300 font-extrabold uppercase tracking-wider">Civitas Akademika</span>
                 </div>
-                <div class="space-y-0.5">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">Rp 0</p>
-                    <p class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">Potongan Admin</p>
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/80 backdrop-blur-md border border-white/10 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                    <p class="text-2xl sm:text-3xl font-black text-white tracking-tight">Rp 0</p>
+                    <span class="text-[11px] text-emerald-300 font-extrabold uppercase tracking-wider">Potongan Admin</span>
                 </div>
-                <div class="space-y-0.5">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight">100%</p>
-                    <p class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">Akad Syariah</p>
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/80 backdrop-blur-md border border-white/10 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                    <p class="text-2xl sm:text-3xl font-black text-white tracking-tight">100%</p>
+                    <span class="text-[11px] text-amber-300 font-extrabold uppercase tracking-wider">Akad Syariah</span>
                 </div>
-                <div class="space-y-0.5">
-                    <p class="text-2xl sm:text-3xl font-extrabold text-purple-400 tracking-tight">24/7</p>
-                    <p class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">Portal Digital</p>
+                <div class="p-4 sm:p-5 rounded-2xl bg-zinc-900/80 backdrop-blur-md border border-white/10 flex flex-col items-center justify-center text-center space-y-1 shadow-lg">
+                    <p class="text-2xl sm:text-3xl font-black text-white tracking-tight">24/7</p>
+                    <span class="text-[11px] text-purple-300 font-extrabold uppercase tracking-wider">Portal Digital</span>
                 </div>
             </div>
 
