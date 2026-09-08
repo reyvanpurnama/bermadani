@@ -23,7 +23,7 @@
                     <div class="flex items-center justify-between">
                         <div
                             class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                            <i class='bx bx-truck text-lg sm:text-xl'></i>
+                            <i class='bx bx-package text-lg sm:text-xl'></i>
                         </div>
                         @if($requestedBatchesCount > 0)
                             <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
