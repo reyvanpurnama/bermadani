@@ -122,7 +122,7 @@
                             <th class="px-3 py-2.5">Status</th>
                             <th class="px-3 py-2.5 text-right">Item/Qty Masuk</th>
                             <th class="px-3 py-2.5 text-right">Qty Terjual</th>
-                            <th class="px-3 py-2.5 text-right">Hak Supplier</th>
+                            <th class="px-3 py-2.5 text-right">Pendapatan Supplier</th>
                             <th class="px-3 py-2.5 text-right">Payout Hari Ini</th>
                             <th class="px-3 py-2.5 text-right">Outstanding</th>
                             <th class="px-4 py-2.5 text-center">Aksi</th>
@@ -311,7 +311,7 @@
                                         <p class="font-bold text-emerald-700 dark:text-emerald-300 mt-0.5">Rp {{ number_format($countPreview['omzet'], 0, ',', '.') }}</p>
                                     </div>
                                     <div class="rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 p-2">
-                                        <p class="text-blue-600 font-bold uppercase text-[10px]">Hak Supplier</p>
+                                        <p class="text-blue-600 font-bold uppercase text-[10px]">Pendapatan Supplier</p>
                                         <p class="font-bold text-blue-700 dark:text-blue-300 mt-0.5">Rp {{ number_format($countPreview['payable'], 0, ',', '.') }}</p>
                                     </div>
                                     <div class="rounded-lg bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 p-2">

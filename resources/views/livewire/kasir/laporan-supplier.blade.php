@@ -70,7 +70,7 @@
             <h3 class="text-xl font-bold text-emerald-600">Rp {{ number_format($summary['totalOmzet'], 0, ',', '.') }}</h3>
         </div>
         <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-4">
-            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Hak Supplier</p>
+            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pendapatan Supplier</p>
             <h3 class="text-xl font-bold text-blue-600">Rp {{ number_format($summary['totalPayable'], 0, ',', '.') }}</h3>
             <p class="text-[10px] text-slate-400 mt-0.5">Margin koperasi: Rp {{ number_format($summary['totalMargin'], 0, ',', '.') }}</p>
         </div>
@@ -97,7 +97,7 @@
                         <p class="font-bold text-emerald-600 text-sm">Rp {{ number_format($row['totalOmzet'], 0, ',', '.') }}</p>
                     </div>
                     <div>
-                        <p class="text-[10px] text-slate-400">Hak Supplier</p>
+                        <p class="text-[10px] text-slate-400">Pendapatan Supplier</p>
                         <p class="font-bold text-blue-600 text-sm">Rp {{ number_format($row['totalPayable'], 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -111,9 +111,9 @@
                             <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Produk</th>
                             <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">Qty</th>
                             <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Harga Jual</th>
-                            <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Hak Supplier/pcs</th>
+                            <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Pendapatan/pcs</th>
                             <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Total Omzet</th>
-                            <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Total Hak Supplier</th>
+                            <th class="px-5 py-2.5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Total Pendapatan Supplier</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-slate-700">

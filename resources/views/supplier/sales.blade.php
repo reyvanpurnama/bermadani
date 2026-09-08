@@ -32,7 +32,7 @@
             <div class="rounded-3xl bg-gradient-to-br from-[#155A6B] via-[#166072] to-[#1a6b80] p-6 text-white shadow-xl shadow-[#155A6B]/20 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-xs font-bold uppercase tracking-wider text-teal-100 flex items-center gap-1.5">
-                        <i class='bx bx-wallet text-lg'></i> Total Pendapatan Anda (Hak Supplier)
+                        <i class='bx bx-wallet text-lg'></i> Total Pendapatan Anda
                     </span>
                     <span class="bg-white/20 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white">
                         Bersih (Net)
@@ -111,7 +111,7 @@
                             <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Produk</th>
                             <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-center">Jumlah</th>
                             <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-right">Harga per Unit</th>
-                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-right">Pendapatan Supplier</th>
+                            <th class="px-6 py-3.5 text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider text-right">Pendapatan Anda</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 text-xs">
