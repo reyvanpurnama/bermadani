@@ -186,10 +186,6 @@
         <header
             class="h-16 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border-b border-zinc-200/80 dark:border-zinc-800/80 flex items-center justify-between px-4 sm:px-8 sticky top-0 z-30 transition-colors duration-300">
             <div class="flex items-center gap-3">
-                <button class="lg:hidden text-zinc-500 hover:text-zinc-900 dark:hover:text-white p-1"
-                    @click="sidebarOpen = true">
-                    <i class='bx bx-menu text-2xl'></i>
-                </button>
                 <div>
                     <h1 class="text-sm sm:text-base font-extrabold text-zinc-900 dark:text-white tracking-tight">
                         @yield('header-title', 'Dasbor Mitra')</h1>
