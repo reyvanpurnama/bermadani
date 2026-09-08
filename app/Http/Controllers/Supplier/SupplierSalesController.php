@@ -23,7 +23,7 @@ class SupplierSalesController extends Controller
 
         $perPage = 15;
         $page = (int) $request->get('page', 1);
-        $paginatedSales = new LengthAwarePaginator(
+        $sales = new LengthAwarePaginator(
             $allSales->forPage($page, $perPage)->values(),
             $allSales->count(),
             $perPage,
@@ -31,11 +31,6 @@ class SupplierSalesController extends Controller
             ['path' => $request->url(), 'query' => $request->query()]
         );
 
-        return view('supplier.sales', compact('sales', 'totalOmzet', 'totalItemsSold', 'supplierRevenue'), [
-            'sales' => $paginatedSales,
-            'totalOmzet' => $totalOmzet,
-            'totalItemsSold' => $totalItemsSold,
-            'supplierRevenue' => $supplierRevenue,
-        ]);
+        return view('supplier.sales', compact('sales', 'totalOmzet', 'totalItemsSold', 'supplierRevenue'));
     }
 }
