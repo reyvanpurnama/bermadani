@@ -15,6 +15,8 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        [x-cloak] { display: none !important; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Plus Jakarta Sans", sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -198,10 +200,10 @@
 
             <!-- Interactive Split Showcase Card Container (Pattern 1 Layout) -->
             <div class="bg-zinc-50/90 rounded-3xl sm:rounded-[2.5rem] border border-zinc-200/90 p-6 sm:p-10 shadow-lg" x-data="{ activeTab: 'mart' }">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+                <div class="flex flex-col lg:flex-row gap-8 items-stretch w-full">
                     
-                    <!-- Left Side: Interactive Row Selectors (5 cols) -->
-                    <div class="lg:col-span-5 flex flex-col justify-center space-y-4">
+                    <!-- Left Side: Interactive Row Selectors (5/12 width) -->
+                    <div class="w-full lg:w-5/12 flex-shrink-0 flex flex-col justify-center space-y-4">
                         
                         <!-- Selector 1: Bermadani Mart -->
                         <button @click="activeTab = 'mart'" 
@@ -262,11 +264,15 @@
 
                     </div>
 
-                    <!-- Right Side: Dynamic Feature Spotlight Display (7 cols) -->
-                    <div class="lg:col-span-7 bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <!-- Right Side: Dynamic Feature Spotlight Display (7/12 width) -->
+                    <div class="w-full lg:w-7/12 flex-grow min-w-0 bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
                         
                         <!-- Tab Content 1: Mart -->
-                        <div x-show="activeTab === 'mart'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6 flex flex-col h-full justify-between">
+                        <div x-show="activeTab === 'mart'" 
+                             x-transition:enter="transition ease-out duration-300" 
+                             x-transition:enter-start="opacity-0 translate-y-2" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             class="space-y-6 flex flex-col h-full justify-between min-w-0">
                             <div class="space-y-3">
                                 <h3 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">Belanja Harian Kampus, Poin Langsung Jadi Dividen.</h3>
                                 <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-medium">
@@ -293,7 +299,12 @@
                         </div>
 
                         <!-- Tab Content 2: Savings -->
-                        <div x-show="activeTab === 'savings'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6 flex flex-col h-full justify-between" style="display: none;">
+                        <div x-show="activeTab === 'savings'" 
+                             x-transition:enter="transition ease-out duration-300" 
+                             x-transition:enter-start="opacity-0 translate-y-2" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             class="space-y-6 flex flex-col h-full justify-between min-w-0" 
+                             x-cloak style="display: none;">
                             <div class="space-y-3">
                                 <h3 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">Nabung Syariah Amanah, Zero Potongan Misterius.</h3>
                                 <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-medium">
@@ -320,7 +331,12 @@
                         </div>
 
                         <!-- Tab Content 3: SHU -->
-                        <div x-show="activeTab === 'shu'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6 flex flex-col h-full justify-between" style="display: none;">
+                        <div x-show="activeTab === 'shu'" 
+                             x-transition:enter="transition ease-out duration-300" 
+                             x-transition:enter-start="opacity-0 translate-y-2" 
+                             x-transition:enter-end="opacity-100 translate-y-0" 
+                             class="space-y-6 flex flex-col h-full justify-between min-w-0" 
+                             x-cloak style="display: none;">
                             <div class="space-y-3">
                                 <h3 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight">Keuntungan Usaha Minimarket Dikembalikan ke Anggota.</h3>
                                 <p class="text-xs sm:text-sm text-zinc-600 leading-relaxed font-medium">
