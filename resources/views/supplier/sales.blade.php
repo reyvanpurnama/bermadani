@@ -34,9 +34,6 @@
                     <span class="text-xs font-bold uppercase tracking-wider text-teal-100 flex items-center gap-1.5">
                         <i class='bx bx-wallet text-lg'></i> Total Pendapatan Anda
                     </span>
-                    <span class="bg-white/20 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white">
-                        Bersih (Net)
-                    </span>
                 </div>
                 <h3 class="text-3xl font-black tracking-tight mt-1">Rp {{ number_format($supplierRevenue ?? 0, 0, ',', '.') }}</h3>
                 <p class="text-[11px] text-teal-200 mt-2 font-medium">Uang bersih yang dicairkan/ditransfer ke rekening Anda (Harga Beli × Qty)</p>
