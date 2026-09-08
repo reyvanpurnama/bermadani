@@ -192,167 +192,149 @@
                 </p>
             </div>
 
-            <!-- Asymmetric Bento Grid (Dark Teal Hero Card + Mixed Contrast Tiles) -->
-            <div class="mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-6 gap-5">
-                
-                <!-- Hero Card 1: Bermadani Mart & Retail (4 Cols on Desktop - Dark Teal Gradient) -->
-                <div class="lg:col-span-4 rounded-3xl gradient-teal-bg p-6 sm:p-8 text-white shadow-2xl shadow-[#155A6B]/25 relative overflow-hidden flex flex-col justify-between min-h-[22rem] sm:min-h-[24rem]">
-                    <!-- Background 3D Illustration Watermark/Image -->
-                    <div class="absolute -right-10 -bottom-10 w-3/5 h-full bg-[url('/images/bento/bento-mart-43.jpeg')] bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none rounded-r-3xl"></div>
+            <!-- Clean Unobscured Feature Cards Grid (Clear Image Frames + Separate Text Below) -->
+            <div class="mt-8 sm:mt-12 space-y-6">
+                <!-- Top Row: 2 Major Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Card 1: Bermadani Mart -->
+                    <div class="rounded-3xl bg-zinc-50/80 border border-zinc-200/80 p-6 sm:p-7 shadow-sm hover:shadow-xl hover:border-[#155A6B]/40 transition-all duration-300 flex flex-col justify-between space-y-6 group">
+                        <!-- Top Crisp 3D Image Frame (No text overlay, 100% clean image) -->
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                            <img src="{{ asset('images/bento/bento-mart-43.jpeg') }}" alt="Bermadani Mart & Retail" class="w-full h-full object-cover">
+                        </div>
 
-                    <!-- Top Tag -->
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md border border-white/25 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-teal-100">
-                            <i class='bx bx-shopping-bag'></i> Bermadani Mart & Retail
-                        </span>
-                    </div>
-
-                    <!-- Bottom Content & Primary CTA -->
-                    <div class="relative z-10 space-y-4 mt-8">
-                        <div class="space-y-2">
-                            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight max-w-lg">
-                                Belanja Harian, Dividen Balik ke Kantong Kamu.
+                        <!-- Bottom Content -->
+                        <div class="space-y-3">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">
+                                <i class='bx bx-shopping-bag text-sm'></i> Minimarket & Retail
+                            </span>
+                            <h3 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight leading-tight">
+                                Belanja Harian, Untungnya Balik ke Kamu.
                             </h3>
-                            <p class="text-xs sm:text-sm text-teal-100 font-medium leading-relaxed max-w-md">
-                                Belanja kebutuhan harian di minimarket UMBandung. Dapatkan harga khusus anggota & setiap transaksi terakumulasi menjadi pembagian hasil dividen SHU.
+                            <p class="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed">
+                                Belanja kebutuhan harian di minimarket UMBandung. Dapatkan harga khusus anggota & setiap rupiah transaksi diakumulasikan jadi dividen SHU.
                             </p>
                         </div>
+                    </div>
 
-                        <div class="pt-2">
-                            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-white text-[#155A6B] px-5 py-2.5 rounded-xl text-xs font-black hover:bg-teal-50 transition-colors shadow-md">
-                                <span>Masuk Portal Belanja</span>
-                                <i class='bx bx-right-arrow-alt text-base'></i>
-                            </a>
+                    <!-- Card 2: Simpanan Syariah -->
+                    <div class="rounded-3xl bg-zinc-50/80 border border-zinc-200/80 p-6 sm:p-7 shadow-sm hover:shadow-xl hover:border-blue-500/40 transition-all duration-300 flex flex-col justify-between space-y-6 group">
+                        <!-- Top Crisp 3D Image Frame -->
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                            <img src="{{ asset('images/bento/bento-savings-43.jpeg') }}" alt="Simpanan Syariah Amanah" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Bottom Content -->
+                        <div class="space-y-3">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
+                                <i class='bx bx-vault text-sm'></i> Simpanan Syariah
+                            </span>
+                            <h3 class="text-xl sm:text-2xl font-black text-zinc-900 tracking-tight leading-tight">
+                                Nabung Amanah Tanpa Biaya Admin Siluman.
+                            </h3>
+                            <p class="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed">
+                                Simpanan Pokok & Wajib berbasis akad Syariah. Bebas potongan bulanan misterius, tercatat transparan, & dipantau langsung dari portal.
+                            </p>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- Side Card 2: Simpanan Syariah (2 Cols on Desktop - Light Clean Card) -->
-                <div class="lg:col-span-2 rounded-3xl bg-white p-6 border border-zinc-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[22rem] sm:min-h-[24rem]">
-                    <!-- 3D Illustration Watermark -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-savings-43.jpeg')] bg-cover bg-center opacity-20 pointer-events-none"></div>
+                <!-- Bottom Row: 3 Secondary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                    
+                    <!-- Card 3: Bagi Hasil SHU -->
+                    <div class="rounded-3xl bg-zinc-50/80 border border-zinc-200/80 p-5 sm:p-6 shadow-sm hover:shadow-xl hover:border-teal-500/40 transition-all duration-300 flex flex-col justify-between space-y-5 group">
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                            <img src="{{ asset('images/bento/bento-shu-43.jpeg') }}" alt="Bagi Hasil SHU Koperasi" class="w-full h-full object-cover">
+                        </div>
 
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-                            <i class='bx bx-vault'></i> Simpanan Syariah
-                        </span>
+                        <div class="space-y-2.5">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 border border-teal-200 px-2.5 py-0.5 rounded-full">
+                                <i class='bx bx-pie-chart-alt-2 text-xs'></i> Dividen & SHU
+                            </span>
+                            <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight leading-snug">
+                                Keuntungan Toko Dibagi ke Anggota.
+                            </h3>
+                            <p class="text-xs text-zinc-600 font-medium leading-relaxed">
+                                Keuntungan usaha minimarket dikembalikan secara adil & proporsional ke seluruh anggota aktif.
+                            </p>
+                        </div>
                     </div>
 
-                    <div class="relative z-10 space-y-2 mt-8">
-                        <h3 class="text-xl font-extrabold text-zinc-900 tracking-tight">
-                            Nabung Amanah Tanpa Biaya Admin Siluman.
-                        </h3>
-                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
-                            Simpanan Pokok & Wajib berbasis akad Syariah. Bebas potongan bulanan misterius, tercatat transparan di portal.
-                        </p>
+                    <!-- Card 4: Titip Jual Supplier -->
+                    <div class="rounded-3xl bg-zinc-50/80 border border-zinc-200/80 p-5 sm:p-6 shadow-sm hover:shadow-xl hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between space-y-5 group">
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                            <img src="{{ asset('images/bento/bento-supplier-43.jpeg') }}" alt="Konsinyasi Supplier UMKM" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="space-y-2.5">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+                                <i class='bx bx-store-alt text-xs'></i> Konsinyasi UMKM
+                            </span>
+                            <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight leading-snug">
+                                Pajang Produk di Gerai Kampus.
+                            </h3>
+                            <p class="text-xs text-zinc-600 font-medium leading-relaxed">
+                                Wadah wirausaha mahasiswa & UMKM. Titip barang dan pantau omzet penjualan harian secara digital.
+                            </p>
+                        </div>
                     </div>
+
+                    <!-- Card 5: Portal 24/7 -->
+                    <div class="rounded-3xl bg-zinc-50/80 border border-zinc-200/80 p-5 sm:p-6 shadow-sm hover:shadow-xl hover:border-purple-500/40 transition-all duration-300 flex flex-col justify-between space-y-5 group">
+                        <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                            <img src="{{ asset('images/bento/bento-portal-43.jpeg') }}" alt="Portal Digital 24/7" class="w-full h-full object-cover">
+                        </div>
+
+                        <div class="space-y-2.5">
+                            <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                                <i class='bx bx-devices text-xs'></i> Portal Digital 24/7
+                            </span>
+                            <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight leading-snug">
+                                Satu Akun Akses Serba Bisa.
+                            </h3>
+                            <p class="text-xs text-zinc-600 font-medium leading-relaxed">
+                                Pantau simpanan, poin belanja, hingga pencairan SHU dalam satu platform portal anggota yang cepat.
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
-
-                <!-- Bottom Row Card 3: Bagi Hasil SHU (2 Cols - Soft Teal Tint) -->
-                <div class="lg:col-span-2 rounded-3xl bg-teal-50/50 border border-teal-200/80 p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] hover:shadow-lg transition-all">
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-shu-43.jpeg')] bg-cover bg-center opacity-15 pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-[#155A6B]/10 border border-[#155A6B]/20 px-3 py-1 rounded-full">
-                            <i class='bx bx-pie-chart-alt-2'></i> Bagi Hasil SHU
-                        </span>
-                    </div>
-
-                    <div class="relative z-10 space-y-2 mt-6">
-                        <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight">
-                            Keuntungan Toko Dibagi ke Anggota.
-                        </h3>
-                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
-                            Keuntungan usaha minimarket dikembalikan secara adil & proporsional ke seluruh anggota aktif.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Bottom Row Card 4: Titip Jual Supplier (2 Cols - Light Clean Card) -->
-                <div class="lg:col-span-2 rounded-3xl bg-white border border-zinc-200/80 p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] hover:shadow-lg transition-all">
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-supplier-43.jpeg')] bg-cover bg-center opacity-15 pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
-                            <i class='bx bx-store-alt'></i> Konsinyasi UMKM
-                        </span>
-                    </div>
-
-                    <div class="relative z-10 space-y-2 mt-6">
-                        <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight">
-                            Pajang Produk di Gerai Kampus.
-                        </h3>
-                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
-                            Wadah wirausaha mahasiswa & UMKM. Titip barang dan pantau omzet penjualan harian secara digital.
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Bottom Row Card 5: Portal 24/7 (2 Cols - Dark Zinc Card) -->
-                <div class="lg:col-span-2 rounded-3xl bg-zinc-900 text-white p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] shadow-xl border border-zinc-800">
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-portal-43.jpeg')] bg-cover bg-center opacity-25 mix-blend-luminosity pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-teal-300 bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full">
-                            <i class='bx bx-devices'></i> Portal 24/7
-                        </span>
-                    </div>
-
-                    <div class="relative z-10 space-y-2 mt-6">
-                        <h3 class="text-lg font-extrabold text-white tracking-tight">
-                            Satu Akun Akses Serba Bisa.
-                        </h3>
-                        <p class="text-xs text-zinc-400 font-medium leading-relaxed">
-                            Pantau simpanan, poin belanja, hingga pencairan SHU dalam satu platform portal anggota yang cepat.
-                        </p>
-                    </div>
-                </div>
-
             </div>
 
         </div>
     </section>
 
-    <!-- Supplier Banner Section (Full 2400x1792 Uncropped Image + Floating Glassmorphism Overlay) -->
+    <!-- Supplier Banner Section (Clean Split Layout: 100% Unobscured Image + Right Text Box) -->
     <section id="supplier" class="py-16 sm:py-24 bg-[#f5f5f7] relative overflow-hidden border-t border-zinc-200">
         <div class="max-w-6xl mx-auto px-4 sm:px-6">
             
-            <!-- 3D Storefront Image Container (Strict 2400x1792 / 4:3 Uncropped Aspect Ratio) -->
-            <div class="relative overflow-hidden rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/80 shadow-2xl bg-white aspect-[2400/1792] w-full flex items-center justify-center p-4 sm:p-8 md:p-12">
-                
-                <!-- Full 2400x1792 Uncropped Image Background -->
-                <img src="{{ asset('images/bento/bento-supplier.jpeg') }}" alt="Mitra Supplier UMBandung" class="absolute inset-0 w-full h-full object-cover pointer-events-none">
-
-                <!-- Ambient Subtle Overlay for Depth -->
-                <div class="absolute inset-0 bg-black/5 pointer-events-none"></div>
-
-                <!-- Glassmorphism Card Overlay (Pure 0% Opacity Frosted Glass) -->
-                <div class="relative z-10 w-full p-6 sm:p-10 md:p-14 rounded-2xl sm:rounded-3xl bg-white/0 backdrop-blur-2xl border border-white/80 shadow-2xl shadow-black/10 transition-all duration-500 hover:bg-white/10">
-                    
-                    <!-- Content Layout -->
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-10 text-center md:text-left">
-                        
-                        <div class="space-y-3.5 max-w-2xl">
-                            <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-zinc-900 text-apple-headline tracking-tight leading-tight">
-                                Dapatkan Ribuan Pembeli di Kampus UMBandung.
-                            </h2>
-                            <p class="text-sm sm:text-base md:text-lg text-zinc-800 leading-relaxed font-semibold max-w-xl">
-                                Jangkau mahasiswa, dosen, dan staf UMBandung setiap hari. Pantau stok barang laku dan omzet harian secara transparan dari Dashboard Supplier.
-                            </p>
-                        </div>
-
-                        <!-- Supplier CTA Button -->
-                        <div class="w-full md:w-auto flex-shrink-0">
-                            <a href="{{ route('supplier.register') }}" class="w-full md:w-auto glass-cta-primary px-8 sm:px-10 py-4 sm:py-5 font-bold text-sm sm:text-base shadow-xl flex items-center justify-center gap-3 group/btn">
-                                <span>Daftar Supplier UMKM</span>
-                                <i class='bx bx-right-arrow-alt text-xl sm:text-2xl group-hover/btn:translate-x-1.5 transition-transform duration-300'></i>
-                            </a>
-                        </div>
-
-                    </div>
-
+            <div class="bg-white rounded-3xl sm:rounded-[2.5rem] border border-zinc-200/80 shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
+                <!-- Left Column: Unobscured 3D Image (7 cols) -->
+                <div class="lg:col-span-7 aspect-[4/3] lg:aspect-auto w-full relative bg-zinc-100 overflow-hidden min-h-[300px] lg:min-h-[420px]">
+                    <img src="{{ asset('images/bento/bento-supplier-43.jpeg') }}" alt="Mitra Supplier UMBandung" class="w-full h-full object-cover">
                 </div>
 
+                <!-- Right Column: Clean Content & CTA (5 cols) -->
+                <div class="lg:col-span-5 p-8 sm:p-10 lg:p-12 flex flex-col justify-center space-y-6 bg-zinc-50/50">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200/80 px-3 py-1 rounded-full w-fit">
+                        <i class='bx bx-store-alt text-sm'></i> Program Kemitraan UMKM
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-zinc-900 text-apple-headline tracking-tight leading-tight">
+                        Dapatkan Ribuan Pembeli di Kampus UMBandung.
+                    </h2>
+                    <p class="text-xs sm:text-sm text-zinc-600 font-medium leading-relaxed">
+                        Jangkau mahasiswa, dosen, dan staf UMBandung setiap hari. Pantau stok barang laku dan omzet harian secara transparan dari Dashboard Supplier.
+                    </p>
+                    <div class="pt-2">
+                        <a href="{{ route('supplier.register') }}" class="apple-btn-blue px-6 py-3.5 text-sm font-bold w-full sm:w-auto inline-flex items-center justify-center gap-2 shadow-md">
+                            <span>Daftar Supplier UMKM</span>
+                            <i class='bx bx-right-arrow-alt text-xl'></i>
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>
