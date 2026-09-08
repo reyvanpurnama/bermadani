@@ -192,99 +192,117 @@
                 </p>
             </div>
 
-            <!-- Bento Grid 6 Columns Layout (Floating Text over 3D Images - No Dark Overlays) -->
-            <div class="mt-8 sm:mt-12 grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-6">
+            <!-- Asymmetric Bento Grid (Dark Teal Hero Card + Mixed Contrast Tiles) -->
+            <div class="mt-8 sm:mt-12 grid grid-cols-1 lg:grid-cols-6 gap-5">
                 
-                <!-- Card 1: Bermadani Mart (3 Cols) -->
-                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl max-lg:rounded-t-3xl lg:rounded-tl-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[22rem] sm:min-h-[26rem] p-6 sm:p-8 lg:col-span-3">
-                    <!-- 3D Illustration Background -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-mart-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
-                    
-                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+                <!-- Hero Card 1: Bermadani Mart & Retail (4 Cols on Desktop - Dark Teal Gradient) -->
+                <div class="lg:col-span-4 rounded-3xl gradient-teal-bg p-6 sm:p-8 text-white shadow-2xl shadow-[#155A6B]/25 relative overflow-hidden flex flex-col justify-between min-h-[22rem] sm:min-h-[24rem]">
+                    <!-- Background 3D Illustration Watermark/Image -->
+                    <div class="absolute -right-10 -bottom-10 w-3/5 h-full bg-[url('/images/bento/bento-mart-43.jpeg')] bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none rounded-r-3xl"></div>
 
-                    <!-- Text Floating Content -->
+                    <!-- Top Tag -->
                     <div class="relative z-10">
-                        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
-                            Belanja Harian, Untungnya Balik ke Kamu.
-                        </h3>
-                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed max-w-xl">
-                            Belanja kebutuhan harian di minimarket UMBandung. Dapatkan harga khusus anggota & setiap rupiah transaksi diakumulasikan jadi dividen kamu.
-                        </p>
+                        <span class="inline-flex items-center gap-1.5 bg-white/20 backdrop-blur-md border border-white/25 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider text-teal-100">
+                            <i class='bx bx-shopping-bag'></i> Bermadani Mart & Retail
+                        </span>
+                    </div>
+
+                    <!-- Bottom Content & Primary CTA -->
+                    <div class="relative z-10 space-y-4 mt-8">
+                        <div class="space-y-2">
+                            <h3 class="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight max-w-lg">
+                                Belanja Harian, Dividen Balik ke Kantong Kamu.
+                            </h3>
+                            <p class="text-xs sm:text-sm text-teal-100 font-medium leading-relaxed max-w-md">
+                                Belanja kebutuhan harian di minimarket UMBandung. Dapatkan harga khusus anggota & setiap transaksi terakumulasi menjadi pembagian hasil dividen SHU.
+                            </p>
+                        </div>
+
+                        <div class="pt-2">
+                            <a href="{{ route('login') }}" class="inline-flex items-center gap-2 bg-white text-[#155A6B] px-5 py-2.5 rounded-xl text-xs font-black hover:bg-teal-50 transition-colors shadow-md">
+                                <span>Masuk Portal Belanja</span>
+                                <i class='bx bx-right-arrow-alt text-base'></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Card 2: Simpanan Syariah (3 Cols) -->
-                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl lg:rounded-tr-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[22rem] sm:min-h-[26rem] p-6 sm:p-8 lg:col-span-3">
-                    <!-- 3D Illustration Background -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-savings-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
-                    
-                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+                <!-- Side Card 2: Simpanan Syariah (2 Cols on Desktop - Light Clean Card) -->
+                <div class="lg:col-span-2 rounded-3xl bg-white p-6 border border-zinc-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden min-h-[22rem] sm:min-h-[24rem]">
+                    <!-- 3D Illustration Watermark -->
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-savings-43.jpeg')] bg-cover bg-center opacity-20 pointer-events-none"></div>
 
-                    <!-- Text Floating Content -->
                     <div class="relative z-10">
-                        <h3 class="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
+                            <i class='bx bx-vault'></i> Simpanan Syariah
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 space-y-2 mt-8">
+                        <h3 class="text-xl font-extrabold text-zinc-900 tracking-tight">
                             Nabung Amanah Tanpa Biaya Admin Siluman.
                         </h3>
-                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed max-w-xl">
-                            Simpanan Pokok & Wajib berbasis akad Syariah. Bebas potongan bulanan misterius, tercatat transparan, & dipantau langsung dari portal.
+                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
+                            Simpanan Pokok & Wajib berbasis akad Syariah. Bebas potongan bulanan misterius, tercatat transparan di portal.
                         </p>
                     </div>
                 </div>
 
-                <!-- Card 3: Bagi Hasil SHU (2 Cols) -->
-                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl lg:rounded-bl-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
-                    <!-- 3D Illustration Background -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-shu-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
-                    
-                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+                <!-- Bottom Row Card 3: Bagi Hasil SHU (2 Cols - Soft Teal Tint) -->
+                <div class="lg:col-span-2 rounded-3xl bg-teal-50/50 border border-teal-200/80 p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] hover:shadow-lg transition-all">
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-shu-43.jpeg')] bg-cover bg-center opacity-15 pointer-events-none"></div>
 
-                    <!-- Text Floating Content -->
                     <div class="relative z-10">
-                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-[#155A6B]/10 border border-[#155A6B]/20 px-3 py-1 rounded-full">
+                            <i class='bx bx-pie-chart-alt-2'></i> Bagi Hasil SHU
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 space-y-2 mt-6">
+                        <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight">
                             Keuntungan Toko Dibagi ke Anggota.
                         </h3>
-                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
                             Keuntungan usaha minimarket dikembalikan secara adil & proporsional ke seluruh anggota aktif.
                         </p>
                     </div>
                 </div>
 
-                <!-- Card 4: Titip Jual Supplier (2 Cols) -->
-                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
-                    <!-- 3D Illustration Background -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-supplier-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
-                    
-                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+                <!-- Bottom Row Card 4: Titip Jual Supplier (2 Cols - Light Clean Card) -->
+                <div class="lg:col-span-2 rounded-3xl bg-white border border-zinc-200/80 p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] hover:shadow-lg transition-all">
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-supplier-43.jpeg')] bg-cover bg-center opacity-15 pointer-events-none"></div>
 
-                    <!-- Text Floating Content -->
                     <div class="relative z-10">
-                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                            <i class='bx bx-store-alt'></i> Konsinyasi UMKM
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 space-y-2 mt-6">
+                        <h3 class="text-lg font-extrabold text-zinc-900 tracking-tight">
                             Pajang Produk di Gerai Kampus.
                         </h3>
-                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                        <p class="text-xs text-zinc-600 font-medium leading-relaxed">
                             Wadah wirausaha mahasiswa & UMKM. Titip barang dan pantau omzet penjualan harian secara digital.
                         </p>
                     </div>
                 </div>
 
-                <!-- Card 5: Portal Keanggotaan (2 Cols) -->
-                <div class="group relative flex flex-col justify-end overflow-hidden rounded-3xl max-lg:rounded-b-3xl lg:rounded-br-[2.5rem] bg-white border border-zinc-200/80 shadow-sm hover:border-zinc-300 hover:shadow-xl transition-all duration-500 min-h-[20rem] sm:min-h-[24rem] p-6 sm:p-8 lg:col-span-2">
-                    <!-- 3D Illustration Background -->
-                    <div class="absolute inset-0 bg-[url('/images/bento/bento-portal-43.jpeg')] bg-cover bg-center group-hover:scale-105 transition-transform duration-700"></div>
-                    
-                    <!-- Soft White Gradient for Maximum Text Legibility (No Dark Overlay) -->
-                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/40 to-transparent pointer-events-none"></div>
+                <!-- Bottom Row Card 5: Portal 24/7 (2 Cols - Dark Zinc Card) -->
+                <div class="lg:col-span-2 rounded-3xl bg-zinc-900 text-white p-6 flex flex-col justify-between relative overflow-hidden min-h-[18rem] shadow-xl border border-zinc-800">
+                    <div class="absolute inset-0 bg-[url('/images/bento/bento-portal-43.jpeg')] bg-cover bg-center opacity-25 mix-blend-luminosity pointer-events-none"></div>
 
-                    <!-- Text Floating Content -->
                     <div class="relative z-10">
-                        <h3 class="text-lg sm:text-xl font-bold tracking-tight text-zinc-900">
+                        <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-teal-300 bg-white/10 backdrop-blur-md border border-white/15 px-3 py-1 rounded-full">
+                            <i class='bx bx-devices'></i> Portal 24/7
+                        </span>
+                    </div>
+
+                    <div class="relative z-10 space-y-2 mt-6">
+                        <h3 class="text-lg font-extrabold text-white tracking-tight">
                             Satu Akun Akses Serba Bisa.
                         </h3>
-                        <p class="mt-1.5 text-xs sm:text-sm text-zinc-700 font-medium leading-relaxed">
+                        <p class="text-xs text-zinc-400 font-medium leading-relaxed">
                             Pantau simpanan, poin belanja, hingga pencairan SHU dalam satu platform portal anggota yang cepat.
                         </p>
                     </div>
