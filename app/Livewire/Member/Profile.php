@@ -6,10 +6,12 @@ use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Member;
 use Illuminate\Support\Facades\Hash;
+use App\Livewire\Member\Concerns\EnsuresMemberCanMutate;
 
 #[Layout('layouts.member')]
 class Profile extends Component
 {
+    use EnsuresMemberCanMutate;
     public $member;
     public $name;
     public $email;
@@ -51,6 +53,7 @@ class Profile extends Component
 
     public function updateProfile()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->validate([
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
@@ -68,6 +71,7 @@ class Profile extends Component
 
     public function updatePassword()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->validate([
             'currentPassword' => 'required',
             'newPassword' => 'required|min:8|confirmed',
@@ -90,6 +94,7 @@ class Profile extends Component
 
     public function updateSimpananSettings()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->validate([
             'simwa_payment_method' => 'nullable|in:SALARY_DEDUCTION,MANUAL',
             'monthly_sukarela_amount' => 'nullable|numeric|min:0',

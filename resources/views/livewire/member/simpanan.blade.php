@@ -21,9 +21,11 @@
                 <i class='bx text-base' :class="showBalance ? 'bx-hide' : 'bx-show'"></i>
                 <span x-text="showBalance ? 'Sembunyikan Saldo' : 'Tampilkan Saldo'"></span>
             </button>
-            <a href="{{ route('member.transfer') }}" class="px-4 py-2 bg-[#155A6B] hover:bg-[#0E3E4B] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2">
+            @unless($member?->isReadOnly())
+            <a href="{{ route('member.transfer') }}" class="px-4 py-2 bg-[#155A6B] hover:bg-[#0E3E4B] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-2 active:scale-[0.98]">
                 <i class='bx bx-transfer text-base'></i> Transfer Sukarela
             </a>
+            @endunless
         </div>
     </div>
 

@@ -64,6 +64,10 @@
             }
         }
     }">
+    @php
+        $currentMember = auth()->check() ? \App\Models\Member::where('userId', auth()->id())->first() : null;
+        $isInactiveMember = $currentMember?->isReadOnly() ?? false;
+    @endphp
 
     <!-- 1. Apple Frosted Glass Desktop Sidebar -->
     <aside id="member-sidebar"
@@ -110,6 +114,22 @@
                 :class="{'justify-center px-2': sidebarCollapsed}">
                 <i class='bx {{ request()->routeIs('member.simpanan*') ? 'bxs-wallet' : 'bx-wallet' }} text-xl shrink-0'></i>
                 <span class="text-xs transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Simpanan Saya</span>
+            </a>
+
+            @unless($isInactiveMember)
+                <a href="{{ route('member.transfer') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group whitespace-nowrap {{ request()->routeIs('member.transfer') ? 'bg-[#155A6B] text-white shadow-md shadow-[#155A6B]/25 font-semibold' : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-white' }}"
+                    :class="{'justify-center px-2': sidebarCollapsed}">
+                    <i class='bx {{ request()->routeIs('member.transfer') ? 'bxs-transfer' : 'bx-transfer' }} text-xl shrink-0'></i>
+                    <span class="text-xs transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Transfer</span>
+                </a>
+            @endunless
+
+            <a href="{{ route('member.transfer.history') }}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group whitespace-nowrap {{ request()->routeIs('member.transfer.history') ? 'bg-[#155A6B] text-white shadow-md shadow-[#155A6B]/25 font-semibold' : 'text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800/60 hover:text-zinc-900 dark:hover:text-white' }}"
+                :class="{'justify-center px-2': sidebarCollapsed}">
+                <i class='bx {{ request()->routeIs('member.transfer.history') ? 'bxs-history' : 'bx-history' }} text-xl shrink-0'></i>
+                <span class="text-xs transition-opacity duration-300" :class="{'hidden': sidebarCollapsed}">Riwayat Transfer</span>
             </a>
 
             <!-- Pinjaman / Pembiayaan -->
@@ -223,11 +243,6 @@
         :class="{'lg:pl-[236px]': !sidebarCollapsed, 'lg:pl-[88px]': sidebarCollapsed}">
         
         <div class="max-w-7xl mx-auto">
-            @php
-                $currentMember = auth()->check() ? \App\Models\Member::where('userId', auth()->id())->first() : null;
-                $isInactiveMember = $currentMember && in_array(strtoupper($currentMember->status ?? ''), ['INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR']);
-            @endphp
-
             @if($isInactiveMember)
                 <div class="mb-6 p-4 rounded-2xl bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/30 flex items-start gap-3 backdrop-blur-sm shadow-sm">
                     <div class="p-2 bg-amber-500 text-white rounded-xl shrink-0 mt-0.5 shadow-md shadow-amber-500/20">
@@ -239,7 +254,7 @@
                             <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-200 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200">READ-ONLY</span>
                         </div>
                         <p class="text-xs text-zinc-600 dark:text-zinc-300 mt-1 leading-relaxed">
-                            Akun Anda dalam status <strong>{{ $currentMember->status }}</strong>. Anda dapat melihat riwayat simpanan, mutasi transaksi terdahulu, dan mengunduh bukti pengembalian simpanan. Pengajuan pinjaman/transfer baru dinonaktifkan.
+                            Akun Anda dalam status <strong>{{ $currentMember->status }}</strong>. Anda dapat melihat data historis dan mengunduh bukti pengembalian simpanan. Perubahan akun dan transaksi baru dinonaktifkan.
                         </p>
                     </div>
                 </div>
@@ -252,40 +267,52 @@
 
     <!-- 4. Floating Mobile Bottom Navigation Bar (Visible < lg) -->
     <nav class="fixed bottom-0 inset-x-0 z-40 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-2xl border-t border-zinc-200/80 dark:border-zinc-800/80 lg:hidden pb-safe">
-        <div class="flex justify-around items-center max-w-md mx-auto px-3 py-2">
+        <div class="flex items-center gap-1 overflow-x-auto hide-scrollbar px-3 py-2">
 
             <!-- Beranda -->
             <a href="{{ route('member.dashboard') }}"
-                class="flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.dashboard') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.dashboard') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
                 <i class='bx {{ request()->routeIs('member.dashboard') ? 'bxs-dashboard' : 'bx-dashboard' }} text-xl'></i>
                 <span class="text-[10px] font-semibold">Beranda</span>
             </a>
 
             <!-- Simpanan -->
             <a href="{{ route('member.simpanan') }}"
-                class="flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.simpanan*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.simpanan*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
                 <i class='bx {{ request()->routeIs('member.simpanan*') ? 'bxs-wallet' : 'bx-wallet' }} text-xl'></i>
                 <span class="text-[10px] font-semibold">Simpanan</span>
             </a>
 
-            <!-- Pembiayaan Floating Button -->
-            <div class="relative -top-4">
-                <a href="{{ route('member.loans') }}"
-                    class="w-13 h-13 rounded-full bg-gradient-to-tr from-[#155A6B] to-emerald-500 shadow-lg shadow-[#155A6B]/30 flex items-center justify-center text-white transform transition-transform active:scale-95 border-3 border-white dark:border-zinc-900">
-                    <i class='bx bx-bank text-xl'></i>
+            @unless($isInactiveMember)
+                <a href="{{ route('member.transfer') }}"
+                    class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.transfer') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                    <i class='bx bx-transfer text-xl'></i>
+                    <span class="text-[10px] font-semibold">Transfer</span>
                 </a>
-            </div>
+            @endunless
+
+            <a href="{{ route('member.transfer.history') }}"
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.transfer.history') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                <i class='bx bx-history text-xl'></i>
+                <span class="text-[10px] font-semibold">Transfer</span>
+            </a>
+
+            <a href="{{ route('member.loans') }}"
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.loans*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                <i class='bx bx-bank text-xl'></i>
+                <span class="text-[10px] font-semibold">Biaya</span>
+            </a>
 
             <!-- Transaksi -->
             <a href="{{ route('member.transactions') }}"
-                class="flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.transactions*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.transactions*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
                 <i class='bx {{ request()->routeIs('member.transactions*') ? 'bxs-receipt' : 'bx-receipt' }} text-xl'></i>
                 <span class="text-[10px] font-semibold">Riwayat</span>
             </a>
 
             <!-- Akun -->
             <a href="{{ route('member.profile') }}"
-                class="flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.profile*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
+                class="min-w-14 flex flex-col items-center gap-1 px-2 py-1.5 rounded-xl transition-all {{ request()->routeIs('member.profile*') ? 'text-[#155A6B] dark:text-emerald-400 font-bold' : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300' }}">
                 <i class='bx {{ request()->routeIs('member.profile*') ? 'bxs-user-badge' : 'bx-user-badge' }} text-xl'></i>
                 <span class="text-[10px] font-semibold">Akun</span>
             </a>

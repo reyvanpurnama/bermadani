@@ -142,6 +142,17 @@ class Member extends Model
     }
 
     /**
+     * Non-active members may retain access to their historical records, but
+     * must not initiate or change any member-facing financial/account action.
+     */
+    public function isReadOnly(): bool
+    {
+        return in_array(strtoupper((string) $this->status), [
+            'INACTIVE', 'RESIGNED', 'SUSPENDED', 'NONAKTIF', 'KELUAR',
+        ], true);
+    }
+
+    /**
      * Get total monthly salary deduction amount
      */
     public function getTotalSalaryDeductionAttribute(): float

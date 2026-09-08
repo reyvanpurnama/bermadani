@@ -2,17 +2,17 @@
     @section('page-title', 'Riwayat Transfer')
 
     {{-- Header & Filters --}}
-    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 mb-6">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm p-6 mb-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <div>
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <i class='bx bx-history text-primary'></i> Riwayat Transfer
+                <h2 class="text-xl font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+                    <i class='bx bx-history text-[#155A6B] dark:text-emerald-400'></i> Riwayat Transfer
                 </h2>
                 <p class="text-sm text-slate-500 mt-1">Semua transaksi transfer simpanan sukarela</p>
             </div>
             <div class="flex gap-2">
                 <button wire:click="setFilter('')"
-                    class="px-4 py-2 rounded-lg text-sm font-bold transition-colors {{ $filterType === '' ? 'bg-primary text-white' : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600' }}">
+                    class="px-4 py-2 rounded-lg text-sm font-bold transition-colors {{ $filterType === '' ? 'bg-[#155A6B] text-white' : 'bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-600' }}">
                     Semua
                 </button>
                 <button wire:click="setFilter('TRANSFER_OUT')"
@@ -31,16 +31,16 @@
             <i class='bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xl'></i>
             <input type="text" wire:model.live.debounce.300ms="search" 
                 placeholder="Cari nama, nomor anggota, atau referensi transfer..."
-                class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                class="w-full pl-12 pr-4 py-3 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-sm text-zinc-900 dark:text-white focus:ring-2 focus:ring-[#155A6B] focus:border-transparent transition-all">
         </div>
     </div>
 
     {{-- Transfer List --}}
-    <div class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden">
         @if($transfers->count() > 0)
             <div class="overflow-x-auto">
                 <table class="w-full">
-                    <thead class="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+                    <thead class="bg-zinc-50 dark:bg-zinc-800">
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tanggal</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Tipe</th>
@@ -50,9 +50,9 @@
                             <th class="px-6 py-4 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                         @foreach($transfers as $transfer)
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" wire:click="viewReceipt({{ $transfer->id }})">
+                            <tr class="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors cursor-pointer" wire:click="viewReceipt({{ $transfer->id }})">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="text-sm font-medium text-slate-900 dark:text-white">
                                         {{ $transfer->created_at->format('d M Y') }}
@@ -92,7 +92,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <button wire:click.stop="viewReceipt({{ $transfer->id }})"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-primary hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors">
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-[#155A6B] hover:bg-[#0E3E4B] text-white rounded-lg text-xs font-bold transition-colors active:scale-[0.98]">
                                         <i class='bx bx-receipt'></i> Lihat Struk
                                     </button>
                                 </td>
@@ -113,10 +113,12 @@
                 </div>
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">Belum Ada Riwayat Transfer</h3>
                 <p class="text-sm text-slate-500 mb-6">Transfer pertama kamu akan muncul di sini</p>
+                @unless($member?->isReadOnly())
                 <a href="{{ route('member.transfer') }}" 
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold transition-colors">
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-[#155A6B] hover:bg-[#0E3E4B] text-white rounded-xl font-bold transition-colors active:scale-[0.98]">
                     <i class='bx bx-plus-circle'></i> Mulai Transfer
                 </a>
+                @endunless
             </div>
         @endif
     </div>
@@ -124,9 +126,9 @@
     {{-- Receipt Modal --}}
     @if($showReceiptModal && $selectedTransfer)
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" wire:click="closeReceipt">
-            <div class="bg-white dark:bg-darkCard rounded-2xl shadow-2xl max-w-md w-full my-8" wire:click.stop>
+            <div class="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl max-w-md w-full my-8" wire:click.stop>
                 {{-- Header --}}
-                <div class="bg-gradient-to-r from-primary to-blue-600 p-4 sm:p-6 rounded-t-2xl text-white relative overflow-hidden">
+                <div class="bg-gradient-to-r from-[#155A6B] to-emerald-600 p-4 sm:p-6 rounded-t-2xl text-white relative overflow-hidden">
                     <div class="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
                     <div class="relative z-10 text-center">
                         <div class="w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 sm:mb-3">
@@ -226,7 +228,7 @@
                         Tutup
                     </button>
                     <button onclick="window.print()"
-                        class="w-full sm:flex-1 py-2.5 sm:py-3 bg-primary hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2">
+                        class="w-full sm:flex-1 py-2.5 sm:py-3 bg-[#155A6B] hover:bg-[#0E3E4B] text-white rounded-xl text-sm font-bold transition-colors active:scale-[0.98] flex items-center justify-center gap-2">
                         <i class='bx bx-printer'></i> Cetak
                     </button>
                 </div>
@@ -234,4 +236,3 @@
         </div>
     @endif
 </div>
-

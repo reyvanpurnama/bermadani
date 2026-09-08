@@ -9,10 +9,12 @@ use App\Models\SimpananTransaction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Livewire\Member\Concerns\EnsuresMemberCanMutate;
 
 #[Layout('layouts.member')]
 class Transfer extends Component
 {
+    use EnsuresMemberCanMutate;
     // Transfer settings
     const MIN_TRANSFER = 10000;
     const MAX_PER_TRANSACTION = 5000000;
@@ -73,6 +75,7 @@ class Transfer extends Component
 
     public function selectRecipient($memberId)
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $member = Member::find($memberId);
         if ($member) {
             $this->recipientNumber = $member->nomorAnggota;
@@ -96,6 +99,7 @@ class Transfer extends Component
 
     public function searchRecipient()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->resetErrorBag();
 
         if (empty($this->recipientNumber)) {
@@ -120,12 +124,14 @@ class Transfer extends Component
 
     public function clearRecipient()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->recipientNumber = '';
         $this->recipientMember = null;
     }
 
     public function proceedToConfirm()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->resetErrorBag();
 
         // Validate recipient
@@ -170,12 +176,14 @@ class Transfer extends Component
 
     public function backToForm()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->step = 1;
         $this->password = '';
     }
 
     public function executeTransfer()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->resetErrorBag();
 
         // Validate password
@@ -267,6 +275,7 @@ class Transfer extends Component
 
     public function newTransfer()
     {
+        if (! $this->ensureMemberCanMutate()) return;
         $this->reset(['step', 'recipientNumber', 'recipientMember', 'amount', 'notes', 'password', 'transferResult']);
         $this->step = 1;
         $this->calculateTodayTransferred();

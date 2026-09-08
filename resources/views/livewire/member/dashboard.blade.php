@@ -199,7 +199,8 @@
                     </div>
                 </a>
 
-                <a href="{{ route('member.transfer') }}" class="group p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-[#155A6B]/10 dark:hover:bg-emerald-500/10 border border-zinc-200/50 dark:border-zinc-700/50 transition-all duration-200 flex flex-col justify-between">
+                @unless($member?->isReadOnly())
+                <a href="{{ route('member.transfer') }}" class="group p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-[#155A6B]/10 dark:hover:bg-emerald-500/10 transition-all duration-200 flex flex-col justify-between shadow-sm hover:shadow-md active:scale-[0.98]">
                     <div class="w-10 h-10 rounded-xl bg-blue-500/10 dark:bg-blue-400/20 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                         <i class='bx bxs-paper-plane'></i>
                     </div>
@@ -208,6 +209,7 @@
                         <span class="text-[10px] text-zinc-400 block mt-0.5">Kirim Sesama</span>
                     </div>
                 </a>
+                @endunless
 
                 <a href="{{ route('member.loans') }}" class="group p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/60 hover:bg-[#155A6B]/10 dark:hover:bg-emerald-500/10 border border-zinc-200/50 dark:border-zinc-700/50 transition-all duration-200 flex flex-col justify-between">
                     <div class="w-10 h-10 rounded-xl bg-amber-500/10 dark:bg-amber-400/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
@@ -531,4 +533,3 @@
 
     </div>
 </div>
-

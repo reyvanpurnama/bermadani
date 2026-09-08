@@ -45,7 +45,7 @@ class Simpanan extends Component
 
     public function markAsRead()
     {
-        if ($this->member) {
+        if ($this->member && ! $this->member->isReadOnly()) {
             SimpananTransaction::where('memberId', $this->member->id)
                 ->where('isRead', false)
                 ->update(['isRead' => true]);
@@ -55,6 +55,7 @@ class Simpanan extends Component
     public function viewReceipt($transferId)
     {
         $this->selectedTransfer = SimpananTransaction::with(['member', 'relatedMember'])
+            ->where('memberId', $this->member->id)
             ->findOrFail($transferId);
         $this->showReceiptModal = true;
     }

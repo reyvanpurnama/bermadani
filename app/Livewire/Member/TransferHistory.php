@@ -34,6 +34,7 @@ class TransferHistory extends Component
     public function viewReceipt($transferId)
     {
         $this->selectedTransfer = SimpananTransaction::with(['member', 'relatedMember'])
+            ->where('memberId', $this->member->id)
             ->findOrFail($transferId);
         $this->showReceiptModal = true;
     }

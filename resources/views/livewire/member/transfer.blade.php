@@ -43,7 +43,7 @@
 
     {{-- Progress --}}
     <div class="h-1 bg-slate-200 dark:bg-slate-700 rounded-full mb-8 overflow-hidden">
-        <div class="h-full bg-primary transition-all duration-500 ease-out" style="width: {{ $step * 33.33 }}%"></div>
+        <div class="h-full bg-[#155A6B] transition-all duration-500 ease-out" style="width: {{ $step * 33.33 }}%"></div>
     </div>
 
     {{-- Step 1: Input --}}
@@ -70,7 +70,7 @@
         </div>
 
         <div
-            class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden">
 
             {{-- Quick Transfer (Recent) --}}
             @if(count($recentRecipients) > 0 && !$recipientMember)
@@ -175,9 +175,9 @@
 
         {{-- Action Button --}}
         <div
-            class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-darkCard border-t border-slate-100 dark:border-slate-800 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:mt-6 z-50">
+            class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:mt-6 z-50">
             <button wire:click="proceedToConfirm" wire:loading.attr="disabled"
-                class="w-full py-4 bg-primary text-white font-bold text-lg rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                class="w-full py-4 bg-[#155A6B] text-white font-bold text-lg rounded-xl hover:bg-[#0E3E4B] transition-all shadow-lg shadow-[#155A6B]/20 active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 <span wire:loading.remove wire:target="proceedToConfirm">Lanjutkan</span>
                 <span wire:loading wire:target="proceedToConfirm"><i class='bx bx-loader-alt animate-spin'></i>
                     Memproses...</span>
@@ -189,7 +189,7 @@
     {{-- Step 2: Confirmation --}}
     @if($step === 2)
         <div
-            class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden animate-[fadeIn_0.3s_ease-out]">
+            class="bg-white dark:bg-zinc-900 rounded-2xl shadow-sm overflow-hidden animate-[fadeIn_0.3s_ease-out]">
             <div class="p-6 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 text-center">
                 <p class="text-slate-500 dark:text-slate-400 text-sm mb-1">Total Nominal</p>
                 <h2 class="text-3xl font-bold text-slate-900 dark:text-white">Rp
@@ -246,13 +246,13 @@
 
         {{-- Action Buttons --}}
         <div
-            class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-darkCard border-t border-slate-100 dark:border-slate-800 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:mt-6 z-50 flex gap-4">
+            class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 lg:static lg:bg-transparent lg:border-none lg:p-0 lg:mt-6 z-50 flex gap-4">
             <button wire:click="backToForm"
                 class="flex-1 py-4 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">
                 Batal
             </button>
             <button wire:click="executeTransfer" wire:loading.attr="disabled"
-                class="flex-[2] py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/30">
+                class="flex-[2] py-4 bg-[#155A6B] text-white font-bold rounded-xl hover:bg-[#0E3E4B] transition-colors disabled:opacity-50 active:scale-[0.98] flex items-center justify-center gap-2 shadow-lg shadow-[#155A6B]/20">
                 <span wire:loading.remove wire:target="executeTransfer">Konfirmasi & Kirim</span>
                 <span wire:loading wire:target="executeTransfer"><i class='bx bx-loader-alt animate-spin'></i>
                     Memproses...</span>
@@ -274,7 +274,7 @@
 
             {{-- Receipt Card --}}
             <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 overflow-hidden relative mb-8">
+                class="bg-white dark:bg-zinc-900 rounded-2xl shadow-lg overflow-hidden relative mb-8">
                 {{-- Decorative jagged edge (CSS trick or just simple line) --}}
                 <div class="p-6 space-y-4">
                     <div class="flex justify-between items-center text-sm">
@@ -312,7 +312,7 @@
                     Ke Beranda
                 </a>
                 <button wire:click="newTransfer"
-                    class="flex-1 py-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/30">
+                    class="flex-1 py-4 bg-[#155A6B] text-white font-bold rounded-xl hover:bg-[#0E3E4B] transition-colors shadow-lg shadow-[#155A6B]/20 active:scale-[0.98]">
                     Transfer Lagi
                 </button>
             </div>

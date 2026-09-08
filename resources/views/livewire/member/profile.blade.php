@@ -4,6 +4,7 @@
     closeModal() { this.activeModal = null; document.body.classList.remove('overflow-hidden'); }
 }">
     @section('title', 'Profil & Identitas')
+    @php($isReadOnly = $member->isReadOnly())
 
     <div class="max-w-2xl mx-auto pb-24 lg:pb-0 space-y-6">
         {{-- Apple ID Header Profile Card --}}
@@ -47,7 +48,16 @@
             </div>
         </div>
 
+        @if($isReadOnly)
+            <div class="rounded-3xl bg-amber-500/10 p-5 text-center shadow-sm dark:bg-amber-500/15">
+                <i class='bx bx-lock-alt text-2xl text-amber-600 dark:text-amber-400'></i>
+                <p class="mt-2 text-sm font-bold text-amber-800 dark:text-amber-200">Profil dalam mode baca saja</p>
+                <p class="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">Informasi keanggotaan tetap tersedia sebagai arsip. Perubahan data, pengaturan simpanan, dan kata sandi tidak tersedia.</p>
+            </div>
+        @endif
+
         {{-- Apple Style Grouped Settings --}}
+        @unless($isReadOnly)
         <div class="space-y-4">
             {{-- Account Group --}}
             <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 overflow-hidden shadow-sm">
@@ -130,9 +140,11 @@
                 <p class="text-[10px] text-zinc-400 font-medium">{{ strtoupper(config('cooperative.short_name')) }} • {{ config('cooperative.name') }}</p>
             </div>
         </div>
+        @endunless
     </div>
 
     {{-- MODALS (Slide-over for Mobile, Modal for Desktop) --}}
+    @unless($isReadOnly)
 
     {{-- 1. Profile Edit Modal --}}
     <div x-show="activeModal === 'profile'" x-cloak
@@ -398,6 +410,7 @@
             <span class="text-sm font-medium">{{ session('success') }}</span>
         </div>
     @endif
+    @endunless
 </div>
 
 @push('styles')

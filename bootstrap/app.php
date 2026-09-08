@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'cashier.shift' => \App\Http\Middleware\CheckCashierShift::class,
             'log.activity' => \App\Http\Middleware\LogActivity::class,
             'member.type' => \App\Http\Middleware\CheckMemberType::class,
+            'member.active' => \App\Http\Middleware\EnsureActiveMember::class,
             'installed' => \App\Http\Middleware\EnsureAppIsInstalled::class,
             'uninstalled' => \App\Http\Middleware\RedirectIfInstalled::class,
         ]);

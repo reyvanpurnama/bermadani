@@ -2,7 +2,7 @@
 
 <div class="space-y-6">
     {{-- Navigation & Header --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm">
         <div>
             <div class="flex items-center gap-2 mb-1">
                 <a href="{{ route('member.loans') }}"
@@ -36,7 +36,7 @@
     @endphp
 
     {{-- Contract Header Info Card --}}
-    <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 relative overflow-hidden">
+    <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm relative overflow-hidden">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100 dark:border-slate-700">
             <div class="flex items-start gap-4">
                 <div class="w-14 h-14 rounded-2xl bg-{{ $themeColor }}-50 dark:bg-{{ $themeColor }}-900/30 text-{{ $themeColor }}-600 dark:text-{{ $themeColor }}-400 flex items-center justify-center text-3xl shrink-0">
@@ -115,7 +115,7 @@
     </div>
 
     {{-- Breakdown Detail Card --}}
-    <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+    <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm">
         <h3 class="text-sm font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <i class='bx bx-pie-chart-alt-2 text-emerald-500 text-lg'></i> Rincian Skema Potongan Angsuran Syariah
         </h3>
@@ -157,7 +157,7 @@
     </div>
 
     {{-- Repayment History Table Section --}}
-    <div class="bg-white dark:bg-darkCard p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
+    <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-sm">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <i class='bx bx-table text-emerald-500 text-lg'></i> Tabel Mutasi & History Pembayaran Angsuran
