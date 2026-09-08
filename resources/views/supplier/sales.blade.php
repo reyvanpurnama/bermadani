@@ -26,27 +26,34 @@
             </div>
         </div>
 
-        <!-- Summary Cards Row -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <!-- Pendapatan Supplier Card -->
-            <div class="rounded-2xl bg-gradient-to-br from-[#155A6B] to-[#1a6b80] p-5 text-white shadow-lg shadow-[#155A6B]/20">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-teal-100 block mb-1">Total Pendapatan Anda</span>
-                <h3 class="text-2xl font-extrabold tracking-tight">Rp {{ number_format($supplierRevenue ?? 0, 0, ',', '.') }}</h3>
-            </div>
-
-            <!-- Total Omzet Retail -->
-            <div class="rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-5 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Total Omzet Penjualan</span>
-                <h3 class="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">Rp {{ number_format($totalOmzet ?? 0, 0, ',', '.') }}</h3>
+        <!-- Summary Cards Row (2 Clean Cards for Supplier) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Pendapatan Supplier Card (Hak Bersih Supplier) -->
+            <div class="rounded-3xl bg-gradient-to-br from-[#155A6B] via-[#166072] to-[#1a6b80] p-6 text-white shadow-xl shadow-[#155A6B]/20 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-teal-100 flex items-center gap-1.5">
+                        <i class='bx bx-wallet text-lg'></i> Total Pendapatan Anda (Hak Supplier)
+                    </span>
+                    <span class="bg-white/20 backdrop-blur-md border border-white/20 px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white">
+                        Bersih (Net)
+                    </span>
+                </div>
+                <h3 class="text-3xl font-black tracking-tight mt-1">Rp {{ number_format($supplierRevenue ?? 0, 0, ',', '.') }}</h3>
+                <p class="text-[11px] text-teal-200 mt-2 font-medium">Uang bersih yang dicairkan/ditransfer ke rekening Anda (Harga Beli × Qty)</p>
             </div>
 
             <!-- Total Unit Terjual -->
-            <div class="rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-5 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md">
-                <span class="text-[11px] font-bold uppercase tracking-wider text-zinc-400 block mb-1">Total Unit Terjual</span>
-                <div class="flex items-baseline gap-1">
-                    <h3 class="text-2xl font-extrabold text-zinc-900 dark:text-white tracking-tight">{{ number_format($totalItemsSold ?? 0, 0, ',', '.') }}</h3>
-                    <span class="text-xs text-zinc-400 font-medium">Pcs</span>
+            <div class="rounded-3xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-6 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+                        <i class='bx bx-package text-lg text-[#155A6B] dark:text-teal-400'></i> Total Unit Terjual
+                    </span>
                 </div>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <h3 class="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">{{ number_format($totalItemsSold ?? 0, 0, ',', '.') }}</h3>
+                    <span class="text-sm text-zinc-400 font-extrabold">Pcs</span>
+                </div>
+                <p class="text-[11px] text-zinc-500 dark:text-zinc-400 mt-2 font-medium">Akumulasi produk konsinyasi Anda yang terjual di minimarket</p>
             </div>
         </div>
 

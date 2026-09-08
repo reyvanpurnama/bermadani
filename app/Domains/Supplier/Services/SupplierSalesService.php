@@ -55,8 +55,8 @@ class SupplierSalesService
             $files = glob(base_path('docs/data/databulanan/retail_report_*.csv'));
             foreach ($files as $file) {
                 if (($h = fopen($file, 'r')) !== false) {
-                    fgetcsv($h, 1000, ','); // skip header
-                    while (($d = fgetcsv($h, 1000, ',')) !== false) {
+                    fgetcsv($h, 1000, ',', '"', '\\'); // skip header
+                    while (($d = fgetcsv($h, 1000, ',', '"', '\\')) !== false) {
                         if (count($d) < 7) continue;
                         $tanggal = trim($d[0] ?? '');
                         $rawName = trim($d[1] ?? '');
