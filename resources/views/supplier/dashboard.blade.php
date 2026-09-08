@@ -16,55 +16,58 @@
                 </h3>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="grid grid-cols-3 gap-3">
                 <!-- Requested Batches -->
                 <a href="{{ route('supplier.restock') }}"
-                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-5 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md hover:shadow-2xl hover:border-[#155A6B]/50 transition-all duration-300 flex items-center gap-4">
-                    @if($requestedBatchesCount > 0)
-                        <span
-                            class="absolute top-3 right-3 w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse ring-4 ring-rose-500/20"></span>
-                    @endif
-                    <div
-                        class="w-12 h-12 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-                        <i class='bx bx-archive-in text-2xl'></i>
+                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-3.5 sm:p-4 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md hover:border-[#155A6B]/50 transition-all duration-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <i class='bx bx-truck text-lg sm:text-xl'></i>
+                        </div>
+                        @if($requestedBatchesCount > 0)
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                        @endif
                     </div>
-                    <div>
-                        <span class="text-2xl font-black text-zinc-900 dark:text-white leading-none block mb-1">{{ $requestedBatchesCount }}</span>
-                        <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Batch Perlu Dikirim</span>
+                    <div class="mt-3">
+                        <span class="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-none block">{{ $requestedBatchesCount }}</span>
+                        <span class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-1 block truncate">Perlu Kirim</span>
                     </div>
                 </a>
 
                 <!-- Pending Settlement -->
                 <a href="{{ route('supplier.restock') }}"
-                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-5 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md hover:shadow-2xl hover:border-amber-500/50 transition-all duration-300 flex items-center gap-4">
-                    @if($pendingSettlementCount > 0)
-                        <span
-                            class="absolute top-3 right-3 w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse ring-4 ring-amber-500/20"></span>
-                    @endif
-                    <div
-                        class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-                        <i class='bx bx-money-withdraw text-2xl'></i>
+                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-3.5 sm:p-4 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md hover:border-amber-500/50 transition-all duration-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <i class='bx bx-money text-lg sm:text-xl'></i>
+                        </div>
+                        @if($pendingSettlementCount > 0)
+                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        @endif
                     </div>
-                    <div>
-                        <span class="text-2xl font-black text-zinc-900 dark:text-white leading-none block mb-1">{{ $pendingSettlementCount }}</span>
-                        <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400">Pembayaran Siap Cair</span>
+                    <div class="mt-3">
+                        <span class="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-none block">{{ $pendingSettlementCount }}</span>
+                        <span class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-1 block truncate">Siap Cair</span>
                     </div>
                 </a>
 
                 <!-- Low Stock -->
                 <a href="{{ route('supplier.products.index') }}"
-                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-5 border border-zinc-200/80 dark:border-zinc-800/80 shadow-md hover:shadow-2xl hover:border-rose-500/50 transition-all duration-300 flex items-center gap-4">
-                    @if($lowStock > 0)
-                        <span
-                            class="absolute top-3 right-3 w-2.5 h-2.5 bg-rose-500 rounded-full animate-pulse ring-4 ring-rose-500/20"></span>
-                    @endif
-                    <div
-                        class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-                        <i class='bx bx-error-circle text-2xl'></i>
+                    class="group relative overflow-hidden rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl p-3.5 sm:p-4 border border-zinc-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-md hover:border-rose-500/50 transition-all duration-200 flex flex-col justify-between">
+                    <div class="flex items-center justify-between">
+                        <div
+                            class="w-9 h-9 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <i class='bx bx-error-circle text-lg sm:text-xl'></i>
+                        </div>
+                        @if($lowStock > 0)
+                            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                        @endif
                     </div>
-                    <div>
-                        <span class="text-2xl font-black text-zinc-900 dark:text-white leading-none block mb-1">{{ $lowStock }}</span>
-                        <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400">SKU Stok Menipis</span>
+                    <div class="mt-3">
+                        <span class="text-xl sm:text-2xl font-black text-zinc-900 dark:text-white leading-none block">{{ $lowStock }}</span>
+                        <span class="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 mt-1 block truncate">Stok Menipis</span>
                     </div>
                 </a>
             </div>
