@@ -186,7 +186,7 @@
             
             <div class="mb-10 sm:mb-14 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 border border-teal-200 px-3 py-1 rounded-full mb-3">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 px-3 py-1 rounded-full mb-3">
                         CORE PRODUCTS & SERVICES
                     </span>
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-apple-headline text-zinc-900 tracking-tight">
@@ -198,8 +198,8 @@
                 </p>
             </div>
 
-            <!-- Interactive Split Showcase Card Container (Pattern 1 Layout) -->
-            <div class="bg-zinc-50/90 rounded-3xl sm:rounded-[2.5rem] border border-zinc-200/90 p-6 sm:p-10 shadow-lg" x-data="{ activeTab: 'mart' }">
+            <!-- Interactive Split Showcase Card Container (Borderless Modern Aesthetics) -->
+            <div class="bg-zinc-100/70 rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 shadow-sm" x-data="{ activeTab: 'mart' }">
                 <div class="flex flex-col lg:flex-row gap-8 items-stretch w-full">
                     
                     <!-- Left Side: Interactive Row Selectors (5/12 width) -->
@@ -207,10 +207,10 @@
                         
                         <!-- Selector 1: Bermadani Mart -->
                         <button @click="activeTab = 'mart'" 
-                            :class="activeTab === 'mart' ? 'bg-[#155A6B] text-white border-[#155A6B] shadow-md scale-[1.02]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100/80'"
-                            class="w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer">
+                            :class="activeTab === 'mart' ? 'bg-[#155A6B] text-white shadow-md scale-[1.02]' : 'bg-white text-zinc-800 shadow-sm hover:shadow-md hover:bg-white'"
+                            class="w-full text-left p-5 rounded-2xl transition-all duration-300 flex items-center justify-between group cursor-pointer">
                             <div class="space-y-1 pr-4">
-                                <span :class="activeTab === 'mart' ? 'text-teal-200 bg-white/20' : 'text-[#155A6B] bg-teal-50 border border-teal-200'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                                <span :class="activeTab === 'mart' ? 'text-teal-200 bg-white/20' : 'text-[#155A6B] bg-teal-50'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                                     <i class='bx bx-shopping-bag'></i> Minimarket Kampus
                                 </span>
                                 <h3 class="text-base sm:text-lg font-bold tracking-tight">Bermadani Mart & Retail</h3>
@@ -226,10 +226,10 @@
 
                         <!-- Selector 2: Simpanan Syariah -->
                         <button @click="activeTab = 'savings'" 
-                            :class="activeTab === 'savings' ? 'bg-[#155A6B] text-white border-[#155A6B] shadow-md scale-[1.02]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100/80'"
-                            class="w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer">
+                            :class="activeTab === 'savings' ? 'bg-[#155A6B] text-white shadow-md scale-[1.02]' : 'bg-white text-zinc-800 shadow-sm hover:shadow-md hover:bg-white'"
+                            class="w-full text-left p-5 rounded-2xl transition-all duration-300 flex items-center justify-between group cursor-pointer">
                             <div class="space-y-1 pr-4">
-                                <span :class="activeTab === 'savings' ? 'text-teal-200 bg-white/20' : 'text-blue-600 bg-blue-50 border border-blue-200'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                                <span :class="activeTab === 'savings' ? 'text-teal-200 bg-white/20' : 'text-blue-600 bg-blue-50'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                                     <i class='bx bx-vault'></i> 0% Admin Siluman
                                 </span>
                                 <h3 class="text-base sm:text-lg font-bold tracking-tight">Simpanan Syariah Amanah</h3>
@@ -245,10 +245,10 @@
 
                         <!-- Selector 3: Dividen SHU -->
                         <button @click="activeTab = 'shu'" 
-                            :class="activeTab === 'shu' ? 'bg-[#155A6B] text-white border-[#155A6B] shadow-md scale-[1.02]' : 'bg-white text-zinc-800 border-zinc-200 hover:border-zinc-300 hover:bg-zinc-100/80'"
-                            class="w-full text-left p-5 rounded-2xl border transition-all duration-300 flex items-center justify-between group cursor-pointer">
+                            :class="activeTab === 'shu' ? 'bg-[#155A6B] text-white shadow-md scale-[1.02]' : 'bg-white text-zinc-800 shadow-sm hover:shadow-md hover:bg-white'"
+                            class="w-full text-left p-5 rounded-2xl transition-all duration-300 flex items-center justify-between group cursor-pointer">
                             <div class="space-y-1 pr-4">
-                                <span :class="activeTab === 'shu' ? 'text-teal-200 bg-white/20' : 'text-purple-700 bg-purple-50 border border-purple-200'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
+                                <span :class="activeTab === 'shu' ? 'text-teal-200 bg-white/20' : 'text-purple-700 bg-purple-50'" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full">
                                     <i class='bx bx-pie-chart-alt-2'></i> Dividen & SHU
                                 </span>
                                 <h3 class="text-base sm:text-lg font-bold tracking-tight">Bagi Hasil Keuntungan Toko</h3>
@@ -265,7 +265,7 @@
                     </div>
 
                     <!-- Right Side: Dynamic Feature Spotlight Display (7/12 width) -->
-                    <div class="w-full lg:w-7/12 flex-grow min-w-0 bg-white rounded-2xl border border-zinc-200/80 p-6 sm:p-8 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                    <div class="w-full lg:w-7/12 flex-grow min-w-0 bg-white rounded-2xl p-6 sm:p-8 flex flex-col justify-between shadow-md relative overflow-hidden">
                         
                         <!-- Tab Content 1: Mart -->
                         <div x-show="activeTab === 'mart'" 
@@ -281,18 +281,18 @@
                             </div>
                             
                             <!-- Unobscured Crisp 3D Image Container -->
-                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner">
+                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
                                 <img src="{{ asset('images/bento/bento-mart-43.jpeg') }}" alt="Bermadani Mart" class="w-full h-full object-cover">
                             </div>
 
                             <!-- Key Metric Pills -->
                             <div class="grid grid-cols-2 gap-3 pt-2">
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Benefit Utama</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Benefit Utama</p>
                                     <p class="text-xs font-bold text-zinc-800 mt-0.5">Diskon Khusus Anggota</p>
                                 </div>
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Transparansi POS</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Transparansi POS</p>
                                     <p class="text-xs font-bold text-zinc-800 mt-0.5">Nota Digital di Portal</p>
                                 </div>
                             </div>
@@ -313,18 +313,18 @@
                             </div>
 
                             <!-- Unobscured Crisp 3D Image Container -->
-                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner">
+                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
                                 <img src="{{ asset('images/bento/bento-savings-43.jpeg') }}" alt="Simpanan Syariah" class="w-full h-full object-cover">
                             </div>
 
                             <!-- Key Metric Pills -->
                             <div class="grid grid-cols-2 gap-3 pt-2">
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Biaya Administrasi</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Biaya Administrasi</p>
                                     <p class="text-xs font-bold text-emerald-600 mt-0.5">Rp 0 / Bebas Potongan</p>
                                 </div>
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Akad Syariah</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Akad Syariah</p>
                                     <p class="text-xs font-bold text-zinc-800 mt-0.5">Wadi'ah & Mudharabah</p>
                                 </div>
                             </div>
@@ -345,18 +345,18 @@
                             </div>
 
                             <!-- Unobscured Crisp 3D Image Container -->
-                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner">
+                            <div class="w-full aspect-[16/9] rounded-xl bg-zinc-100/50 overflow-hidden shadow-inner">
                                 <img src="{{ asset('images/bento/bento-shu-43.jpeg') }}" alt="Bagi Hasil SHU" class="w-full h-full object-cover">
                             </div>
 
                             <!-- Key Metric Pills -->
                             <div class="grid grid-cols-2 gap-3 pt-2">
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Pembagian SHU</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Pembagian SHU</p>
                                     <p class="text-xs font-bold text-[#155A6B] mt-0.5">Tiap Akhir Tahun Buku</p>
                                 </div>
-                                <div class="p-3 bg-zinc-50 rounded-xl border border-zinc-200/60">
-                                    <p class="text-[10px] font-extrabold uppercase text-zinc-500">Audit Laporan</p>
+                                <div class="p-3.5 bg-zinc-50/80 rounded-xl">
+                                    <p class="text-[10px] font-extrabold uppercase text-zinc-400">Audit Laporan</p>
                                     <p class="text-xs font-bold text-zinc-800 mt-0.5">Transparan di Dashboard</p>
                                 </div>
                             </div>
@@ -375,7 +375,7 @@
             
             <div class="mb-10 sm:mb-14 flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mb-3">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full mb-3">
                         <i class='bx bx-store-alt text-xs'></i> KEMITRAAN SUPPLIER UMKM
                     </span>
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-apple-headline text-zinc-900 tracking-tight">
@@ -397,10 +397,10 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
                 <!-- Card 1: Step 01 -->
-                <div class="rounded-3xl bg-white border border-zinc-200/90 p-6 shadow-sm hover:shadow-xl hover:border-amber-500/40 transition-all duration-300 flex flex-col justify-between space-y-6 group">
+                <div class="rounded-3xl bg-white p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6 group">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full">
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-amber-700 bg-amber-50 px-3 py-1 rounded-full">
                                 LANGKAH 01
                             </span>
                             <span class="text-[10px] font-bold text-zinc-400">Verifikasi SKU</span>
@@ -415,16 +415,16 @@
                     </div>
 
                     <!-- Crisp Bottom 3D Frame (Unobscured 100% full visual) -->
-                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
                         <img src="{{ asset('images/bento/bento-supplier-43.jpeg') }}" alt="Pendaftaran SKU Supplier" class="w-full h-full object-cover">
                     </div>
                 </div>
 
                 <!-- Card 2: Step 02 -->
-                <div class="rounded-3xl bg-white border border-zinc-200/90 p-6 shadow-sm hover:shadow-xl hover:border-teal-500/40 transition-all duration-300 flex flex-col justify-between space-y-6 group">
+                <div class="rounded-3xl bg-white p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6 group">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 px-3 py-1 rounded-full">
                                 LANGKAH 02
                             </span>
                             <span class="text-[10px] font-bold text-zinc-400">Gerai Kampus</span>
@@ -439,16 +439,16 @@
                     </div>
 
                     <!-- Crisp Bottom 3D Frame -->
-                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
                         <img src="{{ asset('images/bento/bento-mart-43.jpeg') }}" alt="Penjualan POS Kampus" class="w-full h-full object-cover">
                     </div>
                 </div>
 
                 <!-- Card 3: Step 03 -->
-                <div class="rounded-3xl bg-white border border-zinc-200/90 p-6 shadow-sm hover:shadow-xl hover:border-purple-500/40 transition-all duration-300 flex flex-col justify-between space-y-6 group">
+                <div class="rounded-3xl bg-white p-6 sm:p-7 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between space-y-6 group">
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
-                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full">
+                            <span class="text-[10px] font-extrabold uppercase tracking-wider text-purple-700 bg-purple-50 px-3 py-1 rounded-full">
                                 LANGKAH 03
                             </span>
                             <span class="text-[10px] font-bold text-zinc-400">Dashboard 24/7</span>
@@ -463,7 +463,7 @@
                     </div>
 
                     <!-- Crisp Bottom 3D Frame -->
-                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100 border border-zinc-200/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="w-full aspect-[4/3] rounded-2xl bg-zinc-100/60 overflow-hidden shadow-inner group-hover:scale-[1.02] transition-transform duration-500">
                         <img src="{{ asset('images/bento/bento-portal-43.jpeg') }}" alt="Dashboard Sales Supplier" class="w-full h-full object-cover">
                     </div>
                 </div>
@@ -479,7 +479,7 @@
             
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 border border-teal-200 px-3 py-1 rounded-full">
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 px-3 py-1 rounded-full">
                         OUR STRATEGIC ADVANTAGES
                     </span>
                     <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 text-apple-headline tracking-tight mt-2">
@@ -492,7 +492,7 @@
             </div>
 
             <!-- Main Container with Dark Background Image & 3 Floating Frosted Glass Cards (Pattern 3 Layout) -->
-            <div class="relative rounded-3xl lg:rounded-[2.5rem] border border-zinc-200/80 shadow-2xl overflow-hidden bg-zinc-950 min-h-[520px] flex flex-col justify-end p-6 sm:p-8 md:p-10">
+            <div class="relative rounded-3xl lg:rounded-[2.5rem] shadow-2xl overflow-hidden bg-zinc-950 min-h-[520px] flex flex-col justify-end p-6 sm:p-8 md:p-10">
                 
                 <!-- Background Image Graphic -->
                 <img src="{{ asset('images/hero-landscape.jpeg') }}" alt="Strategic Advantages" class="absolute inset-0 w-full h-full object-cover opacity-35 filter saturate-150">
@@ -504,8 +504,8 @@
                 <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
                     
                     <!-- Floating Card 1 -->
-                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                        <div class="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center text-teal-300 text-xl font-bold">
+                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-300 text-xl font-bold">
                             <i class='bx bx-check-shield'></i>
                         </div>
                         <div class="space-y-2">
@@ -519,8 +519,8 @@
                     </div>
 
                     <!-- Floating Card 2 -->
-                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300 text-xl font-bold">
+                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-300 text-xl font-bold">
                             <i class='bx bx-devices'></i>
                         </div>
                         <div class="space-y-2">
@@ -534,8 +534,8 @@
                     </div>
 
                     <!-- Floating Card 3 -->
-                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center text-purple-300 text-xl font-bold">
+                    <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-300 text-xl font-bold">
                             <i class='bx bx-buildings'></i>
                         </div>
                         <div class="space-y-2">
