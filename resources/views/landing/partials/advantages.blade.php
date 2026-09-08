@@ -1,11 +1,11 @@
 <!-- 3. OUR STRATEGIC ADVANTAGES SPOTLIGHT (Pattern 3 from Reference) -->
-<section id="advantages" class="py-16 sm:py-24 bg-white border-t border-zinc-200 relative overflow-hidden">
+<section id="advantages" class="py-16 sm:py-24 bg-white border-t border-zinc-200/80 relative overflow-hidden">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
             <div>
                 <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#155A6B] bg-teal-50 px-3 py-1 rounded-full">
-                    OUR STRATEGIC ADVANTAGES
+                    <i class='bx bx-award text-xs'></i> KEUNGGULAN UTAMA
                 </span>
                 <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-zinc-900 text-apple-headline tracking-tight mt-2">
                     Keunggulan Utama Bermadani.
@@ -17,20 +17,40 @@
         </div>
 
         <!-- Main Container with Dark Background Image & 3 Floating Frosted Glass Cards (Pattern 3 Layout) -->
-        <div class="relative rounded-3xl lg:rounded-[2.5rem] shadow-2xl overflow-hidden bg-zinc-950 min-h-[520px] flex flex-col justify-end p-6 sm:p-8 md:p-10">
+        <div class="relative rounded-3xl lg:rounded-[2.5rem] shadow-2xl overflow-hidden bg-zinc-950 min-h-[540px] flex flex-col justify-between p-6 sm:p-8 md:p-10">
             
             <!-- Background Image Graphic -->
             <img src="{{ asset('images/hero-landscape.jpeg') }}" alt="Strategic Advantages" class="absolute inset-0 w-full h-full object-cover opacity-35 filter saturate-150">
             
-            <!-- Subtle Ambient Dark Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/40 to-transparent"></div>
+            <!-- Ambient Dark Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-zinc-950/30"></div>
+
+            <!-- Top Metric Stats Bar -->
+            <div class="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 pb-8 border-b border-white/10">
+                <div class="space-y-0.5">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">1,200+</p>
+                    <p class="text-[11px] text-teal-300 font-semibold uppercase tracking-wider">Civitas Akademika</p>
+                </div>
+                <div class="space-y-0.5">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tracking-tight">Rp 0</p>
+                    <p class="text-[11px] text-emerald-300 font-semibold uppercase tracking-wider">Potongan Admin</p>
+                </div>
+                <div class="space-y-0.5">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-amber-400 tracking-tight">100%</p>
+                    <p class="text-[11px] text-amber-300 font-semibold uppercase tracking-wider">Akad Syariah</p>
+                </div>
+                <div class="space-y-0.5">
+                    <p class="text-2xl sm:text-3xl font-extrabold text-purple-400 tracking-tight">24/7</p>
+                    <p class="text-[11px] text-purple-300 font-semibold uppercase tracking-wider">Portal Digital</p>
+                </div>
+            </div>
 
             <!-- Bottom 3 Floating Frosted-Glass Cards -->
-            <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-3 gap-5 pt-8">
                 
                 <!-- Floating Card 1 -->
-                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                    <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center text-teal-300 text-xl font-bold">
+                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-teal-500/25 flex items-center justify-center text-teal-300 text-xl font-bold">
                         <i class='bx bx-check-shield'></i>
                     </div>
                     <div class="space-y-2">
@@ -44,8 +64,8 @@
                 </div>
 
                 <!-- Floating Card 2 -->
-                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-300 text-xl font-bold">
+                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/25 flex items-center justify-center text-blue-300 text-xl font-bold">
                         <i class='bx bx-devices'></i>
                     </div>
                     <div class="space-y-2">
@@ -59,8 +79,8 @@
                 </div>
 
                 <!-- Floating Card 3 -->
-                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
-                    <div class="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-300 text-xl font-bold">
+                <div class="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 text-white shadow-2xl space-y-4 hover:bg-white/15 transition-all duration-300">
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/25 flex items-center justify-center text-purple-300 text-xl font-bold">
                         <i class='bx bx-buildings'></i>
                     </div>
                     <div class="space-y-2">
