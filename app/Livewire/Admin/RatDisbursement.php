@@ -397,6 +397,12 @@ class RatDisbursement extends Component
         }
 
         $query = MemberShuDistribution::where('rat_session_id', $session->id);
+        if ($this->filterDisbursed !== 'SHOW_ALL' && $this->filterDisbursed !== 'ZERO_SHU') {
+            $query->where('shu_amount', '>', 0);
+        } elseif ($this->filterDisbursed === 'ZERO_SHU') {
+            $query->where('shu_amount', '<=', 0);
+        }
+
         $total = (clone $query)->count();
         $disbursed = (clone $query)->where('is_disbursed', true)->count();
         $pending = $total - $disbursed;
@@ -428,9 +434,16 @@ class RatDisbursement extends Component
             $filter = $this->filterDisbursed ?: $this->disbursementFilter;
 
             if ($filter === 'PENDING') {
-                $query->where('is_disbursed', false);
+                $query->where('shu_amount', '>', 0)->where('is_disbursed', false);
             } elseif ($filter === 'DISBURSED') {
-                $query->where('is_disbursed', true);
+                $query->where('shu_amount', '>', 0)->where('is_disbursed', true);
+            } elseif ($filter === 'ZERO_SHU') {
+                $query->where('shu_amount', '<=', 0);
+            } elseif ($filter === 'SHOW_ALL') {
+                // No filter on shu_amount
+            } else {
+                // Default 'ALL' -> Only members who receive SHU (> 0)
+                $query->where('shu_amount', '>', 0);
             }
 
             if ($this->searchMember) {

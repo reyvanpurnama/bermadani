@@ -197,9 +197,11 @@
                     class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-4 py-2.5 text-slate-800 dark:text-white outline-none w-full sm:w-64 focus:ring-2 focus:ring-primary/20 min-h-[42px]">
                 <select wire:model.live="filterDisbursed"
                     class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs rounded-xl px-3 py-2.5 text-slate-800 dark:text-white outline-none cursor-pointer min-h-[42px]">
-                    <option value="ALL">Status: Semua Anggota</option>
-                    <option value="PENDING">Status: Belum Dicairkan</option>
-                    <option value="DISBURSED">Status: Sudah Dicairkan</option>
+                    <option value="ALL">Penerima SHU (> Rp 0)</option>
+                    <option value="PENDING">Belum Dicairkan</option>
+                    <option value="DISBURSED">Sudah Dicairkan</option>
+                    <option value="ZERO_SHU">Tidak Berhak (SHU Rp 0)</option>
+                    <option value="SHOW_ALL">Semua Anggota (Termasuk Rp 0)</option>
                 </select>
             </div>
 
@@ -308,7 +310,7 @@
                                 class="col-span-2 px-3 py-2.5 rounded-xl text-xs font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-rose-100 hover:text-rose-600 transition-all flex items-center justify-center gap-1 min-h-[44px]">
                                 Batalkan Status Pencairan
                             </button>
-                        @else
+                        @elseif((float)$dist->shu_amount > 0)
                             <button wire:click="disburseSingle({{ $dist->id }})"
                                 class="px-3 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm flex items-center justify-center gap-1 min-h-[44px]">
                                 <i class='bx bx-check text-base'></i> Tunai
@@ -318,6 +320,10 @@
                                 class="px-3 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-sm flex items-center justify-center gap-1 min-h-[44px]">
                                 <i class='bx bx-wallet text-base'></i> Ke Sukarela
                             </button>
+                        @else
+                            <div class="col-span-2 text-center py-2 px-3 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 text-xs font-medium">
+                                Tidak Berhak SHU (Rp 0)
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -397,9 +403,13 @@
                                     @if($dist->disbursed_at)
                                         <p class="text-[9px] text-slate-400 mt-0.5">{{ $dist->disbursed_at->format('d/m/Y H:i') }}</p>
                                     @endif
-                                @else
+                                @elseif((float)$dist->shu_amount > 0)
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
                                         <i class='bx bx-time-five mr-1'></i> Belum
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                                        -
                                     </span>
                                 @endif
                             </td>
@@ -422,7 +432,7 @@
                                             class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-600 hover:bg-rose-100 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-900/30 transition-all">
                                             Batalkan
                                         </button>
-                                    @else
+                                    @elseif((float)$dist->shu_amount > 0)
                                         <button wire:click="disburseSingle({{ $dist->id }})"
                                             title="Cairkan Tunai / Transfer Bank (Catat Pengeluaran)"
                                             class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center gap-1">
@@ -433,6 +443,10 @@
                                             class="px-2 py-1.5 rounded-lg text-[10px] font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm transition-all flex items-center gap-1">
                                             <i class='bx bx-wallet'></i> Ke Sukarela
                                         </button>
+                                    @else
+                                        <span class="px-2 py-1 rounded text-[10px] font-medium bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                                            Tidak Berhak
+                                        </span>
                                     @endif
                                 </div>
                             </td>

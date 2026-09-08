@@ -3,153 +3,131 @@
     openModal(id) { this.activeModal = id; document.body.classList.add('overflow-hidden'); },
     closeModal() { this.activeModal = null; document.body.classList.remove('overflow-hidden'); }
 }">
-    @section('page-title', 'Profil Saya')
+    @section('title', 'Profil & Identitas')
 
-    <div class="max-w-xl mx-auto pb-24 lg:pb-0">
-        {{-- Header Profile --}}
-        <div
-            class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 mb-4 relative overflow-hidden text-center group">
-            <div
-                class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-primary/10 to-blue-500/10 dark:from-primary/20 dark:to-blue-500/20">
-            </div>
+    <div class="max-w-2xl mx-auto pb-24 lg:pb-0 space-y-6">
+        {{-- Apple ID Header Profile Card --}}
+        <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 p-6 shadow-sm relative overflow-hidden text-center group">
+            <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-[#155A6B]/15 via-teal-500/15 to-emerald-500/15"></div>
 
-            <div class="relative z-10 pt-8">
-                <div
-                    class="w-24 h-24 bg-gradient-to-br from-primary to-blue-600 rounded-full mx-auto p-1 shadow-lg mb-3 relative group-hover:scale-105 transition-transform duration-300">
-                    <div
-                        class="w-full h-full bg-white dark:bg-slate-800 rounded-full flex items-center justify-center text-4xl font-bold">
-                        <span class="text-transparent bg-clip-text bg-gradient-to-br from-primary to-blue-600">
-                            {{ substr($member->name ?? 'M', 0, 1) }}
-                        </span>
+            <div class="relative z-10 pt-6">
+                <div class="w-24 h-24 bg-gradient-to-br from-[#155A6B] to-emerald-500 rounded-full mx-auto p-1 shadow-lg mb-3 relative group-hover:scale-105 transition-transform duration-300">
+                    <div class="w-full h-full bg-white dark:bg-zinc-800 rounded-full flex items-center justify-center text-4xl font-black text-[#155A6B] dark:text-emerald-400 font-heading">
+                        {{ strtoupper(substr($member->name ?? 'M', 0, 1)) }}
                     </div>
-                    <div class="absolute bottom-0 right-0 w-8 h-8 bg-amber-400 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center shadow-sm"
-                        title="Tier Member">
+                    <div class="absolute bottom-0 right-0 w-8 h-8 bg-amber-400 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center shadow-sm" title="Tier Member">
                         <i class='bx bxs-medal text-white text-sm'></i>
                     </div>
                 </div>
 
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-1">{{ $member->name }}</h2>
-                <div class="flex items-center justify-center gap-2 mb-4">
-                    <span
-                        class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 tracking-wider uppercase">{{ $member->nomorAnggota }}</span>
-                    <span class="text-slate-300 dark:text-slate-600">•</span>
-                    <span class="text-xs text-slate-500 dark:text-slate-400">{{ $member->email }}</span>
+                <h2 class="font-heading font-extrabold text-xl text-zinc-900 dark:text-white mb-1">{{ $member->name }}</h2>
+                <div class="flex items-center justify-center gap-2 mb-3 flex-wrap">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 uppercase tracking-wider">{{ $member->nomorAnggota }}</span>
+                    <span class="text-zinc-300 dark:text-zinc-700">•</span>
+                    <span class="text-xs text-zinc-500 dark:text-zinc-400 font-medium">{{ $member->email }}</span>
                 </div>
 
                 @if($member->joinDate)
-                    <div class="text-[10px] text-slate-400 mb-4 flex items-center justify-center gap-1">
-                        <i class='bx bx-calendar'></i>
-                        Bergabung pada {{ \Carbon\Carbon::parse($member->joinDate)->locale('id')->translatedFormat('d F Y') }}
+                    <div class="text-[11px] text-zinc-400 mb-4 flex items-center justify-center gap-1">
+                        <i class='bx bx-calendar text-sm'></i>
+                        Bergabung sejak {{ \Carbon\Carbon::parse($member->joinDate)->locale('id')->translatedFormat('d F Y') }}
                     </div>
                 @endif
 
-                <div class="flex justify-center gap-2">
-                    <div
-                        class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                        <div class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-0.5">Tier</div>
-                        <div class="font-bold text-primary">{{ $member->tier ?? 'Bronze' }}</div>
+                <div class="flex justify-center gap-3">
+                    <div class="px-5 py-2.5 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-zinc-200/50 dark:border-zinc-700/50">
+                        <div class="text-[10px] text-zinc-400 uppercase tracking-wider font-extrabold mb-0.5">Tier Keanggotaan</div>
+                        <div class="font-heading font-extrabold text-sm text-[#155A6B] dark:text-emerald-400">{{ $member->tier ?? 'Bronze' }}</div>
                     </div>
-                    <div
-                        class="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                        <div class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mb-0.5">Poin</div>
-                        <div class="font-bold text-amber-500">{{ number_format($member->points ?? 0) }}</div>
+                    <div class="px-5 py-2.5 bg-zinc-50 dark:bg-zinc-800/60 rounded-2xl border border-zinc-200/50 dark:border-zinc-700/50">
+                        <div class="text-[10px] text-zinc-400 uppercase tracking-wider font-extrabold mb-0.5">Akumulasi Poin</div>
+                        <div class="font-heading font-extrabold text-sm text-amber-500">{{ number_format($member->points ?? 0) }} Poin</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Menu List (Settings) --}}
+        {{-- Apple Style Grouped Settings --}}
         <div class="space-y-4">
             {{-- Account Group --}}
-            <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div
-                    class="px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Akun & Data Diri</h3>
+            <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 overflow-hidden shadow-sm">
+                <div class="px-5 py-3 bg-zinc-50/60 dark:bg-zinc-800/50 border-b border-zinc-200/80 dark:border-zinc-800">
+                    <h3 class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Identitas & Informasi Diri</h3>
                 </div>
-                <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                <div class="divide-y divide-zinc-200/60 dark:divide-zinc-800">
                     <button @click="openModal('profile')"
-                        class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                        class="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
                         <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                            <div class="w-10 h-10 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                                 <i class='bx bxs-user-detail'></i>
                             </div>
                             <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Informasi Personal &
-                                    Pekerjaan</h4>
-                                <p class="text-xs text-slate-400">Nama, Kontak, Alamat, Unit Kerja</p>
+                                <h4 class="font-bold text-zinc-900 dark:text-white text-sm">Informasi Personal & Pekerjaan</h4>
+                                <p class="text-xs text-zinc-400 mt-0.5">Update nomor telepon, alamat, dan unit kerja</p>
                             </div>
                         </div>
-                        <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
+                        <i class='bx bx-chevron-right text-zinc-300 dark:text-zinc-600 text-xl'></i>
                     </button>
                 </div>
             </div>
 
             {{-- Finance Group --}}
             @if($member->isMemberKoperasi)
-                <div
-                    class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                    <div
-                        class="px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
-                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Pengaturan Keuangan</h3>
+                <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 overflow-hidden shadow-sm">
+                    <div class="px-5 py-3 bg-zinc-50/60 dark:bg-zinc-800/50 border-b border-zinc-200/80 dark:border-zinc-800">
+                        <h3 class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Pengaturan Autodebet & Keuangan</h3>
                     </div>
-                    <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                    <div class="divide-y divide-zinc-200/60 dark:divide-zinc-800">
                         <button @click="openModal('simpanan')"
-                            class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                            class="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
                             <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                                     <i class='bx bxs-wallet-alt'></i>
                                 </div>
                                 <div class="text-left">
-                                    <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Konfigurasi Simpanan
-                                    </h4>
-                                    <p class="text-xs text-slate-400">Atur autodebet Wajib & Sukarela</p>
+                                    <h4 class="font-bold text-zinc-900 dark:text-white text-sm">Konfigurasi Simpanan</h4>
+                                    <p class="text-xs text-zinc-400 mt-0.5">Atur metode pembayaran Wajib & Sukarela</p>
                                 </div>
                             </div>
-                            <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
+                            <i class='bx bx-chevron-right text-zinc-300 dark:text-zinc-600 text-xl'></i>
                         </button>
                     </div>
                 </div>
             @endif
 
             {{-- Security Group --}}
-            <div
-                class="bg-white dark:bg-darkCard rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                <div
-                    class="px-4 py-3 bg-slate-50/50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Keamanan</h3>
+            <div class="bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 overflow-hidden shadow-sm">
+                <div class="px-5 py-3 bg-zinc-50/60 dark:bg-zinc-800/50 border-b border-zinc-200/80 dark:border-zinc-800">
+                    <h3 class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-wider">Keamanan Kredensial</h3>
                 </div>
-                <div class="divide-y divide-slate-100 dark:divide-slate-700">
+                <div class="divide-y divide-zinc-200/60 dark:divide-zinc-800">
                     <button @click="openModal('password')"
-                        class="w-full flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
+                        class="w-full flex items-center justify-between p-4 sm:p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group">
                         <div class="flex items-center gap-4">
-                            <div
-                                class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-400 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                            <div class="w-10 h-10 rounded-2xl bg-rose-500/10 text-rose-500 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                                 <i class='bx bxs-lock-alt'></i>
                             </div>
                             <div class="text-left">
-                                <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm">Ubah Password</h4>
-                                <p class="text-xs text-slate-400">Amankan akun anda secara berkala</p>
+                                <h4 class="font-bold text-zinc-900 dark:text-white text-sm">Ubah Password Sesi</h4>
+                                <p class="text-xs text-zinc-400 mt-0.5">Perbarui kata sandi akun secara berkala</p>
                             </div>
                         </div>
-                        <i class='bx bx-chevron-right text-slate-300 text-xl'></i>
+                        <i class='bx bx-chevron-right text-zinc-300 dark:text-zinc-600 text-xl'></i>
                     </button>
                 </div>
             </div>
 
-            {{-- Logout --}}
+            {{-- Logout Action --}}
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit"
-                    class="w-full flex items-center justify-center gap-2 p-4 bg-white dark:bg-darkCard text-rose-600 dark:text-rose-400 font-bold text-sm rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/10 transition-colors">
-                    <i class='bx bx-log-out text-xl'></i> Keluar Aplikasi
+                    class="w-full flex items-center justify-center gap-2 p-4 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-xl text-rose-600 dark:text-rose-400 font-extrabold text-sm rounded-3xl shadow-sm border border-zinc-200/80 dark:border-zinc-800 hover:bg-rose-500/10 transition-colors">
+                    <i class='bx bx-log-out text-xl'></i> Keluar dari Sesi Portal Anggota
                 </button>
             </form>
 
-            <div class="text-center py-6">
-                <p class="text-[10px] text-slate-400">{{ strtoupper(config('cooperative.short_name')) }} {{ config('cooperative.version') }} • {{ config('cooperative.name') }}</p>
+            <div class="text-center py-4">
+                <p class="text-[10px] text-zinc-400 font-medium">{{ strtoupper(config('cooperative.short_name')) }} • {{ config('cooperative.name') }}</p>
             </div>
         </div>
     </div>
