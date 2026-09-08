@@ -1,5 +1,5 @@
 <!-- 2. EQUIPMENT & PRODUCT SOURCING FOR SUPPLIERS (Pattern 2 from Reference) -->
-<section id="supplier" class="py-16 sm:py-24 bg-[#f5f5f7] relative overflow-hidden border-t border-zinc-200">
+<section id="supplier" class="py-16 sm:py-24 bg-[#f5f5f7] relative overflow-hidden border-t border-zinc-200/80">
     <div class="max-w-6xl mx-auto px-4 sm:px-6">
         
         <div class="mb-10 sm:mb-14 flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -43,13 +43,20 @@
                     </div>
                 </div>
 
-                <!-- Clean Frame Shell Placeholder -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-amber-50/50 via-zinc-50 to-orange-50/30 border border-amber-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-amber-600 text-xl mb-2">
-                        <i class='bx bx-id-card'></i>
+                <!-- Pure CSS Micro-UI Mockup SKU Registration Card -->
+                <div class="w-full p-4 rounded-2xl bg-gradient-to-br from-amber-50/60 via-zinc-50 to-orange-50/30 border border-amber-100/80 shadow-sm space-y-2.5 group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-extrabold uppercase text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full">SKU #8821 ACTIVE</span>
+                        <span class="text-[10px] text-zinc-400 font-medium">Verified SKU</span>
                     </div>
-                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame SKU Digital</span>
-                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Formulir & Katalog Supplier</span>
+                    <div class="space-y-0.5">
+                        <p class="text-xs font-extrabold text-zinc-900 tracking-tight">Kopi Susu Aren 250ml</p>
+                        <p class="text-[10px] text-zinc-500 font-medium">Produk Wirausaha Mahasiswa</p>
+                    </div>
+                    <div class="pt-2 border-t border-amber-200/60 flex justify-between items-center text-xs">
+                        <span class="text-[10px] font-semibold text-zinc-600">Harga Konsinyasi</span>
+                        <span class="font-extrabold text-amber-700">Rp 15.000</span>
+                    </div>
                 </div>
             </div>
 
@@ -71,13 +78,20 @@
                     </div>
                 </div>
 
-                <!-- Clean Frame Shell Placeholder -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-teal-50/50 via-zinc-50 to-emerald-50/30 border border-teal-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-[#155A6B] text-xl mb-2">
-                        <i class='bx bx-store-alt'></i>
+                <!-- Pure CSS Micro-UI Mockup POS Barcode Scanner Widget -->
+                <div class="w-full p-4 rounded-2xl bg-gradient-to-br from-teal-50/60 via-zinc-50 to-emerald-50/30 border border-teal-100/80 shadow-sm space-y-2.5 group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-extrabold uppercase text-[#155A6B] bg-teal-100 px-2 py-0.5 rounded-full">Etalase Toko POS</span>
+                        <span class="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-full">Live Scan</span>
                     </div>
-                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame Display POS Toko</span>
-                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Kasir & Barcode Scanner Kampus</span>
+                    <div class="py-1 text-center bg-white rounded-xl border border-zinc-100 shadow-2xs">
+                        <p class="font-mono text-xs font-bold text-zinc-800 tracking-widest">|||| |||||| |||| |||</p>
+                        <p class="text-[9px] text-zinc-400 font-mono">BARCODE #899120401</p>
+                    </div>
+                    <div class="pt-1.5 border-t border-teal-200/60 flex justify-between items-center text-xs">
+                        <span class="text-[10px] font-semibold text-zinc-600">Terjual Hari Ini</span>
+                        <span class="font-extrabold text-[#155A6B]">42 Botol (Laris)</span>
+                    </div>
                 </div>
             </div>
 
@@ -99,13 +113,20 @@
                     </div>
                 </div>
 
-                <!-- Clean Frame Shell Placeholder -->
-                <div class="w-full aspect-[4/3] rounded-2xl bg-gradient-to-br from-purple-50/50 via-zinc-50 to-indigo-50/30 border border-purple-100/60 flex flex-col items-center justify-center text-center p-6 relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500">
-                    <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-purple-600 text-xl mb-2">
-                        <i class='bx bx-line-chart'></i>
+                <!-- Pure CSS Micro-UI Mockup Supplier Sales Dashboard Widget -->
+                <div class="w-full p-4 rounded-2xl bg-gradient-to-br from-purple-50/60 via-zinc-50 to-indigo-50/30 border border-purple-100/80 shadow-sm space-y-2.5 group-hover:scale-[1.02] transition-transform duration-500">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[9px] font-extrabold uppercase text-purple-800 bg-purple-100 px-2 py-0.5 rounded-full">Saldo Omzet Clean</span>
+                        <span class="text-[10px] text-zinc-400 font-medium">Realtime Payout</span>
                     </div>
-                    <span class="text-xs font-bold text-zinc-700 tracking-tight">Frame Dashboard Sales</span>
-                    <span class="text-[10px] text-zinc-400 font-medium mt-0.5">Monitoring Mutasi & Omzet 24/7</span>
+                    <div>
+                        <p class="text-xl font-extrabold text-zinc-900 tracking-tight">Rp 630.000</p>
+                        <p class="text-[10px] text-zinc-500 font-medium mt-0.5">Penjualan Bersih Terkumpul</p>
+                    </div>
+                    <div class="pt-2 border-t border-purple-200/60 flex justify-between items-center text-xs">
+                        <span class="text-[10px] font-bold text-purple-700">Pencairan Dana</span>
+                        <span class="text-[10px] font-extrabold text-white bg-purple-700 px-2.5 py-1 rounded-lg">Cairkan Ke Rekening</span>
+                    </div>
                 </div>
             </div>
 
