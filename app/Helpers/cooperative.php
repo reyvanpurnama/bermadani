@@ -69,3 +69,41 @@ if (!function_exists('coop_config')) {
         return config("cooperative.{$key}", $default);
     }
 }
+
+if (!function_exists('terbilang_id')) {
+    /**
+     * Convert integer or float number to Indonesian words (Terbilang).
+     *
+     * @param int|float|string $number
+     * @return string
+     */
+    function terbilang_id($number): string
+    {
+        $number = (int) abs((float) $number);
+        $words = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+
+        if ($number < 12) {
+            $result = $words[$number];
+        } elseif ($number < 20) {
+            $result = $words[$number - 10] . ' Belas';
+        } elseif ($number < 100) {
+            $result = $words[floor($number / 10)] . ' Puluh ' . $words[$number % 10];
+        } elseif ($number < 200) {
+            $result = 'Seratus ' . terbilang_id($number - 100);
+        } elseif ($number < 1000) {
+            $result = $words[floor($number / 100)] . ' Ratus ' . terbilang_id($number % 100);
+        } elseif ($number < 2000) {
+            $result = 'Seribu ' . terbilang_id($number - 1000);
+        } elseif ($number < 1000000) {
+            $result = terbilang_id(floor($number / 1000)) . ' Ribu ' . terbilang_id($number % 1000);
+        } elseif ($number < 1000000000) {
+            $result = terbilang_id(floor($number / 1000000)) . ' Juta ' . terbilang_id($number % 1000000);
+        } elseif ($number < 1000000000000) {
+            $result = terbilang_id(floor($number / 1000000000)) . ' Miliar ' . terbilang_id($number % 1000000000);
+        } else {
+            $result = (string) $number;
+        }
+
+        return trim(preg_replace('/\s+/', ' ', $result));
+    }
+}

@@ -665,12 +665,12 @@
                     <button type="button" @click="tab = 'member'"
                         :class="tab === 'member' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'"
                         class="flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5">
-                        <i class='bx bx-user text-sm text-emerald-500'></i> Slip Anggota (Digital)
+                        <i class='bx bx-file text-sm text-emerald-500'></i> Slip Resmi A4 (Digital / Single)
                     </button>
                     <button type="button" @click="tab = 'dual'"
                         :class="tab === 'dual' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'"
                         class="flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5">
-                        <i class='bx bx-copy-alt text-sm text-indigo-500'></i> Cetak 2 Rangkap (A4)
+                        <i class='bx bx-copy-alt text-sm text-indigo-500'></i> Cetak 2 Rangkap (A4 Fisik)
                     </button>
                 </div>
 
@@ -682,12 +682,12 @@
                         <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ config('cooperative.parent_org') }} &bull; {{ config('cooperative.address') }}</p>
                         <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div class="text-left">
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">SLIP PENCAIRAN SHU DAN SIMPANAN</h3>
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">BUKTI PENCAIRAN HAK ANGGOTA</h3>
                                 <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
                             </div>
                             <div class="text-right">
                                 <span x-show="tab === 'member'" class="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 uppercase tracking-wide">
-                                    LEMBAR ANGGOTA
+                                    LEMBAR 2 &bull; ARSIP ANGGOTA (A4)
                                 </span>
                                 <span x-show="tab === 'dual'" class="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 uppercase tracking-wide" style="display: none;">
                                     2 RANGKAP (A4)
@@ -794,6 +794,11 @@
                                         Rp {{ number_format($rcptTotalPencairan, 0, ',', '.') }}
                                     </td>
                                 </tr>
+                                <tr class="bg-slate-50/60 dark:bg-slate-800/40">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 text-slate-500 dark:text-slate-400 italic text-[9.5px]" colspan="2">
+                                        Terbilang: &ldquo;{{ terbilang_id($rcptTotalPencairan) }} Rupiah&rdquo;
+                                    </td>
+                                </tr>
                                 @if($rcptSukarela > 0)
                                     <tr>
                                         <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-500 italic text-[9px]" colspan="2">
@@ -866,7 +871,7 @@
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-700 no-print">
                     <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
                         <i class='bx bx-info-circle text-base text-indigo-500'></i>
-                        <span x-show="tab === 'member'">Format <strong>A5 Landscape</strong> &bull; Siap kirim ke WA anggota.</span>
+                        <span x-show="tab === 'member'">Format <strong>A4 Portrait</strong> &bull; Standar resmi institusi, siap kirim digital atau dicetak.</span>
                         <span x-show="tab === 'dual'" style="display: none;">Format <strong>A4 Portrait</strong> &bull; Sekali print keluar 2 rangkap potong tengah.</span>
                     </div>
 
@@ -881,7 +886,7 @@
                         @endif
                         <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'member']) }}" target="_blank"
                             class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1.5 min-h-[40px] transition-all">
-                            <i class='bx bxs-file-pdf text-base'></i> Download Slip (A5)
+                            <i class='bx bxs-file-pdf text-base'></i> Download Slip (A4)
                         </a>
                         <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'member']) }}" target="_blank"
                             class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1 min-h-[40px] transition-all">

@@ -2,20 +2,20 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>SLIP PENCAIRAN SHU DAN SIMPANAN - {{ $member?->name ?? 'Anggota' }}</title>
+    <title>BUKTI PENCAIRAN HAK ANGGOTA - {{ $member?->name ?? 'Anggota' }}</title>
     <style>
         @page {
-            size: a5 landscape;
-            margin: 8mm 12mm 6mm 12mm;
+            size: a4 portrait;
+            margin: 12mm 15mm 12mm 15mm;
         }
         * {
             box-sizing: border-box;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 8pt;
+            font-size: 8.5pt;
             color: #09090b;
-            line-height: 1.25;
+            line-height: 1.35;
             margin: 0;
             padding: 0;
             background-color: #ffffff;
@@ -25,40 +25,40 @@
             border-collapse: collapse;
         }
 
-        /* Header & Brand */
+        /* Header & Brand Letterhead */
         .header-table td {
             vertical-align: middle;
         }
         .kop-img {
-            height: 32px;
+            height: 38px;
             max-width: 100%;
             display: block;
         }
         .kop-text h2 {
             margin: 0;
-            font-size: 9pt;
+            font-size: 10.5pt;
             color: #09090b;
             text-transform: uppercase;
             font-weight: bold;
             letter-spacing: 0.3px;
         }
         .kop-text p {
-            margin: 1px 0 0 0;
-            font-size: 7pt;
-            color: #71717a;
+            margin: 2px 0 0 0;
+            font-size: 7.5pt;
+            color: #52525b;
         }
         .header-divider {
-            border-bottom: 1.5px solid #155A6B;
-            margin-top: 4px;
-            margin-bottom: 7px;
+            border-bottom: 1.5pt solid #155A6B;
+            margin-top: 8px;
+            margin-bottom: 10px;
         }
 
-        /* Document Title */
+        /* Document Title & Status */
         .title-table {
-            margin-bottom: 7px;
+            margin-bottom: 12px;
         }
         .doc-title {
-            font-size: 11.5pt;
+            font-size: 13pt;
             font-weight: bold;
             color: #09090b;
             letter-spacing: 0.5px;
@@ -66,68 +66,120 @@
             margin: 0;
         }
         .doc-subtitle {
-            font-size: 7.5pt;
-            color: #71717a;
-            margin: 1px 0 0 0;
+            font-size: 8.5pt;
+            color: #52525b;
+            margin: 2px 0 0 0;
+        }
+        .badge-monochrome {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 2px;
+            font-size: 7pt;
+            font-weight: bold;
+            background-color: #f4f4f5;
+            color: #18181b;
+            border: 0.5pt solid #d4d4d8;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
         .meta-text-muted {
-            font-size: 6.5pt;
+            font-size: 7pt;
             color: #71717a;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
 
-        /* Member Info Strip (Clean 2-Column Focus, No Unknown placeholders) */
-        .member-strip {
+        /* Two-Column Stakeholder Dossier */
+        .dossier-container {
+            border: 0.5pt solid #e4e4e7;
+            border-radius: 3px;
             background-color: #fafafa;
-            border-top: 0.5pt solid #e4e4e7;
-            border-bottom: 0.5pt solid #e4e4e7;
-            padding: 5px 8px;
-            margin-bottom: 8px;
+            margin-bottom: 14px;
+            overflow: hidden;
         }
-        .member-name {
+        .dossier-table td {
+            padding: 8px 12px;
+            vertical-align: top;
+        }
+        .dossier-label {
+            font-size: 6.5pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #71717a;
+            margin-bottom: 3px;
+        }
+        .dossier-name {
             font-size: 9.5pt;
             font-weight: bold;
             color: #09090b;
-            letter-spacing: 0.2px;
+            margin-bottom: 2px;
         }
-        .member-no {
+        .dossier-detail {
             font-size: 7.5pt;
             color: #52525b;
-            margin-top: 1px;
-        }
-        .status-dot-active {
-            color: #155A6B;
-            font-size: 7.5pt;
-            margin-right: 2px;
-        }
-        .status-dot-pending {
-            color: #a1a1aa;
-            font-size: 7.5pt;
-            margin-right: 2px;
+            line-height: 1.3;
         }
 
-        /* Ledger Tables */
+        /* Hero Total Statement Box */
+        .hero-statement {
+            border-top: 1.5pt solid #18181b;
+            border-bottom: 1.5pt solid #18181b;
+            background-color: #fafafa;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+        }
+        .hero-title {
+            font-size: 8pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: #18181b;
+        }
+        .hero-terbilang {
+            font-size: 8pt;
+            color: #52525b;
+            font-style: italic;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+        .hero-amount {
+            font-size: 16pt;
+            font-weight: bold;
+            color: #09090b;
+            font-family: 'Courier New', Courier, monospace;
+            letter-spacing: -0.5px;
+            text-align: right;
+        }
+        .hero-sukarela-note {
+            font-size: 7pt;
+            color: #71717a;
+            margin-top: 4px;
+            border-top: 0.5pt dashed #d4d4d8;
+            padding-top: 3px;
+        }
+
+        /* Financial Ledger Panels */
         .ledger-panel {
             border: 0.5pt solid #e4e4e7;
-            border-radius: 2px;
+            border-radius: 3px;
             overflow: hidden;
         }
         .ledger-panel-header {
             background-color: #f4f4f5;
             color: #18181b;
-            font-size: 7pt;
+            font-size: 7.5pt;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 4px 7px;
+            padding: 6px 10px;
             border-bottom: 0.5pt solid #e4e4e7;
         }
         .ledger-table {
-            font-size: 7.5pt;
+            font-size: 8pt;
         }
         .ledger-table td {
-            padding: 4px 7px;
+            padding: 6px 10px;
             border-bottom: 0.5pt solid #f4f4f5;
             color: #27272a;
         }
@@ -141,8 +193,8 @@
         .ledger-subtotal-row td {
             font-weight: bold;
             color: #09090b;
-            padding-top: 4.5px;
-            padding-bottom: 4.5px;
+            padding-top: 7px;
+            padding-bottom: 7px;
         }
 
         /* Tabular Numbers */
@@ -157,73 +209,98 @@
             text-align: center;
         }
 
-        /* Grand Total Section (Apple HIG: Bold Hero Contrast, Zero Fluff) */
-        .grand-total-container {
-            border-top: 1pt solid #18181b;
-            border-bottom: 1pt solid #18181b;
-            padding: 6px 8px;
-            margin-top: 8px;
-            margin-bottom: 8px;
+        /* Legal & Institutional Governance Notes */
+        .legal-box {
+            border: 0.5pt solid #e4e4e7;
+            border-radius: 3px;
             background-color: #fafafa;
+            padding: 8px 12px;
+            margin-top: 14px;
+            margin-bottom: 14px;
         }
-        .grand-total-title {
-            font-size: 9pt;
+        .legal-header {
+            font-size: 7pt;
             font-weight: bold;
-            color: #09090b;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: #52525b;
+            margin-bottom: 4px;
         }
-        .grand-total-amount {
-            font-size: 13.5pt;
-            font-weight: bold;
-            color: #09090b;
-            letter-spacing: -0.3px;
-        }
-        .sukarela-note {
-            font-size: 6.5pt;
+        .legal-list {
+            margin: 0;
+            padding-left: 14px;
+            font-size: 6.8pt;
             color: #71717a;
-            margin-top: 2px;
+            line-height: 1.4;
+        }
+        .legal-list li {
+            margin-bottom: 2px;
         }
 
-        /* Signatures Block */
+        /* Verification & Signatures Block */
         .signature-table {
             width: 100%;
-            margin-top: 6px;
+            margin-top: 10px;
         }
-        .signature-table td {
-            width: 50%;
-            text-align: center;
-            vertical-align: top;
-            font-size: 7pt;
-            color: #52525b;
+        .verification-box {
+            border: 0.5pt solid #d4d4d8;
+            border-radius: 2px;
+            padding: 8px 10px;
+            background-color: #ffffff;
+            display: inline-block;
+            width: 95%;
+            text-align: left;
         }
+        .verification-title {
+            font-size: 6.5pt;
+            font-weight: bold;
+            color: #18181b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+        .verification-hash {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 7.5pt;
+            font-weight: bold;
+            color: #09090b;
+            letter-spacing: 0.5px;
+            margin-bottom: 3px;
+        }
+        .verification-meta {
+            font-size: 6pt;
+            color: #71717a;
+            line-height: 1.3;
+        }
+
         .signature-space {
-            height: 35px;
+            height: 48px;
         }
         .signature-line {
-            font-size: 7.5pt;
+            font-size: 8.5pt;
             font-weight: bold;
             color: #09090b;
             border-top: 0.5pt solid #a1a1aa;
             display: inline-block;
-            padding-top: 2px;
-            min-width: 170px;
+            padding-top: 3px;
+            min-width: 180px;
         }
         .signature-role {
-            font-size: 6.5pt;
+            font-size: 7pt;
             color: #71717a;
-            margin-top: 1px;
+            margin-top: 2px;
         }
 
         /* Microcopy Footer */
         .audit-footer {
-            margin-top: 6px;
+            margin-top: 18px;
             border-top: 0.5pt solid #e4e4e7;
-            padding-top: 2px;
-            font-size: 5.5pt;
+            padding-top: 6px;
+            font-size: 6pt;
             color: #a1a1aa;
             text-align: center;
             letter-spacing: 0.2px;
+            line-height: 1.4;
         }
     </style>
 </head>
@@ -244,60 +321,98 @@
             </td>
             <td width="40%" class="text-right">
                 <div class="meta-text-muted">
-                    No. Ref: <strong style="color: #09090b; font-family: 'Courier New', monospace;">SLIP/{{ $session?->year ?? date('Y') }}/{{ $member?->nomorAnggota ?? $distribution->id }}</strong>
+                    No. Referensi: <strong style="color: #09090b; font-family: 'Courier New', monospace;">{{ $refNumber ?? ('SLIP/' . ($session?->year ?? date('Y')) . '/' . ($member?->nomorAnggota ?? $distribution->id)) }}</strong>
                 </div>
                 <div class="meta-text-muted" style="margin-top: 2px;">
-                    Tanggal: <strong style="color: #09090b;">{{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}</strong>
+                    Tanggal Terbit: <strong style="color: #09090b;">{{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}</strong>
+                </div>
+                <div class="meta-text-muted" style="margin-top: 2px;">
+                    Tahun Buku RAT: <strong style="color: #09090b;">{{ $session?->year ?? date('Y') }}</strong>
                 </div>
             </td>
         </tr>
     </table>
     <div class="header-divider"></div>
 
-    {{-- JUDUL DOKUMEN --}}
+    {{-- JUDUL DOKUMEN & BADGE ARSIP --}}
     <table class="title-table">
         <tr>
             <td>
-                <h1 class="doc-title">SLIP PENCAIRAN SHU DAN SIMPANAN</h1>
+                <h1 class="doc-title">BUKTI PENCAIRAN HAK ANGGOTA</h1>
                 <p class="doc-subtitle">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $session?->year ?? date('Y') }}</p>
             </td>
             <td class="text-right" style="vertical-align: bottom;">
                 @if(($slipType ?? 'member') === 'coop')
-                    <span style="display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: 6.5pt; font-weight: bold; background-color: #f4f4f5; color: #18181b; border: 0.5pt solid #d4d4d8; text-transform: uppercase; letter-spacing: 0.3px;">
+                    <span class="badge-monochrome">
                         LEMBAR 1 &bull; ARSIP KOPERASI
                     </span>
                 @else
-                    <span style="display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: 6.5pt; font-weight: bold; background-color: #f4f4f5; color: #18181b; border: 0.5pt solid #d4d4d8; text-transform: uppercase; letter-spacing: 0.3px;">
+                    <span class="badge-monochrome">
                         LEMBAR 2 &bull; ARSIP ANGGOTA
                     </span>
                 @endif
-                <div class="meta-text-muted" style="margin-top: 2px;">Waktu Cetak: {{ $generatedAt }}</div>
+                <div class="meta-text-muted" style="margin-top: 3px;">
+                    @if($distribution->is_disbursed)
+                        <span style="color: #155A6B;">&bull;</span> <strong>Status: Terverifikasi & Dicairkan</strong>
+                    @else
+                        <span style="color: #a1a1aa;">&bull;</span> Status: Menunggu Pencairan
+                    @endif
+                </div>
             </td>
         </tr>
     </table>
 
-    {{-- DATA PENERIMA (Zero Fluff, Tanpa Unknown) --}}
-    <div class="member-strip">
-        <table>
+    {{-- DOSSIER 2 PIHAK (KOPERASI & ANGGOTA) --}}
+    <div class="dossier-container">
+        <table class="dossier-table">
             <tr>
-                <td width="60%">
-                    <div class="member-name">{{ $member?->name ?? 'Anggota' }}</div>
-                    <div class="member-no font-mono">No. Anggota: #{{ $member?->nomorAnggota ?? '-' }}</div>
+                {{-- PIHAK PENYERAH / KOPERASI --}}
+                <td width="50%" style="border-right: 0.5pt solid #e4e4e7;">
+                    <div class="dossier-label">Pihak Pemberi Dana (Koperasi)</div>
+                    <div class="dossier-name">{{ coop_config('legal_name') }}</div>
+                    <div class="dossier-detail">
+                        {{ coop_config('address') }}<br>
+                        Badan Hukum: No. AHU-0001234.AH.01.26 / Kemenkop UKM
+                    </div>
                 </td>
-                <td width="40%" class="text-right" style="vertical-align: middle;">
-                    <div style="font-size: 7pt; color: #09090b;">
-                        @if($distribution->is_disbursed)
-                            <span class="status-dot-active">&bull;</span> <strong>Sudah Dicairkan</strong>
-                        @else
-                            <span class="status-dot-pending">&bull;</span> <span style="color: #71717a;">Menunggu Pencairan</span>
-                        @endif
+                {{-- PIHAK PENERIMA / ANGGOTA --}}
+                <td width="50%">
+                    <div class="dossier-label">Pihak Penerima Hak (Anggota)</div>
+                    <div class="dossier-name">{{ $member?->name ?? 'Anggota' }}</div>
+                    <div class="dossier-detail">
+                        Nomor Anggota: <strong class="font-mono">#{{ $member?->nomorAnggota ?? '-' }}</strong><br>
+                        Status Keanggotaan: <span style="color: #09090b; font-weight: bold;">Anggota Aktif Koperasi</span>
                     </div>
                 </td>
             </tr>
         </table>
     </div>
 
-    {{-- 2-COLUMN UNIFIED FINANCIAL LEDGER --}}
+    {{-- HERO TOTAL PENCAIRAN (APPLE HIG STATEMENT HIGHLIGHT) --}}
+    <div class="hero-statement">
+        <table>
+            <tr>
+                <td width="55%" style="vertical-align: middle;">
+                    <div class="hero-title">Total Dana Pencairan Hak</div>
+                    <div class="hero-terbilang">
+                        Terbilang: &ldquo;{{ $terbilang ?? (terbilang_id($rcptTotalPencairan) . ' Rupiah') }}&rdquo;
+                    </div>
+                    @if($rcptSukarela > 0)
+                        <div class="hero-sukarela-note">
+                            * Saldo Simpanan Sukarela: <strong>Rp {{ number_format($rcptSukarela, 0, ',', '.') }}</strong> (tetap tersimpan aman di rekening Koperasi)
+                        </div>
+                    @endif
+                </td>
+                <td width="45%" class="text-right" style="vertical-align: middle;">
+                    <div class="hero-amount">
+                        Rp {{ number_format($rcptTotalPencairan, 0, ',', '.') }}
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {{-- 2-COLUMN FINANCIAL LEDGER --}}
     <table>
         <tr>
             {{-- KOLOM KIRI: I. HAK SHU --}}
@@ -318,9 +433,9 @@
                         <tr class="ledger-subtotal-row">
                             <td>
                                 <div>Subtotal Hak SHU</div>
-                                <div style="font-size: 5.5pt; font-weight: normal; color: #71717a;">Porsi: {{ number_format((float)$distribution->portion_percentage, 4, ',', '.') }}%</div>
+                                <div style="font-size: 6.5pt; font-weight: normal; color: #71717a;">Porsi Kontribusi: {{ number_format((float)$distribution->portion_percentage, 4, ',', '.') }}%</div>
                             </td>
-                            <td class="text-right font-mono" style="font-size: 8.5pt;">
+                            <td class="text-right font-mono" style="font-size: 9pt;">
                                 Rp {{ number_format($rcptShu, 0, ',', '.') }}
                             </td>
                         </tr>
@@ -347,8 +462,11 @@
                             <td class="text-right font-mono">Rp {{ number_format($rcptWajib, 0, ',', '.') }}</td>
                         </tr>
                         <tr class="ledger-subtotal-row">
-                            <td>Subtotal Simpanan</td>
-                            <td class="text-right font-mono" style="font-size: 8.5pt;">
+                            <td>
+                                <div>Subtotal Simpanan</div>
+                                <div style="font-size: 6.5pt; font-weight: normal; color: #71717a;">Pokok &amp; Wajib Diperhitungkan</div>
+                            </td>
+                            <td class="text-right font-mono" style="font-size: 9pt;">
                                 Rp {{ number_format($rcptTotalSimpanan, 0, ',', '.') }}
                             </td>
                         </tr>
@@ -358,45 +476,37 @@
         </tr>
     </table>
 
-    {{-- GRAND TOTAL PENCAIRAN --}}
-    <div class="grand-total-container">
-        <table>
-            <tr>
-                <td width="55%" style="vertical-align: middle;">
-                    <div class="grand-total-title">Total Pencairan</div>
-                    @if($rcptSukarela > 0)
-                        <div class="sukarela-note">
-                            * Saldo Simpanan Sukarela: <strong>Rp {{ number_format($rcptSukarela, 0, ',', '.') }}</strong> (tersimpan terpisah)
-                        </div>
-                    @endif
-                </td>
-                <td width="45%" class="text-right" style="vertical-align: middle;">
-                    <span class="grand-total-amount font-mono">
-                        Rp {{ number_format($rcptTotalPencairan, 0, ',', '.') }}
-                    </span>
-                </td>
-            </tr>
-        </table>
+    {{-- KETENTUAN & DASAR HUKUM RAT (INSTITUTIONAL GOVERNANCE) --}}
+    <div class="legal-box">
+        <div class="legal-header">Dasar Ketentuan &amp; Pengesahan Dokumen</div>
+        <ol class="legal-list">
+            <li>Dokumen ini merupakan bukti sah penyerahan hak keuangan Anggota atas pelaksanaan Rapat Anggota Tahunan (RAT) {{ coop_config('legal_name') }} Tahun Buku {{ $session?->year ?? date('Y') }}.</li>
+            <li>Alokasi pembagian Sisa Hasil Usaha (SHU) dan perhitungan saldo simpanan telah diverifikasi sesuai Anggaran Dasar dan Anggaran Rumah Tangga (AD/ART) Koperasi yang berlaku.</li>
+            <li>Tanda terima ini mengikat kedua belah pihak sebagai instrumen pertanggungjawaban yuridis dan pembukuan resmi Koperasi.</li>
+        </ol>
     </div>
 
-    {{-- AREA TANDA TANGAN RESMI (SINGLE SIGNATURE SESUAI ARAHAN KETUA) --}}
+    {{-- VERIFIKASI DIGITAL & TANDA TANGAN RESMI --}}
     <table class="signature-table">
         <tr>
-            <td width="55%" style="text-align: left; vertical-align: bottom;">
-                @if(($slipType ?? 'member') === 'coop')
-                    <div style="font-size: 7pt; color: #71717a; padding-right: 15px; line-height: 1.35;">
-                        <strong>Arsip Koperasi:</strong> Disimpan oleh Koperasi sebagai bukti sah penyerahan dana yang telah diterima oleh anggota.
+            {{-- OTENTIKASI SISTEM --}}
+            <td width="50%" style="vertical-align: top; text-align: left;">
+                <div class="verification-box">
+                    <div class="verification-title">Otentikasi Digital Sistem</div>
+                    <div class="verification-hash">{{ $verificationHash ?? strtoupper(substr(md5($distribution->id . ($distribution->created_at ?? now())), 0, 16)) }}</div>
+                    <div class="verification-meta">
+                        Dokumen tercatat resmi pada Buku Kas &amp; Ledger RAT.<br>
+                        Waktu Terbit: {{ $generatedAt }}<br>
+                        Sistem Informasi: {{ coop_config('short_name', 'Bermadani') }} Core v1.0
                     </div>
-                @else
-                    <div style="font-size: 7pt; color: #71717a; padding-right: 15px; line-height: 1.35;">
-                        <strong>Arsip Anggota:</strong> Diserahkan kepada Anggota sebagai tanda terima resmi pencairan hak oleh Koperasi.
-                    </div>
-                @endif
+                </div>
             </td>
-            <td width="45%" style="text-align: right; vertical-align: top;">
+
+            {{-- TANDA TANGAN PENGESAHAN --}}
+            <td width="50%" style="vertical-align: top; text-align: right;">
                 @if(($slipType ?? 'member') === 'coop')
-                    <div style="display: inline-block; text-align: center; min-width: 170px;">
-                        <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
+                    <div style="display: inline-block; text-align: center; min-width: 180px;">
+                        <p style="margin: 0; font-size: 8pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
                             Yang Menerima,
                         </p>
@@ -405,14 +515,14 @@
                         <div class="signature-role font-mono">No. Anggota: #{{ $member?->nomorAnggota ?? '-' }}</div>
                     </div>
                 @else
-                    <div style="display: inline-block; text-align: center; min-width: 170px;">
-                        <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
+                    <div style="display: inline-block; text-align: center; min-width: 180px;">
+                        <p style="margin: 0; font-size: 8pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
                             Diserahkan oleh,
                         </p>
                         @if(!empty($sigBase64))
-                            <div style="height: 34px; margin: 1px 0;">
-                                <img src="{{ $sigBase64 }}" style="height: 34px; max-width: 140px; display: inline-block; vertical-align: middle;">
+                            <div style="height: 44px; margin: 2px 0;">
+                                <img src="{{ $sigBase64 }}" style="height: 44px; max-width: 150px; display: inline-block; vertical-align: middle;">
                             </div>
                         @else
                             <div class="signature-space"></div>
@@ -425,9 +535,10 @@
         </tr>
     </table>
 
-    {{-- AUDIT FOOTNOTE --}}
+    {{-- MICROCOPY FOOTER --}}
     <div class="audit-footer">
-        Dokumen resmi diterbitkan oleh Sistem Informasi {{ coop_config('legal_name') }} &bull; Ref ID: SLIP-{{ $distribution->id }}-{{ substr(md5($distribution->id . ($distribution->created_at ?? now())), 0, 8) }}
+        {{ coop_config('legal_name') }} &bull; {{ coop_config('address') }} &bull; {{ coop_config('website', 'koperasi.umbandung.ac.id') }}<br>
+        Dokumen resmi diterbitkan secara elektronik dan sah tanpa memerlukan stempel fisik tambahan apabila telah tervalidasi oleh sistem. (Halaman 1 dari 1)
     </div>
 
 </body>

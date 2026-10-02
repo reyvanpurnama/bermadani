@@ -110,6 +110,11 @@ class RatReportPdfController extends Controller
         $rcptTotalPencairan = $rcptTotalSimpanan + $rcptShu;
 
         $type = $request->query('type', 'member'); // 'member' | 'coop' | 'dual'
+        $year = $session?->year ?? date('Y');
+        $nomorAnggota = $member?->nomorAnggota ?? $distribution->id;
+        $refNumber = "SLIP/{$year}/" . str_pad((string)$nomorAnggota, 4, '0', STR_PAD_LEFT);
+        $terbilang = terbilang_id($rcptTotalPencairan) . ' Rupiah';
+        $verificationHash = strtoupper(substr(hash('sha256', "BERMADANI-SLIP-{$distribution->id}-{$distribution->rat_session_id}-{$rcptTotalPencairan}"), 0, 16));
 
         $viewData = [
             'distribution' => $distribution,
@@ -123,23 +128,24 @@ class RatReportPdfController extends Controller
             'rcptTotalSimpanan' => $rcptTotalSimpanan,
             'rcptShu' => $rcptShu,
             'rcptTotalPencairan' => $rcptTotalPencairan,
+            'terbilang' => $terbilang,
+            'refNumber' => $refNumber,
+            'verificationHash' => $verificationHash,
             'generatedAt' => now()->translatedFormat('d F Y H:i'),
             'slipType' => $type,
         ];
 
         $safeName = preg_replace('/[^A-Za-z0-9_-]/', '_', $member?->name ?? 'Anggota');
-        $nomorAnggota = $member?->nomorAnggota ?? $distribution->id;
-        $year = $session?->year ?? date('Y');
 
         if ($type === 'dual') {
             $pdf = Pdf::loadView('pdf.slip-shu-dual', $viewData)->setPaper('a4', 'portrait');
             $filename = "Slip_Pencairan_2Rangkap_A4_{$year}_{$nomorAnggota}_{$safeName}.pdf";
         } elseif ($type === 'coop') {
-            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a5', 'landscape');
-            $filename = "Slip_Pencairan_Arsip_Koperasi_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a4', 'portrait');
+            $filename = "Slip_Pencairan_Arsip_Koperasi_A4_{$year}_{$nomorAnggota}_{$safeName}.pdf";
         } else {
-            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a5', 'landscape');
-            $filename = "Slip_Pencairan_SHU_dan_Simpanan_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a4', 'portrait');
+            $filename = "Slip_Pencairan_SHU_dan_Simpanan_A4_{$year}_{$nomorAnggota}_{$safeName}.pdf";
         }
 
         if ($request->has('download')) {
