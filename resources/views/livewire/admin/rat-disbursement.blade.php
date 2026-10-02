@@ -498,13 +498,15 @@
                         <span class="font-bold text-slate-800 dark:text-white text-sm">{{ $selectedDistribution->member?->name }}</span>
                     </div>
                     <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-400 font-medium">Nomor Anggota (NIK):</span>
-                        <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400">{{ $selectedDistribution->member?->nomorAnggota }}</span>
+                        <span class="text-slate-400 font-medium">Nomor Anggota:</span>
+                        <span class="font-mono font-bold text-indigo-600 dark:text-indigo-400">#{{ $selectedDistribution->member?->nomorAnggota }}</span>
                     </div>
-                    <div class="flex justify-between items-center text-xs">
-                        <span class="text-slate-400 font-medium">Unit Kerja / Institusi:</span>
-                        <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $selectedDistribution->member?->unitKerja ?? '-' }}</span>
-                    </div>
+                    @if($selectedDistribution->member?->unitKerja && $selectedDistribution->member?->unitKerja !== 'Unknown')
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-400 font-medium">Unit Kerja / Institusi:</span>
+                            <span class="font-semibold text-slate-700 dark:text-slate-300">{{ $selectedDistribution->member->unitKerja }}</span>
+                        </div>
+                    @endif
                 </div>
 
                 {{-- Calculation Breakdown Cards --}}
@@ -679,19 +681,19 @@
                         </div>
                     </div>
 
-                    {{-- Member Metadata (Strip) --}}
-                    <div class="grid grid-cols-3 gap-3 text-[11px] bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200/80 dark:border-slate-700/60">
+                    {{-- Member Metadata (Clean 2-Column Focus, No Unknown) --}}
+                    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200/80 dark:border-slate-700/60">
                         <div>
-                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Nomor Anggota</span>
-                            <span class="font-mono font-bold text-slate-900 dark:text-white">#{{ $selectedReceipt->member?->nomorAnggota }}</span>
+                            <span class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white block">{{ $selectedReceipt->member?->name }}</span>
+                            <span class="font-mono text-xs text-slate-500 dark:text-slate-400">No. Anggota: #{{ $selectedReceipt->member?->nomorAnggota }}</span>
                         </div>
-                        <div>
-                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Nama Anggota</span>
-                            <span class="font-bold text-slate-900 dark:text-white">{{ $selectedReceipt->member?->name }}</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Unit Kerja / Institusi</span>
-                            <span class="font-medium text-slate-700 dark:text-slate-300">{{ $selectedReceipt->member?->unitKerja ?? '-' }}</span>
+                        <div class="text-right">
+                            @if($selectedReceipt->is_disbursed)
+                                <span class="text-xs font-bold text-[#155A6B] dark:text-emerald-400">&bull; Sudah Dicairkan</span>
+                            @else
+                                <span class="text-xs text-slate-400">&bull; Menunggu Pencairan</span>
+                            @endif
+                            <span class="block text-[10px] text-slate-400 font-mono mt-0.5">RAT Tahun Buku {{ $selectedReceipt->ratSession?->year }}</span>
                         </div>
                     </div>
 
