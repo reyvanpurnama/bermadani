@@ -682,7 +682,7 @@
                         <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ config('cooperative.parent_org') }} &bull; {{ config('cooperative.address') }}</p>
                         <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                             <div class="text-left">
-                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">BUKTI PENCAIRAN HAK ANGGOTA</h3>
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">SLIP PENCAIRAN SHU DAN SIMPANAN</h3>
                                 <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
                             </div>
                             <div class="text-right">

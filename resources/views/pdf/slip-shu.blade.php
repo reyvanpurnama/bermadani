@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>BUKTI PENCAIRAN HAK ANGGOTA - {{ $member?->name ?? 'Anggota' }}</title>
+    <title>SLIP PENCAIRAN SHU DAN SIMPANAN - {{ $member?->name ?? 'Anggota' }}</title>
     <style>
         @page {
             size: a4 portrait;
@@ -302,7 +302,7 @@
     <table class="title-table">
         <tr>
             <td>
-                <h1 class="doc-title">BUKTI PENCAIRAN HAK ANGGOTA</h1>
+                <h1 class="doc-title">SLIP PENCAIRAN SHU DAN SIMPANAN</h1>
                 <p class="doc-subtitle">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $session?->year ?? date('Y') }}</p>
             </td>
             <td class="text-right" style="vertical-align: bottom;">
@@ -351,7 +351,7 @@
         <table>
             <tr>
                 <td width="55%" style="vertical-align: middle;">
-                    <div class="hero-title">Total Hak Pencairan</div>
+                    <div class="hero-title">Total Pencairan</div>
                     <div class="hero-terbilang">
                         Terbilang: &ldquo;{{ $terbilang ?? (terbilang_id($rcptTotalPencairan) . ' Rupiah') }}&rdquo;
                     </div>
