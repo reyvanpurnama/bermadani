@@ -396,16 +396,16 @@
         </tr>
     </table>
 
-    {{-- OTORISASI OPERASIONAL & EKSEKUSI (QUIET CONFIDENCE) --}}
+    {{-- SERAH TERIMA & STATUS TRANSAKSI --}}
     <table class="auth-table">
         <tr>
             <td width="55%">
-                <div class="auth-label">Otorisasi Koperasi</div>
+                <div class="auth-label">Diserahkan oleh</div>
                 <div class="auth-value">{{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }}</div>
-                <div class="auth-sub">{{ coop_setting('bendahara_title', 'Manajer Operasional') }} &bull; {{ coop_config('legal_name') }}</div>
+                <div class="auth-sub">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</div>
             </td>
             <td width="45%" class="text-right">
-                <div class="auth-label">Status &bull; Waktu Transaksi</div>
+                <div class="auth-label">Status Transaksi</div>
                 <div class="auth-value" style="font-size: 8.5pt;">
                     @if($distribution->is_disbursed)
                         <span style="color: #155A6B;">&bull; Berhasil Dicairkan</span>

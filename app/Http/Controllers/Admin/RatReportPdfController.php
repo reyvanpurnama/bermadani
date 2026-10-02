@@ -84,6 +84,9 @@ class RatReportPdfController extends Controller
 
     public function downloadSlipPdf(Request $request, MemberShuDistribution $distribution)
     {
+        app()->setLocale('id');
+        \Illuminate\Support\Carbon::setLocale('id');
+
         $distribution->loadMissing(['member', 'ratSession']);
         $member = $distribution->member;
         $session = $distribution->ratSession;

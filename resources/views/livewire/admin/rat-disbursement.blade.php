@@ -793,15 +793,15 @@
                         </tbody>
                     </table>
 
-                    {{-- Apple HIG Quiet Authority & Execution Metadata --}}
+                    {{-- Serah Terima & Status Transaksi --}}
                     <div class="flex items-center justify-between pt-3 text-[10px] border-t border-slate-200 dark:border-slate-800">
                         <div>
-                            <p class="text-slate-400 text-[9px] uppercase tracking-wider font-semibold">Otorisasi Koperasi</p>
+                            <p class="text-slate-400 text-[9px] uppercase tracking-wider font-semibold">Diserahkan oleh</p>
                             <p class="font-bold text-slate-900 dark:text-white text-xs mt-0.5">{{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }}</p>
-                            <p class="text-[9.5px] text-slate-500">{{ coop_setting('bendahara_title', 'Manajer Operasional') }} &bull; {{ config('cooperative.legal_name') }}</p>
+                            <p class="text-[9.5px] text-slate-500">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-slate-400 text-[9px] uppercase tracking-wider font-semibold">Status &bull; Waktu Transaksi</p>
+                            <p class="text-slate-400 text-[9px] uppercase tracking-wider font-semibold">Status Transaksi</p>
                             <div class="text-xs font-bold mt-0.5">
                                 @if($selectedReceipt->is_disbursed)
                                     <span class="text-[#155A6B] dark:text-emerald-400">&bull; Berhasil Dicairkan</span>
