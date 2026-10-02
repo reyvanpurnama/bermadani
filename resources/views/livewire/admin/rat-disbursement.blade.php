@@ -686,10 +686,10 @@
                                 <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
                             </div>
                             <div class="text-right">
-                                <span x-show="tab === 'member'" class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase tracking-wide">
+                                <span x-show="tab === 'member'" class="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 uppercase tracking-wide">
                                     LEMBAR ANGGOTA
                                 </span>
-                                <span x-show="tab === 'dual'" class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 uppercase tracking-wide" style="display: none;">
+                                <span x-show="tab === 'dual'" class="inline-block px-2 py-0.5 rounded text-[9px] font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 uppercase tracking-wide" style="display: none;">
                                     2 RANGKAP (A4)
                                 </span>
                             </div>
@@ -814,7 +814,7 @@
                         <div class="text-center min-w-[150px]">
                             <p class="text-slate-500 dark:text-slate-400 mb-1">
                                 {{ coop_config('city', 'Bandung') }}, {{ $selectedReceipt->disbursed_at ? $selectedReceipt->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                                Petugas Operasional,
+                                Diserahkan oleh,
                             </p>
                             @php
                                 $sigPreview = coop_setting('bendahara_signature');
@@ -834,13 +834,13 @@
                     {{-- Mode 2: Cetak 2 Rangkap Preview (Dua Pihak) --}}
                     <div x-show="tab === 'dual'" class="grid grid-cols-2 gap-4 pt-3 text-[10px] text-center" style="display: none;">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400">Lembar 1: TTD Penerima</p>
+                            <p class="text-slate-500 dark:text-slate-400">Lembar 1: Yang Menerima</p>
                             <div class="h-10"></div>
                             <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ $selectedReceipt->member?->name }})</p>
                             <p class="text-[9px] text-slate-400">Arsip Koperasi</p>
                         </div>
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400">Lembar 2: TTD Petugas</p>
+                            <p class="text-slate-500 dark:text-slate-400">Lembar 2: Diserahkan oleh</p>
                             @if(!empty($sigPreview) && file_exists(public_path($sigPreview)))
                                 <div class="h-10 flex items-center justify-center py-0.5">
                                     <img src="{{ asset($sigPreview) }}" alt="TTD" class="h-9 max-w-[120px] object-contain">

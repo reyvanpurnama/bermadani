@@ -93,22 +93,25 @@
         }
         .badge-pill {
             display: inline-block;
-            padding: 2px 7px;
-            border-radius: 9999px;
+            padding: 2px 6px;
+            border-radius: 2px;
             font-size: 6.5pt;
             font-weight: bold;
             letter-spacing: 0.3px;
             text-transform: uppercase;
+            background-color: #f4f4f5;
+            color: #18181b;
+            border: 0.5pt solid #d4d4d8;
         }
         .badge-coop {
-            background-color: #f1f5f9;
-            color: #334155;
-            border: 0.5pt solid #cbd5e1;
+            background-color: #f4f4f5;
+            color: #18181b;
+            border: 0.5pt solid #d4d4d8;
         }
         .badge-member {
-            background-color: #ecfdf5;
-            color: #047857;
-            border: 0.5pt solid #a7f3d0;
+            background-color: #f4f4f5;
+            color: #18181b;
+            border: 0.5pt solid #d4d4d8;
         }
 
         /* Ledger Table */
@@ -360,7 +363,7 @@
                     <div style="display: inline-block; text-align: center; min-width: 150px;">
                         <p style="margin: 0; font-size: 7pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                            Yang Menerima (Anggota),
+                            Yang Menerima,
                         </p>
                         <div class="signature-space"></div>
                         <div class="signature-line">({{ $member?->name ?? 'Anggota' }})</div>
@@ -515,7 +518,7 @@
                     <div style="display: inline-block; text-align: center; min-width: 150px;">
                         <p style="margin: 0; font-size: 7pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                            Petugas Operasional,
+                            Diserahkan oleh,
                         </p>
                         @if(!empty($sigBase64))
                             <div style="height: 28px; margin: 1px 0;">

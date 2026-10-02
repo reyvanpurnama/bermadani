@@ -263,11 +263,11 @@
             </td>
             <td class="text-right" style="vertical-align: bottom;">
                 @if(($slipType ?? 'member') === 'coop')
-                    <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 6.5pt; font-weight: bold; background-color: #f1f5f9; color: #334155; border: 0.5pt solid #cbd5e1; text-transform: uppercase;">
+                    <span style="display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: 6.5pt; font-weight: bold; background-color: #f4f4f5; color: #18181b; border: 0.5pt solid #d4d4d8; text-transform: uppercase; letter-spacing: 0.3px;">
                         LEMBAR 1 &bull; ARSIP KOPERASI
                     </span>
                 @else
-                    <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 6.5pt; font-weight: bold; background-color: #ecfdf5; color: #047857; border: 0.5pt solid #a7f3d0; text-transform: uppercase;">
+                    <span style="display: inline-block; padding: 2px 6px; border-radius: 2px; font-size: 6.5pt; font-weight: bold; background-color: #f4f4f5; color: #18181b; border: 0.5pt solid #d4d4d8; text-transform: uppercase; letter-spacing: 0.3px;">
                         LEMBAR 2 &bull; ARSIP ANGGOTA
                     </span>
                 @endif
@@ -398,7 +398,7 @@
                     <div style="display: inline-block; text-align: center; min-width: 170px;">
                         <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                            Yang Menerima (Anggota),
+                            Yang Menerima,
                         </p>
                         <div class="signature-space"></div>
                         <div class="signature-line">({{ $member?->name ?? 'Anggota' }})</div>
@@ -408,7 +408,7 @@
                     <div style="display: inline-block; text-align: center; min-width: 170px;">
                         <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                            Petugas Operasional,
+                            Diserahkan oleh,
                         </p>
                         @if(!empty($sigBase64))
                             <div style="height: 34px; margin: 1px 0;">
