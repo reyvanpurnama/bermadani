@@ -102,7 +102,9 @@ class RatReportPdfController extends Controller
         $rcptShu = (float) $distribution->shu_amount;
         $rcptTotalPencairan = $rcptTotalSimpanan + $rcptShu;
 
-        $pdf = Pdf::loadView('pdf.slip-shu', [
+        $type = $request->query('type', 'member'); // 'member' | 'coop' | 'dual'
+
+        $viewData = [
             'distribution' => $distribution,
             'member' => $member,
             'session' => $session,
@@ -114,12 +116,23 @@ class RatReportPdfController extends Controller
             'rcptShu' => $rcptShu,
             'rcptTotalPencairan' => $rcptTotalPencairan,
             'generatedAt' => now()->translatedFormat('d F Y H:i'),
-        ])->setPaper('a5', 'landscape');
+            'slipType' => $type,
+        ];
 
         $safeName = preg_replace('/[^A-Za-z0-9_-]/', '_', $member?->name ?? 'Anggota');
         $nomorAnggota = $member?->nomorAnggota ?? $distribution->id;
         $year = $session?->year ?? date('Y');
-        $filename = "Slip_Pencairan_SHU_dan_Simpanan_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+
+        if ($type === 'dual') {
+            $pdf = Pdf::loadView('pdf.slip-shu-dual', $viewData)->setPaper('a4', 'portrait');
+            $filename = "Slip_Pencairan_2Rangkap_A4_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+        } elseif ($type === 'coop') {
+            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a5', 'landscape');
+            $filename = "Slip_Pencairan_Arsip_Koperasi_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+        } else {
+            $pdf = Pdf::loadView('pdf.slip-shu', $viewData)->setPaper('a5', 'landscape');
+            $filename = "Slip_Pencairan_SHU_dan_Simpanan_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+        }
 
         if ($request->has('download')) {
             return $pdf->download($filename);

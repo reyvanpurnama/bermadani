@@ -262,7 +262,16 @@
                 <p class="doc-subtitle">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $session?->year ?? date('Y') }}</p>
             </td>
             <td class="text-right" style="vertical-align: bottom;">
-                <span class="meta-text-muted">Waktu Cetak: {{ $generatedAt }}</span>
+                @if(($slipType ?? 'member') === 'coop')
+                    <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 6.5pt; font-weight: bold; background-color: #f1f5f9; color: #334155; border: 0.5pt solid #cbd5e1; text-transform: uppercase;">
+                        LEMBAR 1 &bull; ARSIP KOPERASI
+                    </span>
+                @else
+                    <span style="display: inline-block; padding: 2px 7px; border-radius: 9999px; font-size: 6.5pt; font-weight: bold; background-color: #ecfdf5; color: #047857; border: 0.5pt solid #a7f3d0; text-transform: uppercase;">
+                        LEMBAR 2 &bull; ARSIP ANGGOTA
+                    </span>
+                @endif
+                <div class="meta-text-muted" style="margin-top: 2px;">Waktu Cetak: {{ $generatedAt }}</div>
             </td>
         </tr>
     </table>
@@ -370,30 +379,49 @@
         </table>
     </div>
 
-    {{-- AREA TANDA TANGAN RESMI --}}
+    {{-- AREA TANDA TANGAN RESMI (SINGLE SIGNATURE SESUAI ARAHAN KETUA) --}}
     <table class="signature-table">
         <tr>
-            <td>
-                <p style="margin: 0;">Penerima (Anggota),</p>
-                <div class="signature-space"></div>
-                <div class="signature-line">({{ $member?->name ?? 'Anggota' }})</div>
-                <div class="signature-role font-mono">No. Anggota: #{{ $member?->nomorAnggota ?? '-' }}</div>
+            <td width="55%" style="text-align: left; vertical-align: bottom;">
+                @if(($slipType ?? 'member') === 'coop')
+                    <div style="font-size: 7pt; color: #71717a; padding-right: 15px; line-height: 1.35;">
+                        <strong>Arsip Koperasi:</strong> Disimpan oleh Koperasi sebagai bukti sah penyerahan dana yang telah diterima oleh anggota.
+                    </div>
+                @else
+                    <div style="font-size: 7pt; color: #71717a; padding-right: 15px; line-height: 1.35;">
+                        <strong>Arsip Anggota:</strong> Diserahkan kepada Anggota sebagai tanda terima resmi pencairan hak oleh Koperasi.
+                    </div>
+                @endif
             </td>
-            <td>
-                <p style="margin: 0;">
-                    {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
-                    Pengurus / Bendahara Koperasi,
-                </p>
-                <div class="signature-space"></div>
-                <div class="signature-line">({{ coop_setting('bendahara_name', 'Muhammad Alwi Almaliki') }})</div>
-                <div class="signature-role">{{ coop_setting('bendahara_title', 'Bendahara Koperasi') }}</div>
+            <td width="45%" style="text-align: right; vertical-align: top;">
+                @if(($slipType ?? 'member') === 'coop')
+                    <div style="display: inline-block; text-align: center; min-width: 170px;">
+                        <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
+                            {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
+                            Yang Menerima (Anggota),
+                        </p>
+                        <div class="signature-space"></div>
+                        <div class="signature-line">({{ $member?->name ?? 'Anggota' }})</div>
+                        <div class="signature-role font-mono">No. Anggota: #{{ $member?->nomorAnggota ?? '-' }}</div>
+                    </div>
+                @else
+                    <div style="display: inline-block; text-align: center; min-width: 170px;">
+                        <p style="margin: 0; font-size: 7.5pt; color: #3f3f46;">
+                            {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
+                            Petugas Operasional,
+                        </p>
+                        <div class="signature-space"></div>
+                        <div class="signature-line">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</div>
+                        <div class="signature-role">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</div>
+                    </div>
+                @endif
             </td>
         </tr>
     </table>
 
     {{-- AUDIT FOOTNOTE --}}
     <div class="audit-footer">
-        Dokumen digital resmi diterbitkan oleh Sistem Informasi {{ coop_config('legal_name') }} &bull; Ref ID: SLIP-{{ $distribution->id }}-{{ substr(md5($distribution->id . ($distribution->created_at ?? now())), 0, 8) }}
+        Dokumen resmi diterbitkan oleh Sistem Informasi {{ coop_config('legal_name') }} &bull; Ref ID: SLIP-{{ $distribution->id }}-{{ substr(md5($distribution->id . ($distribution->created_at ?? now())), 0, 8) }}
     </div>
 
 </body>

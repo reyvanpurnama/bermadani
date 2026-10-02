@@ -649,24 +649,29 @@
     @if($showReceiptModal && $selectedReceipt)
         <div class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in no-print"
             wire:keydown.escape="closeReceiptModal">
-            <div class="bg-white dark:bg-darkCard w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-4 max-h-[92vh] overflow-y-auto">
+            <div x-data="{ tab: 'member' }" class="bg-white dark:bg-darkCard w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-4 max-h-[92vh] overflow-y-auto">
                 {{-- Header --}}
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 no-print">
                     <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
-                        <i class='bx bx-receipt text-slate-700 dark:text-slate-300 text-lg'></i> Slip Pencairan SHU dan Simpanan
+                        <i class='bx bx-receipt text-slate-700 dark:text-slate-300 text-lg'></i> Slip Pencairan SHU &amp; Simpanan
                     </h3>
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('admin.rat.slip-pdf', $selectedReceipt->id) }}" target="_blank"
-                            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm flex items-center gap-1.5 min-h-[38px] transition-all">
-                            <i class='bx bxs-file-pdf text-base'></i> Download PDF (A5)
-                        </a>
-                        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm flex items-center gap-1 min-h-[38px]">
-                            <i class='bx bx-printer text-base'></i> Cetak Slip
-                        </button>
-                        <button wire:click="closeReceiptModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">
-                            <i class='bx bx-x text-2xl'></i>
-                        </button>
-                    </div>
+                    <button wire:click="closeReceiptModal" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">
+                        <i class='bx bx-x text-2xl'></i>
+                    </button>
+                </div>
+
+                {{-- Apple HIG Segmented Control Switcher --}}
+                <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl text-xs font-semibold no-print">
+                    <button type="button" @click="tab = 'member'"
+                        :class="tab === 'member' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'"
+                        class="flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5">
+                        <i class='bx bx-user text-sm text-emerald-500'></i> Slip Anggota (Digital)
+                    </button>
+                    <button type="button" @click="tab = 'dual'"
+                        :class="tab === 'dual' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 dark:text-slate-400'"
+                        class="flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5">
+                        <i class='bx bx-copy-alt text-sm text-indigo-500'></i> Cetak 2 Rangkap (A4)
+                    </button>
                 </div>
 
                 {{-- Printable Receipt Content (Apple HIG Clean Minimalist Ledger) --}}
@@ -675,9 +680,19 @@
                     <div class="text-center border-b pb-3 border-slate-200 dark:border-slate-800">
                         <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">{{ config('cooperative.legal_name') }}</h2>
                         <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ config('cooperative.parent_org') }} &bull; {{ config('cooperative.address') }}</p>
-                        <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
-                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">SLIP PENCAIRAN SHU DAN SIMPANAN</h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
+                        <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                            <div class="text-left">
+                                <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">SLIP PENCAIRAN SHU DAN SIMPANAN</h3>
+                                <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span x-show="tab === 'member'" class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 uppercase tracking-wide">
+                                    LEMBAR ANGGOTA
+                                </span>
+                                <span x-show="tab === 'dual'" class="inline-block px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 uppercase tracking-wide" style="display: none;">
+                                    2 RANGKAP (A4)
+                                </span>
+                            </div>
                         </div>
                     </div>
 
@@ -790,35 +805,85 @@
                         </tbody>
                     </table>
 
-                    {{-- Signatures --}}
-                    <div class="grid grid-cols-2 gap-4 pt-3 text-[10px] text-center">
+                    {{-- Signatures Area --}}
+                    {{-- Mode 1: Slip Anggota (Single Signature Petugas) --}}
+                    <div x-show="tab === 'member'" class="flex items-end justify-between pt-3 text-[10px]">
+                        <div class="text-slate-400 text-[9px] max-w-[200px] leading-relaxed">
+                            <strong>Arsip Anggota:</strong> Tanda terima resmi pencairan hak yang diserahkan oleh Koperasi.
+                        </div>
+                        <div class="text-center min-w-[150px]">
+                            <p class="text-slate-500 dark:text-slate-400 mb-1">
+                                {{ coop_config('city', 'Bandung') }}, {{ $selectedReceipt->disbursed_at ? $selectedReceipt->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
+                                Petugas Operasional,
+                            </p>
+                            <div class="h-10"></div>
+                            <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</p>
+                            <p class="text-[9px] text-slate-400">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</p>
+                        </div>
+                    </div>
+
+                    {{-- Mode 2: Cetak 2 Rangkap Preview (Dua Pihak) --}}
+                    <div x-show="tab === 'dual'" class="grid grid-cols-2 gap-4 pt-3 text-[10px] text-center" style="display: none;">
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400">Penerima (Anggota),</p>
+                            <p class="text-slate-500 dark:text-slate-400">Lembar 1: TTD Penerima</p>
                             <div class="h-10"></div>
                             <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ $selectedReceipt->member?->name }})</p>
+                            <p class="text-[9px] text-slate-400">Arsip Koperasi</p>
                         </div>
                         <div>
-                            <p class="text-slate-500 dark:text-slate-400">Kasir / Bendahara Koperasi,</p>
+                            <p class="text-slate-500 dark:text-slate-400">Lembar 2: TTD Petugas</p>
                             <div class="h-10"></div>
-                            <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name') }})</p>
+                            <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</p>
+                            <p class="text-[9px] text-slate-400">Arsip Anggota</p>
                         </div>
                     </div>
                 </div>
 
                 {{-- Modal Footer Actions --}}
+                @php
+                    $memberPhone = preg_replace('/[^0-9]/', '', $selectedReceipt->member?->phone ?? '');
+                    if (str_starts_with($memberPhone, '0')) {
+                        $memberPhone = '62' . substr($memberPhone, 1);
+                    }
+                    $nominalWa = isset($rcptTotalPencairan) ? $rcptTotalPencairan : (float)$selectedReceipt->shu_amount;
+                    $waText = "Halo Bapak/Ibu " . ($selectedReceipt->member?->name ?? 'Anggota') . ",\n\nBerikut bukti pencairan Hak SHU & Simpanan Koperasi Bermadani UMB Tahun Buku " . ($selectedReceipt->ratSession?->year ?? date('Y')) . " sebesar Rp " . number_format($nominalWa, 0, ',', '.') . ".\n\nTerima kasih atas partisipasi aktif Bapak/Ibu bersama Koperasi Bermadani.";
+                @endphp
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-700 no-print">
                     <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
                         <i class='bx bx-info-circle text-base text-indigo-500'></i>
-                        <span>Format PDF standar: <strong>A5 Landscape</strong> (Praktis dikirim WA &amp; hemat kertas)</span>
+                        <span x-show="tab === 'member'">Format <strong>A5 Landscape</strong> &bull; Siap kirim ke WA anggota.</span>
+                        <span x-show="tab === 'dual'" style="display: none;">Format <strong>A4 Portrait</strong> &bull; Sekali print keluar 2 rangkap potong tengah.</span>
                     </div>
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <a href="{{ route('admin.rat.slip-pdf', $selectedReceipt->id) }}" target="_blank"
+
+                    {{-- Actions when in Member tab --}}
+                    <div x-show="tab === 'member'" class="flex items-center gap-2 w-full sm:w-auto">
+                        @if(!empty($memberPhone))
+                            <a href="https://wa.me/{{ $memberPhone }}?text={{ urlencode($waText) }}" target="_blank"
+                                class="flex-1 sm:flex-none bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold px-3 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1.5 min-h-[40px] transition-all"
+                                title="Kirim notifikasi via WhatsApp ke {{ $selectedReceipt->member?->phone }}">
+                                <i class='bx bxl-whatsapp text-lg'></i> Kirim WA
+                            </a>
+                        @endif
+                        <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'member']) }}" target="_blank"
                             class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1.5 min-h-[40px] transition-all">
-                            <i class='bx bxs-file-pdf text-base'></i> Download PDF (A5)
+                            <i class='bx bxs-file-pdf text-base'></i> Download Slip (A5)
                         </a>
-                        <button onclick="window.print()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1 min-h-[40px] transition-all">
+                        <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'member']) }}" target="_blank"
+                            class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1 min-h-[40px] transition-all">
                             <i class='bx bx-printer text-base'></i> Cetak
-                        </button>
+                        </a>
+                    </div>
+
+                    {{-- Actions when in Dual tab --}}
+                    <div x-show="tab === 'dual'" class="flex items-center gap-2 w-full sm:w-auto" style="display: none;">
+                        <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'dual']) }}" target="_blank"
+                            class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1.5 min-h-[40px] transition-all">
+                            <i class='bx bxs-file-pdf text-base'></i> Download 2 Rangkap (A4)
+                        </a>
+                        <a href="{{ route('admin.rat.slip-pdf', ['distribution' => $selectedReceipt->id, 'type' => 'dual']) }}" target="_blank"
+                            class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1 min-h-[40px] transition-all">
+                            <i class='bx bx-printer text-base'></i> Cetak A4 Langsung
+                        </a>
                     </div>
                 </div>
             </div>
