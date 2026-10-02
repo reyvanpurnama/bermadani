@@ -650,8 +650,8 @@
             <div class="bg-white dark:bg-darkCard w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-4 max-h-[92vh] overflow-y-auto">
                 {{-- Header --}}
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-700 pb-3 no-print">
-                    <h3 class="font-bold text-sm text-slate-800 dark:text-white flex items-center gap-2">
-                        <i class='bx bx-receipt text-indigo-600 text-lg'></i> Preview Slip Kwitansi SHU
+                    <h3 class="font-bold text-sm text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class='bx bx-receipt text-slate-700 dark:text-slate-300 text-lg'></i> Slip Pencairan SHU dan Simpanan
                     </h3>
                     <div class="flex items-center gap-2">
                         <a href="{{ route('admin.rat.slip-pdf', $selectedReceipt->id) }}" target="_blank"
@@ -667,64 +667,72 @@
                     </div>
                 </div>
 
-                {{-- Printable Receipt Content --}}
-                <div id="receiptPrintableSection" class="bg-white text-slate-900 p-5 sm:p-6 rounded-xl border border-slate-200 font-sans space-y-4 text-xs">
-                    {{-- Kop --}}
-                    <div class="text-center border-b pb-3 border-slate-300">
-                        <h2 class="text-sm font-extrabold uppercase tracking-wider text-slate-900">{{ config('cooperative.legal_name') }}</h2>
-                        <p class="text-[10px] text-slate-600">{{ config('cooperative.parent_org') }}</p>
-                        <p class="text-[9px] text-slate-500 font-mono mt-0.5">SLIP PEMBERITAHUAN & KWITANSI PENCAIRAN SHU RAT {{ $selectedReceipt->ratSession?->year }}</p>
-                    </div>
-
-                    {{-- Member Metadata --}}
-                    <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-3 rounded-lg border border-slate-200">
-                        <div>
-                            <span class="text-slate-500 block text-[9px]">Nomor Anggota</span>
-                            <span class="font-mono font-bold text-slate-900">{{ $selectedReceipt->member?->nomorAnggota }}</span>
-                        </div>
-                        <div>
-                            <span class="text-slate-500 block text-[9px]">Nama Anggota</span>
-                            <span class="font-bold text-slate-900">{{ $selectedReceipt->member?->name }}</span>
-                        </div>
-                        <div class="col-span-2">
-                            <span class="text-slate-500 block text-[9px]">Unit Kerja / Institusi</span>
-                            <span class="font-medium text-slate-800">{{ $selectedReceipt->member?->unitKerja ?? '-' }}</span>
+                {{-- Printable Receipt Content (Apple HIG Clean Minimalist Ledger) --}}
+                <div id="receiptPrintableSection" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-5 sm:p-6 rounded-xl border border-slate-200 dark:border-slate-800 font-sans space-y-4 text-xs">
+                    {{-- Kop & Identitas --}}
+                    <div class="text-center border-b pb-3 border-slate-200 dark:border-slate-800">
+                        <h2 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-900 dark:text-white">{{ config('cooperative.legal_name') }}</h2>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400">{{ config('cooperative.parent_org') }} &bull; {{ config('cooperative.address') }}</p>
+                        <div class="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                            <h3 class="text-xs sm:text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">SLIP PENCAIRAN SHU DAN SIMPANAN</h3>
+                            <p class="text-[10px] text-slate-400 font-medium">Rapat Anggota Tahunan (RAT) Tahun Buku {{ $selectedReceipt->ratSession?->year }}</p>
                         </div>
                     </div>
 
-                    {{-- Breakdown Table --}}
-                    <table class="w-full border-collapse border border-slate-300 text-[10px]">
+                    {{-- Member Metadata (Strip) --}}
+                    <div class="grid grid-cols-3 gap-3 text-[11px] bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-200/80 dark:border-slate-700/60">
+                        <div>
+                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Nomor Anggota</span>
+                            <span class="font-mono font-bold text-slate-900 dark:text-white">#{{ $selectedReceipt->member?->nomorAnggota }}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Nama Anggota</span>
+                            <span class="font-bold text-slate-900 dark:text-white">{{ $selectedReceipt->member?->name }}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block text-[9px] uppercase tracking-wider font-semibold">Unit Kerja / Institusi</span>
+                            <span class="font-medium text-slate-700 dark:text-slate-300">{{ $selectedReceipt->member?->unitKerja ?? '-' }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Unified Financial Ledger Table --}}
+                    <table class="w-full border-collapse border border-slate-200 dark:border-slate-700 text-[10px]">
                         <thead>
-                            <tr class="bg-slate-100 font-bold uppercase text-slate-700">
-                                <th class="border border-slate-300 p-2 text-left">Rincian</th>
-                                <th class="border border-slate-300 p-2 text-right">Jumlah (Rp)</th>
+                            <tr class="bg-slate-100 dark:bg-slate-800 font-bold uppercase text-slate-700 dark:text-slate-300 text-[9px] tracking-wider">
+                                <th class="border border-slate-200 dark:border-slate-700 p-2 text-left">Rincian Pos Hak</th>
+                                <th class="border border-slate-200 dark:border-slate-700 p-2 text-right">Nominal (Rp)</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {{-- SHU Section --}}
-                            <tr class="bg-slate-50">
-                                <td class="border border-slate-300 p-2 font-bold text-slate-700" colspan="2">A. RINCIAN SHU</td>
+                        <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                            {{-- I. SHU Section --}}
+                            <tr class="bg-slate-50/80 dark:bg-slate-800/30">
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 font-bold text-slate-800 dark:text-slate-200 text-[9px] uppercase tracking-wider" colspan="2">
+                                    I. Hak Sisa Hasil Usaha (SHU) RAT {{ $selectedReceipt->ratSession?->year }}
+                                </td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-300 p-2 pl-4">Jasa Simpanan (Alokasi Modal)</td>
-                                <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-600 dark:text-slate-400">Jasa Simpanan (Alokasi Modal)</td>
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono font-medium text-slate-800 dark:text-slate-200">
                                     Rp {{ number_format((float)$selectedReceipt->jasa_simpanan_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
                             <tr>
-                                <td class="border border-slate-300 p-2 pl-4">Jasa Usaha / Transaksi (Alokasi Partisipasi)</td>
-                                <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-600 dark:text-slate-400">Jasa Usaha / Transaksi (Partisipasi)</td>
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono font-medium text-slate-800 dark:text-slate-200">
                                     Rp {{ number_format((float)$selectedReceipt->jasa_usaha_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
-                            <tr class="bg-emerald-50 font-bold">
-                                <td class="border border-slate-300 p-2 pl-4 uppercase text-emerald-800">Total Hak SHU</td>
-                                <td class="border border-slate-300 p-2 text-right font-mono text-sm text-emerald-700">
+                            <tr class="bg-slate-50/60 dark:bg-slate-800/40 font-bold">
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-900 dark:text-white">
+                                    Subtotal Hak SHU
+                                    <span class="text-[9px] font-normal text-slate-400 ml-1">(Porsi: {{ number_format((float)$selectedReceipt->portion_percentage, 4, ',', '.') }}%)</span>
+                                </td>
+                                <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono text-slate-900 dark:text-white">
                                     Rp {{ number_format((float)$selectedReceipt->shu_amount, 0, ',', '.') }}
                                 </td>
                             </tr>
 
-                            {{-- Simpanan Section --}}
+                            {{-- II. Simpanan Section --}}
                             @if($selectedReceipt->member)
                                 @php
                                     $rcptPokok = (float) $selectedReceipt->member->simpananPokok;
@@ -733,39 +741,46 @@
                                     $rcptTotalSimpanan = $rcptPokok + $rcptWajib;
                                     $rcptTotalPencairan = $rcptTotalSimpanan + (float)$selectedReceipt->shu_amount;
                                 @endphp
-                                <tr class="bg-slate-50">
-                                    <td class="border border-slate-300 p-2 font-bold text-slate-700" colspan="2">B. SIMPANAN ANGGOTA (Saldo Terkini)</td>
+                                <tr class="bg-slate-50/80 dark:bg-slate-800/30">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 font-bold text-slate-800 dark:text-slate-200 text-[9px] uppercase tracking-wider" colspan="2">
+                                        II. Saldo Simpanan Anggota (Terkini)
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-slate-300 p-2 pl-4">Simpanan Pokok</td>
-                                    <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-600 dark:text-slate-400">Simpanan Pokok</td>
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono font-medium text-slate-800 dark:text-slate-200">
                                         Rp {{ number_format($rcptPokok, 0, ',', '.') }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="border border-slate-300 p-2 pl-4">Simpanan Wajib</td>
-                                    <td class="border border-slate-300 p-2 text-right font-mono font-semibold">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-600 dark:text-slate-400">Simpanan Wajib</td>
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono font-medium text-slate-800 dark:text-slate-200">
                                         Rp {{ number_format($rcptWajib, 0, ',', '.') }}
                                     </td>
                                 </tr>
-                                <tr class="bg-indigo-50 font-bold">
-                                    <td class="border border-slate-300 p-2 pl-4 uppercase text-indigo-800">Total Simpanan (Pokok + Wajib)</td>
-                                    <td class="border border-slate-300 p-2 text-right font-mono text-sm text-indigo-700">
+                                <tr class="bg-slate-50/60 dark:bg-slate-800/40 font-bold">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-900 dark:text-white">
+                                        Subtotal Simpanan
+                                        <span class="text-[9px] font-normal text-slate-400 ml-1">(Pokok + Wajib)</span>
+                                    </td>
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2 text-right font-mono text-slate-900 dark:text-white">
                                         Rp {{ number_format($rcptTotalSimpanan, 0, ',', '.') }}
                                     </td>
                                 </tr>
 
-                                {{-- Grand Total --}}
-                                <tr class="bg-amber-100 font-bold border-t-2 border-amber-400">
-                                    <td class="border border-amber-300 p-2.5 uppercase text-amber-900 text-[11px]">TOTAL PENCAIRAN (SHU + SIMPANAN)</td>
-                                    <td class="border border-amber-300 p-2.5 text-right font-mono text-base text-amber-900">
+                                {{-- Grand Total Row (High Contrast Neutral) --}}
+                                <tr class="border-t-2 border-slate-900 dark:border-slate-100 bg-slate-50 dark:bg-slate-800">
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2.5 uppercase font-bold text-slate-900 dark:text-white text-[10px] tracking-wider">
+                                        TOTAL PENCAIRAN (HAK SHU + SIMPANAN)
+                                    </td>
+                                    <td class="border border-slate-200 dark:border-slate-700 p-2.5 text-right font-mono font-bold text-base text-slate-900 dark:text-white">
                                         Rp {{ number_format($rcptTotalPencairan, 0, ',', '.') }}
                                     </td>
                                 </tr>
                                 @if($rcptSukarela > 0)
-                                    <tr class="bg-blue-50">
-                                        <td class="border border-slate-300 p-2 pl-4 text-blue-700 italic" colspan="2">
-                                            * Simpanan Sukarela: Rp {{ number_format($rcptSukarela, 0, ',', '.') }} (dikembalikan terpisah)
+                                    <tr>
+                                        <td class="border border-slate-200 dark:border-slate-700 p-2 pl-4 text-slate-500 italic text-[9px]" colspan="2">
+                                            * Saldo Simpanan Sukarela: <strong>Rp {{ number_format($rcptSukarela, 0, ',', '.') }}</strong> (dapat dicairkan terpisah)
                                         </td>
                                     </tr>
                                 @endif
@@ -774,16 +789,17 @@
                     </table>
 
                     {{-- Signatures --}}
-                    <div class="grid grid-cols-2 gap-4 pt-4 text-[10px] text-center">
+                    <div class="grid grid-cols-2 gap-4 pt-3 text-[10px] text-center">
                         <div>
-                            <p class="text-slate-500">Penerima (Anggota),</p>
-                            <div class="h-12"></div>
-                            <p class="font-bold border-t border-slate-300 pt-1 text-slate-800">({{ $selectedReceipt->member?->name }})</p>
+                            <p class="text-slate-500 dark:text-slate-400">Penerima (Anggota),</p>
+                            <div class="h-10"></div>
+                            <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ $selectedReceipt->member?->name }})</p>
                         </div>
                         <div>
-                            <p class="text-slate-500">Kasir / Bendahara Koperasi,</p>
-                            <div class="h-12"></div>
-                            <p class="font-bold border-t border-slate-300 pt-1 text-slate-800">({{ coop_setting('bendahara_name') }})</p>
+                            <p class="text-slate-500 dark:text-slate-400">Kasir / Bendahara Koperasi,</p>
+                            <div class="h-10"></div>
+                            <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name') }})</p>
+                        </div>
                     </div>
                 </div>
 

@@ -119,7 +119,7 @@ class RatReportPdfController extends Controller
         $safeName = preg_replace('/[^A-Za-z0-9_-]/', '_', $member?->name ?? 'Anggota');
         $nomorAnggota = $member?->nomorAnggota ?? $distribution->id;
         $year = $session?->year ?? date('Y');
-        $filename = "Slip_SHU_RAT_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+        $filename = "Slip_Pencairan_SHU_dan_Simpanan_{$year}_{$nomorAnggota}_{$safeName}.pdf";
 
         if ($request->has('download')) {
             return $pdf->download($filename);
