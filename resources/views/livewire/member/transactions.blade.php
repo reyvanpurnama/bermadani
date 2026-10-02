@@ -1,5 +1,10 @@
 <div>
-    @section('title', 'Riwayat Belanja Toko')
+    @section('title', 'Aktivitas')
+
+    <nav class="mb-5 grid grid-cols-2 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800" aria-label="Jenis aktivitas">
+        <a href="{{ route('member.transactions') }}" class="rounded-lg bg-white px-3 py-2 text-center text-xs font-bold text-[#155A6B] shadow-sm dark:bg-zinc-900 dark:text-emerald-400">Belanja toko</a>
+        <a href="{{ route('member.transfer.history') }}" class="rounded-lg px-3 py-2 text-center text-xs font-bold text-zinc-500 dark:text-zinc-400">Transfer</a>
+    </nav>
 
     {{-- Stats Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

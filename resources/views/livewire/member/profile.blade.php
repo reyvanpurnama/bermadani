@@ -48,6 +48,16 @@
             </div>
         </div>
 
+        <details class="group overflow-hidden rounded-2xl bg-[#155A6B] text-white shadow-lg shadow-[#155A6B]/15">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 p-4 text-left">
+                <div><p class="text-sm font-bold">Kartu anggota digital</p><p class="mt-0.5 text-xs text-white/70">Tunjukkan saat bertransaksi di kasir.</p></div>
+                <i class='bx bx-chevron-down text-xl transition-transform group-open:rotate-180'></i>
+            </summary>
+            <div class="border-t border-white/15 p-5">
+                <div class="flex items-center justify-between gap-4"><div><p class="text-[10px] font-bold uppercase tracking-wider text-white/65">Nomor anggota</p><p class="mt-1 font-mono text-xl font-bold tracking-wider">{{ $member->nomorAnggota }}</p><p class="mt-4 text-xs text-white/75">{{ $member->name }}</p></div><div class="flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-white text-zinc-900 shadow-lg"><i class='bx bx-qr text-6xl'></i></div></div>
+            </div>
+        </details>
+
         @if($isReadOnly)
             <div class="rounded-3xl bg-amber-500/10 p-5 text-center shadow-sm dark:bg-amber-500/15">
                 <i class='bx bx-lock-alt text-2xl text-amber-600 dark:text-amber-400'></i>
