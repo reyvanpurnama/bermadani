@@ -81,4 +81,50 @@ class RatReportPdfController extends Controller
 
         return $pdf->download($filename);
     }
+
+    public function downloadSlipPdf(Request $request, MemberShuDistribution $distribution)
+    {
+        $distribution->loadMissing(['member', 'ratSession']);
+        $member = $distribution->member;
+        $session = $distribution->ratSession;
+
+        // Load Kop.png logo image as base64 for DomPDF compatibility
+        $kopPath = public_path(config('cooperative.kop_surat_path', 'images/Kop.png'));
+        $kopBase64 = null;
+        if (file_exists($kopPath)) {
+            $kopBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($kopPath));
+        }
+
+        $rcptPokok = (float) ($member?->simpananPokok ?? $distribution->simpanan_pokok_snapshot ?? 0);
+        $rcptWajib = (float) ($member?->simpananWajib ?? $distribution->simpanan_wajib_snapshot ?? 0);
+        $rcptSukarela = (float) ($member?->simpananSukarela ?? 0);
+        $rcptTotalSimpanan = $rcptPokok + $rcptWajib;
+        $rcptShu = (float) $distribution->shu_amount;
+        $rcptTotalPencairan = $rcptTotalSimpanan + $rcptShu;
+
+        $pdf = Pdf::loadView('pdf.slip-shu', [
+            'distribution' => $distribution,
+            'member' => $member,
+            'session' => $session,
+            'kopBase64' => $kopBase64,
+            'rcptPokok' => $rcptPokok,
+            'rcptWajib' => $rcptWajib,
+            'rcptSukarela' => $rcptSukarela,
+            'rcptTotalSimpanan' => $rcptTotalSimpanan,
+            'rcptShu' => $rcptShu,
+            'rcptTotalPencairan' => $rcptTotalPencairan,
+            'generatedAt' => now()->translatedFormat('d F Y H:i'),
+        ])->setPaper('a5', 'landscape');
+
+        $safeName = preg_replace('/[^A-Za-z0-9_-]/', '_', $member?->name ?? 'Anggota');
+        $nomorAnggota = $member?->nomorAnggota ?? $distribution->id;
+        $year = $session?->year ?? date('Y');
+        $filename = "Slip_SHU_RAT_{$year}_{$nomorAnggota}_{$safeName}.pdf";
+
+        if ($request->has('download')) {
+            return $pdf->download($filename);
+        }
+
+        return $pdf->stream($filename);
+    }
 }

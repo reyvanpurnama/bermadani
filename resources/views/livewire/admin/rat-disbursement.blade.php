@@ -654,6 +654,10 @@
                         <i class='bx bx-receipt text-indigo-600 text-lg'></i> Preview Slip Kwitansi SHU
                     </h3>
                     <div class="flex items-center gap-2">
+                        <a href="{{ route('admin.rat.slip-pdf', $selectedReceipt->id) }}" target="_blank"
+                            class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm flex items-center gap-1.5 min-h-[38px] transition-all">
+                            <i class='bx bxs-file-pdf text-base'></i> Download PDF (A5)
+                        </a>
                         <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow-sm flex items-center gap-1 min-h-[38px]">
                             <i class='bx bx-printer text-base'></i> Cetak Slip
                         </button>
@@ -780,7 +784,23 @@
                             <p class="text-slate-500">Kasir / Bendahara Koperasi,</p>
                             <div class="h-12"></div>
                             <p class="font-bold border-t border-slate-300 pt-1 text-slate-800">({{ coop_setting('bendahara_name') }})</p>
-                        </div>
+                    </div>
+                </div>
+
+                {{-- Modal Footer Actions --}}
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-700 no-print">
+                    <div class="text-[11px] text-slate-500 flex items-center gap-1.5">
+                        <i class='bx bx-info-circle text-base text-indigo-500'></i>
+                        <span>Format PDF standar: <strong>A5 Landscape</strong> (Praktis dikirim WA &amp; hemat kertas)</span>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <a href="{{ route('admin.rat.slip-pdf', $selectedReceipt->id) }}" target="_blank"
+                            class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm flex items-center justify-center gap-1.5 min-h-[40px] transition-all">
+                            <i class='bx bxs-file-pdf text-base'></i> Download PDF (A5)
+                        </a>
+                        <button onclick="window.print()" class="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1 min-h-[40px] transition-all">
+                            <i class='bx bx-printer text-base'></i> Cetak
+                        </button>
                     </div>
                 </div>
             </div>
