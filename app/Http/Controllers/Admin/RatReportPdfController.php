@@ -95,6 +95,13 @@ class RatReportPdfController extends Controller
             $kopBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($kopPath));
         }
 
+        // Load Bendahara digital signature if configured
+        $sigSetting = coop_setting('bendahara_signature', '');
+        $sigBase64 = null;
+        if (!empty($sigSetting) && file_exists(public_path($sigSetting))) {
+            $sigBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents(public_path($sigSetting)));
+        }
+
         $rcptPokok = (float) ($member?->simpananPokok ?? $distribution->simpanan_pokok_snapshot ?? 0);
         $rcptWajib = (float) ($member?->simpananWajib ?? $distribution->simpanan_wajib_snapshot ?? 0);
         $rcptSukarela = (float) ($member?->simpananSukarela ?? 0);
@@ -109,6 +116,7 @@ class RatReportPdfController extends Controller
             'member' => $member,
             'session' => $session,
             'kopBase64' => $kopBase64,
+            'sigBase64' => $sigBase64,
             'rcptPokok' => $rcptPokok,
             'rcptWajib' => $rcptWajib,
             'rcptSukarela' => $rcptSukarela,

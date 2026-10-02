@@ -517,7 +517,13 @@
                             {{ coop_config('city', 'Bandung') }}, {{ $distribution->disbursed_at ? $distribution->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
                             Petugas Operasional,
                         </p>
-                        <div class="signature-space"></div>
+                        @if(!empty($sigBase64))
+                            <div style="height: 28px; margin: 1px 0;">
+                                <img src="{{ $sigBase64 }}" style="height: 28px; max-width: 120px; display: inline-block; vertical-align: middle;">
+                            </div>
+                        @else
+                            <div class="signature-space"></div>
+                        @endif
                         <div class="signature-line">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</div>
                         <div class="signature-role">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</div>
                     </div>

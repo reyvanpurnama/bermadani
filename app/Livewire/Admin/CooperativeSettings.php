@@ -40,6 +40,8 @@ class CooperativeSettings extends Component
     public string $ketua_title = '';
     public string $bendahara_name = '';
     public string $bendahara_title = '';
+    public string $current_signature = '';
+    public $signature_upload;
     public string $pengawas_name = '';
     public string $pengawas_title = '';
     public string $rat_default_venue = '';
@@ -96,8 +98,9 @@ class CooperativeSettings extends Component
         // Load Officers & RAT
         $this->ketua_name        = coop_setting('ketua_name', 'Ridlo Abdillah, S.Pd., M.Si.');
         $this->ketua_title       = coop_setting('ketua_title', 'Ketua Koperasi');
-        $this->bendahara_name    = coop_setting('bendahara_name', 'Muhammad Alwi Almaliki');
-        $this->bendahara_title   = coop_setting('bendahara_title', 'Manager Operasional');
+        $this->bendahara_name    = coop_setting('bendahara_name', 'M. Reyvan Purnama');
+        $this->bendahara_title   = coop_setting('bendahara_title', 'Manajer Operasional');
+        $this->current_signature = coop_setting('bendahara_signature', '');
         $this->pengawas_name     = coop_setting('pengawas_name', '');
         $this->pengawas_title    = coop_setting('pengawas_title', 'Pengawas');
         $this->rat_default_venue = coop_setting('rat_default_venue', 'Ruang Rapat Utama Koperasi');
@@ -215,6 +218,71 @@ class CooperativeSettings extends Component
         }
 
         session()->flash('message', 'Data Pejabat & RAT berhasil disimpan!');
+    }
+
+    public function saveSignatureFromCanvas(string $dataUrl): void
+    {
+        if (empty($dataUrl) || !str_contains($dataUrl, 'base64,')) {
+            return;
+        }
+
+        @list($type, $data) = explode(';', $dataUrl);
+        @list(, $data)      = explode(',', $data);
+        $decoded = base64_decode($data);
+
+        if ($decoded) {
+            $dir = public_path('images/signatures');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $filename = 'bendahara_signature_' . time() . '.png';
+            $path = 'images/signatures/' . $filename;
+            file_put_contents(public_path($path), $decoded);
+
+            // Remove old signature file if exists
+            if ($this->current_signature && file_exists(public_path($this->current_signature))) {
+                @unlink(public_path($this->current_signature));
+            }
+
+            CooperativeSetting::setValue('bendahara_signature', $path, 'officers', 'Tanda Tangan Bendahara/Manager');
+            $this->current_signature = $path;
+            session()->flash('message', 'Tanda tangan digital berhasil disimpan!');
+        }
+    }
+
+    public function removeSignature(): void
+    {
+        if ($this->current_signature && file_exists(public_path($this->current_signature))) {
+            @unlink(public_path($this->current_signature));
+        }
+        CooperativeSetting::setValue('bendahara_signature', '', 'officers', 'Tanda Tangan Bendahara/Manager');
+        $this->current_signature = '';
+        session()->flash('message', 'Tanda tangan digital dihapus.');
+    }
+
+    public function updatedSignatureUpload(): void
+    {
+        $this->validate([
+            'signature_upload' => 'image|max:2048',
+        ]);
+
+        $dir = public_path('images/signatures');
+        if (!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
+        $filename = 'bendahara_signature_' . time() . '.' . $this->signature_upload->getClientOriginalExtension();
+        $this->signature_upload->move($dir, $filename);
+        $path = 'images/signatures/' . $filename;
+
+        // Remove old signature file if exists
+        if ($this->current_signature && file_exists(public_path($this->current_signature))) {
+            @unlink(public_path($this->current_signature));
+        }
+
+        CooperativeSetting::setValue('bendahara_signature', $path, 'officers', 'Tanda Tangan Bendahara/Manager');
+        $this->current_signature = $path;
+        $this->reset('signature_upload');
+        session()->flash('message', 'File tanda tangan berhasil diupload!');
     }
 
     public function saveBank(): void

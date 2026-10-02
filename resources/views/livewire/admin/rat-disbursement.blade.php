@@ -816,7 +816,16 @@
                                 {{ coop_config('city', 'Bandung') }}, {{ $selectedReceipt->disbursed_at ? $selectedReceipt->disbursed_at->translatedFormat('d F Y') : now()->translatedFormat('d F Y') }}<br>
                                 Petugas Operasional,
                             </p>
-                            <div class="h-10"></div>
+                            @php
+                                $sigPreview = coop_setting('bendahara_signature');
+                            @endphp
+                            @if(!empty($sigPreview) && file_exists(public_path($sigPreview)))
+                                <div class="h-10 flex items-center justify-center py-0.5">
+                                    <img src="{{ asset($sigPreview) }}" alt="TTD" class="h-9 max-w-[120px] object-contain">
+                                </div>
+                            @else
+                                <div class="h-10"></div>
+                            @endif
                             <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</p>
                             <p class="text-[9px] text-slate-400">{{ coop_setting('bendahara_title', 'Manajer Operasional') }}</p>
                         </div>
@@ -832,7 +841,13 @@
                         </div>
                         <div>
                             <p class="text-slate-500 dark:text-slate-400">Lembar 2: TTD Petugas</p>
-                            <div class="h-10"></div>
+                            @if(!empty($sigPreview) && file_exists(public_path($sigPreview)))
+                                <div class="h-10 flex items-center justify-center py-0.5">
+                                    <img src="{{ asset($sigPreview) }}" alt="TTD" class="h-9 max-w-[120px] object-contain">
+                                </div>
+                            @else
+                                <div class="h-10"></div>
+                            @endif
                             <p class="font-bold border-t border-slate-300 dark:border-slate-700 pt-1 text-slate-900 dark:text-white">({{ coop_setting('bendahara_name', 'M. Reyvan Purnama') }})</p>
                             <p class="text-[9px] text-slate-400">Arsip Anggota</p>
                         </div>

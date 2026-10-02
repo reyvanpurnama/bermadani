@@ -252,6 +252,110 @@
                                 <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Jabatan Resmi</label>
                                 <input type="text" wire:model.defer="bendahara_title" class="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm">
                             </div>
+
+                            {{-- Tanda Tangan Digital (Canvas Pad & File Upload) --}}
+                            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Tanda Tangan Digital (Slip Pencairan)</label>
+
+                                @if(!empty($current_signature) && file_exists(public_path($current_signature)))
+                                    <div class="p-3 bg-slate-50 dark:bg-slate-800/80 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3">
+                                        <div class="flex items-center gap-3">
+                                            <div class="h-12 w-28 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg flex items-center justify-center p-1 overflow-hidden">
+                                                <img src="{{ asset($current_signature) }}?v={{ time() }}" alt="Tanda Tangan" class="max-h-full max-w-full object-contain">
+                                            </div>
+                                            <div>
+                                                <span class="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1">
+                                                    <i class='bx bx-check-circle text-emerald-500'></i> Tanda Tangan Aktif
+                                                </span>
+                                                <span class="text-[10px] text-slate-400 block">Otomatis tercetak pada slip pencairan SHU</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" wire:click="removeSignature" class="px-2.5 py-1.5 rounded-lg text-xs font-bold text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-all flex items-center gap-1">
+                                            <i class='bx bx-trash'></i> Hapus
+                                        </button>
+                                    </div>
+                                @endif
+
+                                {{-- Drawing Pad Canvas --}}
+                                <div x-data="{
+                                    drawing: false,
+                                    hasDrawn: false,
+                                    canvas: null,
+                                    ctx: null,
+                                    init() {
+                                        this.canvas = this.$refs.sigCanvas;
+                                        this.ctx = this.canvas.getContext('2d');
+                                        this.ctx.strokeStyle = '#09090b';
+                                        this.ctx.lineWidth = 2.4;
+                                        this.ctx.lineCap = 'round';
+                                        this.ctx.lineJoin = 'round';
+                                    },
+                                    start(e) {
+                                        this.drawing = true;
+                                        const rect = this.canvas.getBoundingClientRect();
+                                        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                                        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                                        this.ctx.beginPath();
+                                        this.ctx.moveTo(clientX - rect.left, clientY - rect.top);
+                                    },
+                                    draw(e) {
+                                        if (!this.drawing) return;
+                                        const rect = this.canvas.getBoundingClientRect();
+                                        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                                        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                                        this.ctx.lineTo(clientX - rect.left, clientY - rect.top);
+                                        this.ctx.stroke();
+                                        this.hasDrawn = true;
+                                    },
+                                    stop() {
+                                        this.drawing = false;
+                                    },
+                                    clear() {
+                                        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                                        this.hasDrawn = false;
+                                    },
+                                    save() {
+                                        if (!this.hasDrawn) return;
+                                        const dataUrl = this.canvas.toDataURL('image/png');
+                                        $wire.saveSignatureFromCanvas(dataUrl);
+                                        this.clear();
+                                    }
+                                }" class="space-y-2">
+                                    <div class="relative bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 overflow-hidden">
+                                        <canvas x-ref="sigCanvas"
+                                            width="400" height="120"
+                                            class="w-full h-28 touch-none cursor-crosshair block"
+                                            @mousedown="start($event)"
+                                            @mousemove="draw($event)"
+                                            @mouseup="stop()"
+                                            @mouseleave="stop()"
+                                            @touchstart.passive="start($event)"
+                                            @touchmove.prevent="draw($event)"
+                                            @touchend="stop()"></canvas>
+
+                                        <div x-show="!hasDrawn" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs">
+                                            <span class="flex items-center gap-1.5"><i class='bx bx-pen text-base'></i> Goreskan tanda tangan di sini (Mouse / Layar Sentuh)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <button type="button" @click="clear()" class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-1">
+                                                <i class='bx bx-eraser'></i> Bersihkan
+                                            </button>
+                                            <label class="px-2.5 py-1 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-all flex items-center gap-1">
+                                                <i class='bx bx-upload'></i> Upload Gambar
+                                                <input type="file" wire:model="signature_upload" accept="image/*" class="hidden">
+                                            </label>
+                                        </div>
+                                        <button type="button" @click="save()" :disabled="!hasDrawn"
+                                            :class="hasDrawn ? 'bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-sm' : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'"
+                                            class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1">
+                                            <i class='bx bx-check'></i> Simpan TTD
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-800 space-y-4">
